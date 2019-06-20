@@ -1,0 +1,120 @@
+﻿
+@{Layout = "~/Views/Shared/_Layout0.cshtml"; }
+<table class="table table-striped table-bordered">
+    <tbody>
+
+        <tr style="height:20Px">
+            <td><h5><CENTER><b>НОМЕР</b></CENTER></h5></td>
+            <td><h5><CENTER><b>ТИП</b></CENTER></h5></td>
+            <td><p><CENTER><b>ГЛОНАСС</b></CENTER></p></td>
+        </tr>
+
+
+        <tr>
+
+            <td>
+                @Html.DropDownList("Number", new MultiSelectList(ViewBag.Number, "value", "text"), new { @class = "form-control" })
+            </td>
+
+
+            <td>
+
+
+                @Html.DropDownList("Type", new MultiSelectList(ViewBag.Type, "value", "text"), new { @class = "form-control" })
+            </td>
+
+            <td>
+                <input type="checkbox" id ="Glo" checked="@ViewBag.Glo">
+            
+            </td>
+
+        </tr>
+
+
+    </tbody>
+</table>
+@section Scripts {
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+    @Scripts.Render("~/scripts/jquery-3.3.1.js")
+    @Scripts.Render("~/Scripts/chosen.jquery.min.js")
+
+    <script>
+        //скрипт для обработки выбора года чтоб выводить дома по году и месяцу
+                        $('#Number').change(function () {
+                            var _this = $(this);
+
+                            var N = $('#Number').val();//выбраное значение в селекте
+                            var T = $('#Type').val();//выбраное значение в селекте
+                            var G = $('#Glo').prop("checked");//выбраное значение в селекте
+                            var SV = N + ";" + T + ";" + G;
+                           
+                            $("#Spisok").fadeOut('fast', function () {
+                                $("#Spisok").load('@Url.Action("AvtomobilsSpisok", "Avtomobils")', { Selection: SV });
+                                $("#Spisok").fadeIn('slow');
+                            });
+
+
+
+                           //идем в комплит воркс контроллер и там действие поиск по жэу отправляем выбранное значение в селекте, получаем дату список всех домов по жэу из БД перекинутых в лист стринг
+
+                            // alert("PING!");
+
+                        });
+
+
+    </script>
+    <script>
+        //скрипт для обработки выбора года чтоб выводить дома по году и месяцу
+                       $('#Type').change(function () {
+                            var _this = $(this);
+
+                            var N = $('#Number').val();//выбраное значение в селекте
+                            var T = $('#Type').val();//выбраное значение в селекте
+                            var G = $('#Glo').prop("checked");//выбраное значение в селекте
+                            var SV = N + ";" + T + ";" + G;
+                           
+                            $("#Spisok").fadeOut('fast', function () {
+                                $("#Spisok").load('@Url.Action("AvtomobilsSpisok", "Avtomobils")', { Selection: SV });
+                                $("#Spisok").fadeIn('slow');
+                            });
+
+
+
+                           //идем в комплит воркс контроллер и там действие поиск по жэу отправляем выбранное значение в селекте, получаем дату список всех домов по жэу из БД перекинутых в лист стринг
+
+                            // alert("PING!");
+
+                        });
+
+
+    </script>
+    <script>
+        //скрипт для обработки выбора года чтоб выводить дома по году и месяцу
+                         $('#Glo').change(function () {
+                            var _this = $(this);
+
+                            var N = $('#Number').val();//выбраное значение в селекте
+                            var T = $('#Type').val();//выбраное значение в селекте
+                            var G = $('#Glo').prop("checked");//выбраное значение в селекте
+                            var SV = N + ";" + T + ";" + G;
+                           
+                            $("#Spisok").fadeOut('fast', function () {
+                                $("#Spisok").load('@Url.Action("AvtomobilsSpisok", "Avtomobils")', { Selection: SV });
+                                $("#Spisok").fadeIn('slow');
+                            });
+
+
+
+                           //идем в комплит воркс контроллер и там действие поиск по жэу отправляем выбранное значение в селекте, получаем дату список всех домов по жэу из БД перекинутых в лист стринг
+
+                            // alert("PING!");
+
+                        });
+
+
+    </script>
+
+
+
+
+}

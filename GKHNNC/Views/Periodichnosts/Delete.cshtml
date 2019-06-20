@@ -1,0 +1,36 @@
+﻿@model GKHNNC.Models.Periodichnost
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Удалить периодичность</h2>
+
+<h3>Действительно удалить?</h3>
+<div>
+    
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.PeriodichnostName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PeriodichnostName)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-group">
+            <div class="col-md-12 ">
+                @Html.ActionLink("Назад", "Index", null, new { @class = "btn btn-success", @style = "width: 49%" })
+                <input type="submit" value="Удалить" class="btn btn-success" style="width:49%" />
+            </div>
+        </div>
+    
+}
+    </div>

@@ -1,0 +1,928 @@
+﻿@model IEnumerable<GKHNNC.Models.Ezdka>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+
+
+<h3>Отчет по расходу топлива за @ViewBag.Month @ViewBag.Year</h3>
+
+
+<div class="container" id="Tabl">
+
+
+</div>
+
+
+<table class="table table-sm table-bordered table-striped " id="TableMain">
+    <tr>
+        <th>
+            <label data-toggle="tooltip" data-placement="top" title="Номер и марка автомобиля">Наименование</label>
+        </th>
+        <th>
+            <label data-toggle="tooltip" data-placement="top" title="Данные вносятся в программу сотрудником УАТ">Пробег по одометру</label>
+        </th>
+        <th>
+            <label data-toggle="tooltip" data-placement="top" title="Данные собираются программой Автоскан">Пробег по Глонасс</label>
+        </th>
+        <th>
+            <label data-toggle="tooltip" data-placement="top" title="Соотношение пробега по одометру к пробегу по Глонасс ">Разница в пробегах ОДО/Глонасс %</label>
+        </th>
+
+        <th>
+            <label data-toggle="tooltip" data-placement="top" title="Норма на ездки * количество ездок">Расход на ездки (л.)</label>
+        </th>
+
+
+        <th>
+            <label data-toggle="tooltip" data-placement="top" title="Норма расхода * пробег по одометру + расход на ездки">Расчётный расход: одометр + ездки (л.)</label>
+        </th>
+        <th>
+            <label data-toggle="tooltip" data-placement="top" title="Норма расхода * пробег по глонасс + расход на ездки">Расчётный расход: Глонасс + ездки (л.) </label>
+        </th>
+
+        <th>
+            <label data-toggle="tooltip" data-placement="top" title="Данные с датчика уровня топлива Глонасс">Фактический расход по ДУТ Глонасс (л.) </label>
+        </th>
+        
+        <th>
+            <label data-toggle="tooltip" data-placement="top" title="Усадка топлива ночью">Ночная усадка Глонасс (л.)</label>
+        </th>
+
+        <th>
+            <label data-toggle="tooltip" data-placement="top" title="Сумма всех зарегистрированных сливов топлива">Сумма сливов топлива Глонасс (л.)</label>
+        </th>
+        <th>
+            <label data-toggle="tooltip" data-placement="top" title="Общее количество заправленного топлива (данные с АЗС 'Энергия')">Объём заправки по данным АЗС (л.)</label>
+        </th>
+        <th>
+            <label data-toggle="tooltip" data-placement="top"  title="Отношение дней с оформленными выездами к количеству дней с данными по Глонасс">Точность (%)</label>
+        </th>
+
+    </tr>
+    <tr>
+        <td>
+            <label>Итого за месяц</label>
+        </td>
+        <td>
+            @ViewBag.ProbegS
+        </td>
+        <td>
+            @ViewBag.ProbegGlonasS
+        </td>
+        @{int Z = 0;
+            if (ViewBag.ProbegGlonasS != 0)
+            {
+                Z = Math.Abs(100 - Convert.ToInt16(Convert.ToDecimal(ViewBag.ProbegS) / ViewBag.ProbegGlonasS * 100));
+            }
+        }
+        <td>
+            @Z %
+        </td>
+
+        <td>
+            @ViewBag.EzdkiNormSS л.
+        </td>
+        <td>
+            @ViewBag.RashodS л.
+        </td>
+        <td>
+            @ViewBag.RashodGlonassS л.
+        </td>
+        <td>
+            @ViewBag.RashodDutS л.
+        </td>
+        <td>
+            @ViewBag.NightUsadkaS л.
+        </td>
+        <td>
+            @ViewBag.SlivkiS л.
+        </td>
+        <td>
+            @ViewBag.AZSLitersS л.
+        </td>
+        
+        @{
+            decimal l = ViewBag.AZSLitersS;
+            int y = 0;
+            if (l > 0)
+            {
+                y = Math.Abs(100 - Convert.ToInt16(Convert.ToDecimal(ViewBag.RashodDutS) / l * 100));
+
+            }
+
+        }
+        <td>
+            @ViewBag.TochnostSS %
+        </td>
+
+
+    </tr>
+
+    @{List<string> Info = new List<string>(); }
+    @{ for (int j = 0; j < ViewBag.AvtoOtchet.Count; j++)
+        {
+            //сохраняем все через запятую Номер Марка Кол-воЕздок Пробег ПробегГло разницаПробеги расходОДО расходГЛО расходДУТ Заправка РазницаДутАЗС СуммаЗапр ТипАвто ДутФакт пробегФакт РасходФакт АЗСлитрФакт АЗССуммФакт РеалДней ГлоДней АЗСДней ЕздкиКолво ЕздкиТопливо ОстатокВБаке 31НетЕздокВДни
+            string inf = "";
+            string[] s = ViewBag.AvtoOtchet[j].Split(';');
+            string NE = "";
+            if (s[19].Equals("0") == false)
+            {
+                NE = " Есть пробег по одометру, но нулевые данные по глонасс за " + s[19] + " дней.";
+            }
+            inf += "Автомобиль " + s[0] + " " + s[1] + " за " + ViewBag.Month + " " + ViewBag.Year + " совершил " + s[18] + " ездок, " + s[20] + " заправок." + NE;
+
+            string clRashod = ""; if (s[7].Equals(s[15]) == false) { clRashod = "bg-danger"; }
+            string[] NetEzdok = s[31].Split('|');
+            string[] NetEzdokLiters = s[32].Split('|');
+            string NEtit = "";
+            if (NetEzdok.Length > 0 && NetEzdok[0] != "")
+            {
+                NEtit += "Ездок нет, заправки есть:";
+                for (int f = 0; f < NetEzdok.Length; f++)
+                {
+
+                    NEtit += NetEzdok[f] + " " + ViewBag.Month + " объём заправки: " + NetEzdokLiters[f] + "л.; ";
+                }
+            }
+            string[] ASNetEzdok = s[33].Split('|');
+            string[] ASNetEzdokKM = s[34].Split('|');
+            string ASNEtit = "";
+            if (ASNetEzdok.Length > 0 && ASNetEzdok[0] != "")
+            {
+                ASNEtit += "Пробег по ездкам:" + s[14] + "Замечен пробег без регистрации выездов:";
+                inf += ("Замечено перемещение автомобиля по Глонасс без оформления выездов:");
+                for (int f = 0; f < ASNetEzdok.Length; f++)
+                {
+
+                    ASNEtit += ASNetEzdok[f] + " " + ViewBag.Month + " пробег: " + ASNetEzdokKM[f] + "км.; ";
+                    inf += (ASNetEzdok[f] + " " + ViewBag.Month + " пробег: " + ASNetEzdokKM[f] + "км.; ");
+                }
+            }
+            string clProbeg = "";
+            if (ASNEtit.Equals("") == false)
+            {
+                clProbeg = "bg-danger"; //пробег не совпал
+            }
+
+            string[] ASNetEzdokDUT = s[35].Split('|');
+            string[] ASNetDUT = s[36].Split('|');
+            string ASNEDUTtit = "";
+            if (ASNetEzdokDUT.Length > 0 && ASNetEzdokDUT[0] != "")
+            {
+                ASNEDUTtit += "Ездок нет, расход есть:";
+                inf += ("Автомобиль не совершал ездок, но расход по ДУТ был:");
+                for (int f = 0; f < ASNetEzdokDUT.Length; f++)
+                {
+
+                    ASNEDUTtit += ASNetEzdokDUT[f] + " " + ViewBag.Month + " расход: " + ASNetDUT[f] + "л.; ";
+                    inf += (ASNetEzdokDUT[f] + " " + ViewBag.Month + " расход: " + ASNetDUT[f] + "л.; ");
+                }
+            }
+            string[] tochnostDni = s[37].Split('|');
+            string TDtit = "";
+            if (tochnostDni.Length > 0 && tochnostDni[0] != "")
+            {
+                TDtit += "Нет езок в дни:";
+
+                for (int f = 0; f < ASNetEzdokDUT.Length; f++)
+                {
+
+                    TDtit += tochnostDni[f] + " " + ViewBag.Month + "; ";
+
+                }
+                TDtit += " Есть данные Глонасс по этим дням.";
+            }
+            string clDUT = "";
+            if (ASNEDUTtit.Equals("") == false)
+            {
+                clDUT = "bg-danger"; //пробег не совпал
+            }
+            string[] SlivkiDays = s[39].Split('|');//сливы на авто
+            string[] Slivki = s[40].Split('|');
+
+            string clDut = ""; if (s[8].Equals(s[13]) == false) { clDut = "bg-danger"; inf += ("Потрачено на" + Convert.ToString(Convert.ToInt32(s[13].Replace("л.", "")) - Convert.ToInt32(s[8].Replace("л.", ""))) + " л. топлива больше, чем в дни ездок по ДУТ. Очевидно автомобиль работал на территории или возможен слив топлива. "); }
+            string clAZS = ""; if (s[9].Equals(s[16]) == false) { clAZS = "bg-danger"; inf += ("Сумма заправок игнорируя ездки у данного автомобиля составила " + s[16] + "! Как минимум автомобиль выезжал за территорию предприятия и находился на Бердском Шоссе 500 заправка 'ЭНЕРГИЯ' без оформления ездки (ездок). Зафиксированные даты заправок:" + NEtit); }
+            string clOstatok = ""; if (Convert.ToInt16(s[25].Replace("л.", "")) > 50) { clOstatok = "bg-danger"; inf += ("На конец месяца в баке автомобиля должно остаться не менее " + s[25] + " топлива (по данным одометра, норм на ездки и учёта заправок)"); }
+            if (Convert.ToInt16(s[25].Replace("л.", "")) < -10) { clOstatok = "bg-success"; inf += ("В баке автомобиля почти не осталось топлива! Его расход составил " + s[25] + " за месяц (по данным одометра, норм на ездки и учёта заправок)."); }
+            string clMin1 = "";
+            string clMin2 = "";
+            string clMin3 = "";
+            if (s[28].Equals("1")) { clMin1 = "bg-success"; }
+            if (s[28].Equals("2")) { clMin2 = "bg-success"; }
+            if (s[28].Equals("3")) { clMin3 = "bg-success"; }
+            string clTochnost = "";
+            if (Convert.ToInt16(s[27].Replace("%", "")) < 90) { clTochnost = "bg-warning"; }
+            if (Convert.ToInt16(s[27].Replace("%", "")) < 70) { clTochnost = "bg-danger"; }
+            Info.Add(inf);
+            //1Наименование
+            //2Пробег по одометру
+            //3Пробег по Глонасс
+            //4Разница в пробегах ОДО/Глонасс%
+            //5Расчётный расход (по одометру л.)
+            //6Расчётный расход (по Глонасс л.)
+            //7Потрачено по норме на ездки (л.)
+            //8Количество ездок
+            //9Фактический расход (по ДУТ Глонасс л.)
+            //10Объём заправки(л.)
+            //11Разница между ДУТ и заправками(%)
+            //12Сумма заправки(р.)
+            //13Остаток(л.)
+            //14Точность
+    <tr>
+        <td>
+            <!-- Модальное окно -->
+            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#@s[0]Modal">
+                @s[0]
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="@s[0]Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 class="modal-title" id="exampleModalLabel">Детальный отчёт за @ViewBag.Month @ViewBag.Year </h3>
+                            <h4 class="modal-title" id="exampleModalLabel"> @s[12] - @s[0] - @s[1] </h4>
+                            <h6 class="modal-title" id="exampleModalLabel">@s[2] дней совершал выезды.</h6>
+
+                        </div>
+                        <div class="modal-body">
+
+                            @{//0Пробег 1ПробегГло 2разницаПробеги 3расходОДО 4расходГЛО 5расходДУТ 6Заправка 7РазницаДутАЗС 8СуммаЗапр 9День 10Водитель 11НесоответствиеПробегов 12НесоответствиеЗаправок 13типмашины 14Кол-воЕздок 15Кол-воТоплива 16ОстатокВБаке
+                                string[] s1 = ViewBag.AvtoOtchet[j].Split(';');
+                                string col = "#" + j.ToString();
+                                string col2 = j.ToString();
+
+                            <table class=" table-bordered table-striped" id="@s[0]Table">
+                                <tr>
+                                    <th title="Месяц">@ViewBag.Month</th>
+                                    <th title="Год">@ViewBag.Year</th>
+                                    <th title="Тип автомобиля">@s[12]</th>
+                                    <th title="Марка автомобиля">@s[1]</th>
+                                    <th title="Номер автомобиля">@s[0]</th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                                <tr>
+                                    <th title="Дата ездки">Дата</th>
+                                    <th title="Пробег по одометру (сданный водителем)">Пробег по одометру</th>
+                                    <th title="Пробег по Глонасс взятый из программы АВТОСКАН или ФортСистемс">Пробег по Глонасс</th>
+                                    <th title="Разница между пробегами одометр к глонасс">Разница в пробегах %</th>
+                                    <th title="Норма на ездку*количество ездок">Расч. расход по ездкам</th>
+                                    <th title="Норма*пробег Одометр">Расч. расход по одо.</th>
+                                    <th title="Норма*пробег Глонасс">Расч. расход по Гло.</th>
+                                    <th title="Расход, рассчитанный датчиком уровня топлива">Расх. ДУТ</th>
+                                    <th title="Расход, рассчитанный датчиком уровня топлива">Усадка Гло</th>
+                                    <th title="Расход, рассчитанный датчиком уровня топлива">Сливы Гло</th>
+                                    <th title="Объём заправленного топлива">Заправка АЗС</th>
+                                    <th title="Объём заправки по глонасс">Запр.Гло</th>
+                                    <th title="Остаток топлива (Сумма заправленного топлива - расчетный расход по ездкам - расчетный расход по одометру">Ост. ОДО</th>
+                                    <th title="Остаток топлива (Сумма заправленного топлива - расчетный расход по ездкам - расчетный расход по Глонасс">Ост. ГЛО</th>
+
+                                    <th title="Сумма заправки">Заправки на сумму р.</th>
+                                    <th title="Водитель автомобиля">Водитель</th>
+                                </tr>
+                                <tr>
+                                    <td>Итого</td>
+                                    <td>@s1[3]</td>
+                                    <td title="Фактический пробег по глонасс / пробег по ездкам">@s1[4].Replace("км.", "").Replace("м/ч.", "")/@s[14].Replace("км.", "").Replace("м/ч.", "")</td>
+                                    <td>@s1[5]</td>
+                                    <td>@s1[22]</td>
+                                    <td>@s1[6]</td>
+                                    <td>@s1[7]</td>
+                                    <td title="Расход ДУТ за месяц: @s[38]">@s1[8]</td>
+                                    <td title="Ночная усадка за месяц">@s[42]</td>
+                                    <td title="Объём сливов">@s[41]</td>
+                                    <td title="Объём заправок по документам / объём заправок по ездкам">@s1[16]/@s1[9]</td>
+                                    <td title="Фактический объём заправок Глонасс">@s[43]</td>
+                                    <td>@s1[25]</td>
+                                    <td>@s1[30]</td>
+
+                                    <td>@s1[11]</td>
+                                    <td>---</td>
+
+                                </tr>
+                                @{ string[] ss = ViewBag.VseAvtoOtchets[j].Split('!');
+                                    for (int D = 0; D < ss.Length - 1; D++)
+                                    {
+                                        string[] sss = ss[D].Split(';');
+                                        string cl1 = "";
+                                        if (sss[11].Equals("1")) { cl1 = "bg-danger"; }
+                                        string cl2 = "";
+                                        if (sss[12].Equals("1")) { cl2 = "bg-danger"; }
+                                        string RaznicaZapravok = "Недолив:" + (Convert.ToDecimal(sss[6].Replace("л.", "")) - Convert.ToDecimal(sss[17].Replace("л.", ""))).ToString() + "л.";
+                                        string clSliv = ""; if (sss[18].Equals("0.00л.") == false) { clSliv = "bg-danger"; }
+                                        string clNight = ""; if (Convert.ToDecimal(sss[19].Replace("л.", "")) > 2) { clNight = "bg-danger"; }
+                                <tr>
+                                    <td>@sss[9]</td>
+                                    <td class="@cl1">@sss[0]</td>
+                                    <td class="@cl1">@sss[1]</td>
+                                    <td class="@cl1">@sss[2]</td>
+                                    <td>@sss[14]</td>
+                                    <td>@sss[3]</td>
+                                    <td>@sss[4]</td>
+                                    <td class="@cl2">@sss[5]</td>
+                                    <td class="@clNight">@sss[19]</td>
+                                    <td class="@clSliv">@sss[18]</td>
+                                    <td class="@cl2">@sss[6]</td>
+                                    <td title="@RaznicaZapravok">@sss[17]</td>
+                                    <td>@sss[15]</td>
+                                    <td>@sss[16]</td>
+
+                                    <td>@sss[8]</td>
+                                    <td>@sss[10]</td>
+
+                                </tr>
+
+
+
+                                    }
+                                    if (ASNetEzdok.Length > 0 && ASNetEzdok[0] != "")
+                                    {
+                                        <tr>
+                                            <td colspan="16" style="text-align:center" class="bg-danger">
+                                                Зафиксированы пробеги по Глонасс без оформления выездов:
+                                            </td>
+                                        </tr>
+
+                                        for (int e = 0; e < ASNetEzdok.Length; e++)
+                                        {
+                                            <tr>
+
+                                                <td style="text-align:center">
+                                                    @ASNetEzdok[e]
+                                                </td>
+                                                <td style="text-align:center">
+                                                    @ViewBag.Month
+                                                </td>
+                                                <td colspan="3" style="text-align:center">
+                                                    пробег по Глонасс:
+                                                </td>
+                                                <td style="text-align:center">
+                                                    @ASNetEzdokKM[e]
+                                                </td>
+                                                @if (e + 1 < ASNetEzdok.Length)
+                                                {
+                                                    e++;
+                                                    <td></td>
+                                                    <td style="text-align:center">
+                                                        @ASNetEzdok[e]
+                                                    </td>
+                                                    <td style="text-align:center">
+                                                        @ViewBag.Month
+                                                    </td>
+                                                    <td colspan="4" style="text-align:center">
+                                                        пробег по Глонасс:
+                                                    </td>
+                                                    <td colspan="3" style="text-align:center">
+                                                        @ASNetEzdokKM[e]
+                                                    </td>
+                                                }
+
+                                            </tr>
+                                        }
+                                    }
+
+                                    if (NetEzdok.Length > 0 && NetEzdok[0] != "")
+                                    {
+                                        <tr>
+                                            <td colspan="16" style="text-align:center" class="bg-danger">
+                                                Зафиксированы заправки без оформления выездов:
+                                            </td>
+                                        </tr>
+
+                                        for (int e = 0; e < NetEzdok.Length; e++)
+                                        {
+                                            <tr>
+
+                                                <td style="text-align:center">
+                                                    @NetEzdok[e]
+                                                </td>
+                                                <td style="text-align:center">
+                                                    @ViewBag.Month
+                                                </td>
+                                                <td colspan="3" style="text-align:center">
+                                                    объём заправки:
+                                                </td>
+                                                <td style="text-align:center">
+                                                    @NetEzdokLiters[e] л.
+                                                </td>
+                                                @if (e + 1 < NetEzdok.Length)
+                                                {
+                                                    e++;
+                                                    <td></td>
+                                                    <td style="text-align:center">
+                                                        @NetEzdok[e]
+                                                    </td>
+                                                    <td style="text-align:center">
+                                                        @ViewBag.Month
+                                                    </td>
+                                                    <td colspan="4" style="text-align:center">
+                                                        объём заправки:
+                                                    </td>
+                                                    <td colspan="3" style="text-align:center">
+                                                        @NetEzdokLiters[e] л.
+                                                    </td>
+                                                }
+
+                                            </tr>
+                                        }
+                                    }
+                                    if (ASNetEzdokDUT.Length > 0 && ASNetEzdokDUT[0] != "")
+                                    {
+                                        <tr>
+                                            <td colspan="16" style="text-align:center" class="bg-danger">
+                                                Зафиксированы расходы по ДУТ без оформления выездов:
+                                            </td>
+                                        </tr>
+
+                                        for (int e = 0; e < ASNetEzdokDUT.Length; e++)
+                                        {
+                                            <tr>
+
+                                                <td style="text-align:center">
+                                                    @ASNetEzdokDUT[e]
+                                                </td>
+                                                <td style="text-align:center">
+                                                    @ViewBag.Month
+                                                </td>
+                                                <td colspan="3" style="text-align:center">
+                                                    расход топлива:
+                                                </td>
+                                                <td style="text-align:center">
+                                                    @ASNetDUT[e] л.
+                                                </td>
+                                                @if (e + 1 < ASNetEzdokDUT.Length)
+                                                {
+                                                    e++;
+                                                    <td></td>
+                                                    <td style="text-align:center">
+                                                        @ASNetEzdokDUT[e]
+                                                    </td>
+                                                    <td style="text-align:center">
+                                                        @ViewBag.Month
+                                                    </td>
+                                                    <td colspan="4" style="text-align:center">
+                                                        расход топлива:
+                                                    </td>
+                                                    <td colspan="3" style="text-align:center">
+                                                        @ASNetDUT[e] л.
+                                                    </td>
+                                                }
+
+                                            </tr>
+                                        }
+                                    }
+                                    if (SlivkiDays.Length > 0 && SlivkiDays[0] != "")
+                                    {
+                                        <tr>
+                                            <td colspan="16" style="text-align:center" class="bg-danger">
+                                                Зафиксированые сливы топлива:
+                                            </td>
+                                        </tr>
+
+                                        for (int e = 0; e < SlivkiDays.Length; e++)
+                                        {
+                                            <tr>
+
+                                                <td style="text-align:center">
+                                                    @SlivkiDays[e]
+                                                </td>
+                                                <td style="text-align:center">
+                                                    @ViewBag.Month
+                                                </td>
+                                                <td colspan="3" style="text-align:center">
+                                                    объём слива:
+                                                </td>
+                                                <td colspan="2" style="text-align:center">
+                                                    @Slivki[e] л.
+                                                </td>
+                                                @if (e + 1 < SlivkiDays.Length)
+                                                {
+                                                    e++;
+
+                                                    <td style="text-align:center">
+                                                        @SlivkiDays[e]
+                                                    </td>
+                                                    <td style="text-align:center">
+                                                        @ViewBag.Month
+                                                    </td>
+                                                    <td colspan="4" style="text-align:center">
+                                                        объём слива:
+                                                    </td>
+                                                    <td colspan="3" style="text-align:center">
+                                                        @Slivki[e] л.
+                                                    </td>
+                                                }
+
+                                            </tr>
+                                        }
+                                    }
+                                    <tr>
+                                        <td colspan="16" style="text-align:center" class="bg-danger">
+
+                                            @{ string nedotext = "Недолив топлива за месяц составил:";
+                                                if (s[44].Contains("-")) { nedotext = "Перелив топлива за месяц составил:"; s[44].Replace("-", ""); }
+
+                                               }
+                                                @nedotext @s[44] л.
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td colspan="16" style="text-align:center">
+                                            @Info[j]
+                                        </td>
+                                    </tr>
+                                }
+
+
+                            </table>
+
+
+
+                            }
+
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-success" data-dismiss="modal">Закрыть</button>
+                            <button type="button" id="@s[0]" tag="ToExcel" value="@s[0]" class="btn btn-success" data-dismiss="modal">Сохранить в эксель</button>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <br />
+            @s[12]
+        </td>
+        <td>@s[3]</td>
+        <td class="@clProbeg" title="@ASNEtit">@s[4]</td>
+        <td>@s[5]</td>
+        <td class="@clRashod ">@s[22] л.</td>
+        <td class="@clMin1">@s[23] л.</td>
+        <td class="@clRashod @clMin3">@s[24] л.</td>
+        <td class="@clDut @clMin2 @clDUT" title="@ASNEDUTtit">@s[8]</td>
+        <td>@s[42] л.</td>
+        <td>@s[41] л.</td>
+
+        <td class="@clAZS" title="@NEtit">@s[9] </td>
+
+
+        <td class="@clTochnost" title="@TDtit">@s[27]</td>
+    </tr>
+
+        }
+    }
+
+</table>
+
+<table class="table table-sm table-bordered table-striped " id="TableZapravki">
+    <tr>
+        <th>
+            <label data-toggle="tooltip" data-placement="top" title="Номер и марка автомобиля">Наименование</label>
+        </th>
+        <th>
+            <label data-toggle="tooltip" data-placement="top" title="Норма на ездки * количество ездок">Расход на ездки (л.)</label>
+        </th>
+        <th>
+            <label data-toggle="tooltip" data-placement="top" title="Норма расхода * пробег по одометру + расход на ездки">Расчётный расход по одометру + ездки (л.)</label>
+        </th>
+        <th>
+            <label data-toggle="tooltip" data-placement="top" title="Норма расхода * пробег по глонасс + расход на ездки">Расчётный расход по Глонасс + ездки (л.) </label>
+        </th>
+        <th>
+            <label data-toggle="tooltip" data-placement="top" title="Данные с датчика уровня топлива Глонасс">Фактический расход (по ДУТ Глонасс л.) </label>
+        </th>
+        <th>
+            <label data-toggle="tooltip" data-placement="top" title="Общее количество заправленного топлива (данные с АЗС 'Энергия')">Объём заправки по данным АЗС (л.)</label>
+        </th>
+        <th>
+            <label data-toggle="tooltip" data-placement="top" title="Остаток в баке на конец месяца">Остаток по одометру(л.)</label>
+        </th>
+        <th>
+            <label data-toggle="tooltip" data-placement="top" title="Остаток в баке на конец месяца">Остаток по Глонасс(л.)</label>
+        </th>
+        <th>
+            <label data-toggle="tooltip" data-placement="top" title="Общая сумма всех заправок">Сумма заправки(р.)</label>
+        </th>
+        <th>
+            <label data-toggle="tooltip" data-placement="top" title="Отношение дней с оформленными выездами к количеству дней с данными по Глонасс">Точность (%)</label>
+        </th>
+
+    </tr>
+    <tr>
+        <td>
+            <label>Итого за месяц</label>
+        </td>
+        <td>
+            @ViewBag.EzdkiNormSS л.
+        </td>
+        <td>
+            @ViewBag.RashodS л.
+        </td>
+        <td>
+            @ViewBag.RashodGlonassS л.
+        </td>
+        <td>
+            @ViewBag.RashodDutS л.
+        </td>
+        <td>
+            @ViewBag.AZSLitersS л.
+        </td>
+        <td>
+            @ViewBag.OstatokSS л.
+        </td>
+        <td>
+            @ViewBag.OstatokGloSS л.
+        </td>
+        <td>
+            @ViewBag.AZSSummaS р.
+        </td>
+        <td>
+            @ViewBag.TochnostSS %
+        </td>
+
+
+    </tr>
+
+    @{ for (int j = 0; j < ViewBag.AvtoOtchet.Count; j++)
+        {
+            //сохраняем все через запятую Номер Марка Кол-воЕздок Пробег ПробегГло разницаПробеги расходОДО расходГЛО расходДУТ Заправка РазницаДутАЗС СуммаЗапр ТипАвто ДутФакт пробегФакт РасходФакт АЗСлитрФакт АЗССуммФакт РеалДней ГлоДней АЗСДней ЕздкиКолво ЕздкиТопливо ОстатокВБаке
+
+            string[] s = ViewBag.AvtoOtchet[j].Split(';');
+
+            string clOstatok = ""; if (Convert.ToInt16(s[25].Replace("л.", "")) > 50) { clOstatok = "bg-danger"; }
+            if (Convert.ToInt16(s[25].Replace("л.", "")) < 0) { clOstatok = "bg-success"; }
+            string clOstatokGlo = ""; if (Convert.ToInt16(s[30].Replace("л.", "")) > 50) { clOstatokGlo = "bg-danger"; }
+            if (Convert.ToInt16(s[30].Replace("л.", "")) < 0) { clOstatokGlo = "bg-success"; }
+            string clTochnost = "";
+            if (Convert.ToInt16(s[27].Replace("%", "")) < 90) { clTochnost = "bg-warning"; }
+            if (Convert.ToInt16(s[27].Replace("%", "")) < 70) { clTochnost = "bg-danger"; }
+            Info.Add(" ");
+            //1Наименование
+            //2Пробег по одометру
+            //3Пробег по Глонасс
+            //4Разница в пробегах ОДО/Глонасс%
+            //5Расчётный расход (по одометру л.)
+            //6Расчётный расход (по Глонасс л.)
+            //7Потрачено по норме на ездки (л.)
+            //8Количество ездок
+            //9Фактический расход (по ДУТ Глонасс л.)
+            //10Объём заправки(л.)
+            //11Разница между ДУТ и заправками(%)
+            //12Сумма заправки(р.)
+            //13Остаток(л.)
+            //14Точность
+            <tr>
+                <td>
+
+                    @s[0]
+                    <br />
+                    @s[12]
+                </td>
+                <td>@s[22] л.</td>
+                <td>@s[23] л.</td>
+                <td>@s[24] л.</td>
+                <td>@s[8]</td>
+                <td>@s[9] </td>
+                <td class="@clOstatok">@s[25] </td>
+                <td class="@clOstatokGlo">@s[30] </td>
+                <td>@s[11] </td>
+
+                <td class="@clTochnost">@s[27]</td>
+            </tr>
+
+        }
+    }
+
+</table>
+
+<table class="table table-sm table-bordered table-striped " id="TableProbegi">
+    <tr>
+        <th>
+            <label data-toggle="tooltip" data-placement="top" title="Номер и марка автомобиля">Наименование</label>
+        </th>
+        <th>
+            <label data-toggle="tooltip" data-placement="top" title="Данные вносятся в программу сотрудником УАТ">Пробег по одометру</label>
+        </th>
+        <th>
+            <label data-toggle="tooltip" data-placement="top" title="Данные собираются программой Автоскан">Пробег по Глонасс</label>
+        </th>
+
+        <th>
+            <label data-toggle="tooltip" data-placement="top" title="Соотношение пробега по одометру к пробегу по Глонасс ">Разница в пробегах ОДО/Глонасс %</label>
+        </th>
+
+        <th>
+            <label data-toggle="tooltip" data-placement="top" title="Общее количество ездок за месяц">Количество ездок</label>
+        </th>
+        <th>
+            <label data-toggle="tooltip" data-placement="top" title="Норма расхода * пробег по одометру + расход на ездки">Расчётный расход (по одометру л.)</label>
+        </th>
+        <th>
+            <label data-toggle="tooltip" data-placement="top" title="Норма расхода * пробег по глонасс + расход на ездки">Расчётный расход (по Глонасс л.) </label>
+        </th>
+        <th>
+            <label data-toggle="tooltip" data-placement="top" title="Данные с датчика уровня топлива Глонасс">Фактический расход (по ДУТ Глонасс л.) </label>
+        </th>
+        <th>
+            <label data-toggle="tooltip" data-placement="top"  title="Отношение дней с оформленными выездами к количеству дней с данными по Глонасс">Точность (%)</label>
+        </th>
+
+    </tr>
+    <tr>
+        <td>
+            <label>Итого за месяц</label>
+        </td>
+        <td>
+            @ViewBag.ProbegS
+        </td>
+        <td>
+            @ViewBag.ProbegGlonasS
+        </td>
+        <td>
+            @Z %
+        </td>
+        <td>
+            @ViewBag.EzdkiSS
+        </td>
+        <td>
+            @ViewBag.RashodS л.
+        </td>
+        <td>
+            @ViewBag.RashodGlonassS л.
+        </td>
+        <td>
+            @ViewBag.RashodDutS л.
+        </td>
+        <td>
+            @ViewBag.TochnostSS %
+        </td>
+
+
+    </tr>
+
+
+    @{ for (int j = 0; j < ViewBag.AvtoOtchet.Count; j++)
+        {
+            //сохраняем все через запятую 0Номер 1Марка 2Кол-воЕздок 3Пробег 4ПробегГло 5разницаПробеги 6расходОДО 7расходГЛО 8расходДУТ 9Заправка 10РазницаДутАЗС 11СуммаЗапр 12ТипАвто 13ДутФакт 14пробегФакт 15РасходФакт 16АЗСлитрФакт 17АЗССуммФакт 18РеалДней 19ГлоДней 20АЗСДней 21ЕздкиКолво 22ЕздкиТопливо 23ОстатокВБаке
+
+            string[] s = ViewBag.AvtoOtchet[j].Split(';');
+
+            string clTochnost = "";
+            if (Convert.ToInt16(s[27].Replace("%", "")) < 90) { clTochnost = "bg-warning"; }
+            if (Convert.ToInt16(s[27].Replace("%", "")) < 70) { clTochnost = "bg-danger"; }
+            //1Наименование
+            //2Пробег по одометру
+            //3Пробег по Глонасс
+            //4Разница в пробегах ОДО/Глонасс%
+            //5Расчётный расход (по одометру л.)
+            //6Расчётный расход (по Глонасс л.)
+            //9Фактический расход (по ДУТ Глонасс л.)
+            //10Объём заправки(л.)
+            //14Точность
+            <tr>
+                <td>
+                    @s[0]
+                    <br />
+                    @s[12]
+                </td>
+                <td>@s[3]</td>
+                <td>@s[4]</td>
+                <td>@s[5]</td>
+                <td>@s[21]</td>
+                <td>@s[23] л.</td>
+                <td>@s[24] л.</td>
+                <td>@s[8] </td>
+
+                <td class="@clTochnost">@s[27]</td>
+            </tr>
+
+        }
+    }
+
+</table>
+
+<div class="btn-group" role="group">
+    <button id="But1" type="button" class="btn btn-success">Общая</button>
+    <button id="But2" type="button" class="btn btn-success">Пробеги</button>
+    <button id="But3" type="button" class="btn btn-success">Расходы</button>
+</div>
+
+<p>
+
+</p>
+<a class="btn btn-success btn-block" type="button" id="BTNExcel " href="@ViewBag.Path">
+    Экспорт в Excel
+</a>
+<p>
+
+</p>
+
+
+
+
+
+
+
+<p><a href="/Home/Index" class="btn btn-success btn-block">В главное меню &raquo;</a> </p>
+
+@section Scripts {
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+    @Scripts.Render("~/scripts/jquery-3.3.1.js")
+    <script>
+        //Начало
+
+        $("#TableZapravki").hide();
+        $("#TableProbegi").hide();
+    </script>
+    <script>
+        //Нажатие на кнопку
+        $("#But1").click(function () {
+            var Viz = $('#TableProbegi');
+            if ($('#TableZapravki').is(':visible')) { Viz = $('#TableZapravki'); }
+
+            Viz.fadeOut('slow', function () {
+                $('#TableMain').fadeIn('fast');
+
+            });
+        });
+    </script>
+    <script>
+        //Нажатие на кнопку
+        $('#But2').click(function () {
+            var Viz = $('#TableMain');
+            if ($('#TableZapravki').is(':visible')) { Viz = $('#TableZapravki'); }
+
+            Viz.fadeOut('slow', function () {
+                $('#TableProbegi').fadeIn('fast');
+
+            });
+        });
+    </script>
+    <script>
+        //Нажатие на кнопку
+        $('#But3').click(function () {
+            var Viz = $('#TableProbegi');
+            if ($('#TableMain').is(':visible')) { Viz = $('#TableMain'); }
+
+            Viz.fadeOut('slow', function () {
+                $('#TableZapravki').fadeIn('fast');
+
+            });
+
+        });
+    </script>
+    <script>
+        //Нажатие на кнопку "input[type='submit']"
+        $("button[tag='ToExcel']").click(function () {
+            
+
+            var ID = $(this).val();
+            if (ID != "" && ID != null && ID != undefined) {
+                console.log(ID);
+
+
+
+                var S = "";
+                var array = [];
+                var table = $('#' + ID + 'Table tbody');
+                var rows = table.children();
+                for (var i = 0; i < rows.length; i++) {
+                    var fields = rows.eq(i).children();
+                    var rowArray = [];
+                    for (var j = 0; j < fields.length; j++) {
+                        rowArray.push(fields[j].innerHTML);
+                        S += fields[j].innerHTML + ";";
+                    }
+
+                    array.push(rowArray);
+                    S += ";";
+                }
+                var T = table.html().replace("</tr>", "|").replace("<tr>", "").replace("<td>", "").replace("</td>", ";").replace(" ", "");
+
+                console.log(array);
+
+                $.post('@Url.Action("ExportToExcelJquery", "Ezdkas")', { selection: array }, function (data) {
+
+                    window.location.href = data;
+                });
+
+            }});
+    </script>
+}
+

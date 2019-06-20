@@ -1,0 +1,79 @@
+﻿@model IEnumerable<GKHNNC.Models.CompleteWork>
+@{ Layout = "~/Views/Shared/_Layout0.cshtml";}
+<p><a href="/CompleteWorks/NewCompleteWork" class="btn btn-success btn-default" style="width:100%">Добавить выполненную работу &raquo;</a> </p>
+<p><a href="/CompleteWorks/NewCompleteWorkMass" class="btn btn-success btn-default" style="width:100%">Групповое занесение работ &raquo;</a> </p>
+
+
+
+
+<table id="T" class="table table-bordered">
+    <tr>
+        <th>
+            <p>Адрес</p>
+
+        </th>
+        <th>
+            <p>Наименование</p>
+        </th>
+        <th>
+            <p>Количество</p>
+        </th>
+        <th>
+            <p>Измерение</p>
+        </th>
+        <th>
+            <p>Дата</p>
+
+        </th>
+        <th>
+            <p>Агент</p>
+        </th>
+        <th><p>Опции</p></th>
+    </tr>
+
+    @{ int counter = 0;}
+    @foreach (var item in Model)
+    {
+        counter++;
+        
+        
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.WorkAdress)
+
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.WorkName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.WorkNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.WorkIzmerenie)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.WorkDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Agent)
+            </td>
+            <td>
+                @Html.ActionLink(" Информация", "Delete", new { id = item.ID }, new { @class = "btn btn-success btn-icon glyphicon glyphicon-info-sign" })
+
+            </td>
+        </tr>
+
+    }
+
+</table>
+<p><a href="/Home/Index" class="btn btn-success btn-block ">В главное меню &raquo;</a> </p>
+<p><a href="/CompleteWorks/SozdanieAktov" class="btn btn-success btn-block ">К созданию актов &raquo;</a> </p>
+
+@section Scripts {
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+    @Scripts.Render("~/scripts/jquery-3.3.1.js")
+    @Scripts.Render("~/Scripts/chosen.jquery.min.js")
+
+    
+
+}

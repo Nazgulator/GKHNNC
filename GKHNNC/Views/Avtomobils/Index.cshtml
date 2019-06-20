@@ -1,0 +1,12 @@
+﻿<h2>Список автомобилей</h2>
+
+
+<p>
+    @Html.ActionLink("Создать", "Create", null, new { @class = "btn btn-success btn-block" })
+</p>
+<div class="row" id="Menu">
+    @Html.Action("AvtomobilsMenu")
+</div>
+<div class="row" id="Spisok">
+    @Html.Action("AvtomobilsSpisok")
+</div>

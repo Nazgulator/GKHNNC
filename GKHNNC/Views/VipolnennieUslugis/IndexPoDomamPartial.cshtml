@@ -1,0 +1,234 @@
+﻿@model IEnumerable<GKHNNC.Models.VipolnennieUslugi>
+@{
+    ViewBag.Title = "IndexPoDomam";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+
+<table id="T" class="table table-bordered" style="width:100%">
+    <tr>
+        <th>
+            <p>№</p>
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Adres.Adress)
+        </th>
+        <th>
+            <p>Количество услуг</p>
+        </th>
+        <th>
+            <p>Формирование акта</p>
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ForPrint)
+            <input type="checkbox" class="form-control" id="SelectAll">
+        </th>
+        <th>
+            <p>Месяц</p>
+        </th>
+        <th>
+            <p>Год</p>
+        </th>
+
+
+
+        </div>
+        @{int c = 0; string counter = "";}
+        @foreach (var item in Model)
+        {
+            c++;
+            string clas = "";
+            bool FP = false;
+            if (c < 10) { counter = "0" + c.ToString(); }
+            else
+            {
+                counter = c.ToString();
+            }
+            string sborka = item.Adres.Adress + ";" + item.Date.Year + ";" + item.Date.Month;
+            if (item.ForPrint)
+            {
+                clas = "bg-success";
+                FP = true;
+            }
+
+        <tr id="@counter" value="@sborka" class="@clas">
+            <td>
+                @counter
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Adres.Adress, new { @class = "form-control col-md-4" })
+            </td>
+
+            <td>
+                @{
+
+                    string[] SS = ViewBag.NUString[c].Split(';');
+                    List<string> MSS = new List<string>();
+                    string USLUG = "";
+                    MSS.Add(ViewBag.NumUslug[c].ToString() + " УСЛУГ");
+                    for (int i = 0; i < SS.Length - 1; i++)
+                    {
+                        MSS.Add(SS[i]);
+                    }
+                    MultiSelectList MSL = new MultiSelectList(MSS);
+                }
+
+                @Html.DropDownList("Услуги", MSL, new { @class = "form-control col-md-4", @style = "width:100%" })
+
+            </td>
+            <td>
+                <button id="@counter" value="@FP" class="btn btn-success" style="width: 100%">Акт</button>
+            </td>
+            <td>
+                <input id="@counter" name="C_@counter" type="checkbox" checked="@FP" value="@FP" class="form-control col-md-1" />
+            </td>
+            <td>
+                @{ int I = item.Date.Month;
+                    string M = "";
+                    switch (I)
+                    {
+
+                        case 1:
+                            M = "Январь";
+                            break;
+                        case 2:
+                            M = "Февраль";
+                            break;
+                        case 3:
+                            M = "Март";
+                            break;
+                        case 4:
+                            M = "Апрель";
+                            break;
+                        case 5:
+                            M = "Май";
+                            break;
+                        case 6:
+                            M = "Июнь";
+                            break;
+                        case 7:
+                            M = "Июль";
+                            break;
+                        case 8:
+                            M = "Август";
+                            break;
+                        case 9:
+                            M = "Сентябрь";
+                            break;
+                        case 10:
+                            M = "Октябрь";
+                            break;
+                        case 11:
+                            M = "Ноябрь";
+                            break;
+                        case 12:
+                            M = "Декабрь";
+                            break;
+
+                        default:
+                            M = "Январь";
+                            break;
+
+                    }
+                }
+                <p>@M</p>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Date.Year)
+            </td>
+
+        </tr>
+    }
+
+    </table>
+
+    <p>
+        <a href="/Home/Index" class="btn btn-success" style="width: 100%">В главное меню</a>
+    </p>
+
+
+    @section Scripts {
+        @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+        @Scripts.Render("~/scripts/jquery-3.3.1.js")
+        @Scripts.Render("~/Scripts/chosen.jquery.min.js")
+
+        <script>
+            //скрипт для обработки нажатия галочки
+            $("input[type='checkbox']").change(function () {
+                if (this.id == "SelectAll")
+                {
+                    var Check = this.checked;
+                    var AllCheckboxes = $("input[type='checkbox']").not("[id=SelectAll]");
+
+                    AllCheckboxes.each(function () {
+
+                           //Инвертирует выделение
+                        var TekElement = $(this);
+                        if (Check != TekElement.checked) {
+                            $(this).prop('checked', Check);
+                            if (Check) {
+                                $("#T tr[id^=" + TekElement.attr("id") + "]").addClass("bg-success");
+                                var S = $("#T tr[id^=" + TekElement.attr("id") + "]").attr("value") + ";" + Check;
+                                if (S != "" && S != null) {
+                                    $.post('@Url.Action("ZamenaGalki", "VipolnennieUslugis")', { selection: S }, function (data) { });
+                                }
+                            }
+
+                            else {
+                                $("#T tr[id^=" + TekElement.attr("id") + "]").removeClass("bg-success");
+                                var S = $("#T tr[id^=" + TekElement.attr("id") + "]").attr("value") +";"+ Check;
+                                if (S != "" && S != null) {
+                                    $.post('@Url.Action("ZamenaGalki", "VipolnennieUslugis")', { selection: S }, function (data) { });
+                                }
+                            }
+                        }
+
+
+                    });
+                }
+                else
+                {
+                    var Check = this.checked;
+
+                    if (Check) {
+                        $("#T tr[id^=" + this.id + "]").addClass("bg-success");
+                    }
+                    else
+                    {
+                        $("#T tr[id^=" + this.id + "]").removeClass("bg-success");
+                    }
+                        var S = $("#T tr[id^=" + this.id + "]").attr("value") + ";"+ Check;
+                        $.post('@Url.Action("ZamenaGalki", "VipolnennieUslugis")', { selection: S }, function (data) { });
+
+
+                }
+            });
+
+
+        </script>
+
+        <script>
+            
+            $("button").click(function () {
+               
+                
+               
+                        var S = $("#T tr[id^=" + this.id + "]").attr("value");
+                $.post('@Url.Action("SformirovatAkt", "CompleteWorks")', { Selection: S }, function (data) {
+                    window.location.href = data;
+
+                });
+
+
+                
+            });
+
+
+        </script>
+
+
+
+
+    }
+
+

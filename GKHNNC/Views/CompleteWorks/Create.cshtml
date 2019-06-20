@@ -1,0 +1,159 @@
+﻿@model GKHNNC.Models.CompleteWork
+
+@{
+    ViewBag.Title = "Create";
+}
+
+
+
+@using (Html.BeginForm("Create", "CompleteWorks", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+<CENTER>
+    <h2><b>Добавление выполненной работы</b></h2>
+    <div class="container">
+        <div class="form-horizontal ">
+            <div class="center">
+                <hr />
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                @Html.HiddenFor(model => model.WorkGroup)
+                @Html.HiddenFor(model => model.WorkAdress)
+                @Html.HiddenFor(model => model.WorkCode)
+                @Html.HiddenFor(model => model.WorkIzmerenie)
+                <div class="col-md-12">
+
+
+                    <div class="form-group">
+                        <label>Адрес </label>
+
+                        @ViewBag.Adress
+
+
+                    </div>
+                    <div class="form-group">
+                        <label>Группа</label>
+
+                        @ViewBag.Group
+
+                    </div>
+                    <div class="form-group">
+
+                        <label>Наименование</label>
+
+
+                        <select name="WorkWorkId" id="WorkWorkId" class="form-control" style="width: 365Px;min-width:365px;">
+                            @{
+                                foreach (string[] S in ViewBag.All)
+                                {
+                                    //name value = id
+                                    <option value="@S[2]"> @S[0] </option>
+                                }
+                            }
+                        </select>
+
+                        <small id="AdressHelp" class="form-text text-muted">Выберите вид работы из списка.</small>
+
+
+
+
+                    </div>
+                    <div class="form-group">
+                        <label>Измерение</label>
+                        <select name="Izmerenie" id="Izmerenie" class="form-control" style="width: 365Px;min-width:365px;">
+                            @{
+                                foreach (string[] S in ViewBag.All)
+                                {
+                                    //name izmerenie id
+                                    <option disabled> @S[1] </option>
+                                }
+                            }
+                        </select>
+
+                        <script>
+
+                            $('#WorkWorkId').change(function () {
+                                var _this = $(this);
+                                $('#Izmerenie').get(0).selectedIndex = $(_this).get(0).selectedIndex;
+
+
+                                // alert("PING!");
+
+                            });
+
+
+                        </script>
+                        <small id="AdressHelp" class="form-text text-muted">Измерение выбирается автоматически.</small>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label>Количество</label>
+                        @Html.EditorFor(model => model.WorkNumber, new { htmlAttributes = new { @class = "form-control", @style = "width:365Px !important; min-width:365px;" } })
+                        @Html.ValidationMessageFor(model => model.WorkNumber, "", new { @class = "text-danger" })
+                        <small id="AdressHelp" class="form-text text-muted">Введите количество: целое число или дробное. Пример: 7.32</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Дата выполнения</label>
+
+                        @Html.EditorFor(model => model.WorkDate, new { htmlAttributes = new { @class = "form-control", @style = "width:365Px !important; min-width:365px;" } })
+                        @Html.ValidationMessageFor(model => model.WorkDate, "", new { @class = "text-danger" })
+                        <small id="AdressHelp" class="form-text text-muted">Выберите дату выполнения работы из календаря.</small>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        @Html.ActionLink("Назад", "Index", null, new { @class = "btn btn-success", style = "width: 180Px" })
+                        <input type="submit" value="Добавить" class="btn btn-success" style="width: 180Px" />
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</CENTER>
+}
+
+<link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/scripts/jquery-3.3.1.js")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/scripts/validate.js")
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+    @Scripts.Render("~/scripts/jquery.unobtrusive.min.js")
+    <script src='@Url.Content("~/Scripts/jquery-ui-1.12.1.min.js")' type="text/javascript"></script>
+    <script type="text/javascript">
+        $(function () {
+            $('#WorkDate')
+                .datepicker({ dateFormat: 'yy/mm/dd' })
+                .get(0).setAttribute("type", "text");
+            $.datepicker.regional['ru'] = {
+                prevText: 'Пред',
+                nextText: 'След',
+                monthNames: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+                    'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+                monthNamesShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн',
+                    'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
+                dayNames: ['воскресенье', 'понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота'],
+                dayNamesShort: ['вск', 'пнд', 'втр', 'срд', 'чтв', 'птн', 'сбт'],
+                dayNamesMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+                weekHeader: 'Не',
+                dateFormat: 'dd/mm/yy',
+                showOn: "both",
+                buttonText: "Выбрать дату",
+                firstDay: 1,
+                isRTL: false,
+                showMonthAfterYear: false,
+                yearSuffix: ''
+            };
+            $.datepicker.setDefaults($.datepicker.regional['ru']);
+        });
+    </script>
+
+}

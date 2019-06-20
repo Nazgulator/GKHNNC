@@ -1,0 +1,60 @@
+﻿@using Microsoft.AspNet.Identity
+@if (Request.IsAuthenticated)
+{
+    using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+    {
+        @Html.AntiForgeryToken()
+
+
+        <ul class="nav navbar-nav navbar-right">
+
+
+            <li>
+                @Html.ActionLink("Здравствуйте, " + User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
+            </li>
+            <li><a href="javascript:document.getElementById('logoutForm').submit()">Выйти</a></li>
+        </ul>
+
+
+    }
+
+    if (User.IsInRole("Пользователь"))
+    {
+        <ul class="nav navbar-nav navbar-left">
+            <li>@Html.ActionLink("Главная", "Index", "Home")</li>
+            <li>@Html.ActionLink("Выполненные работы", "IndexMain", "CompleteWorks")</li>
+
+        </ul>
+    }
+    else
+    {
+       
+        <ul class="nav navbar-nav navbar-left"> 
+            <li>@Html.ActionLink("Главная", "Index", "Home")</li>
+            <li>@Html.ActionLink("Виды работ", "Index", "Works")</li>
+            <li>@Html.ActionLink("Адреса", "Index", "Adres")</li>
+            <li>@Html.ActionLink("Выполненные работы", "Index", "CompleteWorks")</li>
+           @if (User.Identity.Name.Contains("ИнженерОЭЖФ") == false)
+           {  <li>@Html.ActionLink("Пользователи", "RolesAndUsers", "Manage")</li>}
+
+        </ul>
+
+        
+
+    }
+
+
+
+}
+else
+{
+            <ul class="nav navbar-nav navbar-right">
+                <li>@Html.ActionLink("Регистрация", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
+                <li>@Html.ActionLink("Выполнить вход", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+            </ul>
+            <ul class="nav navbar-nav navbar-left">
+                <li>  @Html.ActionLink("ЖКХ'ННЦ'", "Index", "Home")</li>
+                <li>@Html.ActionLink("Главная", "Index", "Home")</li>
+
+            </ul>
+            }

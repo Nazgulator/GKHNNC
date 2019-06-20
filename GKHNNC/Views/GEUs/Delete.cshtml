@@ -1,0 +1,54 @@
+﻿@model GKHNNC.Models.GEU
+
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<h3>Удаление ЖЭУ?</h3>
+<div>
+   
+    <hr />
+    <div class="container" style="width:365Px">
+        <div class="row">
+
+                <div class="col-xs-6" >
+                    @Html.LabelFor(model => model.Name)
+                </div>
+                <div class="col-xs-6" >
+                    @Html.DisplayFor(model => model.Name)
+                </div>
+        </div>
+        <div class="row">
+           
+                <div class="col-xs-6" >
+                    @Html.LabelFor(model => model.Director)
+                </div><div class="col-xs-6" >
+                    @Html.DisplayFor(model => model.Director)
+                </div>
+
+        </div>
+        <div class="row">
+           
+                <div class="col-xs-6" >
+                    @Html.LabelFor(model => model.Doverennost)
+                </div><div class="col-xs-6" >
+                    @Html.DisplayFor(model => model.Doverennost)
+                </div>
+        </div>
+    </div>
+    
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+    <div class="form-group">
+        @Html.ActionLink("Назад", "Index", null, new { @class = "btn btn-success", style = "width: 180Px" })
+        <input type="submit" value="Удалить" class="btn btn-success" style="width: 180Px" />
+
+    </div>
+    }
+</div>

@@ -1,0 +1,42 @@
+﻿@{
+    ViewBag.Title = "Avtoscan Main";
+}
+<div class="container">
+    <div class="row col-md-8 col-md-offset-2">
+        <div class=" col-md-12">
+        <h3>АвтоСкан</h3>
+        </div>
+        </div>
+        <div class="row col-md-8 col-md-offset-2">
+            <div class=" col-md-12">
+                <p><a id="AvtoScanButton" class="btn btn-success btn-block ">Зайти в АвтоСкан &raquo;</a> </p>
+            </div>
+            <div class=" col-md-12">
+                <p><a href="/Home/Index" class="btn btn-success btn-block ">В главное меню &raquo;</a> </p>
+            </div>
+        </div>
+    </div>
+    @section Scripts {
+        @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+        @Scripts.Render("~/scripts/jquery-3.3.1.js")
+        @Scripts.Render("~/Scripts/chosen.jquery.min.js")
+        @Scripts.Render("~/bundles/jqueryval")
+        @Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/bundles/bootstrap")
+        @Scripts.Render("~/scripts/validate.js")
+        @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+        @Scripts.Render("~/scripts/jquery.unobtrusive.min.js")
+
+        <script>
+            //скрипт для добычи данных в автоскане
+            $("#AvtoScanButton").click(function () {
+                $.post('@Url.Action("GoToAvtoScan", "AvtoScans")', function (Data) {
+                    $("#AvtoScanButton").val = Data;
+                }
+
+                );
+                
+            });
+             
+        </script>
+    }

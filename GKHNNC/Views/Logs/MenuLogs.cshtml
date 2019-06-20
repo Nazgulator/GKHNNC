@@ -1,0 +1,120 @@
+﻿
+@{Layout = "~/Views/Shared/_Layout0.cshtml"; }
+<table class="table table-striped table-bordered">
+    <tbody>
+
+            <tr style="height:20Px">
+                <td><h5><CENTER><b>ГОД</b></CENTER></h5></td>
+                <td><h5><CENTER><b>МЕСЯЦ</b></CENTER></h5></td>
+                <td><p><CENTER><b>ДЕНЬ</b></CENTER></p></td>
+            </tr>
+
+
+            <tr>
+
+                <td>
+                        @Html.DropDownList("Year", new MultiSelectList(ViewBag.Year), new { @class = "form-control" })
+                </td>
+
+
+                <td>
+
+                 
+                    @Html.DropDownList("Month", new MultiSelectList(ViewBag.Month), new { @class = "form-control" })
+                </td>
+
+                <td>
+                    @Html.DropDownList("Day", new MultiSelectList(ViewBag.Day), new { @class = "form-control" })
+                </td>
+
+            </tr>
+
+
+    </tbody>
+</table>
+@section Scripts {
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+    @Scripts.Render("~/scripts/jquery-3.3.1.js")
+    @Scripts.Render("~/Scripts/chosen.jquery.min.js")
+
+    <script>
+        //скрипт для обработки выбора года чтоб выводить дома по году и месяцу
+                        $('#Year').change(function () {
+                            var _this = $(this);
+
+                            var Y = $('#Year').val();//выбраное значение в селекте
+                            var Day = $('#Day').val();//выбраное значение в селекте
+                            var M = $('#Month').val();//выбраное значение в селекте
+                            var SV = Day + ";" + M + ";" + Y;
+                            var YM = Y + ";" + M;
+                            $("#Spisok").fadeOut('fast', function () {
+                                $("#Spisok").load('@Url.Action("SpisokLogs", "Logs")', { Selection: SV });
+                                $("#Menu").load('@Url.Action("MenuLogs", "Logs")', { Selection: YM });
+                                $("#Spisok").fadeIn('slow');
+                            });
+
+
+
+                           //идем в комплит воркс контроллер и там действие поиск по жэу отправляем выбранное значение в селекте, получаем дату список всех домов по жэу из БД перекинутых в лист стринг
+
+                            // alert("PING!");
+
+                        });
+
+
+    </script>
+    <script>
+        //скрипт для обработки выбора года чтоб выводить дома по году и месяцу
+                       $('#Month').change(function () {
+                            var _this = $(this);
+
+                            var Y = $('#Year').val();//выбраное значение в селекте
+                            var Day = $('#Day').val();//выбраное значение в селекте
+                            var M = $('#Month').val();//выбраное значение в селекте
+                            var SV = Day + ";" + M + ";" + Y;
+                            var YM = Y + ";" + M;
+                            $("#Spisok").fadeOut('fast', function () {
+                                $("#Spisok").load('@Url.Action("SpisokLogs", "Logs")', { Selection: SV });
+                                $("#Menu").load('@Url.Action("MenuLogs", "Logs")', { Selection: YM });
+                                $("#Spisok").fadeIn('slow');
+                            });
+
+
+
+                           //идем в комплит воркс контроллер и там действие поиск по жэу отправляем выбранное значение в селекте, получаем дату список всех домов по жэу из БД перекинутых в лист стринг
+
+                            // alert("PING!");
+
+                        });
+
+
+    </script>
+    <script>
+        //скрипт для обработки выбора года чтоб выводить дома по году и месяцу
+                        $('#Day').change(function () {
+                            var _this = $(this);
+
+                            var Y = $('#Year').val();//выбраное значение в селекте
+                            var Day = $('#Day').val();//выбраное значение в селекте
+                            var M = $('#Month').val();//выбраное значение в селекте
+                            var SV = Day + ";" + M + ";" + Y;
+                            $("#Spisok").fadeOut('fast', function () {
+                                $("#Spisok").load('@Url.Action("SpisokLogs", "Logs")', { Selection: SV });
+                                $("#Spisok").fadeIn('slow');
+                            });
+
+
+
+                           //идем в комплит воркс контроллер и там действие поиск по жэу отправляем выбранное значение в селекте, получаем дату список всех домов по жэу из БД перекинутых в лист стринг
+
+                            // alert("PING!");
+
+                        });
+
+
+    </script>
+   
+
+
+
+}

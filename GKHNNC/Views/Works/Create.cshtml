@@ -1,0 +1,78 @@
+﻿@model GKHNNC.Models.Work
+
+@{
+    ViewBag.Title = "Новый вид работ";
+}
+
+
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="container" style="width:100%; margin:6%">
+
+        <h2><Center><b>Добавление нового вида работ</b></Center></h2>
+        <hr />
+        <Center>
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            <div class="row form-horizontal">
+                <div class="col-md-12">
+                    <div class="form-group" >
+                        <label for="Name">Наименование работы</label>
+                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", @style = "width:365Px !important; min-width:365px;" } })
+                        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                        <small id="emailHelp" class="form-text text-muted">Введите наименование нового вида работ.</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Group"> Группа</label>
+
+                        @{
+                            MultiSelectList MSL2 = new MultiSelectList(new string[] { "ТО конструктивных элементов", "ТО внутридомового инженерного оборудования" });
+                        }
+
+                        @Html.DropDownListFor(model => model.Group, MSL2, new { @class = "form-control", @style = "width:365Px !important; min-width:365px;" })
+                        @Html.ValidationMessageFor(model => model.Group, "", new { @class = "text-danger" })
+                        <small id="emailHelp" class="form-text text-muted">Выберите группу работ</small>
+
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Izmerenie">Измерение</label>
+
+                        @{
+                            MultiSelectList MSL = new MultiSelectList(new string[] { "Пг.м.", "Кв.м.", "Шт." });
+                        }
+
+                        @Html.DropDownListFor(model => model.Izmerenie, MSL, null, new { @class = "form-control", @style = "width:365Px !important; min-width:365px;" })
+                        @Html.ValidationMessageFor(model => model.Izmerenie, "", new { @class = "text-danger" })
+                        <small id="emailHelp" class="form-text text-muted">Выберите единицу измерения.</small>
+
+
+                    </div>
+                
+          </div>
+   
+       </div>
+
+    <div class="form-group">
+        <div class="col-8">
+            @Html.ActionLink("Назад", "Index", null, new { @class = "btn btn-success", style = "width: 180Px" })
+            <input type="submit" value="Добавить" class="btn btn-success" style="width: 180Px" />
+        </div>
+    </div>
+    <div>
+
+    </div>
+    </Center>
+    </div>
+}
+
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

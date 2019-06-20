@@ -1,0 +1,82 @@
+﻿@model GKHNNC.Models.Work
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Редактирование типа работы</h2>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    
+<div class="form-horizontal">
+    <h4>Work</h4>
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.WorkId)
+
+
+    <div class="form-group">
+        <p>Наименование</p>
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <p>Группа</p>
+        <div class="col-md-10">
+            @{
+                MultiSelectList MSL2 = new MultiSelectList(new string[] { "ТО конструктивных элементов", "ТО внутридомового инженерного оборудования" });
+            }
+
+            @Html.DropDownListFor(model => model.Group, MSL2, new { @class = "form-control", style = "width: 100%" })
+            @Html.ValidationMessageFor(model => model.Group, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <p>Измерение</p>
+        <div class="col-md-10">
+            @{
+                MultiSelectList MSL = new MultiSelectList(new string[] { "Пг.м.", "Кв.м.", "Шт." });
+            }
+
+            @Html.DropDownListFor(model => model.Izmerenie, MSL, new { @class = "form-control", style = "width: 100%" })
+            @Html.ValidationMessageFor(model => model.Izmerenie, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group">
+        <p>Код</p>
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Code, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Code, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="row col-md-6 col-md-offset-3">
+        <div class=" form-group">
+            <div class=" col-md-6  ">
+                @Html.ActionLink("Назад", "Index", null, new { @class = "btn btn-success btn-block" })
+            </div>
+            <div class=" col-md-6  ">
+                <input type="submit" value="Изменить" class="btn btn-success btn-block" />
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+</div>
+</div>
+}
+
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

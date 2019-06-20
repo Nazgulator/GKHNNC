@@ -1,0 +1,118 @@
+﻿@model GKHNNC.Models.MarkaAvtomobil
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+<h2>Редактировать</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+   <div class="container">
+       <div class="form-horizontal">
+           <hr />
+           @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+           @Html.HiddenFor(model => model.Id)
+
+           <div class="row col-md-6 col-md-offset-3">
+               <div class="col-md-12">
+                   @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label " })
+               </div>
+               <div class="col-md-12">
+                   @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                   @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+               </div>
+           </div>
+
+
+           <div class="row col-md-6 col-md-offset-3">
+               <div class="col-md-12">
+                   @Html.LabelFor(model => model.SNorm, htmlAttributes: new { @class = "control-label " })
+               </div>
+               <div class="col-md-12">
+                   @Html.EditorFor(model => model.SNorm, new { htmlAttributes = new { @class = "form-control" } })
+                   @Html.ValidationMessageFor(model => model.SNorm, "", new { @class = "text-danger" })
+               </div>
+           </div>
+
+
+           <div class="row col-md-6 col-md-offset-3">
+               <div class="col-md-12">
+                   @Html.LabelFor(model => model.WNorm, htmlAttributes: new { @class = "control-label " })
+               </div>
+               <div class="col-md-12">
+                   @Html.EditorFor(model => model.WNorm, new { htmlAttributes = new { @class = "form-control" } })
+                   @Html.ValidationMessageFor(model => model.WNorm, "", new { @class = "text-danger" })
+               </div>
+           </div>
+
+
+           <div class="row col-md-6 col-md-offset-3">
+               <div class="col-md-12">
+                   @Html.LabelFor(model => model.Toplivo, htmlAttributes: new { @class = "control-label " })
+               </div>
+               <div class="col-md-12">
+                   @Html.EditorFor(model => model.Toplivo, new { htmlAttributes = new { @class = "form-control" } })
+                   @Html.ValidationMessageFor(model => model.Toplivo, "", new { @class = "text-danger" })
+               </div>
+           </div>
+
+           <div class="row col-md-6 col-md-offset-3">
+               <div class="col-md-12">
+                   @Html.LabelFor(model => model.NormaEzdka, htmlAttributes: new { @class = "control-label " })
+               </div>
+               <div class="col-md-12">
+                   @Html.EditorFor(model => model.NormaEzdka, new { htmlAttributes = new { @class = "form-control" } })
+                   @Html.ValidationMessageFor(model => model.NormaEzdka, "", new { @class = "text-danger" })
+               </div>
+           </div>
+
+           <div class="row col-md-6 col-md-offset-3" style="height:50Px;  ">
+               <div class="col-md-6 col-md-offset-2" style="text-align:justify;display:flex;align-items:center;height:50Px">
+                   @Html.LabelFor(model => model.EzdkaPricep, htmlAttributes: new { @class = "control-label " })
+               </div>
+               <div class="col-md-2">
+                   @Html.EditorFor(model => model.EzdkaPricep, new { htmlAttributes = new { @class = "form-control" } })
+                   @Html.ValidationMessageFor(model => model.EzdkaPricep, "", new { @class = "text-danger" })
+               </div>
+           </div>
+
+           <div class="row col-md-6 col-md-offset-3" style="height:50Px;  ">
+               <div class="col-md-6 col-md-offset-2" style="text-align:justify;display:flex;align-items:center;height:50Px">
+                   @Html.LabelFor(model => model.KmMoto, htmlAttributes: new { @class = "control-label " })
+               </div>
+               <div class="col-md-2">
+                   
+                       @Html.EditorFor(model => model.KmMoto, new { htmlAttributes = new { @class = "form-control" } })
+                       @Html.ValidationMessageFor(model => model.KmMoto, "", new { @class = "text-danger" })
+                   
+               </div>
+               <div class="row col-md-12  ">
+                   <p> </p>
+               </div>
+               <div class="row col-md-12  ">
+                   <p> </p>
+               </div>
+               <div class="row col-md-12  ">
+                   <p> </p>
+               </div>
+           </div>
+
+
+           <div class="row col-md-6 col-md-offset-3">
+               <div class=" form-group">
+                   <div class=" col-md-6  ">
+                       @Html.ActionLink("Назад", "Index", null, new { @class = "btn btn-success btn-block" })
+                   </div>
+                   <div class=" col-md-6  ">
+                       <input type="submit" value="Изменить" class="btn btn-success btn-block" />
+                   </div>
+
+               </div>
+           </div>
+       </div>
+       </div>
+}
+

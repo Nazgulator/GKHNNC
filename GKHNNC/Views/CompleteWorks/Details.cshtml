@@ -1,0 +1,79 @@
+﻿@model GKHNNC.Models.CompleteWork
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Информация</h2>
+
+<div class="container">
+    <div class="form-horizontal">
+
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="row col-md-6 col-md-offset-3">
+            <div class="col-md-6>
+                @Html.LabelFor(model => model.WorkName, htmlAttributes: new { @class = "control-label " })
+            </div>
+            <div class="col-md-6">
+                @Html.DisplayFor(model => model.WorkName)
+               
+            </div>
+        </div>
+        <div class="row col-md-6 col-md-offset-3">
+            <div class="col-md-6>
+                @Html.LabelFor(model => model.WorkIzmerenie, htmlAttributes: new { @class = "control-label " })
+
+            </div>
+            <div class="col-md-6>
+                @Html.DisplayFor(model => model.WorkIzmerenie)
+           
+
+            </div>
+        </div>
+
+        <div class="row col-md-6 col-md-offset-3">
+            <div class="col-md-6>
+                @Html.LabelFor(model => model.Agent, htmlAttributes: new { @class = "control-label " })
+
+            </div>
+            <div class="col-md-6>
+                @Html.DisplayFor(model => model.Agent)
+        
+
+            </div>
+        </div>
+
+
+
+        <div class="row col-md-6 col-md-offset-3">
+            <div class="col-md-6>
+                @Html.LabelFor(model => model.WorkCode, htmlAttributes: new { @class = "control-label " })
+            </div>
+            <div class="col-md-6>
+                @Html.DisplayFor(model => model.WorkCode)
+           
+            </div>
+        </div>
+
+
+
+        <div class="form-group">
+
+            <div class="col-md-10">
+
+            </div>
+        </div>
+        <div class="row col-md-6 col-md-offset-3">
+            <div class=" form-group">
+                <div class=" col-md-12  ">
+                    @Html.ActionLink("Назад", "Index", null, new { @class = "btn btn-success btn-block" })
+                </div>
+                
+
+            </div>
+        </div>
+
+    </div>
+</div>

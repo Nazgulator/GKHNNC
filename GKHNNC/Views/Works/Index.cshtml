@@ -1,0 +1,56 @@
+﻿@model IEnumerable<GKHNNC.Models.Work>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2><Center><b>Виды работ</b></Center></h2>
+
+
+    
+<p><a href="/Works/Create" class="btn btn-success btn-default" style="width:100%">Добавить новый вид работ &raquo;</a> </p>
+
+<table class="table">
+    <tr>
+        <th>
+            <p>Наименование</p>
+        </th>
+        <th>
+            <p>Группа</p>
+        </th>
+        <th>
+            <p>Измерение</p>
+        </th>
+        <th>
+            <p>Код</p>
+        </th>
+
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.Group)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Izmerenie)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Code)
+            </td>
+            <td>
+                @Html.ActionLink("Редактировать", "Edit", new { id = item.WorkId }, new { @class = "giperssilka" }) |
+                @Html.ActionLink("Информация", "Details", new { id = item.WorkId }, new { @class = "giperssilka" }) |
+                @Html.ActionLink("Удалить", "Delete", new { id = item.WorkId }, new { @class = "giperssilka" })
+            </td>
+        </tr>
+    }
+
+</table>

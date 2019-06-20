@@ -1,0 +1,173 @@
+﻿@{Layout = "~/Views/Shared/_Layout0.cshtml"; }
+<table class="table table-striped table-bordered">
+    <tbody>
+        @using (Html.BeginForm("OtchetMonth", "CompleteWorks", FormMethod.Post))
+        {
+            <tr style="height:20Px">
+
+                <td><h5><CENTER><b>ЖЭУ</b></CENTER></h5></td>
+                <td><h5><CENTER><b>АДРЕС</b></CENTER></h5></td>
+                <td><h5><CENTER><b>МЕСЯЦ</b></CENTER></h5></td>
+                <td><p><CENTER><b>ГОД</b></CENTER></p></td>
+
+
+            </tr>
+
+
+            <tr>
+
+                <td>
+                    @{
+                        MultiSelectList MSL2 = new MultiSelectList(ViewBag.GEU);
+                        @Html.DropDownList("GEU", MSL2, new { @class = "form-control" })
+                    }
+                </td>
+
+                <td>
+
+                    @{
+                        MultiSelectList MSL4 = new MultiSelectList(ViewBag.Adres);
+                    }
+                    @Html.DropDownList("WorkAdress", MSL4, new { @class = "form-control" })
+                </td>
+
+                <td>
+
+                   
+                    @Html.DropDownList("Month",new SelectList(ViewBag.Month,"value","text"), new { @class = "form-control" })
+                </td>
+
+                <td>
+                    @{
+
+                        MultiSelectList MSL3 = new MultiSelectList(ViewBag.Year);
+                    }
+                    @Html.DropDownList("Year", MSL3, new { @class = "form-control" })
+                </td>
+
+            </tr>
+
+        }
+    </tbody>
+</table>
+@section Scripts {
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+    @Scripts.Render("~/scripts/jquery-3.3.1.js")
+    @Scripts.Render("~/Scripts/chosen.jquery.min.js")
+    <script>
+            //скрипт для поиска домов по жэу
+        $("#GEU").change(function () {
+            var S = $("#GEU").val();
+            $.post('@Url.Action("MenuPoiskAdresaPoGeu", "CompleteWorks")', { GEU: S }, function (data) {
+
+                var WA = $("#WorkAdress");
+                WA.empty();
+                for (var i = 0; i < data.length; i++) {
+                WA.append('<option value="'+data[i]+'">'+data[i]+'</option>');
+                }
+
+            });
+    });
+
+    </script>
+
+
+
+    <script>
+        //скрипт для обработки выбора года чтоб выводить дома по году и месяцу
+                        $('#Year').change(function () {
+                            var _this = $(this);
+
+                            var Y = $('#Year').val();//выбраное значение в селекте
+                            var Adres = $('#WorkAdress').val();//выбраное значение в селекте
+                            var M = $('#Month').val();//выбраное значение в селекте
+                            var GEU = $('#GEU').val();//выбраное значение в селекте
+                            var SV = GEU + ";" + Adres + ";" + M + ";" + Y;
+                            $("#Spisok").fadeOut('fast', function () {
+                                $("#Spisok").load('@Url.Action("IndexSpisok", "CompleteWorks")', { Selection: SV });
+                                $("#Spisok").fadeIn('slow');
+                            }); 
+                           
+                          
+
+                           //идем в комплит воркс контроллер и там действие поиск по жэу отправляем выбранное значение в селекте, получаем дату список всех домов по жэу из БД перекинутых в лист стринг
+
+                            // alert("PING!");
+
+                        });
+
+
+    </script>
+    <script>
+        //скрипт для обработки выбора года чтоб выводить дома по году и месяцу
+                        $('#GEU').change(function () {
+                            var _this = $(this);
+
+                            var Y = $('#Year').val();//выбраное значение в селекте
+                            var Adres = $('#WorkAdress').val();//выбраное значение в селекте
+                            var M = $('#Month').val();//выбраное значение в селекте
+                            var GEU = $('#GEU').val();//выбраное значение в селекте
+                            var SV = GEU+";"+Adres+";"+M+";"+Y;
+                           $("#Spisok").fadeOut('fast', function () {
+                                 $("#Spisok").load('@Url.Action("IndexSpisok", "CompleteWorks")', { Selection: SV });
+                                $("#Spisok").fadeIn('slow');
+                            });
+
+
+                           //идем в комплит воркс контроллер и там действие поиск по жэу отправляем выбранное значение в селекте, получаем дату список всех домов по жэу из БД перекинутых в лист стринг
+
+                            // alert("PING!");
+
+                        });
+
+
+    </script>
+    <script>
+        //скрипт для обработки выбора года чтоб выводить дома по году и месяцу
+                        $('#Month').change(function () {
+                            var _this = $(this);
+
+                            var Y = $('#Year').val();//выбраное значение в селекте
+                            var Adres = $('#WorkAdress').val();//выбраное значение в селекте
+                            var M = $('#Month').val();//выбраное значение в селекте
+                            var GEU = $('#GEU').val();//выбраное значение в селекте
+                            var SV = GEU+";"+Adres+";"+M+";"+Y;
+                            $("#Spisok").fadeOut('fast', function () {
+                                 $("#Spisok").load('@Url.Action("IndexSpisok", "CompleteWorks")', { Selection: SV });
+                                $("#Spisok").fadeIn('slow');
+                            });
+
+
+                           //идем в комплит воркс контроллер и там действие поиск по жэу отправляем выбранное значение в селекте, получаем дату список всех домов по жэу из БД перекинутых в лист стринг
+
+                            // alert("PING!");
+
+                        });
+
+
+    </script>
+    <script>
+        //скрипт для обработки выбора года чтоб выводить дома по году и месяцу
+                        $('#WorkAdress').change(function () {
+                            var _this = $(this);
+
+                            var Y = $('#Year').val();//выбраное значение в селекте
+                            var Adres = $('#WorkAdress').val();//выбраное значение в селекте
+                            var M = $('#Month').val();//выбраное значение в селекте
+                            var GEU = $('#GEU').val();//выбраное значение в селекте
+                            var SV = GEU+";"+Adres+";"+M+";"+Y;
+                            $("#Spisok").load('@Url.Action("IndexSpisok", "CompleteWorks")', { Selection: SV });
+
+
+                           //идем в комплит воркс контроллер и там действие поиск по жэу отправляем выбранное значение в селекте, получаем дату список всех домов по жэу из БД перекинутых в лист стринг
+
+                            // alert("PING!");
+
+                        });
+
+
+    </script>
+
+
+
+}

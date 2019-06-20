@@ -1,0 +1,243 @@
+﻿@model IEnumerable<GKHNNC.Models.VipolnennieUslugi>
+@{
+    ViewBag.Title = "CompleteWorks";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+
+<table id="T" class="table table-bordered" style="width:100%">
+    <tr>
+        <th>
+            <p>№</p>
+        </th>
+        <th>
+            <p>Адрес</p>
+        </th>
+        <th>
+            <p>Количество работ</p>
+        </th>
+        <th>
+            <p>Количество услуг</p>
+        </th>
+        <th>
+            <p>Месяц</p>
+        </th>
+        <th>
+            <p>Год</p>
+        </th>
+        <th>
+            <p>Сформировать акт</p>
+        </th>
+
+
+        </div>
+        @{int c = -1; string counter = "";}
+        @foreach (var item in Model)
+        {
+            c++;
+            string clas = "";
+            bool FP = false;
+            if (c < 10) { counter = "0" + c.ToString(); }
+            else
+            {
+                counter = c.ToString();
+            }
+            if (ViewBag.VUString[c].Equals(null) == false && ViewBag.VUString[c].Equals("") == false)
+            {
+                //если все ок и услуги загружены
+                if (item.ForPrint)
+                {
+                    clas = "bg-success";
+                }
+            }
+            else
+            {
+                //если пришла пустая по услугам строка
+                clas = "bg-warning";
+            }
+            string sborka = item.Adres.Adress + ";" + item.Date.Year + ";" + item.Date.Month + ";" + ViewBag.GEU;
+        <tr id="@counter" value="@sborka" class="@clas">
+            <td>
+                @{ int co = c + 1;}
+                @co
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Adres.Adress)
+            </td>
+
+            <td>
+                @{
+
+                    string[] SS = ViewBag.CWString[c].Split(';');
+                    List<string> MSS = new List<string>();
+
+                    MSS.Add(ViewBag.CWNumber[c].ToString() + " РАБОТ");
+                    for (int i = 0; i < SS.Length - 1; i++)
+                    {
+                        MSS.Add(SS[i]);
+                    }
+                    MultiSelectList MSL = new MultiSelectList(MSS);
+                }
+
+                @Html.DropDownList("Работы", MSL, new { @class = "form-control col-md-4" })
+
+            </td>
+            <td>
+                @{
+                    List<string> MSS2 = new List<string>();
+                    if (ViewBag.VUString[c].Equals(null) == false && ViewBag.VUString[c].Equals("") == false)
+                    {
+                        string[] SS2 = ViewBag.VUString[c].Split(';');
+
+
+                        MSS2.Add(ViewBag.VUNumber[c].ToString() + " УСЛУГ");
+                        for (int i = 0; i < SS2.Length - 1; i++)
+                        {
+                            MSS2.Add(SS2[i]);
+                        }
+                    }
+                    else
+                    {
+                        MSS2.Add("УСЛУГИ НЕ ЗАГРУЖЕНЫ!");
+                    }
+                    MultiSelectList MSL2 = new MultiSelectList(MSS2);
+                }
+
+                @Html.DropDownList("Услуги", MSL2, new { @class = "form-control col-md-4" })
+
+            </td>
+            <td>
+                @{ int I = item.Date.Month;
+                    string M = "";
+                    switch (I)
+                    {
+
+                        case 1:
+                            M = "Январь";
+                            break;
+                        case 2:
+                            M = "Февраль";
+                            break;
+                        case 3:
+                            M = "Март";
+                            break;
+                        case 4:
+                            M = "Апрель";
+                            break;
+                        case 5:
+                            M = "Май";
+                            break;
+                        case 6:
+                            M = "Июнь";
+                            break;
+                        case 7:
+                            M = "Июль";
+                            break;
+                        case 8:
+                            M = "Август";
+                            break;
+                        case 9:
+                            M = "Сентябрь";
+                            break;
+                        case 10:
+                            M = "Октябрь";
+                            break;
+                        case 11:
+                            M = "Ноябрь";
+                            break;
+                        case 12:
+                            M = "Декабрь";
+                            break;
+
+                        default:
+                            M = "Январь";
+                            break;
+
+                    }
+                }
+                <p>@M</p>
+
+            </td>
+            <td>
+
+                @Html.DisplayFor(modelItem => item.Date.Year)
+            </td>
+            <td>
+                @if (ViewBag.VUString[c].Equals(null) == false && ViewBag.VUString[c].Equals("") == false)
+                {
+                    //если все ок и услуги загружены
+                    if (item.ForPrint)
+                    {
+
+
+                        <input type="submit" name="b-@counter" id="@counter" value="Сформировать акт" class="btn btn-success btn-default" />
+                        //<a href="/Home/Index" class="btn btn-success" style="width: 100%">Сформировать акт</a>
+
+                    }
+                    else
+                    {
+                        <center><p>Данные в проверке.</p></center>
+                    }
+                }
+                else
+                {
+                    <center> <p>Ждём загрузки выполненных услуг.</p></center>
+                }
+            </td>
+
+        </tr>
+    }
+
+    </table>
+
+    <p>
+        <a href="/Home/Index" class="btn btn-success" style="width: 100%">В главное меню</a>
+    <p><a href="/CompleteWorks/IndexMain" class="btn btn-success btn-block" ">К выполненным работам &raquo;</a> </p>
+    </p>
+
+
+    @section Scripts {
+        @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+        @Scripts.Render("~/scripts/jquery-3.3.1.js")
+        @Scripts.Render("~/Scripts/chosen.jquery.min.js")
+
+        <script>
+            //скрипт для обработки формирования актов
+            $("input[type='submit']").click(function () {
+
+                var _this = $(this);
+                x = _this.attr("value");
+                if (x != 'Отчет сохранен!') {
+
+                    var S = $("#T tr[id^=" + this.id + "]").attr("value");
+                    $.post('@Url.Action("SformirovatAkt", "CompleteWorks")', { selection: S }, function (data) {
+
+                        window.location.href = data;
+                        _this.attr('href', data);
+                        _this.attr('value', 'Отчет сохранен!');
+                        _this.removeClass("btn-success");
+                        _this.addClass("btn-info");
+                        _this.parent().parent().removeClass("bg-success");
+                        _this.parent().parent().addClass("bg-info");
+
+
+
+
+                    });
+                }
+
+
+            });
+
+
+        </script>
+
+
+
+
+
+
+    }
+
+
+

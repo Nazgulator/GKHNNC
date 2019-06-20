@@ -1,0 +1,81 @@
+﻿@model GKHNNC.Models.Ezdka
+
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>Ezdka</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Avto.Number)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Avto.Number)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ArhNumb)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ArhNumb)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Date)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Date)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Probeg)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Probeg)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Ezdki)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Ezdki)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Time)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Time)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Voditel)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Voditel)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    }
+</div>

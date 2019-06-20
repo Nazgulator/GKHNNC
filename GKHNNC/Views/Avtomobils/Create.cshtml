@@ -1,0 +1,109 @@
+﻿@model GKHNNC.Models.Avtomobil
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+<h2>Создать</h2>
+
+@using (Html.BeginForm()) 
+{
+    @Html.AntiForgeryToken()
+    
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+<div class="container">
+    <div class="form-horizontal">
+
+        <div class="row col-md-6 col-md-offset-3">
+            <div class="col-md-12">
+                @Html.LabelFor(model => model.MarkaId, "MarkaId", htmlAttributes: new { @class = "control-label" })
+
+            </div>
+            <div class="col-md-12">
+                @Html.DropDownList("MarkaId", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.MarkaId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+        <div class="row col-md-6 col-md-offset-3">
+            <div class="col-md-12">
+                @Html.LabelFor(model => model.TypeId, "TypeId", htmlAttributes: new { @class = "control-label" })
+
+            </div>
+            <div class="col-md-12">
+                @Html.DropDownList("TypeId", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.TypeId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+        <div class="row col-md-6 col-md-offset-3">
+            <div class="col-md-12">
+                @Html.LabelFor(model => model.Number, htmlAttributes: new { @class = "control-label" })
+
+            </div>
+            <div class="col-md-12">
+                @Html.EditorFor(model => model.Number, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Number, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+        <div class="row col-md-6 col-md-offset-3">
+            <div class="col-md-12">
+                @Html.LabelFor(model => model.Date, htmlAttributes: new { @class = "control-label" })
+
+            </div>
+            <div class="col-md-12">
+                @Html.EditorFor(model => model.Date, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Date, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+        <div class="row col-md-6 col-md-offset-3">
+            <div class="col-md-12">
+                @Html.LabelFor(model => model.Garage, htmlAttributes: new { @class = "control-label" })
+
+            </div>
+            <div class="col-md-12">
+                @Html.EditorFor(model => model.Garage, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Garage, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="row col-md-6 col-md-offset-3" style="height:50Px;  ">
+            <div class="col-md-6 col-md-offset-2" style="text-align:justify;display:flex;align-items:center;height:50Px">
+                @Html.LabelFor(model => model.Glonass, htmlAttributes: new { @class = "control-label" })
+
+            </div>
+            <div class="col-md-2">
+                <div class="checkbox">
+                    @Html.EditorFor(model => model.Glonass, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Glonass, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row col-md-12">
+            <p> </p>
+        </div>
+
+        <div class="row col-md-6 col-md-offset-3">
+            <div class=" form-group">
+                <div class=" col-md-6  ">
+                    @Html.ActionLink("Назад", "Index", null, new { @class = "btn btn-success btn-block" })
+                </div>
+                <div class=" col-md-6  ">
+                    <input type="submit" value="Готово" class="btn btn-success btn-block" />
+                </div>
+
+            </div>
+        </div>
+    </div>
+ </div>
+ }

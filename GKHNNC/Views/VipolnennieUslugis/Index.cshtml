@@ -1,0 +1,161 @@
+﻿@model IEnumerable<GKHNNC.Models.VipolnennieUslugi>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Выполненные услуги</h2>
+<table class="table table-striped table-bordered">
+    <tbody>
+        <tr style="height:20Px">
+            @if (ViewBag.GEU != null)
+            {
+                <td><h5><CENTER><b>ЖЭУ</b></CENTER></h5></td>
+            }
+            <td><h5><CENTER><b>ДОМ</b></CENTER></h5></td>
+            <td><h5><CENTER><b>МЕСЯЦ</b></CENTER></h5></td>
+            <td><p><CENTER><b>ГОД</b></CENTER></p></td>
+            <td><p><CENTER><b>СОЗДАНИЕ АКТА</b></CENTER></p></td>
+
+        </tr>
+
+        @using (Html.BeginForm("OtchetMonth", "VipolnennieUslugis", FormMethod.Post))
+        {
+            <tr>
+                @if (ViewBag.GEU != null)
+                {
+                    <td>
+                        @{ MultiSelectList MSL2 = new MultiSelectList("пусто");
+                            MSL2 = new MultiSelectList(ViewBag.GEU);
+                            @Html.DropDownList("GEU", MSL2, new { @class = "form-control", @style = "width: 100%" })
+                        }
+                    </td>
+                }
+                <td>
+
+                    @Html.DropDownList("Adres", new MultiSelectList(ViewBag.Adres, "value", "text"), new { @class = "form-control", @style = "width:100 % !important; " })
+
+                </td>
+
+
+
+                <td>
+
+                    @{
+                        MultiSelectList MSL = new MultiSelectList(new string[] { "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь" });
+                    }
+                    @Html.DropDownList("Month", MSL, new { @class = "form-control", @style = "width: 100%" })
+                </td>
+
+                <td>
+                    @{
+
+                        MultiSelectList MSL3 = new MultiSelectList(ViewBag.Year);
+                    }
+                    @Html.DropDownList("Year", MSL3, new { @class = "form-control", @style = "width: 100%" })
+                </td>
+                <td>
+
+                    <Center>
+                        <div>
+                            <input type="submit" name="b1" value="Акт за месяц по дому" class="btn btn-success btn-default" style="width:250Px" />
+                        </div>
+                    </Center>
+
+                </td>
+            </tr>
+         }
+    </tbody>
+</table>
+<p>
+    @Html.ActionLink("Добавить новую услугу", "Create", null, new { @class = "btn btn-success btn-default", @style = "width:100%" })
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Adres.Adress)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Usluga.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Date)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.StoimostNaM2)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.StoimostNaMonth)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Adres.Adress)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Usluga.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Date)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StoimostNaM2)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StoimostNaMonth)
+            </td>
+            <td>
+                @Html.ActionLink("Редактировать", "Edit", new { id = item.Id }) |
+                @Html.ActionLink("Удалить", "Delete", new { id = item.Id })
+            </td>
+        </tr>
+    }
+
+</table>
+<p>
+    <a href="/Home/Index" class="btn btn-success" style="width: 100%">В главное меню</a>
+</p>
+
+
+@section Scripts {
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+    @Scripts.Render("~/scripts/jquery-3.3.1.js")
+    @Scripts.Render("~/Scripts/chosen.jquery.min.js")
+
+
+    <script>
+        //скрипт работает обработка идет не пост запросом
+                        $('#GEU').change(function () {
+                            var _this = $(this);
+                            $('#Adres').get(0).selectedIndex = $(_this).get(0).selectedIndex;//выбрать параллельный элемент
+                            $("#Adres").empty();//обнулить селект
+
+                            var selectedValue = $('#GEU').val();//выбраное значение в селекте
+                            $.post('@Url.Action("PoiskPoGeu", "VipolnennieUslugis")', { selection: selectedValue }, function (data) {
+                                if (data.length > 0) {
+                                    for (i = 0; i < data.length; i++) {
+                                        $("#Adres").append('<option value=' + data[i] + '>' + data[i] + '</option>');
+
+                                    }
+                                }
+                                else {
+                                    alert("К выбранному ЖЭУ не прикреплено ни одного дома.");
+                                }
+
+                            });
+                           //идем в комплит воркс контроллер и там действие поиск по жэу отправляем выбранное значение в селекте, получаем дату список всех домов по жэу из БД перекинутых в лист стринг
+
+                            // alert("PING!");
+
+                        });
+
+
+    </script>
+
+
+}

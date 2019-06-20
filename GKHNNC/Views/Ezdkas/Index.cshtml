@@ -1,0 +1,70 @@
+﻿@model IEnumerable<GKHNNC.Models.Ezdka>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+<h2>Главная</h2>
+
+<p>
+    @Html.ActionLink("Создать", "Create", null, new {@class = "btn btn-success btn-block"})
+</p>
+<table id="T" class="table table-bordered table-striped">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Avto.Number)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ArhNumb)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Date)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Probeg)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Ezdki)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Time)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Voditel)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Avto.Number)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ArhNumb)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Date)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Probeg)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Ezdki)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Time)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Voditel)
+        </td>
+        <td>
+            @Html.ActionLink("Редактировать", "Edit", new { id=item.Id }) |
+            @Html.ActionLink("Удалить", "Delete", new { id=item.Id })
+        </td>
+    </tr>
+}
+
+</table>
+<p><a href="/Home/Index" class="btn btn-success btn-block" >В главное меню &raquo;</a> </p>

@@ -1,0 +1,36 @@
+﻿@model IEnumerable<GKHNNC.Models.Adres>
+
+@{
+    ViewBag.Title = "Главная";
+}
+
+<h2><Center><b>Адреса</b></Center></h2>
+
+
+<p><a href="/Adres/Create" class="btn btn-success btn-default" style="width:100%">Добавить новый адрес &raquo;</a> </p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Adress)
+        </th>
+        <th>@Html.DisplayNameFor(model => model.GEU)</th>
+        <th>Опции</th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Adress)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.GEU)
+        </td>
+        <td>
+            @Html.ActionLink("Редактировать", "Edit", new { id = item.Id }) |
+            @Html.ActionLink("Информация", "Details", new { id = item.Id }) |
+            @Html.ActionLink("Удалить", "Delete", new { id = item.Id })
+        </td>
+    </tr>
+}
+
+</table>

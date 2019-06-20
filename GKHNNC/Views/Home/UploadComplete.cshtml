@@ -1,0 +1,170 @@
+﻿
+@{
+    ViewBag.Title = "UploadComplete";
+}
+
+
+<div id="Nadpis2" >
+    <h2>Идет обработка файла.</h2>
+    <p><label>Пожалуйста подождите, пока идет обработка и запись файла в базу данных. </label></p>
+    <p>
+
+    </p>
+</div>
+<div class="progress" >
+
+    <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-success progress-bar-animated" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+    <center>
+        <label id="nadpis">Ждём подтверждения...</label>
+    </center>
+</div>
+<div id="MainNadpis">
+    <h2>Файл @ViewBag.file успешно загружен!</h2>
+
+    <div class="alert alert-success" role="alert">
+        Заголовки полученных данных представлены в таблице ниже. Пожалуйста проверьте данные и подтвердите загрузку.
+    </div>
+</div>
+
+<table id="tabl" class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">№</th>
+            <th scope="col">Адрес</th>
+            <th scope="col">Наименование услуги</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (int i = 0; i < ViewBag.MaxCount; i++)
+        {
+            <tr>
+                @{int n = i + 1;}
+                <th scope="row">@n</th>
+                @if (ViewBag.H.Count > i)
+                {
+
+                    <td>
+                        @if (ViewBag.HTF[i])
+                        {
+                            <div style="color:forestgreen">
+                                @ViewBag.H[i]
+                            </div>
+                        }
+                        else
+                        {
+                            <div style="color:black">
+                                @ViewBag.H[i]
+                            </div>
+                        }
+
+                    </td>
+                }
+                else
+                {
+                    <td></td>
+                }
+                @if (ViewBag.U.Count > i)
+                {
+                    <td>
+                        @if (ViewBag.UTF[i])
+                        {
+                            <div style="color:forestgreen">
+                                @ViewBag.U[i]
+                            </div>
+                        }
+                        else
+                        {
+                            <div style="color:black">
+                                @ViewBag.U[i]
+                            </div>
+                        }
+
+                    </td>
+                }
+                else
+                {
+                    <td></td>
+                }
+
+            </tr>
+
+
+        }
+
+    </tbody>
+</table>
+@using (Html.BeginForm("UploadComplete", "Home", FormMethod.Post))
+{
+    <input id="Date" name="Date" type="hidden" value=@ViewBag.Data />
+
+
+    <div class="form-group">
+        <center>
+            @Html.ActionLink("Файл загружен неверно", "Upload", null, new { @class = "btn btn-danger", style = "width: 49%", @id = "cancel" })
+            <input type="submit" id="submit" value="Файл загружен верно" class="btn btn-success" style="width: 49%" />
+        </center>
+
+    </div>
+}
+@section Scripts{
+    @Scripts.Render("~/scripts/jquery-3.3.1.min.js")
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+    @Scripts.Render("~/scripts/nprogress.min.js")
+    @Scripts.Render("~/scripts/jquery.signalR-2.4.0.min.js")
+    @Scripts.Render("~/signalr/hubs")
+
+
+        <script>
+            $("#submit").click(function () {
+
+                $("#tabl").fadeOut("slow");
+            $("#submit").fadeOut("slow");
+            $("#cancel").fadeOut("slow");
+            $("#Nadpis2").fadeIn("slow");
+            $("#MainNadpis").fadeOut("slow");
+
+        }
+
+
+        );
+    </script>
+    <script>
+                $(function () {
+                    var PB = $.connection.progressHub;
+                console.log("Загрузили файл на сервер ждем подтверждения.");
+                    PB.client.sendMessage = function (message, count) {
+                    // update progress
+                    console.log(count);
+                UpdateProgress(message, count);
+                //alert(message);
+            };
+
+                    $.connection.hub.start().done(function () {
+                    console.log("Приконнектились");
+                // call the method CallLongOperation defined in the Hub
+                PB.server.getCountAndMessage();
+                $("#progressBar").hide();
+                        $("#Nadpis2").hide();
+                        $("#Nadpis2").fadeOut();
+
+
+            });
+
+
+            // Update the progress bar
+                    function UpdateProgress(message, count) {
+                    $("#progressBar").fadeIn("slow");
+                var result = $("#result");
+                result.html(message);
+
+                //$("#progressBar").data("progressbar").value(count);
+
+                $("#progressBar").attr("aria-valuenow", count);
+                $("#progressBar").width(count + '%');
+                $("#progressBar").text(count + '%');
+                $("#nadpis").text(message);
+                // $("#progressBar").css("width", count);
+            }
+});
+    </script>
+}

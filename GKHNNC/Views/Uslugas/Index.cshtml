@@ -1,0 +1,46 @@
+﻿ @model IEnumerable<GKHNNC.Models.Usluga>
+
+@{
+    ViewBag.Title = "Index";
+}
+<center>
+    <h2>Услуги</h2>
+
+    <p>
+        @Html.ActionLink("Добавить новую услугу", "Create", null, new { @class = "btn btn-success btn-default", @style = "width:100%" })
+    </p>
+    <table class="table">
+        <tr>
+
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PeriodichnostId)
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Periodichnost.PeriodichnostName)
+                </td>
+                <td>
+                    @Html.ActionLink("Редактировать", "Edit", new { id = item.Id }) |
+                  
+                    @Html.ActionLink("Удалить", "Delete", new { id = item.Id })
+                </td>
+            </tr>
+        }
+
+
+    </table>
+    <a href="/Home/Index" class="btn btn-success" style = "width: 100%">В главное меню</a>
+    
+</center>

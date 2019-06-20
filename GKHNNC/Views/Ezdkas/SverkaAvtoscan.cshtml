@@ -1,0 +1,79 @@
+﻿@model IEnumerable<GKHNNC.Models.AutoScansSverka>
+@{
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+
+}
+<h2>Сверка данных АВТОСКАН Февраль 2019</h2>
+<table class="table table-striped table-bordered">
+
+    <tr>
+        <th>
+            <p>Авто ID</p>
+        </th>
+        <th>
+            <p>Номер</p>
+        </th>
+        <th>
+            <p>День</p>
+        </th>
+        <th>
+            <p>Час</p>
+        </th>
+        <th>
+            <p>СуммаДУТ</p>
+        </th>
+        <th>
+            <p>Пробег</p>
+        </th>
+        <th>
+            <p>Сливы</p>
+        </th>
+        <th>
+            <p>Заправки</p>
+        </th>
+        <th>
+            <p>Скорость</p>
+        </th>
+    </tr>
+    @{decimal pred = 0; int predID = 0;}
+    @foreach (var item in Model)
+    {
+        string cl = "";
+        if (pred != item.DUT && predID == item.AvtoId) { cl = "bg-warning"; }
+        <tr class="@cl">
+            <th>
+                @Html.DisplayFor(modelItem => item.AvtoId)
+            </th>
+            <th>
+                @Html.DisplayFor(modelItem => item.Name)
+            </th>
+            <th>
+                @Html.DisplayFor(modelItem => item.DateSnyatia.Day)
+            </th>
+            <th>
+                @Html.DisplayFor(modelItem => item.DateSnyatia.Hour)
+            </th>
+            <th>
+                @Html.DisplayFor(modelItem => item.DUT)
+            </th>
+            <th>
+                @Html.DisplayFor(modelItem => item.KM)
+            </th>
+            <th>
+                @Html.DisplayFor(modelItem => item.Sliv)
+            </th>
+            <th>
+                @Html.DisplayFor(modelItem => item.Zapravleno)
+            </th>
+            <th>
+                @Html.DisplayFor(modelItem => item.MaxSpeed)
+            </th>
+        </tr>
+
+        predID = item.AvtoId;
+        pred = item.DUT;
+
+
+
+    }
+</table>

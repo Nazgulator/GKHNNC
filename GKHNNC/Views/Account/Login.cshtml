@@ -1,0 +1,67 @@
+﻿@using GKHNNC.Models
+@model LoginViewModel
+@{
+    ViewBag.Title = "Выполнить вход";
+}
+
+
+<Center>
+    <div class="row">
+
+        <div class="col-md-12">
+            <section id="loginForm">
+                <h2>@ViewBag.Title.</h2>
+                @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <h4>Используйте локальную учетную запись для входа.</h4>
+                    <hr />
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    <div class="form-group">
+                      
+                        @Html.TextBoxFor(m => m.UserName, new { @class = "form-control", @style = "width:365Px !important; min-width:365px;", @placeholder = "Введите логин" })
+                        @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger" })
+
+                      <p></p>
+                       
+                       
+                        @Html.PasswordFor(m => m.Password, new { @class = "form-control ", @style = "width:365Px !important; min-width:365px;", @placeholder = "Введите пароль латинскими буквами", @aria_describedby = "addon3" })
+                        @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+
+                    </div>
+
+
+
+                    <div class="form-group">
+
+                        <input type="submit" value="Выполнить вход" class="btn btn-success" style="width: 365Px;min-width:365px;" />
+
+
+                    </div>
+                    <div class="form-group">
+                        <p>  @Html.ActionLink("Регистрация нового пользователя", "Register", null, new { @class = "btn btn-outline-success", style = "width: 365Px" }) </p>
+                    </div>
+                    <Center>
+                        <div class="form-check">
+
+                            @Html.CheckBoxFor(m => m.RememberMe, new { @class = "form-check-input", @style = "width:100%  min-width:100px;" })
+                            <label class="form-check-label" for="RememberMe">
+                                Запомнить меня
+                            </label>
+
+                        </div>
+                    </Center>
+                    @* Включите, когда будет включено подтверждение учетной записи для функции сброса пароля
+            <p>
+                @Html.ActionLink("Забыли пароль?", "ForgotPassword")
+            </p>*@
+                }
+            </section>
+        </div>
+       
+    </div>
+</Center>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

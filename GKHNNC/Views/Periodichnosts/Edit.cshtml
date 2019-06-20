@@ -1,0 +1,36 @@
+﻿@model GKHNNC.Models.Periodichnost
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h2>Редактировать</h2>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.Id)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.PeriodichnostName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.PeriodichnostName, new { htmlAttributes = new { @class = "form-control", @style = "width: 98%" } })
+                @Html.ValidationMessageFor(model => model.PeriodichnostName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-12 ">
+                @Html.ActionLink("Назад", "Index", null, new { @class = "btn btn-success", @style = "width: 49%" })
+                <input type="submit" value="Изменить" class="btn btn-success" style="width:49%" />
+            </div>
+        </div>
+    
+    </div>
+}
+

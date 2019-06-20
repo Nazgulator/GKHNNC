@@ -1,0 +1,215 @@
+﻿@model IEnumerable<GKHNNC.Models.CompleteWork>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+   
+}
+
+<h2><Center>Выполненные работы</Center></h2>
+
+
+
+
+@using (Html.BeginForm("OtchetMonth", "CompleteWorks", FormMethod.Post))
+{
+
+
+    <table class="table table-striped table-bordered">
+        <tbody>
+            <tr style="height:20Px">
+                @if (ViewBag.GEU != null)
+                {
+                    <td><h5><CENTER><b>ЖЭУ</b></CENTER></h5></td>
+                }
+                <td><h5><CENTER><b>ДОМ</b></CENTER></h5></td>
+                <td><h5><CENTER><b>МЕСЯЦ</b></CENTER></h5></td>
+                <td><p><CENTER><b>ГОД</b></CENTER></p></td>
+                <td><p><CENTER><b>СОЗДАНИЕ ОТЧЕТА</b></CENTER></p></td>
+
+            </tr>
+
+
+            <tr>
+                @if (ViewBag.GEU != null)
+                {
+                    <td>
+                        @{ MultiSelectList MSL2 = new MultiSelectList("пусто");
+                            MSL2 = new MultiSelectList(ViewBag.GEU);
+                            @Html.DropDownList("GEU", MSL2, new { @class = "form-control", @style = "width: 100%" })
+                        }
+                    </td>
+                }
+                else
+                {
+                    string GGEU = ViewBag.GEU2;
+                    @Html.Hidden("GEU", GGEU);
+                }
+                <td>
+
+                    @{
+
+                        MultiSelectList MSL5 = new MultiSelectList(ViewBag.Adres);
+
+                    }
+
+                    @Html.DropDownList("Adres", new MultiSelectList(ViewBag.Adres, "value", "text"), new { @class = "form-control", @style = "width:100 % !important; min - width:500Px; " })
+
+                </td>
+
+
+
+                <td>
+
+                    @{
+                        MultiSelectList MSL = new MultiSelectList(new string[] { "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь" });
+                    }
+                    @Html.DropDownList("Month", MSL, new { @class = "form-control", @style = "width: 100%" })
+                </td>
+
+                <td>
+                    @{
+
+                        MultiSelectList MSL3 = new MultiSelectList(ViewBag.Year);
+                    }
+                    @Html.DropDownList("Year", MSL3, new { @class = "form-control", @style = "width: 100%" })
+                </td>
+                <td>
+
+                    <Center>
+                        <div>
+                            <input type="submit" name="b1" value="Отчет за месяц по ЖЭУ" class="btn btn-success btn-default" style="width:250Px" />
+
+                            <input type="submit" name="b3" value="Отчет за месяц по дому" class="btn btn-success btn-default" style="width:250Px" />
+
+
+
+
+
+
+                        </div>
+                    </Center>
+
+                </td>
+            </tr>
+        </tbody>
+
+
+    </table>
+}
+<p><a href="/CompleteWorks/NewCompleteWork" class="btn btn-success btn-default" style="width:100%">Добавить выполненную работу &raquo;</a> </p>
+
+
+
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.ActionLink("Адрес", "Index", new { sortOrder = ViewBag.NameSortParm })
+
+        </th>
+        <th>
+            <p>Наименование</p>
+        </th>
+        <th>
+            <p>Количество</p>
+        </th>
+        <th>
+            <p>Измерение</p>
+        </th>
+        <th>
+            @Html.ActionLink("Дата", "Index", new { sortOrder = ViewBag.DateSortParm })
+
+        </th>
+        <th>
+            <p>Агент</p>
+        </th>
+        <th><p>Опции</p></th>
+    </tr>
+    <style>
+
+        a.my-class {
+            color: #106300
+        }
+
+            a.my-class:active {
+                color: #106300
+            }
+
+            a.my-class:link {
+                color: #106300
+            }
+
+            a.my-class:visited {
+                color: #5cb85c
+            }
+    </style>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.WorkAdress)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.WorkName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.WorkNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.WorkIzmerenie)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.WorkDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Agent)
+            </td>
+            <td>
+
+                @Html.ActionLink("i", "Delete", new { id = item.ID }, new { @class = "btn btn-success btn-circle" })
+            </td>
+        </tr>
+
+    }
+
+</table>
+
+@section Scripts {
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+    @Scripts.Render("~/scripts/jquery-3.3.1.js")
+    @Scripts.Render("~/Scripts/chosen.jquery.min.js")
+
+
+    <script>
+        //скрипт работает обработка идет не пост запросом
+                        $('#GEU').change(function () {
+                            var _this = $(this);
+                            $('#Adres').get(0).selectedIndex = $(_this).get(0).selectedIndex;//выбрать параллельный элемент
+                            $("#Adres").empty();//обнулить селект
+
+                            var selectedValue = $('#GEU').val();//выбраное значение в селекте
+                            $.post('@Url.Action("PoiskPoGeu", "CompleteWorks")', { selection: selectedValue }, function (data) {
+                                if (data.length > 0) {
+                                    for (i = 0; i < data.length; i++) {
+                                        $("#Adres").append('<option value=' + data[i] + '>' + data[i] + '</option>');
+
+                                    }
+                                }
+                                else {
+                                    alert("К выбранному ЖЭУ не прикреплено ни одного дома.");
+                                }
+
+                            });
+                           //идем в комплит воркс контроллер и там действие поиск по жэу отправляем выбранное значение в селекте, получаем дату список всех домов по жэу из БД перекинутых в лист стринг
+
+                            // alert("PING!");
+
+                        });
+
+
+    </script>
+
+
+}

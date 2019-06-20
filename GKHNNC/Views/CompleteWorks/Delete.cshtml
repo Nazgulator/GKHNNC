@@ -1,0 +1,240 @@
+﻿@model GKHNNC.Models.CompleteWork
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Удаление элемента</h2>
+
+<h3>Вы действительно хотите удалить элемент?</h3>
+<p> </p>
+<div class=" container">
+    <div class="form-group">
+        <div class=" row col-md-8 col-md-offset-2">
+            <div class=" col-md-4" style="text-align:right; vertical-align:middle">
+                <b>Наименование работы</b>
+            </div>
+            <div class=" col-md-8 ">
+
+                <input value="@Model.WorkName" class="form-control" />
+
+            </div>
+            <div class=" col-md-12 "><p> </p> </div>
+        </div>
+
+        <div class=" row col-md-8 col-md-offset-2">
+
+            <div class=" col-md-4" style="text-align:right; vertical-align:middle">
+                <b>Количество</b>
+            </div>
+            <div class=" col-md-4 ">
+
+                <input value="@Model.WorkNumber" class="form-control" />
+
+            </div>
+            <div class=" col-md-4 ">
+
+                <input value="@Model.WorkIzmerenie" class="form-control" />
+
+            </div>
+            <div class=" col-md-12 "><p> </p> </div>
+        </div>
+
+        <div class=" row col-md-8 col-md-offset-2">
+            <div class="form-group ">
+                <div class=" col-md-4" style="text-align:right; vertical-align:middle">
+                    <b>Дата выполнения работы</b>
+                </div>
+                <div class=" col-md-4 ">
+                    @{ string Y = Model.WorkDate.Year.ToString();
+                        int Month = Model.WorkDate.Month;
+                        string M = "";
+                        switch (Month)
+                        {
+                            case 1:
+                                {
+                                    M = "Январь";
+                                    break;
+                                }
+                            case 2:
+                                {
+                                    M = "Февраль";
+                                    break;
+                                }
+                            case 3:
+                                {
+                                    M = "Март";
+                                    break;
+                                }
+                            case 4:
+                                {
+                                    M = "Апрель";
+                                    break;
+                                }
+                            case 5:
+                                {
+                                    M = "Май";
+                                    break;
+                                }
+                            case 6:
+                                {
+                                    M = "Июнь";
+                                    break;
+                                }
+                            case 7:
+                                {
+                                    M = "Июль";
+                                    break;
+                                }
+                            case 8:
+                                {
+                                    M = "Август";
+                                    break;
+                                }
+                            case 9:
+                                {
+                                    M = "Сентябрь";
+                                    break;
+                                }
+                            case 10:
+                                {
+                                    M = "Октябрь";
+                                    break;
+                                }
+                            case 11:
+                                {
+                                    M = "Ноябрь";
+                                    break;
+                                }
+                            case 12:
+                                {
+                                    M = "Декабрь";
+                                    break;
+                                }
+
+                        }
+                        string MY = M + " " + Y;
+                    }
+                    <input value="@MY" class="form-control" />
+
+                </div>
+                <div class=" col-md-4 ">
+
+                    <input value="@Model.Agent" class="form-control" />
+
+                </div>
+                <div class=" col-md-12 "><p> </p> </div>
+            </div>
+        </div>
+
+        <div class=" row col-md-8 col-md-offset-2">
+            <div class="form-group ">
+                <div class=" col-md-4" style="text-align:right; vertical-align:middle">
+                    <b>Дата создания работы</b>
+                </div>
+                <div class=" col-md-4 ">
+                    @{ string Y1 = Model.WorkDate.Year.ToString();
+                        int Month1 = Model.WorkDate.Month;
+                        string M1 = "";
+                        switch (Month1)
+                        {
+                            case 1:
+                                {
+                                    M = "Январь";
+                                    break;
+                                }
+                            case 2:
+                                {
+                                    M = "Февраль";
+                                    break;
+                                }
+                            case 3:
+                                {
+                                    M = "Март";
+                                    break;
+                                }
+                            case 4:
+                                {
+                                    M = "Апрель";
+                                    break;
+                                }
+                            case 5:
+                                {
+                                    M = "Май";
+                                    break;
+                                }
+                            case 6:
+                                {
+                                    M = "Июнь";
+                                    break;
+                                }
+                            case 7:
+                                {
+                                    M = "Июль";
+                                    break;
+                                }
+                            case 8:
+                                {
+                                    M = "Август";
+                                    break;
+                                }
+                            case 9:
+                                {
+                                    M = "Сентябрь";
+                                    break;
+                                }
+                            case 10:
+                                {
+                                    M = "Октябрь";
+                                    break;
+                                }
+                            case 11:
+                                {
+                                    M = "Ноябрь";
+                                    break;
+                                }
+                            case 12:
+                                {
+                                    M = "Декабрь";
+                                    break;
+                                }
+
+                        }
+                        string MY1 = M1 + " " + Y1;
+                    }
+                    <input value="@MY1" class="form-control" />
+
+                </div>
+                <div class=" col-md-4 ">
+
+                    <input value="@Model.KtoSohranil" class="form-control" />
+
+                </div>
+                <div class=" col-md-12 "><p> </p> </div>
+            </div>
+        </div>
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="row col-md-8 col-md-offset-2">
+                <div class=" form-group">
+                    <div class=" col-md-6  ">
+                        @Html.ActionLink("Назад", "IndexMain", null, new { @class = "btn btn-success btn-block" })
+                    </div>
+                    <div class=" col-md-6  ">
+                        <input type="submit" value="Удалить" class="btn btn-success btn-block" />
+                    </div>
+                </div>
+            </div>
+
+        }
+
+    </div>
+    
+</div>
+
+   
+
+       
+    

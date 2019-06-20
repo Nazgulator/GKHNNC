@@ -1,0 +1,59 @@
+﻿@model GKHNNC.Models.MarkaAvtomobil
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>MarkaAvtomobil</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SNorm)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SNorm)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.WNorm)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.WNorm)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Toplivo)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Toplivo)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.KmMoto)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.KmMoto)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

@@ -1,0 +1,51 @@
+﻿@model IEnumerable<GKHNNC.Models.ApplicationUser>
+
+@{
+    ViewBag.Title = "RolesAndUsers";
+}
+
+<h2><Center><b>Пользователи и роли</b></Center></h2>
+
+<table class="table">
+    <tr>
+        <th>
+            <p>Пользователь</p>
+        </th>
+        <th>
+            <p>Роль</p>
+        </th>
+
+
+        <th></th>
+    </tr>
+    @{int i = 0;
+    foreach (var item in Model)
+    {
+        <tr>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.UserName)
+            </td>
+
+            <td>
+               
+                @ViewBag.Roles[i]
+            </td>
+
+            <td>
+                @if (ViewBag.Roles[i] == "Пользователь")
+                {
+                    @Html.ActionLink("Назначить администратором", "ToAdmin", new { id = item.Id , roll = ViewBag.Roles[i] })
+                }
+                else
+                {
+                    @Html.ActionLink("Разжаловать в пользователи", "ToAdmin", new { id = item.Id, roll = ViewBag.Roles[i] })
+                }
+                @Html.ActionLink("Удалить", "DeleteUser", new { id = item.Id })
+            </td>
+        </tr>
+            i++;
+        }
+        }
+
+</table>

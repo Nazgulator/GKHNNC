@@ -1,0 +1,89 @@
+﻿@model GKHNNC.Models.CompleteWork
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Изменение выполненной работы</h2>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+ <div class="container">
+    <div class="form-horizontal">
+       
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.ID)
+        @Html.HiddenFor(model => model.WorkCode)
+        @Html.HiddenFor(model => model.WorkIzmerenie)
+        @Html.HiddenFor(model => model.Agent)
+        <div class="row col-md-6 col-md-offset-3">
+            <div class="col-md-6>
+                @Html.LabelFor(model => model.WorkName, htmlAttributes: new { @class = "control-label " })
+            </div>
+            <div class="col-md-6">
+                @Html.LabelFor(model => model.WorkName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.WorkName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="row col-md-6 col-md-offset-3">
+            <div class="col-md-6>
+                @Html.LabelFor(model => model.WorkIzmerenie, htmlAttributes: new { @class = "control-label " })
+
+            </div>
+            <div class="col-md-6>
+                @Html.LabelFor(model => model.WorkIzmerenie, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.WorkIzmerenie, "", new { @class = "text-danger" })
+
+            </div>
+        </div>
+
+        <div class="row col-md-6 col-md-offset-3">
+            <div class="col-md-6>
+                @Html.LabelFor(model => model.Agent, htmlAttributes: new { @class = "control-label " })
+
+            </div>
+            <div class="col-md-6>
+                @Html.LabelFor(model => model.Agent, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Agent, "", new { @class = "text-danger" })
+
+            </div>
+        </div>
+
+
+
+        <div class="row col-md-6 col-md-offset-3">
+            <div class="col-md-6>
+                @Html.LabelFor(model => model.WorkCode, htmlAttributes: new { @class = "control-label " })
+            </div>
+            <div class="col-md-6>
+                @Html.LabelFor(model => model.WorkCode, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.WorkCode, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+
+      
+        <div class="row col-md-6 col-md-offset-3">
+            <div class=" form-group">
+                <div class=" col-md-6  ">
+                    @Html.ActionLink("Назад", "Index", null, new { @class = "btn btn-success btn-block" })
+                </div>
+                <div class=" col-md-6  ">
+                    <input type="submit" value="Изменить" class="btn btn-success btn-block" />
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+ </div>
+}
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

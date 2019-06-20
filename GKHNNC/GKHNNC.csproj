@@ -1,0 +1,876 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.0\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.0\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{104BA6D9-DB04-4C18-A24B-C140D2533895}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GKHNNC</RootNamespace>
+    <AssemblyName>GKHNNC</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>true</UseIISExpress>
+    <Use64BitIISExpress />
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Ionic.Zip, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
+      <HintPath>..\packages\Selenium.WebDriver.PhantomJS.Xplatform.2.45.0.1\lib\net40\Ionic.Zip.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.SignalR.Core, Version=2.4.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.SignalR.Core.2.4.0\lib\net45\Microsoft.AspNet.SignalR.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.SignalR.SystemWeb, Version=2.4.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.SignalR.SystemWeb.2.4.0\lib\net45\Microsoft.AspNet.SignalR.SystemWeb.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Office.Interop.Excel.15.0.4795.1000\lib\net20\Microsoft.Office.Interop.Excel.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Microsoft.Web.XmlTransform, Version=2.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Web.Xdt.2.1.1\lib\net40\Microsoft.Web.XmlTransform.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Selenium.WebDriver.PhantomJS.Xplatform.2.45.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NuGet.Core, Version=2.14.0.832, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\NuGet.Core.2.14.0\lib\net40-Client\NuGet.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Quartz, Version=3.0.7.0, Culture=neutral, PublicKeyToken=f6b8c98a402cc8a4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Quartz.3.0.7\lib\net452\Quartz.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IdentityModel.Selectors" />
+    <Reference Include="System.Runtime.Remoting" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http">
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest">
+    </Reference>
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.4\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.4\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Optimization">
+      <HintPath>..\packages\Microsoft.AspNet.Web.Optimization.1.1.3\lib\net40\System.Web.Optimization.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.4\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.4\lib\net45\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.4\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.4\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="ThoughtWorks.Selenium.Core, Version=3.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Selenium.RC.3.1.0\lib\net40\ThoughtWorks.Selenium.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="WebDriver, Version=2.45.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Selenium.WebDriver.Mono.2.45.0\lib\net40\WebDriver.dll</HintPath>
+    </Reference>
+    <Reference Include="WebDriver.Support, Version=3.141.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Selenium.Support.3.141.0\lib\net45\WebDriver.Support.dll</HintPath>
+    </Reference>
+    <Reference Include="WebGrease">
+      <Private>True</Private>
+      <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
+    </Reference>
+    <Reference Include="Antlr3.Runtime">
+      <Private>True</Private>
+      <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Core">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.2\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Owin">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Owin.2.2.2\lib\net45\Microsoft.AspNet.Identity.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.EntityFramework">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.EntityFramework.2.2.2\lib\net45\Microsoft.AspNet.Identity.EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="Owin">
+      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin">
+      <HintPath>..\packages\Microsoft.Owin.4.0.0\lib\net451\Microsoft.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Host.SystemWeb">
+      <HintPath>..\packages\Microsoft.Owin.Host.SystemWeb.4.0.0\lib\net451\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security">
+      <HintPath>..\packages\Microsoft.Owin.Security.4.0.0\lib\net451\Microsoft.Owin.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Cookies">
+      <HintPath>..\packages\Microsoft.Owin.Security.Facebook.4.0.0\lib\net451\Microsoft.Owin.Security.Facebook.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Cookies">
+      <HintPath>..\packages\Microsoft.Owin.Security.Cookies.4.0.0\lib\net451\Microsoft.Owin.Security.Cookies.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Google">
+      <HintPath>..\packages\Microsoft.Owin.Security.Google.4.0.0\lib\net451\Microsoft.Owin.Security.Google.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Twitter">
+      <HintPath>..\packages\Microsoft.Owin.Security.Twitter.4.0.0\lib\net451\Microsoft.Owin.Security.Twitter.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.MicrosoftAccount">
+      <HintPath>..\packages\Microsoft.Owin.Security.MicrosoftAccount.4.0.0\lib\net451\Microsoft.Owin.Security.MicrosoftAccount.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.OAuth">
+      <HintPath>..\packages\Microsoft.Owin.Security.OAuth.4.0.0\lib\net451\Microsoft.Owin.Security.OAuth.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Diagnostics.DiagnosticSource">
+      <HintPath>..\packages\System.Diagnostics.DiagnosticSource.4.4.1\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.TelemetryCorrelation">
+      <HintPath>..\packages\Microsoft.AspNet.TelemetryCorrelation.1.0.0\lib\net45\Microsoft.AspNet.TelemetryCorrelation.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ApplicationInsights">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.2.5.1\lib\net46\Microsoft.ApplicationInsights.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AI.Agent.Intercept">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.Agent.Intercept.2.4.0\lib\net45\Microsoft.AI.Agent.Intercept.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AI.DependencyCollector">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.DependencyCollector.2.5.1\lib\net45\Microsoft.AI.DependencyCollector.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AI.PerfCounterCollector">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.PerfCounterCollector.2.5.1\lib\net45\Microsoft.AI.PerfCounterCollector.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AI.ServerTelemetryChannel">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel.2.5.1\lib\net45\Microsoft.AI.ServerTelemetryChannel.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AI.WindowsServer">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.WindowsServer.2.5.1\lib\net45\Microsoft.AI.WindowsServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AI.Web">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.Web.2.5.1\lib\net45\Microsoft.AI.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform">
+      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\IdentityConfig.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AdresController.cs" />
+    <Compile Include="Controllers\AvtomobilsController.cs" />
+    <Compile Include="Controllers\AvtoScansController.cs" />
+    <Compile Include="Controllers\ChatMessagesController.cs" />
+    <Compile Include="Controllers\CompleteWorksController.cs" />
+    <Compile Include="Controllers\ExcelExportMonth.cs" />
+    <Compile Include="Controllers\EzdkasController.cs" />
+    <Compile Include="Controllers\GEUsController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\LogsController.cs" />
+    <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\MarkaAvtomobilsController.cs" />
+    <Compile Include="Controllers\Opredelenie.cs" />
+    <Compile Include="Controllers\PeriodichnostsController.cs" />
+    <Compile Include="Hubs\ProgressHub.cs" />
+    <Compile Include="Controllers\TypeAvtosController.cs" />
+    <Compile Include="Controllers\UslugasController.cs" />
+    <Compile Include="Controllers\VipolnennieUslugisController.cs" />
+    <Compile Include="Controllers\WorksController.cs" />
+    <Compile Include="DAL\GladiatorsContext.cs" />
+    <Compile Include="DAL\WorkContext.cs" />
+    <Compile Include="DAL\WorkInitializer.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Jobs\AvtoScanJob.cs" />
+    <Compile Include="Jobs\AvtoScanZadacha.cs" />
+    <Compile Include="Migrations\NormMigration.cs" />
+    <Compile Include="Migrations\NormMigration.Designer.cs">
+      <DependentUpon>NormMigration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\Adres.cs" />
+    <Compile Include="Models\AdresView.cs" />
+    <Compile Include="Models\Agent.cs" />
+    <Compile Include="Models\AutoScansSverka.cs" />
+    <Compile Include="Models\Avtomobil.cs" />
+    <Compile Include="Models\ChatMessage.cs" />
+    <Compile Include="Models\AutoScan.cs" />
+    <Compile Include="Models\CompleteWork.cs" />
+    <Compile Include="Models\Ezdka.cs" />
+    <Compile Include="Models\GEU.cs" />
+    <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\Log.cs" />
+    <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\MarkaAvtomobil.cs" />
+    <Compile Include="Models\MenuLogs.cs" />
+    <Compile Include="Models\OtchetModel.cs" />
+    <Compile Include="Models\OtchetViewModel.cs" />
+    <Compile Include="Models\Periodichnost.cs" />
+    <Compile Include="Models\TypeAvto.cs" />
+    <Compile Include="Models\Usluga.cs" />
+    <Compile Include="Models\Sopostavlenie.cs" />
+    <Compile Include="Models\ViewModelHouses.cs" />
+    <Compile Include="Models\VipolnennieUslugi.cs" />
+    <Compile Include="Models\Work.cs" />
+    <Compile Include="Models\Zapravka.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Startup.cs" />
+    <Compile Include="Utilites\SessionObjects.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="CodeTemplates\AssemblyVersions.xml" />
+    <Content Include="CodeTemplates\PackageVersions5.0.0.xml" />
+    <Content Include="CodeTemplates\PackageVersions5.1.0.xml" />
+    <Content Include="CodeTemplates\PackageVersions5.1.1.xml" />
+    <Content Include="CodeTemplates\PackageVersions5.1.2.xml" />
+    <Content Include="CodeTemplates\PackageVersions5.2.0.xml" />
+    <Content Include="CodeTemplates\PackageVersions5.2.2.xml" />
+    <Content Include="CodeTemplates\PackageVersions5.2.3.xml" />
+    <Content Include="CodeTemplates\PackageVersions5.2.4.xml" />
+    <Content Include="Content\bootstrap-theme.css" />
+    <Content Include="Content\bootstrap-theme.min.css" />
+    <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\chosen-sprite%402x.png" />
+    <Content Include="Content\chosen-sprite.png" />
+    <Content Include="Content\chosen.css" />
+    <Content Include="Content\chosen.min.css" />
+    <Content Include="Content\nprogress.css" />
+    <Content Include="Content\themes\base\accordion.css" />
+    <Content Include="Content\themes\base\all.css" />
+    <Content Include="Content\themes\base\autocomplete.css" />
+    <Content Include="Content\themes\base\base.css" />
+    <Content Include="Content\themes\base\button.css" />
+    <Content Include="Content\themes\base\core.css" />
+    <Content Include="Content\themes\base\datepicker.css" />
+    <Content Include="Content\themes\base\dialog.css" />
+    <Content Include="Content\themes\base\draggable.css" />
+    <Content Include="Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <Content Include="Content\themes\base\images\ui-bg_flat_75_ffffff_40x100.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_55_fbf9ee_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_65_ffffff_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_75_dadada_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_75_e6e6e6_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_95_fef1ec_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_highlight-soft_75_cccccc_1x100.png" />
+    <Content Include="Content\themes\base\images\ui-icons_222222_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_2e83ff_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_444444_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_454545_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_555555_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_777620_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_777777_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_888888_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_cc0000_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_ffffff_256x240.png" />
+    <Content Include="Content\themes\base\jquery-ui.css" />
+    <Content Include="Content\themes\base\jquery-ui.min.css" />
+    <Content Include="Content\themes\base\menu.css" />
+    <Content Include="Content\themes\base\progressbar.css" />
+    <Content Include="Content\themes\base\resizable.css" />
+    <Content Include="Content\themes\base\selectable.css" />
+    <Content Include="Content\themes\base\selectmenu.css" />
+    <Content Include="Content\themes\base\slider.css" />
+    <Content Include="Content\themes\base\sortable.css" />
+    <Content Include="Content\themes\base\spinner.css" />
+    <Content Include="Content\themes\base\tabs.css" />
+    <Content Include="Content\themes\base\theme.css" />
+    <Content Include="Content\themes\base\tooltip.css" />
+    <Content Include="Driver\chromedriver.exe" />
+    <Content Include="favicon.ico" />
+    <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Global.asax" />
+    <Content Include="Content\Site.css" />
+    <Content Include="Ico\icons8-rfid-датчик-50.png" />
+    <Content Include="Ico\icons8-solidworks-flow-simulation-50.png" />
+    <Content Include="Ico\icons8-бумага-50.png" />
+    <Content Include="Ico\icons8-газовая-промышленность-50.png" />
+    <Content Include="Ico\icons8-документы-50.png" />
+    <Content Include="Ico\icons8-золотые-слитки-50.png" />
+    <Content Include="Ico\icons8-инженерия-50.png" />
+    <Content Include="Ico\icons8-каска-50.png" />
+    <Content Include="Ico\icons8-лицензия-50 %281%29.png" />
+    <Content Include="Ico\icons8-лицензия-50.png" />
+    <Content Include="Ico\icons8-материнская-плата-50.png" />
+    <Content Include="Ico\icons8-металл-50.png" />
+    <Content Include="Ico\icons8-микроскоп-50.png" />
+    <Content Include="Ico\icons8-настройки-3-50.png" />
+    <Content Include="Ico\icons8-ошибка-50.png" />
+    <Content Include="Ico\icons8-переработка-50.png" />
+    <Content Include="Ico\icons8-погрузчик-50.png" />
+    <Content Include="Ico\icons8-поддон-50.png" />
+    <Content Include="Ico\icons8-производство-50.png" />
+    <Content Include="Ico\icons8-работа-50.png" />
+    <Content Include="Ico\icons8-рабочая-50.png" />
+    <Content Include="Ico\icons8-рабочие-50.png" />
+    <Content Include="Ico\icons8-рабочий-50.png" />
+    <Content Include="Ico\icons8-руководство-50.png" />
+    <Content Include="Ico\icons8-стеллаж-50.png" />
+    <Content Include="Ico\icons8-шестерни-50.png" />
+    <Content Include="Ico\icons8-экологичные-технологии-50.png" />
+    <Content Include="Ico\icons8-электроника-50.png" />
+    <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="ApplicationInsights.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="CodeTemplates\ApiControllerEmpty\Controller.cs.t4" />
+    <Content Include="CodeTemplates\ApiControllerEmpty\Controller.vb.t4" />
+    <Content Include="CodeTemplates\ApiControllerWithActions\Controller.cs.t4" />
+    <Content Include="CodeTemplates\ApiControllerWithActions\Controller.vb.t4" />
+    <Content Include="CodeTemplates\ApiControllerWithContext\Controller.cs.t4" />
+    <Content Include="CodeTemplates\ApiControllerWithContext\Controller.vb.t4" />
+    <Content Include="CodeTemplates\ApiDependencyCodeGenerator\Global.asax.cs.t4" />
+    <Content Include="CodeTemplates\ApiDependencyCodeGenerator\Global.asax.vb.t4" />
+    <Content Include="CodeTemplates\ApiDependencyCodeGenerator\Global.cs.t4" />
+    <Content Include="CodeTemplates\ApiDependencyCodeGenerator\Global.vb.t4" />
+    <Content Include="CodeTemplates\ApiDependencyCodeGenerator\WebApiConfig.cs.t4" />
+    <Content Include="CodeTemplates\ApiDependencyCodeGenerator\WebApiConfig.vb.t4" />
+    <Content Include="CodeTemplates\MvcArea\Area.cs.t4" />
+    <Content Include="CodeTemplates\MvcArea\Area.vb.t4" />
+    <Content Include="CodeTemplates\MvcArea\web.cs.t4" />
+    <Content Include="CodeTemplates\MvcArea\web.vb.t4" />
+    <Content Include="CodeTemplates\MvcControllerEmpty\Controller.cs.t4" />
+    <Content Include="CodeTemplates\MvcControllerEmpty\Controller.vb.t4" />
+    <Content Include="CodeTemplates\MvcControllerWithActions\Controller.cs.t4" />
+    <Content Include="CodeTemplates\MvcControllerWithActions\Controller.vb.t4" />
+    <Content Include="CodeTemplates\MvcControllerWithContext\Controller.cs.t4" />
+    <Content Include="CodeTemplates\MvcControllerWithContext\Controller.vb.t4" />
+    <Content Include="CodeTemplates\MvcFullDependencyCodeGenerator\BundleConfig.cs.t4" />
+    <Content Include="CodeTemplates\MvcFullDependencyCodeGenerator\BundleConfig.vb.t4" />
+    <Content Include="CodeTemplates\MvcFullDependencyCodeGenerator\Error.cshtml" />
+    <Content Include="CodeTemplates\MvcFullDependencyCodeGenerator\Error.vbhtml" />
+    <Content Include="CodeTemplates\MvcFullDependencyCodeGenerator\FilterConfig.cs.t4" />
+    <Content Include="CodeTemplates\MvcFullDependencyCodeGenerator\FilterConfig.vb.t4" />
+    <Content Include="CodeTemplates\MvcFullDependencyCodeGenerator\Global.asax.cs.t4" />
+    <Content Include="CodeTemplates\MvcFullDependencyCodeGenerator\Global.asax.vb.t4" />
+    <Content Include="CodeTemplates\MvcFullDependencyCodeGenerator\Global.cs.t4" />
+    <Content Include="CodeTemplates\MvcFullDependencyCodeGenerator\Global.vb.t4" />
+    <Content Include="CodeTemplates\MvcFullDependencyCodeGenerator\RouteConfig.cs.t4" />
+    <Content Include="CodeTemplates\MvcFullDependencyCodeGenerator\RouteConfig.vb.t4" />
+    <Content Include="CodeTemplates\MvcFullDependencyCodeGenerator\Site.cs.t4" />
+    <Content Include="CodeTemplates\MvcFullDependencyCodeGenerator\Site.vb.t4" />
+    <Content Include="CodeTemplates\MvcFullDependencyCodeGenerator\web.cs.t4" />
+    <Content Include="CodeTemplates\MvcFullDependencyCodeGenerator\web.vb.t4" />
+    <Content Include="CodeTemplates\MvcFullDependencyCodeGenerator\_Layout.cs.t4" />
+    <Content Include="CodeTemplates\MvcFullDependencyCodeGenerator\_Layout.vb.t4" />
+    <Content Include="CodeTemplates\MvcFullDependencyCodeGenerator\_ViewStart.cs.t4" />
+    <Content Include="CodeTemplates\MvcFullDependencyCodeGenerator\_ViewStart.vb.t4" />
+    <Content Include="CodeTemplates\MvcMinimalDependencyCodeGenerator\Global.asax.cs.t4" />
+    <Content Include="CodeTemplates\MvcMinimalDependencyCodeGenerator\Global.asax.vb.t4" />
+    <Content Include="CodeTemplates\MvcMinimalDependencyCodeGenerator\Global.cs.t4" />
+    <Content Include="CodeTemplates\MvcMinimalDependencyCodeGenerator\Global.vb.t4" />
+    <Content Include="CodeTemplates\MvcMinimalDependencyCodeGenerator\RouteConfig.cs.t4" />
+    <Content Include="CodeTemplates\MvcMinimalDependencyCodeGenerator\RouteConfig.vb.t4" />
+    <Content Include="CodeTemplates\MvcMinimalDependencyCodeGenerator\web.cs.t4" />
+    <Content Include="CodeTemplates\MvcMinimalDependencyCodeGenerator\web.vb.t4" />
+    <Content Include="CodeTemplates\MvcViewWithoutModel\Empty.cs.t4" />
+    <Content Include="CodeTemplates\MvcViewWithoutModel\Empty.vb.t4" />
+    <Content Include="CodeTemplates\MvcViewWithoutModel\Imports.include.t4" />
+    <Content Include="CodeTemplates\MvcView\Create.cs.t4" />
+    <Content Include="CodeTemplates\MvcView\Create.vb.t4" />
+    <Content Include="CodeTemplates\MvcView\Delete.cs.t4" />
+    <Content Include="CodeTemplates\MvcView\Delete.vb.t4" />
+    <Content Include="CodeTemplates\MvcView\Details.cs.t4" />
+    <Content Include="CodeTemplates\MvcView\Details.vb.t4" />
+    <Content Include="CodeTemplates\MvcView\Edit.cs.t4" />
+    <Content Include="CodeTemplates\MvcView\Edit.vb.t4" />
+    <Content Include="CodeTemplates\MvcView\Empty.cs.t4" />
+    <Content Include="CodeTemplates\MvcView\Empty.vb.t4" />
+    <Content Include="CodeTemplates\MvcView\Imports.include.t4" />
+    <Content Include="CodeTemplates\MvcView\List.cs.t4" />
+    <Content Include="CodeTemplates\MvcView\List.vb.t4" />
+    <Content Include="CodeTemplates\MvcView\ModelMetadataFunctions.cs.include.t4" />
+    <Content Include="CodeTemplates\MvcView\ModelMetadataFunctions.vb.include.t4" />
+    <Content Include="CodeTemplates\ODataControllerWithActions\Controller.cs.t4" />
+    <Content Include="CodeTemplates\ODataControllerWithActions\Controller.vb.t4" />
+    <Content Include="CodeTemplates\ODataControllerWithContext\Controller.cs.t4" />
+    <Content Include="CodeTemplates\ODataControllerWithContext\Controller.vb.t4" />
+    <Content Include="App_Readme\NProgressjs_README.md" />
+    <Content Include="App_Readme\NProgressjs_LICENSE" />
+    <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
+    <Content Include="Scripts\Export-Html-Table-To-Excel-Spreadsheet-using-jQuery-table2excel\.editorconfig" />
+    <Content Include="Scripts\Export-Html-Table-To-Excel-Spreadsheet-using-jQuery-table2excel\.gitignore" />
+    <Content Include="Scripts\Export-Html-Table-To-Excel-Spreadsheet-using-jQuery-table2excel\.gitpod.yml" />
+    <Content Include="Scripts\Export-Html-Table-To-Excel-Spreadsheet-using-jQuery-table2excel\.jshintrc" />
+    <Content Include="Scripts\Export-Html-Table-To-Excel-Spreadsheet-using-jQuery-table2excel\.travis.yml" />
+    <Content Include="Scripts\Export-Html-Table-To-Excel-Spreadsheet-using-jQuery-table2excel\bower.json" />
+    <Content Include="Scripts\Export-Html-Table-To-Excel-Spreadsheet-using-jQuery-table2excel\CHANGELOG.md" />
+    <Content Include="Scripts\Export-Html-Table-To-Excel-Spreadsheet-using-jQuery-table2excel\CONTRIBUTING.md" />
+    <Content Include="Scripts\Export-Html-Table-To-Excel-Spreadsheet-using-jQuery-table2excel\demo\download.xls" />
+    <Content Include="Scripts\Export-Html-Table-To-Excel-Spreadsheet-using-jQuery-table2excel\package.json" />
+    <Content Include="Scripts\Export-Html-Table-To-Excel-Spreadsheet-using-jQuery-table2excel\README.md" />
+    <Content Include="Scripts\Export-Html-Table-To-Excel-Spreadsheet-using-jQuery-table2excel\serve.json" />
+    <Content Include="Scripts\Export-Html-Table-To-Excel-Spreadsheet-using-jQuery-table2excel\table2excel.jquery.json" />
+    <Content Include="Scripts\Export-Html-Table-To-Excel-Spreadsheet-using-jQuery-table2excel\yarn.lock" />
+    <None Include="Scripts\jquery-3.3.1.intellisense.js" />
+    <Content Include="Scripts\chosen.jquery.js" />
+    <Content Include="Scripts\chosen.jquery.min.js" />
+    <Content Include="Scripts\Export-Html-Table-To-Excel-Spreadsheet-using-jQuery-table2excel\demo\index.html" />
+    <Content Include="Scripts\Export-Html-Table-To-Excel-Spreadsheet-using-jQuery-table2excel\dist\jquery.table2excel.js" />
+    <Content Include="Scripts\Export-Html-Table-To-Excel-Spreadsheet-using-jQuery-table2excel\dist\jquery.table2excel.min.js" />
+    <Content Include="Scripts\Export-Html-Table-To-Excel-Spreadsheet-using-jQuery-table2excel\Gruntfile.js" />
+    <Content Include="Scripts\Export-Html-Table-To-Excel-Spreadsheet-using-jQuery-table2excel\src\jquery.table2excel.js" />
+    <Content Include="Scripts\jquery-3.3.1.js" />
+    <Content Include="Scripts\jquery-3.3.1.min.js" />
+    <Content Include="Scripts\jquery-3.3.1.slim.js" />
+    <Content Include="Scripts\jquery-3.3.1.slim.min.js" />
+    <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery-ui-1.12.1.js" />
+    <Content Include="Scripts\jquery-ui-1.12.1.min.js" />
+    <Content Include="Scripts\jquery.signalR-2.4.0.js" />
+    <Content Include="Scripts\jquery.signalR-2.4.0.min.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\methods_ru.js" />
+    <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Scripts\nprogress.js" />
+    <Content Include="Scripts\nprogress.min.js" />
+    <Content Include="Scripts\tabulator-master\dist\css\bootstrap\tabulator_bootstrap.css" />
+    <Content Include="Scripts\tabulator-master\dist\css\bootstrap\tabulator_bootstrap.min.css" />
+    <Content Include="Scripts\tabulator-master\dist\css\bootstrap\tabulator_bootstrap4.css" />
+    <Content Include="Scripts\tabulator-master\dist\css\bootstrap\tabulator_bootstrap4.min.css" />
+    <Content Include="Scripts\tabulator-master\dist\css\bulma\tabulator_bulma.css" />
+    <Content Include="Scripts\tabulator-master\dist\css\bulma\tabulator_bulma.min.css" />
+    <Content Include="Scripts\tabulator-master\dist\css\semantic-ui\tabulator_semantic-ui.css" />
+    <Content Include="Scripts\tabulator-master\dist\css\semantic-ui\tabulator_semantic-ui.min.css" />
+    <Content Include="Scripts\tabulator-master\dist\css\tabulator.css" />
+    <Content Include="Scripts\tabulator-master\dist\css\tabulator.min.css" />
+    <Content Include="Scripts\tabulator-master\dist\css\tabulator_midnight.css" />
+    <Content Include="Scripts\tabulator-master\dist\css\tabulator_midnight.min.css" />
+    <Content Include="Scripts\tabulator-master\dist\css\tabulator_modern.css" />
+    <Content Include="Scripts\tabulator-master\dist\css\tabulator_modern.min.css" />
+    <Content Include="Scripts\tabulator-master\dist\css\tabulator_simple.css" />
+    <Content Include="Scripts\tabulator-master\dist\css\tabulator_simple.min.css" />
+    <Content Include="Scripts\tabulator-master\dist\css\tabulator_site.css" />
+    <Content Include="Scripts\tabulator-master\dist\css\tabulator_site.min.css" />
+    <Content Include="Scripts\tabulator-master\dist\js\jquery_wrapper.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\jquery_wrapper.min.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\accessor.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\accessor.min.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\ajax.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\ajax.min.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\calculation_colums.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\calculation_colums.min.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\clipboard.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\clipboard.min.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\data_tree.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\data_tree.min.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\download.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\download.min.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\edit.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\edit.min.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\filter.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\filter.min.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\format.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\format.min.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\frozen_columns.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\frozen_columns.min.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\frozen_rows.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\frozen_rows.min.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\group_rows.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\group_rows.min.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\history.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\history.min.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\html_table_import.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\html_table_import.min.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\keybindings.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\keybindings.min.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\moveable_columns.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\moveable_columns.min.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\moveable_rows.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\moveable_rows.min.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\mutator.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\mutator.min.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\page.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\page.min.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\persistence.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\persistence.min.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\reactive_data.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\reactive_data.min.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\resize_columns.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\resize_columns.min.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\resize_rows.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\resize_rows.min.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\resize_table.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\resize_table.min.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\responsive_layout.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\responsive_layout.min.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\select_row.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\select_row.min.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\sort.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\sort.min.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\validate.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\modules\validate.min.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\tabulator.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\tabulator.min.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\tabulator_core.js" />
+    <Content Include="Scripts\tabulator-master\dist\js\tabulator_core.min.js" />
+    <Content Include="Scripts\tabulator-master\gulpfile.js" />
+    <Content Include="Scripts\tabulator-master\src\js\cell.js" />
+    <Content Include="Scripts\tabulator-master\src\js\column.js" />
+    <Content Include="Scripts\tabulator-master\src\js\column_manager.js" />
+    <Content Include="Scripts\tabulator-master\src\js\core.js" />
+    <Content Include="Scripts\tabulator-master\src\js\core_modules.js" />
+    <Content Include="Scripts\tabulator-master\src\js\footer_manager.js" />
+    <Content Include="Scripts\tabulator-master\src\js\jquery_wrapper.js" />
+    <Content Include="Scripts\tabulator-master\src\js\modules\accessor.js" />
+    <Content Include="Scripts\tabulator-master\src\js\modules\ajax.js" />
+    <Content Include="Scripts\tabulator-master\src\js\modules\calculation_colums.js" />
+    <Content Include="Scripts\tabulator-master\src\js\modules\clipboard.js" />
+    <Content Include="Scripts\tabulator-master\src\js\modules\comms.js" />
+    <Content Include="Scripts\tabulator-master\src\js\modules\data_tree.js" />
+    <Content Include="Scripts\tabulator-master\src\js\modules\download.js" />
+    <Content Include="Scripts\tabulator-master\src\js\modules\edit.js" />
+    <Content Include="Scripts\tabulator-master\src\js\modules\filter.js" />
+    <Content Include="Scripts\tabulator-master\src\js\modules\format.js" />
+    <Content Include="Scripts\tabulator-master\src\js\modules\frozen_columns.js" />
+    <Content Include="Scripts\tabulator-master\src\js\modules\frozen_rows.js" />
+    <Content Include="Scripts\tabulator-master\src\js\modules\group_rows.js" />
+    <Content Include="Scripts\tabulator-master\src\js\modules\history.js" />
+    <Content Include="Scripts\tabulator-master\src\js\modules\html_table_import.js" />
+    <Content Include="Scripts\tabulator-master\src\js\modules\keybindings.js" />
+    <Content Include="Scripts\tabulator-master\src\js\modules\layout.js" />
+    <Content Include="Scripts\tabulator-master\src\js\modules\localize.js" />
+    <Content Include="Scripts\tabulator-master\src\js\modules\moveable_columns.js" />
+    <Content Include="Scripts\tabulator-master\src\js\modules\moveable_rows.js" />
+    <Content Include="Scripts\tabulator-master\src\js\modules\mutator.js" />
+    <Content Include="Scripts\tabulator-master\src\js\modules\page.js" />
+    <Content Include="Scripts\tabulator-master\src\js\modules\persistence.js" />
+    <Content Include="Scripts\tabulator-master\src\js\modules\reactive_data.js" />
+    <Content Include="Scripts\tabulator-master\src\js\modules\resize_columns.js" />
+    <Content Include="Scripts\tabulator-master\src\js\modules\resize_rows.js" />
+    <Content Include="Scripts\tabulator-master\src\js\modules\resize_table.js" />
+    <Content Include="Scripts\tabulator-master\src\js\modules\responsive_layout.js" />
+    <Content Include="Scripts\tabulator-master\src\js\modules\select_row.js" />
+    <Content Include="Scripts\tabulator-master\src\js\modules\sort.js" />
+    <Content Include="Scripts\tabulator-master\src\js\modules\validate.js" />
+    <Content Include="Scripts\tabulator-master\src\js\modules_enabled.js" />
+    <Content Include="Scripts\tabulator-master\src\js\polyfills.js" />
+    <Content Include="Scripts\tabulator-master\src\js\row.js" />
+    <Content Include="Scripts\tabulator-master\src\js\row_manager.js" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Views\Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Home\About.cshtml" />
+    <Content Include="Views\Home\Contact.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Account\_ExternalLoginsListPartial.cshtml" />
+    <Content Include="Views\Account\ConfirmEmail.cshtml" />
+    <Content Include="Views\Account\ExternalLoginConfirmation.cshtml" />
+    <Content Include="Views\Account\ExternalLoginFailure.cshtml" />
+    <Content Include="Views\Account\ForgotPassword.cshtml" />
+    <Content Include="Views\Account\ForgotPasswordConfirmation.cshtml" />
+    <Content Include="Views\Account\Login.cshtml" />
+    <Content Include="Views\Account\Register.cshtml" />
+    <Content Include="Views\Account\ResetPassword.cshtml" />
+    <Content Include="Views\Account\ResetPasswordConfirmation.cshtml" />
+    <Content Include="Views\Account\SendCode.cshtml" />
+    <Content Include="Views\Account\VerifyCode.cshtml" />
+    <Content Include="Views\Manage\AddPhoneNumber.cshtml" />
+    <Content Include="Views\Manage\ChangePassword.cshtml" />
+    <Content Include="Views\Manage\Index.cshtml" />
+    <Content Include="Views\Manage\ManageLogins.cshtml" />
+    <Content Include="Views\Manage\SetPassword.cshtml" />
+    <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
+    <Content Include="Views\Shared\Lockout.cshtml" />
+    <Content Include="Views\Shared\_LoginPartial.cshtml" />
+    <Content Include="Views\Works\Create.cshtml" />
+    <Content Include="Views\Works\Delete.cshtml" />
+    <Content Include="Views\Works\Details.cshtml" />
+    <Content Include="Views\Works\Edit.cshtml" />
+    <Content Include="Views\Works\Index.cshtml" />
+    <Content Include="Views\CompleteWorks\Create.cshtml" />
+    <Content Include="Views\CompleteWorks\Delete.cshtml" />
+    <Content Include="Views\CompleteWorks\Details.cshtml" />
+    <Content Include="Views\CompleteWorks\Edit.cshtml" />
+    <Content Include="Views\CompleteWorks\Index.cshtml" />
+    <Content Include="Views\CompleteWorks\CreateFirst.cshtml" />
+    <Content Include="Views\Manage\EditUserName.cshtml" />
+    <Content Include="Views\Adres\Create.cshtml" />
+    <Content Include="Views\Adres\Delete.cshtml" />
+    <Content Include="Views\Adres\Details.cshtml" />
+    <Content Include="Views\Adres\Edit.cshtml" />
+    <Content Include="Views\Adres\Index.cshtml" />
+    <Content Include="Views\CompleteWorks\AdresView.cshtml" />
+    <Content Include="Views\Manage\RolesAndUsers.cshtml" />
+    <Content Include="Views\CompleteWorks\OtchetMonth.cshtml" />
+    <Content Include="Views\CompleteWorks\PoiskIzmereniya.cshtml" />
+    <Content Include="Views\CompleteWorks\Error.cshtml" />
+    <Content Include="Views\Home\Upload.cshtml" />
+    <Content Include="Views\Home\Warning.cshtml" />
+    <Content Include="Views\Home\UploadComplete.cshtml" />
+    <Content Include="Views\Uslugas\Create.cshtml" />
+    <Content Include="Views\Uslugas\Delete.cshtml" />
+    <Content Include="Views\Uslugas\Details.cshtml" />
+    <Content Include="Views\Uslugas\Edit.cshtml" />
+    <Content Include="Views\Uslugas\Index.cshtml" />
+    <Content Include="Views\Periodichnosts\Create.cshtml" />
+    <Content Include="Views\Periodichnosts\Delete.cshtml" />
+    <Content Include="Views\Periodichnosts\Edit.cshtml" />
+    <Content Include="Views\Periodichnosts\Index.cshtml" />
+    <Content Include="Views\VipolnennieUslugis\Create.cshtml" />
+    <Content Include="Views\VipolnennieUslugis\Delete.cshtml" />
+    <Content Include="Views\VipolnennieUslugis\Details.cshtml" />
+    <Content Include="Views\VipolnennieUslugis\Edit.cshtml" />
+    <Content Include="Views\VipolnennieUslugis\Index.cshtml" />
+    <Content Include="Views\Home\UploadEnd.cshtml" />
+    <Content Include="Views\GEUs\Create.cshtml" />
+    <Content Include="Views\GEUs\Delete.cshtml" />
+    <Content Include="Views\GEUs\Details.cshtml" />
+    <Content Include="Views\GEUs\Edit.cshtml" />
+    <Content Include="Views\GEUs\Index.cshtml" />
+    <Content Include="Views\VipolnennieUslugis\OtchetMonth.cshtml" />
+    <Content Include="Views\VipolnennieUslugis\IndexPoDomam.cshtml" />
+    <Content Include="Views\VipolnennieUslugis\IndexPoDomamPartial.cshtml" />
+    <Content Include="Views\VipolnennieUslugis\IndexPoDomamPartial0.cshtml" />
+    <Content Include="Views\Shared\_Layout0.cshtml" />
+    <Content Include="Views\CompleteWorks\PartialViewMenu.cshtml" />
+    <Content Include="Views\CompleteWorks\PartialViewSpisok.cshtml" />
+    <Content Include="Views\CompleteWorks\SozdanieAktov.cshtml" />
+    <Content Include="Views\CompleteWorks\AddNewCompleteWork.cshtml" />
+    <Content Include="Views\CompleteWorks\NewCompleteWork.cshtml" />
+    <Content Include="Views\CompleteWorks\IndexMenu.cshtml" />
+    <Content Include="Views\CompleteWorks\IndexSpisok.cshtml" />
+    <Content Include="Views\CompleteWorks\IndexMain.cshtml" />
+    <Content Include="Views\ChatMessages\Create.cshtml" />
+    <Content Include="Views\ChatMessages\Delete.cshtml" />
+    <Content Include="Views\ChatMessages\Details.cshtml" />
+    <Content Include="Views\ChatMessages\Edit.cshtml" />
+    <Content Include="Views\ChatMessages\Index.cshtml" />
+    <Content Include="Views\AvtoScans\Index.cshtml" />
+    <Content Include="Views\TypeAvtos\Create.cshtml" />
+    <Content Include="Views\TypeAvtos\Delete.cshtml" />
+    <Content Include="Views\TypeAvtos\Details.cshtml" />
+    <Content Include="Views\TypeAvtos\Edit.cshtml" />
+    <Content Include="Views\TypeAvtos\Index.cshtml" />
+    <Content Include="Views\MarkaAvtomobils\Create.cshtml" />
+    <Content Include="Views\MarkaAvtomobils\Delete.cshtml" />
+    <Content Include="Views\MarkaAvtomobils\Details.cshtml" />
+    <Content Include="Views\MarkaAvtomobils\Edit.cshtml" />
+    <Content Include="Views\MarkaAvtomobils\Index.cshtml" />
+    <Content Include="Views\Logs\Create.cshtml" />
+    <Content Include="Views\Logs\Delete.cshtml" />
+    <Content Include="Views\Logs\Details.cshtml" />
+    <Content Include="Views\Logs\Edit.cshtml" />
+    <Content Include="Views\Logs\Index.cshtml" />
+    <Content Include="Views\Avtomobils\Create.cshtml" />
+    <Content Include="Views\Avtomobils\Delete.cshtml" />
+    <Content Include="Views\Avtomobils\Details.cshtml" />
+    <Content Include="Views\Avtomobils\Edit.cshtml" />
+    <Content Include="Views\Avtomobils\Index.cshtml" />
+    <Content Include="Views\Ezdkas\Create.cshtml" />
+    <Content Include="Views\Ezdkas\Delete.cshtml" />
+    <Content Include="Views\Ezdkas\Details.cshtml" />
+    <Content Include="Views\Ezdkas\Edit.cshtml" />
+    <Content Include="Views\Ezdkas\Index.cshtml" />
+    <Content Include="Views\Ezdkas\IndexOtchet.cshtml" />
+    <Content Include="Views\Ezdkas\IndexMenu.cshtml" />
+    <Content Include="Views\Ezdkas\IndexMain.cshtml" />
+    <Content Include="Scripts\tabulator-master\.github\ISSUE_TEMPLATE\bug_report.md" />
+    <Content Include="Scripts\tabulator-master\.github\ISSUE_TEMPLATE\feature_request.md" />
+    <Content Include="Scripts\tabulator-master\.github\ISSUE_TEMPLATE\question.md" />
+    <Content Include="Scripts\tabulator-master\.gitignore" />
+    <Content Include="Scripts\tabulator-master\bower.json" />
+    <Content Include="Scripts\tabulator-master\CODE_OF_CONDUCT.md" />
+    <Content Include="Scripts\tabulator-master\dist\css\bootstrap\tabulator_bootstrap.min.css.map" />
+    <Content Include="Scripts\tabulator-master\dist\css\bootstrap\tabulator_bootstrap4.min.css.map" />
+    <Content Include="Scripts\tabulator-master\dist\css\bulma\tabulator_bulma.min.css.map" />
+    <Content Include="Scripts\tabulator-master\dist\css\semantic-ui\tabulator_semantic-ui.min.css.map" />
+    <Content Include="Scripts\tabulator-master\dist\css\tabulator.min.css.map" />
+    <Content Include="Scripts\tabulator-master\dist\css\tabulator_midnight.min.css.map" />
+    <Content Include="Scripts\tabulator-master\dist\css\tabulator_modern.min.css.map" />
+    <Content Include="Scripts\tabulator-master\dist\css\tabulator_simple.min.css.map" />
+    <Content Include="Scripts\tabulator-master\dist\css\tabulator_site.min.css.map" />
+    <Content Include="Scripts\tabulator-master\LICENSE" />
+    <Content Include="Scripts\tabulator-master\package.json" />
+    <Content Include="Scripts\tabulator-master\README.md" />
+    <Content Include="Scripts\tabulator-master\src\scss\bootstrap\functions4.scss" />
+    <Content Include="Scripts\tabulator-master\src\scss\bootstrap\tabulator_bootstrap.scss" />
+    <Content Include="Scripts\tabulator-master\src\scss\bootstrap\tabulator_bootstrap4.scss" />
+    <Content Include="Scripts\tabulator-master\src\scss\bootstrap\variables.scss" />
+    <Content Include="Scripts\tabulator-master\src\scss\bootstrap\variables4.scss" />
+    <Content Include="Scripts\tabulator-master\src\scss\bulma\tabulator_bulma.scss" />
+    <Content Include="Scripts\tabulator-master\src\scss\bulma\variables.scss" />
+    <Content Include="Scripts\tabulator-master\src\scss\semantic-ui\tabulator_semantic-ui.scss" />
+    <Content Include="Scripts\tabulator-master\src\scss\semantic-ui\variables.scss" />
+    <Content Include="Scripts\tabulator-master\src\scss\semantic-ui\variables_table.scss" />
+    <Content Include="Scripts\tabulator-master\src\scss\tabulator.scss" />
+    <Content Include="Scripts\tabulator-master\src\scss\tabulator_midnight.scss" />
+    <Content Include="Scripts\tabulator-master\src\scss\tabulator_modern.scss" />
+    <Content Include="Scripts\tabulator-master\src\scss\tabulator_simple.scss" />
+    <Content Include="Scripts\tabulator-master\src\scss\tabulator_site.scss" />
+    <Content Include="Scripts\tabulator-master\yarn.lock" />
+    <Content Include="Views\CompleteWorks\NewCompleteWorkMass.cshtml" />
+    <Content Include="Views\Logs\MenuLogs.cshtml" />
+    <Content Include="Views\Logs\SpisokLogs.cshtml" />
+    <Content Include="Views\Avtomobils\AvtomobilsSpisok.cshtml" />
+    <Content Include="Views\Avtomobils\AvtomobilsMenu.cshtml" />
+    <Content Include="Views\Ezdkas\SverkaAvtoscan.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="Files\" />
+    <Folder Include="MyScripts\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="Content\bootstrap.min.css.map" />
+    <Content Include="Content\bootstrap.css.map" />
+    <Content Include="Content\bootstrap-theme.min.css.map" />
+    <Content Include="Content\bootstrap-theme.css.map" />
+    <None Include="packages.config" />
+    <Content Include="Scripts\jquery-3.3.1.slim.min.map" />
+    <Content Include="Scripts\jquery-3.3.1.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\NormMigration.resx">
+      <DependentUpon>NormMigration.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>57207</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:57207/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>Данный проект ссылается на пакеты NuGet, отсутствующие на этом компьютере. Используйте восстановление пакетов NuGet, чтобы скачать их.  Дополнительную информацию см. по адресу: http://go.microsoft.com/fwlink/?LinkID=322105. Отсутствует следующий файл: {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.0\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.0\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+    <Error Condition="!Exists('..\packages\Selenium.Firefox.WebDriver.0.23.0\build\Selenium.Firefox.WebDriver.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Selenium.Firefox.WebDriver.0.23.0\build\Selenium.Firefox.WebDriver.targets'))" />
+    <Error Condition="!Exists('..\packages\Selenium.Chrome.WebDriver.2.45\build\Selenium.Chrome.WebDriver.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Selenium.Chrome.WebDriver.2.45\build\Selenium.Chrome.WebDriver.targets'))" />
+    <Error Condition="!Exists('..\packages\Selenium.InternetExplorer.WebDriver.3.141.5\build\Selenium.InternetExplorer.WebDriver.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Selenium.InternetExplorer.WebDriver.3.141.5\build\Selenium.InternetExplorer.WebDriver.targets'))" />
+    <Error Condition="!Exists('..\packages\Selenium.WebDriver.Server.3.0.1.1\build\Selenium.WebDriver.Server.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Selenium.WebDriver.Server.3.0.1.1\build\Selenium.WebDriver.Server.targets'))" />
+    <Error Condition="!Exists('..\packages\selenium-server-standalone.3.9.1.1\build\selenium-server-standalone.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\selenium-server-standalone.3.9.1.1\build\selenium-server-standalone.targets'))" />
+  </Target>
+  <Import Project="..\packages\Selenium.Firefox.WebDriver.0.23.0\build\Selenium.Firefox.WebDriver.targets" Condition="Exists('..\packages\Selenium.Firefox.WebDriver.0.23.0\build\Selenium.Firefox.WebDriver.targets')" />
+  <Import Project="..\packages\Selenium.Chrome.WebDriver.2.45\build\Selenium.Chrome.WebDriver.targets" Condition="Exists('..\packages\Selenium.Chrome.WebDriver.2.45\build\Selenium.Chrome.WebDriver.targets')" />
+  <Import Project="..\packages\Selenium.InternetExplorer.WebDriver.3.141.5\build\Selenium.InternetExplorer.WebDriver.targets" Condition="Exists('..\packages\Selenium.InternetExplorer.WebDriver.3.141.5\build\Selenium.InternetExplorer.WebDriver.targets')" />
+  <Import Project="..\packages\Selenium.WebDriver.Server.3.0.1.1\build\Selenium.WebDriver.Server.targets" Condition="Exists('..\packages\Selenium.WebDriver.Server.3.0.1.1\build\Selenium.WebDriver.Server.targets')" />
+  <Import Project="..\packages\selenium-server-standalone.3.9.1.1\build\selenium-server-standalone.targets" Condition="Exists('..\packages\selenium-server-standalone.3.9.1.1\build\selenium-server-standalone.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target> -->
+</Project>

@@ -1,0 +1,149 @@
+﻿@{
+    ViewBag.Title = "IndexPoDomam";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+@model IEnumerable<GKHNNC.Models.VipolnennieUslugi>
+
+<table class="table table-striped table-bordered">
+    <tbody>
+        <tr style="height:20Px">
+            @if (ViewBag.GEU != null)
+            {
+                <td><h5><CENTER><b>ЖЭУ</b></CENTER></h5></td>
+            }
+            <td><h5><CENTER><b>ДОМ</b></CENTER></h5></td>
+            <td><h5><CENTER><b>МЕСЯЦ</b></CENTER></h5></td>
+            <td><p><CENTER><b>ГОД</b></CENTER></p></td>
+            <td><p><CENTER><b>СОЗДАНИЕ АКТА</b></CENTER></p></td>
+
+        </tr>
+
+        @using (Html.BeginForm("OtchetMonth", "VipolnennieUslugis", FormMethod.Post, new { id = "dateForm" }))
+        {
+            <tr>
+                @if (ViewBag.GEU != null)
+                {
+                    <td>
+                        @{ MultiSelectList MSL2 = new MultiSelectList("пусто");
+                            MSL2 = new MultiSelectList(ViewBag.GEU);
+                            @Html.DropDownList("GEU", MSL2, new { @class = "form-control", @style = "width: 100%" })
+                        }
+                    </td>
+                }
+                <td>
+
+                    @Html.DropDownList("Adres", new MultiSelectList(ViewBag.Adres), new { @class = "form-control", @style = "width:100 %" })
+
+                </td>
+
+
+
+                <td>
+
+                  
+                    @Html.DropDownList("Month", new SelectList(ViewBag.Month,"value","text"), new { @class = "form-control", @style = "width: 100%" })
+                </td>
+
+                <td>
+                    @{
+
+                        MultiSelectList MSL3 = new MultiSelectList(ViewBag.Year);
+                    }
+                    @Html.DropDownList("Year", MSL3, new { @class = "form-control", @style = "width: 100%" })
+                </td>
+                <td>
+
+                    <Center>
+                        <div>
+                            <input type="submit" name="b1" value="Акт за месяц по дому" class="btn btn-success btn-default" style="width:250Px" />
+                        </div>
+                    </Center>
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@section Scripts {
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+    @Scripts.Render("~/scripts/jquery-3.3.1.js")
+    @Scripts.Render("~/Scripts/chosen.jquery.min.js")
+
+
+    <script>
+        //скрипт работает обработка идет не пост запросом
+                        $('#GEU').change(function () {
+                            var _this = $(this);
+                            $('#Adres').get(0).selectedIndex = $(_this).get(0).selectedIndex;//выбрать параллельный элемент
+                            $("#Adres").empty();//обнулить селект
+                            var Y = $('#Year').val();//выбраное значение в селекте
+                            var M = $('#Month').val();//выбраное значение в селекте
+                            var GEU = $('#GEU').val();
+                            var SV = Y + ";" + M + ";" + GEU;
+                            var selectedValue = $('#GEU').val();//выбраное значение в селекте
+                            $.post('@Url.Action("PoiskPoGeu", "VipolnennieUslugis")', { selection: selectedValue }, function (data) {
+                                if (data.length > 0) {
+                                    for (i = 0; i < data.length; i++) {
+                                        $("#Adres").append('<option value=' + data[i] + '>' + data[i] + '</option>');
+
+                                    }
+                                    $("#PartPoDomam").load('@Url.Action("IndexPoDomamPartial", "VipolnennieUslugis")', { Year: SV });
+                                }
+                                else {
+                                    alert("К выбранному ЖЭУ не прикреплено ни одного дома.");
+                                }
+
+                            });
+                           //идем в комплит воркс контроллер и там действие поиск по жэу отправляем выбранное значение в селекте, получаем дату список всех домов по жэу из БД перекинутых в лист стринг
+
+                            // alert("PING!");
+
+                        });
+
+
+    </script>
+
+    <script>
+        //скрипт для обработки выбора года чтоб выводить дома по году и месяцу
+                        $('#Year').change(function () {
+                            var _this = $(this);
+
+                            var Y = $('#Year').val();//выбраное значение в селекте
+                            var M = $('#Month').val();//выбраное значение в селекте
+                            var GEU = $('#GEU').val();
+                            var SV = Y + ";" + M+";"+GEU;
+                            $("#PartPoDomam").load('@Url.Action("IndexPoDomamPartial", "VipolnennieUslugis")', { Year: SV });
+
+
+                           //идем в комплит воркс контроллер и там действие поиск по жэу отправляем выбранное значение в селекте, получаем дату список всех домов по жэу из БД перекинутых в лист стринг
+
+                            // alert("PING!");
+
+                        });
+
+
+    </script>
+    <script>
+        //скрипт для обработки выбора года чтоб выводить дома по году и месяцу
+                        $('#Month').change(function () {
+                            var _this = $(this);
+
+                            var Y = $('#Year').val();//выбраное значение в селекте
+                            var M = $('#Month').val();//выбраное значение в селекте
+                            var GEU = $('#GEU').val();
+                            var SV = Y + ";" + M + ";" + GEU;
+                            $("#PartPoDomam").load('@Url.Action("IndexPoDomamPartial", "VipolnennieUslugis")', { Year: SV });
+
+
+                           //идем в комплит воркс контроллер и там действие поиск по жэу отправляем выбранное значение в селекте, получаем дату список всех домов по жэу из БД перекинутых в лист стринг
+
+                            // alert("PING!");
+
+                        });
+
+
+    </script>
+
+
+}

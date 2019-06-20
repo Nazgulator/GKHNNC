@@ -1,0 +1,70 @@
+﻿@model IEnumerable<GKHNNC.Models.MarkaAvtomobil>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+<h2>Главная</h2>
+
+<p>
+    @Html.ActionLink("Создать", "Create", null, new {@class = "btn btn-success btn-block"})
+</p>
+<table id="T" class="table table-bordered table-striped">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SNorm)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.WNorm)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Toplivo)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.NormaEzdka)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.KmMoto)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.EzdkaPricep)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.SNorm)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.WNorm)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Toplivo)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.NormaEzdka)
+        </td>
+        <td>
+            @Html.CheckBoxFor(modelItem => item.KmMoto)
+        </td>
+        <td>
+            @Html.CheckBoxFor(modelItem => item.EzdkaPricep)
+        </td>
+        <td>
+            @Html.ActionLink("Редактировать", "Edit", new { id = item.Id }) |
+            @Html.ActionLink("Удалить", "Delete", new { id = item.Id })
+        </td>
+    </tr>
+}
+
+</table>
+<p><a href="/Home/Index" class="btn btn-success btn-block" ">В главное меню &raquo;</a> </p>

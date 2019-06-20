@@ -1,0 +1,9 @@
+﻿
+@{
+    ViewBag.Title = "OtchetMonth";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Акт за месяц сформирован. Вы можете его</h2>
+<h2><a href="@Url.Action("Download", new {GEU = ViewBag.patch, Path = ViewBag.path })" class="btn btn-success btn-block">СКАЧАТЬ</a><br /></h2>
+
