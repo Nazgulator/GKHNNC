@@ -25,6 +25,16 @@ namespace Opredelenie
 {
     class Opr
     {
+        public static List<string> MonthZabit()
+        {
+            List<string> Month = new List<string>();
+            for (int i = 1; i < 13; i++)
+            {
+                Month.Add( MonthOpred(i));
+            }
+            return Month;
+        }
+
         public static string OpredelenieBukvi(int i)
         {
             string bukva = "A";

@@ -112,7 +112,7 @@ if (pkName != null) {
 }
 
 </table>
-<p><a href="/Home/Index" class="btn btn-success btn-block" ">В главное меню &raquo;</a> </p>
+<p><a href="/Home/Index" class="btn btn-success btn-block">В главное меню &raquo;</a> </p>
 <#
 // The following code closes the tag used in the case of a view using a layout page and the body and html tags in the case of a regular view page
 #>

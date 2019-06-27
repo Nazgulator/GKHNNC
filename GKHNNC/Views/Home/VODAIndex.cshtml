@@ -1,0 +1,76 @@
+﻿
+<Center>
+    <h3>
+        Программа VODA
+    </h3>
+    <h5>
+        Проведение анализа данных по воде и отоплению.
+    </h5>
+    <h5>
+        Выберите месяц для загрузки и анализа данных.
+    </h5>
+
+
+    <div class="container">
+        <div class="row form-group">
+            @for (int i = 0; i < ViewBag.Month.Count / 2; i++)
+            {
+                string cl1 = "btn btn-secondary";
+                if (ViewBag.Go[i]<3&& ViewBag.Go[i] > 0) { cl1 = "btn btn-warning"; }
+                if (ViewBag.Go[i] == 3 ) { cl1 = "btn btn-success"; }
+                <div class="col-md-2">
+
+                    <button class="@cl1" onclick="location.href='@Url.Action("VODAMonth", "Home", new { Month = i+1 } )'">
+                        @ViewBag.Month[i]
+                    </button>
+
+                </div>
+            }
+        </div>
+        <div class="row  form-group">
+            @for (int i = ViewBag.Month.Count / 2; i < ViewBag.Month.Count ; i++)
+            {
+                string cl1 = "btn btn-secondary";
+                if (ViewBag.Go[i] < 3 && ViewBag.Go[i] > 0) { cl1 = "btn btn-warning"; }
+                if (ViewBag.Go[i] == 3) { cl1 = "btn btn-success"; }
+
+                <div class="col-md-2">
+
+                    <button class="@cl1"  onclick="location.href='@Url.Action("VODAMonth", "Home", new { Month = i+1 } )'">
+                        @ViewBag.Month[i]
+                    </button>
+
+                </div>
+            }
+        </div>
+
+
+    </div>
+    </br>
+    <p>
+        <button class="btn btn-success btn-lg" style="width:500Px" onclick="location.href='@Url.Action("Index", "SVNs")'">
+            <i class="glyphicon glyphicon-file"></i> Все СВН записи &raquo;
+        </button>
+    </p>
+    <p>
+        <button class="btn btn-success btn-lg" style="width:500Px" onclick="location.href='@Url.Action("Index", "UEVs")'">
+            <i class="glyphicon glyphicon-list-alt"></i> Все УЭВ записи &raquo;
+        </button>
+    </p>
+    <p>
+        <button class="btn btn-success btn-lg" style="width:500Px" onclick="location.href='@Url.Action("Index", "OBSDs")'">
+            <i class="glyphicon glyphicon-list-alt"></i> Все ОБСД записи &raquo;
+        </button>
+    </p>
+    <p>
+        <button class="btn btn-success btn-lg" style="width:500Px" onclick="location.href='@Url.Action("Index", "IPUs")'">
+            <i class="glyphicon glyphicon-list-alt"></i> Все ИПУ записи &raquo;
+        </button>
+    </p>
+    <p>
+        <button class="btn btn-success btn-lg" style="width:500Px" onclick="location.href='@Url.Action("Index", "OPUs")'">
+            <i class="glyphicon glyphicon-list-alt"></i> Все ОПУ записи &raquo;
+        </button>
+    </p>
+
+</Center>

@@ -32,7 +32,10 @@
 
 
 
-        </div>
+
+
+
+
         @{int c = 0; string counter = "";}
         @foreach (var item in Model)
         {
@@ -73,7 +76,7 @@
                     MultiSelectList MSL = new MultiSelectList(MSS);
                 }
 
-                @Html.DropDownList("Услуги", MSL, new { @class = "form-control col-md-4", @style = "width:100%" })
+                @Html.DropDownList("Услуги", new MultiSelectList(@ViewBag.Mass[c-1]), new { @class = "form-control col-md-4", @style = "width:100%" })
 
             </td>
             <td>

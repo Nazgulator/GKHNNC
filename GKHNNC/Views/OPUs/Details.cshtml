@@ -1,0 +1,98 @@
+﻿@model GKHNNC.Models.OPU
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Details</title>
+</head>
+<body>
+    <div>
+        <h4>OPU</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.Adres.Adress)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.Adres.Adress)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.OtopGkal)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.OtopGkal)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.GWM3)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.GWM3)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.HWM3)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.HWM3)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.OtopRub)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.OtopRub)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.GWRub)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.GWRub)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.HWRub)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.HWRub)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.Primech)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.Primech)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.Date)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.Date)
+            </dd>
+    
+        </dl>
+    </div>
+    <p>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+        @Html.ActionLink("Back to List", "Index")
+    </p>
+</body>
+</html>

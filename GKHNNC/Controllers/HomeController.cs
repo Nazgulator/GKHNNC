@@ -15,6 +15,32 @@ using System;
 using System.IO;
 using System.Collections;
 using Microsoft.AspNet.SignalR;
+using Opredelenie;
+using System.Web;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using Excel = Microsoft.Office.Interop.Excel;
+using System.Collections;
+
+using System.IO;
+
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Net;
+//using DocumentFormat.OpenXml.Packaging;
+//using DocumentFormat.OpenXml.Wordprocessing;
+//using DocumentFormat.OpenXml.Packaging;
+//using DocumentFormat.OpenXml.Spreadsheet;
+using System.Text.RegularExpressions;
+using System.Threading;
+using GKHNNC.Models;
+using Microsoft.AspNet.Identity;
+using System.Web.Helpers;
+using Opredelenie;
+using System.Diagnostics;
 
 
 
@@ -26,6 +52,199 @@ namespace GKHNNC.Controllers
         public ActionResult Index()
         {
             return View();
+        }
+        /*
+        public ActionResult ProverkaVodaMonth(int Month)
+        {
+            return View();
+        }
+        */
+
+
+        public ActionResult VodaMonth(int Month)
+        {
+            
+           int Year = DateTime.Now.Year;
+            List<Adres> dbAdresa = db.Adres.ToList();//список всех адресов
+            //Сервис айди 1 = отопление, 2 = ГВ, 3 = ГВ на общее имущество берем только гв и гв на общее и смотрим складывать ли их
+            List<SVN> dbSVNs = db.SVNs.Where(a => a.Date.Year == DateTime.Now.Year && a.Date.Month == Month&&(a.ServiceId == 2||a.ServiceId==3)).Include(b=>b.Service).ToList();
+            List<UEV> dbUEV = db.UEVs.Where(c => c.Date.Year == Year && c.Date.Month == Month).ToList();
+            List<OPU> dbOPU = db.OPUs.Where(c => c.Date.Year == Year && c.Date.Month == Month).ToList();
+            ViewBag.SVN = false;
+            if (dbSVNs.Count > 0)
+            {
+                ViewBag.SVN = true;
+            }
+            ViewBag.UEV = false;
+            if (dbUEV.Count > 0)
+            {
+                ViewBag.UEV = true;
+            }
+            ViewBag.OPU = false;
+            if (dbOPU.Count > 0)
+            {
+                ViewBag.OPU = true;
+            }
+            List<ViewVoda> Result = new List<ViewVoda>();//пишем сюда результат
+            List<ViewVoda> RedResult = new List<ViewVoda>();//пишем сюда результат
+            List<ViewVoda> NullResult = new List<ViewVoda>();//пишем сюда результат
+
+            //для каждого адреса ищем данные уэв и сумму данных SVN
+            bool skladivat = false;
+            List<TableService> TS = db.TableServices.Where(g => g.Id == 2 || g.Id == 3).ToList();//проверка складывать ли если числа в поле сумм равны то складываем
+            if (TS[0].Summ == TS[1].Summ) { skladivat = true; }
+            foreach(Adres A in dbAdresa)
+            {
+                ViewVoda V = new ViewVoda();
+                decimal Plan = 0;
+                decimal Fact = 0;
+                SVN GVSVN = new SVN();
+                SVN GVOSVN = new SVN();
+                try
+                {
+                    GVSVN = dbSVNs.Where(d => d.AdresId == A.Id && d.ServiceId == 2).Single();//горячая вода
+                }
+                catch { }
+                try
+                {
+                     GVOSVN = dbSVNs.Where(d => d.AdresId == A.Id && d.ServiceId == 3).Single();//горячая вода на общее имущество
+                }
+                catch { }
+                    if (skladivat)//Если суммы равны то значит складываем ГВ общее и ГВ 
+                {
+                    Plan = GVSVN.Plan + GVOSVN.Plan;//Складываем плановые показатели 
+                    Fact = GVSVN.Fact + GVOSVN.Fact;//Складываем фактические показатели
+
+                }
+                else
+                {
+                    Plan = GVSVN.Plan;//если не складывать то берем данные только из свн
+                    Fact = GVSVN.Fact;
+                }
+                //Выставленные показания в рублях
+                decimal GVUEV = 0;
+                try
+                {
+                   GVUEV =  dbUEV.Where(e => e.AdresId == A.Id).Sum(f => f.HwVodaRub + f.HwEnergyRub);//ищем выставленную сумму в рублях по горячей воде в данном доме УЭВ
+
+                }
+                catch
+                {   }
+                //ищем прибор учета и если он есть то выводим галку
+                bool pu = false;
+                try
+                {
+                    int Pribor = dbUEV.Where(e => e.AdresId == A.Id).Select(f => f.Pribor).Single();
+                    if (Pribor > 0) { pu = true; }
+                }
+                catch { }
+                decimal GVUEVM3 = 0;
+                try
+                {
+                    GVUEVM3 = dbUEV.Where(e => e.AdresId == A.Id).Sum(f => f.HwVodaM3);//ищем выставленную сумму в рублях по горячей воде в данном доме УЭВ
+                }
+                catch { }
+
+                decimal RaznPlan = GVUEV - Plan;//Разница с планом
+                decimal RaznFact = GVUEV - Fact;//Разница с фактом
+
+                //ищем в базе все опушки
+                string Primech = "";
+                decimal VFact = 0;
+                try
+                {
+                    VFact = dbOPU.Where(h => h.AdresId == A.Id).Select(k => k.GWM3).Single();
+                    Primech = dbOPU.Where(h => h.AdresId == A.Id).Select(k => k.Primech).Single();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+
+
+                //сохраняем данные для вывода
+                V.Primech = Primech;
+                V.VFact = VFact;
+                V.Fact = Fact;
+                V.Plan = Plan;
+                V.RaznFact = RaznFact;
+                V.RaznPlan = RaznPlan;
+                V.Uev = GVUEV;
+                V.Adres = A.Adress;
+                V.PU = pu;//прибор учета галкой
+                V.GVUEVM3 = GVUEVM3;
+                if (Plan + Fact + GVUEV == 0)
+                {
+                    NullResult.Add(V);
+                }
+                else
+                {
+                    if (GVUEV > VFact && pu)
+                    {
+                        RedResult.Add(V);
+                    }
+                    Result.Add(V);
+                }
+
+            }
+
+
+            /*
+            Excel.Application ApExcel = new Excel.Application();
+            Excel.Workbooks WB = null;
+            WB = ApExcel.Workbooks;
+            Excel.Workbook WbExcel = ApExcel.Workbooks.Add(System.Reflection.Missing.Value);
+            Excel.Worksheet WS = WbExcel.Sheets[1];
+            Excel.Range range;//рэндж
+            ApExcel.Visible = false;//невидимо
+            ApExcel.ScreenUpdating = false;//и не обновляемо
+
+
+
+            // Сохранение файла Excel.
+
+            WbExcel.SaveCopyAs("C:\\inetpub\\Otchets\\" + "OtchetMonth" + GEU + ".xlsx");//сохраняем в папку
+
+            ApExcel.Visible = true;//невидимо
+            ApExcel.ScreenUpdating = true;//и не обновляемо
+                                          // Закрытие книги.
+            WbExcel.Close(false, "", Type.Missing);
+            // Закрытие приложения Excel.
+
+            ApExcel.Quit();
+
+            Marshal.FinalReleaseComObject(WbExcel);
+            Marshal.FinalReleaseComObject(WB);
+            Marshal.FinalReleaseComObject(ApExcel);
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            */
+            List<ViewVoda> MainResult = new List<ViewVoda>(RedResult);//пишем сюда результат
+            MainResult.AddRange(Result);
+            MainResult.AddRange(NullResult);
+            ViewBag.Year = Year;
+            ViewBag.Month = Opr.MonthOpred(Month);
+            return View(MainResult);
+        }
+
+        public ActionResult VODAIndex()
+        {
+            
+            ViewBag.Month = Opr.MonthZabit();
+            int[] Go =new int[12];
+            for (int i=1;i<13;i++)
+            {
+                
+                int x =db.SVNs.Where(a => a.Date.Year == DateTime.Now.Year && a.Date.Month == i).Count();
+                if (x > 0) { Go[i - 1]++; }
+                int y = db.UEVs.Where(a => a.Date.Year == DateTime.Now.Year && a.Date.Month == i).Count();
+                if (y > 0) { Go[i - 1]++; }
+                int z = db.OPUs.Where(a => a.Date.Year == DateTime.Now.Year && a.Date.Month == i).Count();
+                if (z > 0) { Go[i - 1]++; }
+            }
+            ViewBag.Go = Go;
+            return View();
+
         }
 
         public ActionResult About()
@@ -183,6 +402,7 @@ namespace GKHNNC.Controllers
                     ViewBag.HTF = HTF;
                     ViewBag.HId = HId;
                     ViewBag.UTF = UTF;
+                    
                     ViewBag.UId = houses[0].UId; 
                     ViewBag.Data = Date;//отправляем дату с загруженного файла
                     ViewBag.Houses = houses;

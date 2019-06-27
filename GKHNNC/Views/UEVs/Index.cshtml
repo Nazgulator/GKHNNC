@@ -1,0 +1,48 @@
+﻿
+
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Файлы УЭВ по месяцам</title>
+</head>
+<body>
+    <h3>Файлы УЭВ по месяцам</h3>
+    <h5>В раскрывающихся списках показаны адреса, по которым были найдены соответствующие данные в файле.</h5>
+
+
+    <table id="T" class="table table-bordered table-striped">
+        <tr>
+            <th>
+                Дата
+            </th>
+            <th>
+                ОТОПЛЕНИЕ
+            </th>
+
+
+        </tr>
+        @for (int i = 0; i < ViewBag.Head.Count; i++)
+        {
+            <tr>
+                <th>
+                    @ViewBag.Head[i]
+                </th>
+              
+                    <td>
+                        @Html.DropDownList("Сервисы", new SelectList(@ViewBag.UEVKI[i]), new { @class = "form-control col-md-4", @style = "width:100%" })
+                    </td>
+              
+            </tr>
+        }
+
+
+
+    </table>
+    <p><a href="/Home/Index" class="btn btn-success btn-block">В главное меню &raquo;</a> </p>
+    <p><a href="/UEVs/Upload" class="btn btn-success btn-block">Загрузить новый файл УЭВ  &raquo;</a> </p>
+</body>
+</html>

@@ -1,0 +1,71 @@
+﻿@model IEnumerable<GKHNNC.Models.SVN>
+
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+<body>
+    <p>
+        @Html.ActionLink("Создать", "Create", null, new { @class = "btn btn-success btn-block" })
+    </p>
+    <table id="T" class="table table-bordered table-striped">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Adres.Adress)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Service.Type)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Agent)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Fact)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Plan)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Maket)
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Adres.Adress)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Service.Type)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Agent)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Fact)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Plan)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Maket)
+                </td>
+                <td>
+                    @Html.ActionLink("Редактировать", "Edit", new { id = item.Id }) |
+                    @Html.ActionLink("Удалить", "Delete", new { id = item.Id })
+                </td>
+            </tr>
+        }
+
+    </table>
+    <p><a href="/Home/Index" class="btn btn-success btn-block">В главное меню &raquo;</a> </p>
+    <p><a href="/SVNs/Upload" class="btn btn-success btn-block">Загрузить новый файл СВН  &raquo;</a> </p>
+</body>
+</html>

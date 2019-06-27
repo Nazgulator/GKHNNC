@@ -18,6 +18,13 @@ namespace GKHNNC
 
             public string msg = "";
             public int count = 0;
+        public static void Warning(string msg)
+        {
+            var message = msg;
+            IHubContext hub = GlobalHost.ConnectionManager.GetHubContext<ProgressHub>();
+            hub.Clients.All.sendMessage(string.Format(message));
+            hub.Clients.All.messageRecived(message);
+        }
 
             public static void SendMessage(string msg, int count)
             {

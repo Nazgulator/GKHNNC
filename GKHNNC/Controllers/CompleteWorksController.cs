@@ -661,8 +661,8 @@ namespace GKHNNC.Controllers
             }
             int M = Convert.ToInt16(Month);
             int Y = Convert.ToInt16(Year);
-            
 
+            Adres ADRdb = db.Adres.Where(f => f.Adress.Replace(" ", "").Equals(Adres)).Single();
             List<CompleteWork> CWdb = db.CompleteWorks.Where(a => a.WorkAdress.Replace(" ", "").Equals(Adres) && a.WorkDate.Year == Y && a.WorkDate.Month == M).ToList();
             List<VipolnennieUslugi> VUdb = db.VipolnennieUslugis.Include(a => a.Adres).Include(b => b.Usluga).Include(v=>v.Usluga.Periodichnost).Where(c => c.Adres.Adress.Replace(" ", "").Equals(Adres) && c.Date.Year == Y && c.Date.Month == M).ToList();
             GEU geudb = db.GEUs.Where(a => a.Name.Contains(GEU)).First();
@@ -679,18 +679,14 @@ namespace GKHNNC.Controllers
             string filename = "ASP" + Adres.Replace(" ", "").Replace("/", " к.") + "_" + Year.Remove(0, 2) + "_" + Month + ".xlsx";
             //формируем удобочитаемый адрес 
             string AA = "";
-            string ADR = AdresAll;
-            int ind = 0;
-            if (ADR.Contains("  "))
-            {
-                string AAA = ADR.Replace("  ", "!");
-                ind = AAA.IndexOf('!');
-                ADR = ADR.Remove(ind);//убрали пустой хвост
-            }
+            //string ADR = ADRdb.Ulica;
+            //int ind = 0;
            
-            ADR = ADR.Replace(" ", "-");
+           
+            //ADR = ADR.Replace("  ", "").Replace(" ", "-");
+            
 
-            ExcelExportDomVipolnennieUslugi.SFORMIROVATAKT(CWdb, VUdb, Month, VUdb[0].Adres.GEU, Year, ADR, geudb.Director, geudb.Doverennost, path, summa.ToString());
+            ExcelExportDomVipolnennieUslugi.SFORMIROVATAKT(CWdb, VUdb, Month, VUdb[0].Adres.GEU, Year, ADRdb.Ulica, ADRdb.Dom, geudb.Director, geudb.Doverennost, path, summa.ToString());
 
 
             string path2 = Url.Content("~/Content/ASP" +Adres.Replace(" ","").Replace("/", " к.") + "_"+ Year.Remove(0, 2) + "_" + Month + ".xlsx");

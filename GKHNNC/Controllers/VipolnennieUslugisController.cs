@@ -109,6 +109,18 @@ namespace GKHNNC.Controllers
             string adr = "";
             int nu = 0;
             string nustring = "";
+
+            List<List<string>> Mass = new List<List<string>>();
+            List<Adres> MasAdr = vipolnennieUslugis.Select(r => r.Adres).Distinct().ToList();
+            foreach(Adres A in MasAdr)
+            {
+                List<string> s = vipolnennieUslugis.Where(u=>u.Adres.Adress==A.Adress).Select(t => t.Usluga.Name).ToList();
+                int col = vipolnennieUslugis.Where(u => u.Adres.Adress == A.Adress).Count();
+                s.Insert(0, col.ToString());
+                Mass.Add(s);
+            }
+            ViewBag.Mass = Mass;    
+
             foreach (VipolnennieUslugi v in vipolnennieUslugis)
             {
                 if (v.Adres.Adress.Equals(adr) == false)
@@ -154,6 +166,7 @@ namespace GKHNNC.Controllers
             NUString.Add(nustring);
             ViewBag.NUString = NUString;//названия услуг через ;
             ViewBag.NumUslug = NU;//количество услуг
+            
             return View(vu.ToList());
         }
 
@@ -239,18 +252,17 @@ namespace GKHNNC.Controllers
         }
         public List<string> AdresaForGeu(string geu)
         {
-            List<string> Ad = new List<string>();
+            List<string> Ad = db.Adres.Where(x=>x.GEU.Equals(geu)).Select(y=>y.Adress).ToList();
 
-            foreach (Adres A in db.Adres)
+           /* foreach (Adres A in db.Adres)
             {
                 if (A.GEU != null && A.GEU.Equals(geu))
                 {
                     string AA = "";
                     string ADR = A.Adress;
                     int ind = 0;
-                    string a = ADR.Replace("  ", "!");
-                    ind = a.IndexOf('!');
-                    ADR =ADR.Remove(ind);//убрали пустой хвост
+
+                  //убрали пустой хвост
                     ADR = ADR.Replace(" ", "-");
                   /*  if (ADR.Contains("БОРОВАЯ ПАРТИЯ") || ADR.Contains("МУСЫ ДЖАЛИЛЯ") || ADR.Contains("ГЕРОЕВ ТРУДА") || ADR.Contains("АКАДЕМИКА ТРОФИМУКА") || ADR.Contains("ЗЕЛЕНАЯ ГОРКА"))
                     {
@@ -268,11 +280,11 @@ namespace GKHNNC.Controllers
                     ADR.Remove(ind2);
                     ADR = ADR.Remove(ind) + "," + ADR.Remove(0, ind + 1);
                     AA = ADR;
-                    */
+                    
                     
                     Ad.Add(ADR);
                 }
-            }
+            }*/
 
             
            return (Ad);

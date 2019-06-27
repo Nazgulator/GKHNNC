@@ -17,14 +17,21 @@
             <h2>Добавить адрес</h2>
             <hr />
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-            
+
             <div class="form-group">
-                @Html.LabelFor(model => model.Adress, htmlAttributes: new { @class = "control-label col-md-1 col-md-push-3" })
+                @Html.LabelFor(model => model.Ulica, htmlAttributes: new { @class = "control-label col-md-1 col-md-push-3" })
                 <div class="col-md-5 col-md-push-3">
-                    @Html.EditorFor(model => model.Adress, new { htmlAttributes = new { @class = "form-control" }, @placeholder = "Вводите наименование в верхнем регистре (большими буквами)" })
-                    @Html.ValidationMessageFor(model => model.Adress, "", new { @class = "text-danger" })
+                    @Html.EditorFor(model => model.Ulica, new { htmlAttributes = new { @class = "form-control" }, @placeholder = "Вводите наименование в верхнем регистре (большими буквами)" })
+                    @Html.ValidationMessageFor(model => model.Ulica, "", new { @class = "text-danger" })
                 </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.Dom, htmlAttributes: new { @class = "control-label col-md-1 col-md-push-3" })
+                <div class="col-md-5 col-md-push-3">
+                    @Html.EditorFor(model => model.Dom, new { htmlAttributes = new { @class = "form-control" }, @placeholder = "Вводите наименование в верхнем регистре (большими буквами)" })
+                    @Html.ValidationMessageFor(model => model.Dom, "", new { @class = "text-danger" })
                 </div>
+            </div>
             <div class="form-group">
                 @Html.LabelFor(model => model.GEU, htmlAttributes: new { @class = "control-label col-md-1 col-md-push-3" })
                 <div class="col-md-5 col-md-push-3">
@@ -35,22 +42,36 @@
 
                     @Html.DropDownListFor(model => model.GEU, MSL, new { @class = "form-control" })
                     @Html.ValidationMessageFor(model => model.GEU, "", new { @class = "text-danger" })
-                    </div>
                 </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.UEV, htmlAttributes: new { @class = "control-label col-md-1 col-md-push-3" })
+                <div class="col-md-5 col-md-push-3">
+                    @Html.EditorFor(model => model.UEV, new { htmlAttributes = new { @class = "form-control" }, @placeholder = "Вводите код УЭВ только цифры" })
+                    @Html.ValidationMessageFor(model => model.UEV, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.OBSD, htmlAttributes: new { @class = "control-label col-md-1 col-md-push-3" })
+                <div class="col-md-5 col-md-push-3">
+                    @Html.EditorFor(model => model.OBSD, new { htmlAttributes = new { @class = "form-control" }, @placeholder = "Вводите код УЭВ только цифры" })
+                    @Html.ValidationMessageFor(model => model.OBSD, "", new { @class = "text-danger" })
+                </div>
+            </div>
 
             <div class="form-group">
                 <div class="col-md-6 col-md-push-3">
                     <div class="mx-2">
                         @Html.ActionLink("Назад", "Index", null, new { @class = "btn btn-success col-md-6 mx-2" })
                     </div>
-                        <input type="submit" value="Добавить адрес" class="btn btn-success col-md-6 mx-2 " />
-                   
-                    </div>
+                    <input type="submit" value="Добавить адрес" class="btn btn-success col-md-6 mx-2 " />
+
                 </div>
             </div>
+        </div>
 
-        
-    </center>
+
+</center>
 }
 
 

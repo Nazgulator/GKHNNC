@@ -76,6 +76,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.IdentityModel.Selectors" />
     <Reference Include="System.Runtime.Remoting" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
@@ -228,8 +229,15 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="AutoScans.cs">
+      <DependentUpon>WorkCenterContext.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Avtomobils.cs">
+      <DependentUpon>WorkCenterContext.tt</DependentUpon>
+    </Compile>
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdresController.cs" />
+    <Compile Include="Controllers\ArendatorsController.cs" />
     <Compile Include="Controllers\AvtomobilsController.cs" />
     <Compile Include="Controllers\AvtoScansController.cs" />
     <Compile Include="Controllers\ChatMessagesController.cs" />
@@ -238,17 +246,25 @@
     <Compile Include="Controllers\EzdkasController.cs" />
     <Compile Include="Controllers\GEUsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\IPUsController.cs" />
     <Compile Include="Controllers\LogsController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\MarkaAvtomobilsController.cs" />
+    <Compile Include="Controllers\OBSDsController.cs" />
     <Compile Include="Controllers\Opredelenie.cs" />
+    <Compile Include="Controllers\OPUsController.cs" />
     <Compile Include="Controllers\PeriodichnostsController.cs" />
+    <Compile Include="Controllers\SVNsController.cs" />
+    <Compile Include="Controllers\TableServicesController.cs" />
+    <Compile Include="Controllers\UEVsController.cs" />
+    <Compile Include="Ezdkas.cs">
+      <DependentUpon>WorkCenterContext.tt</DependentUpon>
+    </Compile>
     <Compile Include="Hubs\ProgressHub.cs" />
     <Compile Include="Controllers\TypeAvtosController.cs" />
     <Compile Include="Controllers\UslugasController.cs" />
     <Compile Include="Controllers\VipolnennieUslugisController.cs" />
     <Compile Include="Controllers\WorksController.cs" />
-    <Compile Include="DAL\GladiatorsContext.cs" />
     <Compile Include="DAL\WorkContext.cs" />
     <Compile Include="DAL\WorkInitializer.cs" />
     <Compile Include="Global.asax.cs">
@@ -256,6 +272,9 @@
     </Compile>
     <Compile Include="Jobs\AvtoScanJob.cs" />
     <Compile Include="Jobs\AvtoScanZadacha.cs" />
+    <Compile Include="MarkaAvtomobils.cs">
+      <DependentUpon>WorkCenterContext.tt</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\NormMigration.cs" />
     <Compile Include="Migrations\NormMigration.Designer.cs">
       <DependentUpon>NormMigration.cs</DependentUpon>
@@ -265,10 +284,17 @@
     <Compile Include="Models\Adres.cs" />
     <Compile Include="Models\AdresView.cs" />
     <Compile Include="Models\Agent.cs" />
+    <Compile Include="Models\Arendator.cs" />
     <Compile Include="Models\AutoScansSverka.cs" />
     <Compile Include="Models\Avtomobil.cs" />
     <Compile Include="Models\ChatMessage.cs" />
     <Compile Include="Models\AutoScan.cs" />
+    <Compile Include="Models\OPU.cs" />
+    <Compile Include="Models\IPU.cs" />
+    <Compile Include="Models\OBSD.cs" />
+    <Compile Include="Models\UEV.cs" />
+    <Compile Include="Models\SVN.cs" />
+    <Compile Include="Models\TableService.cs" />
     <Compile Include="Models\CompleteWork.cs" />
     <Compile Include="Models\Ezdka.cs" />
     <Compile Include="Models\GEU.cs" />
@@ -284,12 +310,31 @@
     <Compile Include="Models\Usluga.cs" />
     <Compile Include="Models\Sopostavlenie.cs" />
     <Compile Include="Models\ViewModelHouses.cs" />
+    <Compile Include="Models\ViewVoda.cs" />
     <Compile Include="Models\VipolnennieUslugi.cs" />
     <Compile Include="Models\Work.cs" />
     <Compile Include="Models\Zapravka.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="TypeAvtoes.cs">
+      <DependentUpon>WorkCenterContext.tt</DependentUpon>
+    </Compile>
     <Compile Include="Utilites\SessionObjects.cs" />
+    <Compile Include="WorkCenterContext.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>WorkCenterContext.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="WorkCenterContext.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>WorkCenterContext.tt</DependentUpon>
+    </Compile>
+    <Compile Include="WorkCenterContext.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>WorkCenterContext.edmx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="CodeTemplates\AssemblyVersions.xml" />
@@ -309,6 +354,16 @@
     <Content Include="Content\chosen-sprite.png" />
     <Content Include="Content\chosen.css" />
     <Content Include="Content\chosen.min.css" />
+    <Content Include="Content\Images\IPUOff.png" />
+    <Content Include="Content\Images\IPUOn.png" />
+    <Content Include="Content\Images\OBSDOff.png" />
+    <Content Include="Content\Images\OBSDOn.png" />
+    <Content Include="Content\Images\OPUOff.png" />
+    <Content Include="Content\Images\OPUOn.png" />
+    <Content Include="Content\Images\SVNOff.png" />
+    <Content Include="Content\Images\SVNOn.png" />
+    <Content Include="Content\Images\UEVOff.png" />
+    <Content Include="Content\Images\UEVOn.png" />
     <Content Include="Content\nprogress.css" />
     <Content Include="Content\themes\base\accordion.css" />
     <Content Include="Content\themes\base\all.css" />
@@ -464,6 +519,16 @@
     <Content Include="CodeTemplates\ODataControllerWithContext\Controller.vb.t4" />
     <Content Include="App_Readme\NProgressjs_README.md" />
     <Content Include="App_Readme\NProgressjs_LICENSE" />
+    <Content Include="WorkCenterContext.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>WorkCenterContext.edmx</DependentUpon>
+      <LastGenOutput>WorkCenterContext.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="WorkCenterContext.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>WorkCenterContext.edmx</DependentUpon>
+      <LastGenOutput>WorkCenterContext.cs</LastGenOutput>
+    </Content>
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <Content Include="Scripts\Export-Html-Table-To-Excel-Spreadsheet-using-jQuery-table2excel\.editorconfig" />
     <Content Include="Scripts\Export-Html-Table-To-Excel-Spreadsheet-using-jQuery-table2excel\.gitignore" />
@@ -799,6 +864,77 @@
     <Content Include="Views\Avtomobils\AvtomobilsSpisok.cshtml" />
     <Content Include="Views\Avtomobils\AvtomobilsMenu.cshtml" />
     <Content Include="Views\Ezdkas\SverkaAvtoscan.cshtml" />
+    <Content Include="Views\TableServices\Create.cshtml" />
+    <Content Include="Views\TableServices\Delete.cshtml" />
+    <Content Include="Views\TableServices\Details.cshtml" />
+    <Content Include="Views\TableServices\Edit.cshtml" />
+    <Content Include="Views\TableServices\Index.cshtml" />
+    <Content Include="Views\SVNs\Create.cshtml" />
+    <Content Include="Views\SVNs\Delete.cshtml" />
+    <Content Include="Views\SVNs\Details.cshtml" />
+    <Content Include="Views\SVNs\Edit.cshtml" />
+    <Content Include="Views\SVNs\Index.cshtml" />
+    <Content Include="Views\SVNs\Upload.cshtml" />
+    <Content Include="Views\SVNs\UploadComplete.cshtml" />
+    <Content Include="Views\SVNs\IndexMain.cshtml" />
+    <Content Include="Views\SVNs\NotUpload.cshtml" />
+    <Content Include="Views\Adres\Upload.cshtml" />
+    <Content Include="Views\Adres\UploadComplete.cshtml" />
+    <Content Include="Views\Adres\NotUpload.cshtml" />
+    <Content Include="Views\UEVs\Create.cshtml" />
+    <Content Include="Views\UEVs\Delete.cshtml" />
+    <Content Include="Views\UEVs\Details.cshtml" />
+    <Content Include="Views\UEVs\Edit.cshtml" />
+    <Content Include="Views\UEVs\IndexMain.cshtml" />
+    <Content Include="Views\UEVs\NotUpload.cshtml" />
+    <Content Include="Views\UEVs\Upload.cshtml" />
+    <Content Include="Views\UEVs\UploadComplete.cshtml" />
+    <Content Include="Views\UEVs\Index.cshtml" />
+    <Content Include="Views\OBSDs\Create.cshtml" />
+    <Content Include="Views\OBSDs\Delete.cshtml" />
+    <Content Include="Views\OBSDs\Details.cshtml" />
+    <Content Include="Views\OBSDs\Edit.cshtml" />
+    <Content Include="Views\OBSDs\IndexMain.cshtml" />
+    <Content Include="Views\OBSDs\Upload.cshtml" />
+    <Content Include="Views\OBSDs\UploadComplete.cshtml" />
+    <Content Include="Views\OBSDs\NotUpload.cshtml" />
+    <Content Include="Views\Home\VODAIndex.cshtml" />
+    <Content Include="Views\OBSDs\Index.cshtml" />
+    <EntityDeploy Include="WorkCenterContext.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>WorkCenterContext.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="WorkCenterContext.edmx.diagram">
+      <DependentUpon>WorkCenterContext.edmx</DependentUpon>
+    </Content>
+    <Content Include="Views\IPUs\Create.cshtml" />
+    <Content Include="Views\IPUs\Delete.cshtml" />
+    <Content Include="Views\IPUs\Details.cshtml" />
+    <Content Include="Views\IPUs\Edit.cshtml" />
+    <Content Include="Views\IPUs\IndexMain.cshtml" />
+    <Content Include="Views\IPUs\Upload.cshtml" />
+    <Content Include="Views\IPUs\UploadComplete.cshtml" />
+    <Content Include="Views\IPUs\NotUpload.cshtml" />
+    <Content Include="Views\IPUs\Index.cshtml" />
+    <Content Include="Views\Home\VodaMonth.cshtml" />
+    <Content Include="Views\OPUs\Create.cshtml" />
+    <Content Include="Views\OPUs\Delete.cshtml" />
+    <Content Include="Views\OPUs\Details.cshtml" />
+    <Content Include="Views\OPUs\Edit.cshtml" />
+    <Content Include="Views\OPUs\IndexMain.cshtml" />
+    <Content Include="Views\OPUs\Upload.cshtml" />
+    <Content Include="Views\OPUs\UploadComplete.cshtml" />
+    <Content Include="Views\OPUs\NotUpload.cshtml" />
+    <Content Include="Views\OPUs\Index.cshtml" />
+    <Content Include="Views\Home\ProverkaVodaMonth.cshtml" />
+    <Content Include="Views\Arendators\Create.cshtml" />
+    <Content Include="Views\Arendators\Delete.cshtml" />
+    <Content Include="Views\Arendators\Details.cshtml" />
+    <Content Include="Views\Arendators\Edit.cshtml" />
+    <Content Include="Views\Arendators\IndexMain.cshtml" />
+    <Content Include="Views\Arendators\NotUpload.cshtml" />
+    <Content Include="Views\Arendators\Upload.cshtml" />
+    <Content Include="Views\Arendators\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -822,6 +958,9 @@
     <EmbeddedResource Include="Migrations\NormMigration.resx">
       <DependentUpon>NormMigration.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

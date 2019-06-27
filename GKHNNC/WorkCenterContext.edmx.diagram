@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="ffaac36636be4852bd17a40c422c1913" Name="Diagram1" ZoomLevel="55">
+        <EntityTypeShape EntityType="WorkContextModel.AutoScans" Width="1.5" PointX="13.25" PointY="1.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="WorkContextModel.Avtomobils" Width="1.5" PointX="11" PointY="3.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="WorkContextModel.Ezdkas" Width="1.5" PointX="13.25" PointY="6" IsExpanded="true" />
+        <EntityTypeShape EntityType="WorkContextModel.MarkaAvtomobils" Width="1.5" PointX="8.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="WorkContextModel.TypeAvtoes" Width="1.5" PointX="8.75" PointY="1.25" IsExpanded="true" />
+        <AssociationConnector Association="WorkContextModel.FK_Avtomobils_AutoScans" ManuallyRouted="false" />
+        <AssociationConnector Association="WorkContextModel.FK_Avtomobils_Ezdkas" ManuallyRouted="false" />
+        <AssociationConnector Association="WorkContextModel.FK_MarkaAvtomobils_Avtomobils" ManuallyRouted="false" />
+        <AssociationConnector Association="WorkContextModel.FK_TypeAvtoes_Avtomobils" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

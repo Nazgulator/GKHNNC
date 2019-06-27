@@ -31,9 +31,19 @@ namespace GKHNNC.DAL
         public DbSet<MarkaAvtomobil> MarkaAvtomobils { get; set; }
         public DbSet<TypeAvto> TypeAvtos { get; set; }
         public DbSet<Avtomobil> Avtomobils { get; set; }
-      
-
+        public DbSet<TableService> TableServices { get; set; }     
         public System.Data.Entity.DbSet<GKHNNC.Models.Adres> Adres { get; set; }
+        public System.Data.Entity.DbSet<GKHNNC.Models.SVN> SVNs { get; set; }
+
+        public System.Data.Entity.DbSet<GKHNNC.Models.UEV> UEVs { get; set; }
+
+        public System.Data.Entity.DbSet<GKHNNC.Models.OBSD> OBSDs { get; set; }
+
+        public System.Data.Entity.DbSet<GKHNNC.Models.IPU> IPUs { get; set; }
+
+        public System.Data.Entity.DbSet<GKHNNC.Models.OPU> OPUs { get; set; }
+
+        public System.Data.Entity.DbSet<GKHNNC.Models.Arendator> Arendators { get; set; }
 
 
         //protected override void OnModelCreating(DbModelBuilder modelBuilder)

@@ -19,5 +19,8 @@ namespace GKHNNC
             BundleConfig.RegisterBundles(BundleTable.Bundles);
            // AvtoScanZadacha.Start(); автоскан работает в отдельной программе 
         }
+
+
+
     }
 }

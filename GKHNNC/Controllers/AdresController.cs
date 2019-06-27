@@ -8,6 +8,14 @@ using System.Web;
 using System.Web.Mvc;
 using GKHNNC.DAL;
 using GKHNNC.Models;
+using Microsoft.AspNet.Identity;
+using System.Web.Helpers;
+using GKHNNC.Utilites;
+using System;
+using System.IO;
+using Opredelenie;
+using System.Collections;
+using Microsoft.AspNet.SignalR;
 
 namespace GKHNNC.Controllers
 {
@@ -16,7 +24,7 @@ namespace GKHNNC.Controllers
         private WorkContext db = new WorkContext();
 
         // GET: Adres
-        [Authorize]
+       
         public ActionResult Index()
         {
             return View(db.Adres.ToList());
@@ -48,10 +56,11 @@ namespace GKHNNC.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Adress,GEU")] Adres adres)
+        public ActionResult Create([Bind(Include = "Id,Ulica,Dom,GEU,UEV,OBSD")] Adres adres)
         {
             if (ModelState.IsValid)
             {
+                adres.Adress = adres.Ulica.Replace(" ", "")+adres.Dom.Replace(" ","");
                 db.Adres.Add(adres);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -75,15 +84,116 @@ namespace GKHNNC.Controllers
             return View(adres);
         }
 
+        [HttpGet]
+        public ActionResult Upload()
+        {
+
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Upload(HttpPostedFileBase upload)
+        {
+            int progress = 0;
+            double pro100 = 0;
+            int procount = 0;
+            if (upload != null)
+            {
+              
+
+
+
+
+                //call this method inside your working action
+                ProgressHub.SendMessage("Инициализация и подготовка...", 0);
+
+                // получаем имя файла
+                string fileName = System.IO.Path.GetFileName(upload.FileName);
+                // сохраняем файл в папку Files в проекте
+                if (Directory.Exists(Server.MapPath("~/Files/")) == false)
+                {
+                    Directory.CreateDirectory(Server.MapPath("~/Files/"));
+
+                }
+                upload.SaveAs(Server.MapPath("~/Files/" + fileName));
+                //обрабатываем файл после загрузки
+
+
+
+                string[] Names = new string[] { "Adres", "Code" };
+                List<List<string>> excel = ExcelSVNUpload.IMPORT(Server.MapPath("~/Files/" + fileName), Names);
+                if (excel.Count < 1)
+                {
+                    //если нифига не загрузилось то 
+                    Console.WriteLine("Пустой массив значит файл не загрузился!(он уже удалился)");
+                    return View("NotUpload");
+                }
+                else
+                {
+                    pro100 = excel.Count;
+                    procount = 0;
+                    List<Adres> Adresdb = db.Adres.ToList();
+                    foreach (List<string> e in excel)
+                    {
+                        string E = e[0].Replace(" ", "");
+                        foreach (Adres A in Adresdb)
+                        {
+                            if (E.Equals(A.Adress.Replace(" ","")))
+                            {//модифицируем записи в ДБ
+                                A.UEV = Convert.ToInt16(e[1]);
+                                db.Entry(A).State = EntityState.Modified;
+                                db.SaveChanges();
+                                break;
+                            }
+
+                        }
+                        procount++;
+                        progress = Convert.ToInt16(50 + procount / pro100 * 50);
+                        ProgressHub.SendMessage("Обрабатываем файл, подождите чуток ...", progress);
+                        if (procount > pro100) { procount = Convert.ToInt32(pro100); }
+
+                    }
+
+
+                }
+
+            }
+            return View("UploadComplete");
+        }
+
+
+
+                    //не используется
+        public ActionResult Save(int? id, [Bind(Include = "UEV")] string UEV)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Adres adres = db.Adres.Find(id);
+            adres.UEV = Convert.ToInt32(UEV);
+            db.Entry(adres).State = EntityState.Modified;
+            db.SaveChanges();
+           
+            if (adres == null)
+            {
+                return HttpNotFound();
+            }
+
+            return Json("Index");
+        }
+
+
         // POST: Adres/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Adress,GEU")] Adres adres)
+        public ActionResult Edit([Bind(Include = "Id,Ulica,Dom,GEU,UEV,OBSD")] Adres adres)
         {
             if (ModelState.IsValid)
             {
+                adres.Adress = adres.Ulica.Replace(" ", "") + adres.Dom.Replace(" ", "");
                 db.Entry(adres).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");

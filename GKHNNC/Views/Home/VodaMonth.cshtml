@@ -1,0 +1,188 @@
+﻿@model IEnumerable<GKHNNC.Models.ViewVoda>
+
+
+
+<!DOCTYPE html>
+
+<html>
+
+
+
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Расчет горячей воды за @ViewBag.Year @ViewBag.Month</title>
+</head>
+<body>
+    <h5>Загруженные данные:</h5>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                @if (ViewBag.SVN)
+                {
+                    <img src="~/Content/Images/SVNOn.png" class="img-responsive" style="height:50px;width:auto" />
+                }
+                else
+                {
+                    <img src="~/Content/Images/SVNOff.png" href="/SVN/Upload" class="img-responsive" style="height:50px;width:auto" />
+                }
+            </div>
+            <div class="col-md-4">
+                @if (ViewBag.UEV)
+                {
+                    <img src="~/Content/Images/UEVOn.png" class="img-responsive" style="height:50px;width:auto" />
+                }
+                else
+                {
+                    <img src="~/Content/Images/UEVOff.png" href="/UEV/Upload" class="img-responsive" style="height:50px;width:auto" />
+                }
+            </div>
+            <div class="col-md-4">
+                @if (ViewBag.OPU)
+                {
+                    <img src="~/Content/Images/OPUOn.png" class="img-responsive" style="height:50px;width:auto" />
+                }
+                else
+                {
+                    <img src="~/Content/Images/OPUOff.png" href="/OPU/Upload" class="img-responsive" style="height:50px;width:auto" />
+                }
+            </div>
+            </div>
+        </div>
+    <h3>Расчет горячей воды за @ViewBag.Year @ViewBag.Month</h3>
+
+
+
+    <table id="T" class="table table-bordered table-striped">
+        <tr>
+            <th>
+                Адрес
+            </th>
+
+            <th>
+                УЭВ
+            </th>
+            <th>
+                План
+            </th>
+            <th>
+                Факт
+            </th>
+            <th>
+                УЭВ-План
+            </th>
+            <th>
+                УЭВ-Факт
+            </th>
+            <th>
+                ПУ
+            </th>
+            <th>
+                Доп.
+            </th>
+            <th>
+                Объём УЭВ
+            </th>
+            <th>
+                Объём Факт
+            </th>
+
+
+        </tr>
+        @foreach (var item in Model)
+        {
+            string cl1 = "bg-warning"; string cl2 = "bg-warning"; string cl3 = ""; string cl4 = ""; string cl5 = ""; string cl6 = "";
+
+            if (item.RaznFact < 0)
+            {
+                cl1 = "bg-success";
+            }
+            if (item.RaznFact == 0)
+            {
+                cl1 = "";
+            }
+            if (item.RaznFact > 1000)
+            {
+                cl1 = "bg-danger";
+            }
+            if (item.RaznPlan < 0)
+            {
+                cl2 = "bg-success";
+            }
+            if (item.RaznPlan == 0)
+            {
+                cl2 = "";
+            }
+            if (item.RaznPlan > 1000)
+            {
+                cl2 = "bg-danger";
+            }
+            if (item.Uev == 0 && (item.Plan + item.Fact != 0))
+            {
+                cl3 = "bg-warning";
+            }
+            if (item.VFact < item.GVUEVM3 - 1)
+            {
+                cl4 = "bg-warning";
+            }
+            if (item.VFact < item.GVUEVM3 - 5)
+            {
+                cl4 = "bg-danger";
+            }
+            if (item.VFact == 0 && item.PU == false && item.GVUEVM3 != 0)
+            {
+                cl4 = "bg-info";
+            }
+            if (item.VFact - 3 > item.GVUEVM3)
+            {
+                cl6 = "bg-success";
+            }
+            if (item.Primech != "")
+            {
+                cl5 = "bg-info";
+            }
+
+
+
+
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Adres)
+                </td>
+
+                <td class=@cl3>
+                    @Html.DisplayFor(modelItem => item.Uev)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Plan)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Fact)
+                </td>
+                <td class=@cl2>
+                    @Html.DisplayFor(modelItem => item.RaznPlan)
+                </td>
+                <td class=@cl1>
+                    @Html.DisplayFor(modelItem => item.RaznFact)
+                </td>
+                <td class=@cl4 + @cl5>
+
+                    <input type="checkbox" class="form-control" id="SelectAll" style="width:15px;height:15px" checked=@item.PU>
+                </td>
+                <td class=@cl5>
+                    @Html.DisplayFor(modelItem => item.Primech)
+                </td>
+                <td class=@cl4 + @cl5>
+                    @Html.DisplayFor(modelItem => item.GVUEVM3)
+                </td>
+                <td class=@cl6>
+                    @Html.DisplayFor(modelItem => item.VFact)
+                </td>
+            </tr>
+
+        }
+
+    </table>
+    <p><a href="/Home/Index" class="btn btn-success btn-block">В главное меню &raquo;</a> </p>
+</body>
+</html>
+

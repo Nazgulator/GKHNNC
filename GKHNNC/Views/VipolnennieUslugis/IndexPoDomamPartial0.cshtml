@@ -15,7 +15,7 @@
             <td><h5><CENTER><b>ДОМ</b></CENTER></h5></td>
             <td><h5><CENTER><b>МЕСЯЦ</b></CENTER></h5></td>
             <td><p><CENTER><b>ГОД</b></CENTER></p></td>
-            <td><p><CENTER><b>СОЗДАНИЕ АКТА</b></CENTER></p></td>
+            
 
         </tr>
 
@@ -52,15 +52,7 @@
                     }
                     @Html.DropDownList("Year", MSL3, new { @class = "form-control", @style = "width: 100%" })
                 </td>
-                <td>
-
-                    <Center>
-                        <div>
-                            <input type="submit" name="b1" value="Акт за месяц по дому" class="btn btn-success btn-default" style="width:250Px" />
-                        </div>
-                    </Center>
-
-                </td>
+                
             </tr>
         }
     </tbody>
@@ -73,6 +65,7 @@
 
     <script>
         //скрипт работает обработка идет не пост запросом
+        
                         $('#GEU').change(function () {
                             var _this = $(this);
                             $('#Adres').get(0).selectedIndex = $(_this).get(0).selectedIndex;//выбрать параллельный элемент
@@ -101,7 +94,7 @@
 
                         });
 
-
+        
     </script>
 
     <script>

@@ -1,0 +1,169 @@
+﻿
+
+@{
+    /**/
+
+    ViewBag.Title = "Загрузка файлов Ипу";
+}
+<div class="progress">
+
+    <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-success progress-bar-animated" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+    <center>
+        <label id="nadpis">Выберите файл для загрузки</label>
+    </center>
+</div>
+<Center>  
+    <p> <h3>Загрузка файла ИПУ</h3></p>
+    
+    @using (Html.BeginForm("Upload", "IPUs", FormMethod.Post, new { enctype = "multipart/form-data", @placeholder = "Выберите дату" }))
+    {<div class="container" id="main">
+         <div class=" row">
+             <p> <h5>Выберите дату (год и месяц) создания файла.</h5></p>
+             <p> <h5>Имя файла написано без пробелов, длина имени менее 20 символов.</h5></p>
+             <p> <h5>Файл должен содержать вкладку "для УЭВ по ГВС без ОПУ" (с большой буквы).</h5></p>
+             <p> <h5>В файле должны быть колонки: "адрес", "начислениепонормативу(руб.)", "начислениепосчетчику(куб.м.)","Номер счетчика"</h5></p>
+         </div>
+    <div class=" row">
+
+        <label>Дата файла</label>
+        @Html.Editor("Date", new { htmlAttributes = new { @class = "form-control", @style = "width:365Px !important; min-width:365px;" } })
+
+    </div>
+    <div class=" row">
+
+        <label>Выберите файл для загрузки</label>
+        <input type="file" name="upload" class="form-control" style="width: 365Px;" /><br>
+
+    </div>
+    <div class=" row">
+
+        <a id="cancel" href="/IPUs/Index" class="btn btn-default" style="width: 180Px">Назад</a>
+        <input id="download" type="submit" value="Загрузить" class="btn btn-success" style="width: 180Px" />
+
+    </div>
+    <div class=" row">
+        <p>  </p>
+        <div class="alert alert-danger" role="alert" id="warning">
+            <p> IPU  файл за этот месяц уже загружен! Хотите перезаписать данные? </p>
+
+        </div>
+    </div>
+</div>
+
+    }
+
+
+
+
+</Center>
+
+<link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+@section Scripts{
+    @Scripts.Render("~/scripts/jquery-3.3.1.min.js")
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+    @Scripts.Render("~/scripts/nprogress.min.js")
+    @Scripts.Render("~/scripts/jquery.signalR-2.4.0.min.js")
+    @Scripts.Render("~/signalr/hubs")
+
+
+    <!--SignalR script to update the chat page and send messages.-->
+    <script>
+        //при открытии страницы
+        $("#progress").hide();
+        $("#warning").hide();
+
+    </script>
+    <script>
+        $("#download").click(function () {
+            $("#progress").fadeIn("slow");
+            $("#main").fadeOut("slow");
+        }
+        );
+    </script>
+    <script>
+        $(function () {
+            var PB = $.connection.progressHub;
+            console.log("Тест");
+            PB.client.sendMessage = function (message, count) {
+                // update progress
+                console.log(count);
+                UpdateProgress(message, count);
+                //alert(message);
+            };
+
+            $.connection.hub.start().done(function () {
+                console.log("Приконнектились");
+                // call the method CallLongOperation defined in the Hub
+                PB.server.getCountAndMessage();
+                $("#progressBar").hide();
+
+
+
+            });
+
+
+            // Update the progress bar
+            function UpdateProgress(message, count) {
+                $("#progressBar").fadeIn("slow");
+                var result = $("#result");
+                result.html(message);
+
+                //$("#progressBar").data("progressbar").value(count);
+
+                $("#progressBar").attr("aria-valuenow", count);
+                $("#progressBar").width(count + '%');
+                $("#progressBar").text(count + '%');
+                $("#nadpis").text(message);
+                // $("#progressBar").css("width", count);
+            }
+        });
+    </script>
+
+    <script>
+            //скрипт для поиска по дате выдает количество. Если не ноль то высвечивает предупреждение.
+        $("#Date").change(function () {
+            var S = $("#Date").val();
+            $.post('@Url.Action("PoiskIPU", "IPUs")', { date: S }, function (data) {
+                
+                if (data != 0) {
+                    $("#warning").fadeIn();
+                }
+                else
+                {
+                    $("#warning").hide();
+                }
+               
+
+            });
+    });
+
+    </script>
+
+    <script type="text/javascript">
+        $(function () {
+            $('#Date')
+                .datepicker({ dateFormat: 'yy/mm' })
+                .get(0).setAttribute("type", "text");
+            $.datepicker.regional['ru'] = {
+                prevText: 'Пред',
+                nextText: 'След',
+                monthNames: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+                    'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+                monthNamesShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн',
+                    'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
+                dayNames: ['воскресенье', 'понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота'],
+                dayNamesShort: ['вск', 'пнд', 'втр', 'срд', 'чтв', 'птн', 'сбт'],
+                dayNamesMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+                weekHeader: 'Не',
+                dateFormat: 'yy/mm',
+                showOn: "both",
+                buttonText: "Выбрать дату",
+                firstDay: 1,
+                isRTL: false,
+                showMonthAfterYear: true,
+                yearSuffix: ''
+            };
+            $.datepicker.setDefaults($.datepicker.regional['ru']);
+        });
+    </script>
+}

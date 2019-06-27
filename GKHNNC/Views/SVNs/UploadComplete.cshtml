@@ -1,0 +1,109 @@
+﻿
+@{
+    ViewBag.Title = "UploadComplete";
+}
+
+
+
+<div id="MainNadpis">
+    <h2>Файл @ViewBag.file за @ViewBag.date успешно загружен!</h2>
+
+    <div class="alert alert-success" role="alert">
+       Данные представлены в таблице ниже. 
+    </div>
+</div>
+<div>
+    <h5>Сервисы из таблицы СВН</h5>
+</div>
+
+<table id="tabl" class="table table-striped">
+
+    <tbody>
+
+        <tr>
+
+            @for (int i = 0; i < 3; i++)
+            {
+
+
+
+                <td>
+                    @Html.DropDownList("Сервисы", new SelectList(@ViewBag.Services[i]), new { @class = "form-control col-md-4", @style = "width:100%" })
+                </td>
+
+
+
+
+            }
+        </tr>
+
+       
+
+
+    </tbody>
+</table>
+<p><a href="/SVNs/Index" class="btn btn-success btn-default" style="width:100%">Все данные СВН >></a></p>
+
+
+@section Scripts{
+    @Scripts.Render("~/scripts/jquery-3.3.1.min.js")
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+    @Scripts.Render("~/scripts/nprogress.min.js")
+    @Scripts.Render("~/scripts/jquery.signalR-2.4.0.min.js")
+    @Scripts.Render("~/signalr/hubs")
+
+
+    <script>
+        $("#submit").click(function () {
+
+            $("#tabl").fadeOut("slow");
+            $("#submit").fadeOut("slow");
+            $("#cancel").fadeOut("slow");
+            $("#Nadpis2").fadeIn("slow");
+            $("#MainNadpis").fadeOut("slow");
+
+        }
+
+
+        );
+    </script>
+    <script>
+        $(function () {
+            var PB = $.connection.progressHub;
+            console.log("Загрузили файл на сервер ждем подтверждения.");
+            PB.client.sendMessage = function (message, count) {
+                // update progress
+                console.log(count);
+                UpdateProgress(message, count);
+                //alert(message);
+            };
+
+            $.connection.hub.start().done(function () {
+                console.log("Приконнектились");
+                // call the method CallLongOperation defined in the Hub
+                PB.server.getCountAndMessage();
+                $("#progressBar").hide();
+                $("#Nadpis2").hide();
+                $("#Nadpis2").fadeOut();
+
+
+            });
+
+
+            // Update the progress bar
+            function UpdateProgress(message, count) {
+                $("#progressBar").fadeIn("slow");
+                var result = $("#result");
+                result.html(message);
+
+                //$("#progressBar").data("progressbar").value(count);
+
+                $("#progressBar").attr("aria-valuenow", count);
+                $("#progressBar").width(count + '%');
+                $("#progressBar").text(count + '%');
+                $("#nadpis").text(message);
+                // $("#progressBar").css("width", count);
+            }
+        });
+    </script>
+}

@@ -1,0 +1,49 @@
+﻿
+
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Файлы ОБСД по месяцам</title>
+</head>
+<body>
+    <h3>Файлы ОБСД по месяцам</h3>
+    <h5>В раскрывающихся списках показаны адреса, по которым были найдены соответствующие данные в файле.</h5>
+
+
+    <table id="T" class="table table-bordered table-striped">
+        <tr>
+            <th>
+                Дата
+            </th>
+            <th> 
+                Не нулевых записей
+            </th>
+
+
+        </tr>
+        @for (int i = 0; i < ViewBag.Head.Count; i++)
+        {
+            <tr>
+                <th>
+                    @ViewBag.Head[i]
+                </th>
+              
+                <td>
+                    @ViewBag.OBSDKI[i]
+                  
+                </td>
+              
+            </tr>
+        }
+
+
+
+    </table>
+    <p><a href="/Home/Index" class="btn btn-success btn-block">В главное меню &raquo;</a> </p>
+    <p><a href="/OBSDs/Upload" class="btn btn-success btn-block">Загрузить новый файл ОБСД  &raquo;</a> </p>
+</body>
+</html>

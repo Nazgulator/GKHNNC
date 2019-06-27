@@ -1,0 +1,120 @@
+﻿@model GKHNNC.Models.Arendator
+
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Редактировать</title>
+</head>
+<body>
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+       <div class="container">
+           <div class="form-horizontal">
+               <hr />
+               @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+               @Html.HiddenFor(model => model.Id)
+
+               <div class="row col-md-6 col-md-offset-3">
+                   <div class="col-md-6">
+                       @Html.LabelFor(model => model.AdresId, "AdresId", htmlAttributes: new { @class = "control-label col-md-2" })
+                   </div>
+                   <div class="col-md-6">
+                       @Html.DropDownList("AdresId", null, htmlAttributes: new { @class = "form-control" })
+                       @Html.ValidationMessageFor(model => model.AdresId, "", new { @class = "text-danger" })
+                   </div>
+               </div>
+               <div class="row col-md-6 col-md-offset-3">
+                   <div class="col-md-6">
+                       @Html.LabelFor(model => model.Date, htmlAttributes: new { @class = "control-label" })
+                   </div>
+                   <div class="col-md-6">
+                       @Html.EditorFor(model => model.Date, new { htmlAttributes = new { @class = "form-control" } })
+                       @Html.ValidationMessageFor(model => model.Date, "", new { @class = "text-danger" })
+                   </div>
+               </div>
+
+               <div class="row col-md-6 col-md-offset-3">
+                   <div class="col-md-6">
+                       @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label" })
+                   </div>
+                   <div class="col-md-6">
+                       @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                       @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                   </div>
+               </div>
+
+
+               <div class="row col-md-6 col-md-offset-3">
+                   <div class="col-md-6">
+                       @Html.LabelFor(model => model.Ploshad, htmlAttributes: new { @class = "control-label" })
+                   </div>
+                   <div class="col-md-6">
+                       @Html.EditorFor(model => model.Ploshad, new { htmlAttributes = new { @class = "form-control" } })
+                       @Html.ValidationMessageFor(model => model.Ploshad, "", new { @class = "text-danger" })
+                   </div>
+               </div>
+
+
+               <div class="row col-md-6 col-md-offset-3">
+                   <div class="col-md-6">
+                       @Html.LabelFor(model => model.Teplota, htmlAttributes: new { @class = "control-label" })
+                   </div>
+                   <div class="col-md-6">
+                       @Html.EditorFor(model => model.Teplota, new { htmlAttributes = new { @class = "form-control" } })
+                       @Html.ValidationMessageFor(model => model.Teplota, "", new { @class = "text-danger" })
+                   </div>
+               </div>
+               <div class="row col-md-6 col-md-offset-3">
+                   <div class="col-md-6">
+                       @Html.LabelFor(model => model.Teplota12, htmlAttributes: new { @class = "control-label" })
+                   </div>
+                   <div class="col-md-6">
+                       @Html.EditorFor(model => model.Teplota12, new { htmlAttributes = new { @class = "form-control" } })
+                       @Html.ValidationMessageFor(model => model.Teplota12, "", new { @class = "text-danger" })
+                   </div>
+               </div>
+
+               <div class="row col-md-6 col-md-offset-3">
+                   <div class="col-md-6">
+                       @Html.LabelFor(model => model.HotWater, htmlAttributes: new { @class = "control-label" })
+                   </div>
+                   <div class="col-md-6">
+                       @Html.EditorFor(model => model.HotWater, new { htmlAttributes = new { @class = "form-control" } })
+                       @Html.ValidationMessageFor(model => model.HotWater, "", new { @class = "text-danger" })
+                   </div>
+               </div>
+
+
+               <div class="row col-md-6 col-md-offset-3">
+                   <div class="col-md-6">
+                       @Html.LabelFor(model => model.ColdWater, htmlAttributes: new { @class = "control-label" })
+                   </div>
+                   <div class="col-md-6">
+                       @Html.EditorFor(model => model.ColdWater, new { htmlAttributes = new { @class = "form-control" } })
+                       @Html.ValidationMessageFor(model => model.ColdWater, "", new { @class = "text-danger" })
+                   </div>
+               </div>
+
+
+               <div class="row col-md-6 col-md-offset-3">
+                   <div class=" form-group">
+                       <div class=" col-md-6  ">
+                           @Html.ActionLink("Назад", "Index", null, new { @class = "btn btn-success btn-block" })
+                       </div>
+                       <div class=" col-md-6  ">
+                           <input type="submit" value="Изменить" class="btn btn-success btn-block" />
+                       </div>
+
+                   </div>
+               </div>
+           </div>
+    </div>
+    }
+    
+</body>
+</html>
