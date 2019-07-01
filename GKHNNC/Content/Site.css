@@ -16,6 +16,62 @@
     white-space: normal;
 }
 
+.podlogka {
+    display: block;
+    position: relative;
+    top: 260px;
+    right: 500px;
+    text-align: center;
+    font-family: Latha;
+    font-weight: bold;
+    color: #fff;
+}
+
+.Ptext {
+    position: absolute;
+    top: 0;
+    width: 10%;
+}
+
+.Pwraper {
+    position: relative;
+    width: 10%;
+}
+
+.img-wrap {
+    position: relative;
+    width: 100%;
+    top:10px;
+ 
+}
+.row-bottom-margin {
+    margin-bottom: 10px;
+}
+    .img-wrap h2 {
+        position: absolute;
+        top: -20px;
+        left: 5px;
+        bottom: 0;
+        width: 100%;
+    }
+    .img-wrap h3 {
+        position: absolute;
+        top: -17px;
+        left: 35px;
+        bottom: 0;
+        width: 100%;
+        color:#000000;
+    }
+.img-wrap h5 {
+    position: absolute;
+    top: -3px;
+    left: 10px;
+    bottom: 0;
+    width: 100%;
+    color: #000000;
+}
+
+
 /* Set width on the form input elements since they're 100% wide by default */
 input,
 select,

@@ -282,7 +282,7 @@ namespace GKHNNC.Controllers
 
                 //обрабатываем файл после загрузки
                 string Vkladka = Date.Month.ToString();
-                string[] Names = new string[] { "адрес", "№дом", "теплотаобщаясопу(гкал)", "расходгвссопукуб,м", "расходхвскуб,мзамесяц", "руботопление", "рубгор.вода", "рубхол.вода" };
+                string[] Names = new string[] { "адрес", "№дом", "гкалотопления(нараспределение)", "расходгвскуб,мзамесяц", "расходхвскуб,мзамесяц", "руботопление", "рубгор.вода", "рубхол.вода" };
                 List<List<string>> excel = ExcelSVNUpload.IMPORT(Server.MapPath("~/Files/" + fileName), Names, Vkladka);
                 if (excel.Count < 1)
                 {

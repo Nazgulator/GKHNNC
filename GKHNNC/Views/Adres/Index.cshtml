@@ -13,6 +13,7 @@
         <th>
             @Html.DisplayNameFor(model => model.Adress)
         </th>
+        <th>@Html.DisplayNameFor(model => model.Ploshad)</th>
         <th>@Html.DisplayNameFor(model => model.GEU)</th>
         <th>@Html.DisplayNameFor(model => model.UEV)</th>
         <th>@Html.DisplayNameFor(model => model.OBSD)</th>
@@ -21,24 +22,27 @@
 
     @foreach (var item in Model)
     {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Adress)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.GEU)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UEV)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.OBSD)
-            </td>
-            <td>
-                @Html.ActionLink("Редактировать", "Edit", new { id = item.Id }) |
-                @Html.ActionLink("Удалить", "Delete", new { id = item.Id })
-            </td>
-        </tr>
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Adress)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Ploshad)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.GEU)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.UEV)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.OBSD)
+        </td>
+        <td>
+            @Html.ActionLink("Редактировать", "Edit", new { id = item.Id }) |
+            @Html.ActionLink("Удалить", "Delete", new { id = item.Id })
+        </td>
+    </tr>
     }
 
 </table>

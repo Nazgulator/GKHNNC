@@ -45,6 +45,8 @@ namespace GKHNNC.DAL
 
         public System.Data.Entity.DbSet<GKHNNC.Models.Arendator> Arendators { get; set; }
 
+        public System.Data.Entity.DbSet<GKHNNC.Models.House> Houses { get; set; }
+
 
         //protected override void OnModelCreating(DbModelBuilder modelBuilder)
 

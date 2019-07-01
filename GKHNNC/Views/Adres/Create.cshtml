@@ -45,6 +45,13 @@
                 </div>
             </div>
             <div class="form-group">
+                @Html.LabelFor(model => model.Ploshad, htmlAttributes: new { @class = "control-label col-md-1 col-md-push-3" })
+                <div class="col-md-5 col-md-push-3">
+                    @Html.EditorFor(model => model.Ploshad, new { htmlAttributes = new { @class = "form-control" }, @placeholder = "Площадь цифрами через точку" })
+                    @Html.ValidationMessageFor(model => model.Ploshad, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
                 @Html.LabelFor(model => model.UEV, htmlAttributes: new { @class = "control-label col-md-1 col-md-push-3" })
                 <div class="col-md-5 col-md-push-3">
                     @Html.EditorFor(model => model.UEV, new { htmlAttributes = new { @class = "form-control" }, @placeholder = "Вводите код УЭВ только цифры" })

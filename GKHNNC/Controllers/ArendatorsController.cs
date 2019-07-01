@@ -251,6 +251,10 @@ namespace GKHNNC.Controllers
                     }
                     if (excel[i][1] != null && excel[i][1] != "")//Когда дошли до номера дома значит это дом и в нем есть арендаторы
                     {
+                        decimal ploshad = 0;
+                        try { ploshad = Convert.ToDecimal(excel[i][3]); } catch { }
+                        decimal teplota12 = 0;
+                        try { teplota12 = Convert.ToDecimal(excel[i][4]); } catch { }
                         string adr = excel[i][0].ToString();
                         adr = adr.ToUpper();
                         adr = adr.Replace("ПР.", "");
@@ -286,23 +290,32 @@ namespace GKHNNC.Controllers
                            AdrId =  db.Adres.Where(x => x.Adress.Equals(adr)).Select(y => y.Id).Single();//сохранили адрес
                         }
                         catch { continue; }//если адрес не нашли то пропустим данный шаг в цикле
-                        
+                        if (AdrId != 0 && ploshad != 0)
+                        {
+                            Adres A = db.Adres.Where(x => x.Id == AdrId).First();
+                            A.Ploshad = ploshad;
+                            if (teplota12 != 0) { A.Teplota12 = teplota12; }
+                            db.Entry(A).State = EntityState.Modified;
+                            db.SaveChanges();
+                        }
+
                         Ar.AdresId = AdrId;//пишем в адрес
                         Ar.Date = Date;
                         int j = i+1;
                         
-                        while (excel[j][1] == "0"&&j<excel.Count)
-                        {
-                            try { Ar.Name = excel[j][0]; } catch { }
-                            try { Ar.Teplota = Convert.ToDecimal(excel[j][2]); } catch { }
-                            try { Ar.Ploshad = Convert.ToDecimal(excel[j][3]); } catch { }
-                            try { Ar.Teplota12 = Convert.ToDecimal(excel[j][4]); } catch { }
-                            try { Ar.HotWater = Convert.ToDecimal(excel[j][5]); } catch { }
-                            try { Ar.ColdWater = Convert.ToDecimal(excel[j][6]); } catch { }
-                            db.Arendators.Add(Ar);
-                            db.SaveChanges();
-                            j++;
-                        }
+                            while (j < excel.Count && excel[j][1] == "0")
+                            {
+                                try { Ar.Name = excel[j][0]; } catch { }
+                                try { Ar.Teplota = Convert.ToDecimal(excel[j][2]); } catch { }
+                                try { Ar.Ploshad = Convert.ToDecimal(excel[j][3]); } catch { }
+                                try { Ar.Teplota12 = Convert.ToDecimal(excel[j][4]); } catch { }
+                                try { Ar.HotWater = Convert.ToDecimal(excel[j][5]); } catch { }
+                                try { Ar.ColdWater = Convert.ToDecimal(excel[j][6]); } catch { }
+                                db.Arendators.Add(Ar);
+                                db.SaveChanges();
+                                j++;
+                            }
+                        
                         i = j-1;
                     }
                   

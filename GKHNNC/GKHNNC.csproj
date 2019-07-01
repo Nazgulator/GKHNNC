@@ -246,6 +246,7 @@
     <Compile Include="Controllers\EzdkasController.cs" />
     <Compile Include="Controllers\GEUsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\HousesController.cs" />
     <Compile Include="Controllers\IPUsController.cs" />
     <Compile Include="Controllers\LogsController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
@@ -284,6 +285,7 @@
     <Compile Include="Models\Adres.cs" />
     <Compile Include="Models\AdresView.cs" />
     <Compile Include="Models\Agent.cs" />
+    <Compile Include="Models\House.cs" />
     <Compile Include="Models\Arendator.cs" />
     <Compile Include="Models\AutoScansSverka.cs" />
     <Compile Include="Models\Avtomobil.cs" />
@@ -354,16 +356,24 @@
     <Content Include="Content\chosen-sprite.png" />
     <Content Include="Content\chosen.css" />
     <Content Include="Content\chosen.min.css" />
+    <Content Include="Content\Images\ColdWater.png" />
+    <Content Include="Content\Images\GrayPodlogka.png" />
+    <Content Include="Content\Images\GreenPodlogka.png" />
+    <Content Include="Content\Images\HotWater.png" />
     <Content Include="Content\Images\IPUOff.png" />
     <Content Include="Content\Images\IPUOn.png" />
     <Content Include="Content\Images\OBSDOff.png" />
     <Content Include="Content\Images\OBSDOn.png" />
     <Content Include="Content\Images\OPUOff.png" />
     <Content Include="Content\Images\OPUOn.png" />
+    <Content Include="Content\Images\Otoplenie.png" />
+    <Content Include="Content\Images\Otoplenie12.png" />
+    <Content Include="Content\Images\Ploshad.png" />
     <Content Include="Content\Images\SVNOff.png" />
     <Content Include="Content\Images\SVNOn.png" />
     <Content Include="Content\Images\UEVOff.png" />
     <Content Include="Content\Images\UEVOn.png" />
+    <Content Include="Content\Images\House.png" />
     <Content Include="Content\nprogress.css" />
     <Content Include="Content\themes\base\accordion.css" />
     <Content Include="Content\themes\base\all.css" />
@@ -935,6 +945,9 @@
     <Content Include="Views\Arendators\NotUpload.cshtml" />
     <Content Include="Views\Arendators\Upload.cshtml" />
     <Content Include="Views\Arendators\Index.cshtml" />
+    <Content Include="Views\Houses\Edit.cshtml" />
+    <Content Include="Views\Houses\Index.cshtml" />
+    <Content Include="Views\Arendators\UploadComplete.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
