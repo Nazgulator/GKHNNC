@@ -47,6 +47,8 @@ namespace GKHNNC.DAL
 
         public System.Data.Entity.DbSet<GKHNNC.Models.House> Houses { get; set; }
 
+        public System.Data.Entity.DbSet<GKHNNC.Models.Negilaya> Negilayas { get; set; }
+
 
         //protected override void OnModelCreating(DbModelBuilder modelBuilder)
 

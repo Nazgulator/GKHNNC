@@ -34,6 +34,9 @@ namespace GKHNNC.Controllers
     public class ExcelExportMonth
     {
         public int ver = 0;
+
+       
+
         public static void EXPORT(List<CompleteWork> CompleteWorks,string Month, string GEU,string Year) {
 
             if (CompleteWorks.Count == 0)
@@ -351,15 +354,40 @@ namespace GKHNNC.Controllers
     public class ExcelSVNUpload
     {
         //Универсальный метод загрузки требует          имя файла        наименования колонок  номер вкладки или наименование  ( массив номеров столбцов) по желанию
-        public static List<List<string>> IMPORT(string FilePatch, string[] Names, string Vkladka = "1", int[] X = null )
+        public static List<List<string>> IMPORT(string FilePatch, string[] Names, out string Error, string Vkladka = "1", int[] X = null )
         {
+            Error = "";
             List<List<string>> SVNKI = new List<List<string>>();
             //инициализация загруженного файла
             Excel.Application ApExcel = new Excel.Application();
             Excel.Workbooks WB = null;
             WB = ApExcel.Workbooks;
-            Excel.Workbook WbExcel = WB.Open(FilePatch);
-            int vk = 1;
+            Excel.Workbook WbExcel = null;
+            try
+            {
+                WbExcel = WB.Open(FilePatch);
+            }
+            catch {
+                //если вкладку не нашли
+                // Закрытие книги.
+                WbExcel.Close(false, "", Type.Missing);
+                // Закрытие приложения Excel.
+
+                ApExcel.Quit();
+
+                Marshal.FinalReleaseComObject(WbExcel);
+                Marshal.FinalReleaseComObject(WB);
+                Marshal.FinalReleaseComObject(ApExcel);
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+
+                //Удаление файла с сервера
+                File.Delete(FilePatch);
+                Error = "Не найдена вкладка " + Vkladka;
+                return SVNKI;
+               
+            }
+                int vk = 1;
             string vks = "";
             Excel.Worksheet WS = null;
             try
@@ -435,7 +463,7 @@ namespace GKHNNC.Controllers
 
             if (X == null)
             {
-                for (int i = 0; i < lastRow; i++)
+                for (int i = 0; i < 50; i++)
                 {
 
                     for (int j = 0; j < LastCol; j++)
@@ -467,6 +495,7 @@ namespace GKHNNC.Controllers
                                     if (xx) { goto ShapkaNaidena; }//если все заголовки нашли то выходим
                                     else
                                     {
+
                                         //если нашли соответствие то записали и вышли чтобы одинаковые наименования заголовков можно было далее назначить
                                         break;
                                     }
@@ -486,6 +515,16 @@ namespace GKHNNC.Controllers
 
                 }
             }
+
+            //Если не все заголовки найдены то смотрим каких не хватает и выдаем сообщение
+            Error = "Не найдены заголовки: ";
+            
+            for (int g=0;g < NamesI.Length;g++)
+            {
+                if (NamesI[g] < 0) { Error += Names[g]+"; "; }
+                
+            }
+
             ShapkaNaidena:
             //все ли найдены столбцы? Доп проверка много времени не займет.
             bool go = true;

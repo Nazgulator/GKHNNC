@@ -15,6 +15,8 @@ namespace GKHNNC.Models
         public decimal Fact { get; set; }
         [Display(Name = "План")]
         public decimal Plan { get; set; }
+        [Display(Name = "ИПУ")]
+        public decimal IPU{ get; set; }
         [Display(Name = "УЭВ")]
         public decimal Uev { get; set; }
         [Display(Name = "УЭВ-Факт")]

@@ -1,0 +1,196 @@
+﻿
+<!DOCTYPE html>
+
+<html>
+
+
+
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Расчет отопления за @ViewBag.Year </title>
+</head>
+<body>
+
+    <h5>Загруженные данные:</h5>
+    <div class="container col-md-12">
+        <div class="row">
+            <div class="col-md-4">
+                @if (ViewBag.SVN)
+                {
+                    <img src="~/Content/Images/SVNOn.png" class="img-responsive" style="height:50px;width:auto" />
+                }
+                else
+                {
+                    <img src="~/Content/Images/SVNOff.png" href="/SVN/Upload" class="img-responsive" style="height:50px;width:auto" />
+                }
+            </div>
+            <div class="col-md-4">
+                @if (ViewBag.UEV)
+                {
+                    <img src="~/Content/Images/UEVOn.png" class="img-responsive" style="height:50px;width:auto" />
+                }
+                else
+                {
+                    <img src="~/Content/Images/UEVOff.png" href="/UEV/Upload" class="img-responsive" style="height:50px;width:auto" />
+                }
+            </div>
+            <div class="col-md-4">
+                @if (ViewBag.OPU)
+                {
+                    <img src="~/Content/Images/OPUOn.png" class="img-responsive" style="height:50px;width:auto" />
+                }
+                else
+                {
+                    <img src="~/Content/Images/OPUOff.png" href="/OPU/Upload" class="img-responsive" style="height:50px;width:auto" />
+                }
+            </div>
+        </div>
+    </div>
+    <h3>Расчет отопления за @ViewBag.Year  до месяца @ViewBag.Month</h3>
+
+
+
+    <table id="Table" class="table table-bordered table-striped">
+        <tr>
+            <th>
+
+            </th>
+            <th>
+
+            </th>
+            @for (int i = 0; i < ViewBag.Months.Count; i++)
+            {
+
+                <th colspan="3" style="text-align:center">
+                    @ViewBag.Months[i]
+                </th>
+
+            }
+            <th colspan="3" style="text-align:center">
+                Итого
+            </th>
+
+        </tr>
+        <tr>
+            <th>
+                Адрес
+            </th>
+            <th>
+                ПУ
+            </th>
+            @for (int i = 0; i < ViewBag.Months.Count; i++)
+            {
+                <th>
+                    УЭВ
+                </th>
+                <th>
+                    План
+                </th>
+                <th>
+                    Факт
+                </th>
+
+
+            }
+            <th>
+                Сумма УЭВ
+            </th>
+            <th>
+                Сумма План
+            </th>
+            <th>
+                Сумма Факт
+            </th>
+        </tr>
+        @for (int j = 0; j < ViewBag.Adresa.Count; j++)
+        {
+            string[] S = ViewBag.VV[0][j].Split(';');
+           
+        <tr>
+            <td>
+                @ViewBag.Adresa[j]
+            </td>
+            <td>
+                <input type="checkbox" class="form-control" id="SelectAll" style="width:15px;height:15px" checked=@Convert.ToBoolean(S[3])>
+            </td>
+            @for (int m = 0; m < ViewBag.Months.Count; m++)
+            {
+                string[] SS = ViewBag.VV[m][j].Split(';');
+               
+
+                <td>
+                    @SS[0]
+                </td>
+                <td >
+                    @SS[1]
+                </td>
+                <td >
+                    @SS[2]
+                </td>
+
+            }
+            @{
+                string clFact = "";
+                string clPlan = "";
+                if (Convert.ToDecimal(@ViewBag.SummUev[j]) <= Convert.ToDecimal(@ViewBag.SummPlan[j]) - 1000) { clPlan = "bg-success"; } else { clPlan = "bg-danger"; }
+                if (Convert.ToDecimal(@ViewBag.SummUev[j]) <= Convert.ToDecimal(@ViewBag.SummFact[j]) - 1000) { clFact = "bg-success"; } else { clFact = "bg-danger"; }
+            }
+            <td>
+                @ViewBag.SummUev[j]
+            </td>
+            <td class="@clPlan">
+                @ViewBag.SummPlan[j]
+            </td>
+            <td class="@clFact">
+                @ViewBag.SummFact[j]
+            </td>
+        </tr>
+        }
+      
+
+    </table>
+    <p><a href="/Home/VODAIndex" class="btn btn-success btn-block"> Назад </a> </p>
+    <p><button tag ="ToExcel" class="btn btn-success btn-block">Экспорт в эксель &raquo;</button> </p>
+</body>
+</html>
+@section Scripts {
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+    @Scripts.Render("~/scripts/jquery-3.3.1.js")
+  
+    <script>
+        //Нажатие на кнопку "input[type='submit']"
+        $("button[tag='ToExcel']").click(function () {
+
+
+           
+           
+
+
+
+                var S = "";
+                var array = [];
+                var table = $("#Table");
+                var rows = table.children();
+                for (var i = 0; i < rows.length; i++) {
+                    var fields = rows.eq(i).children();
+                    var rowArray = [];
+                    for (var j = 0; j < fields.length; j++) {
+                        rowArray.push(fields[j].innerHTML);
+                        S += fields[j].innerHTML + ";";
+                    }
+
+                    array.push(rowArray);
+                    S += ";";
+                }
+                var T = table.html().replace("</tr>", "|").replace("<tr>", "").replace("<td>", "").replace("</td>", ";").replace(" ", "");
+
+                console.log(array);
+
+                $.post('@Url.Action("ExportToExcelJquery", "Home")', { selection: array }, function (data) {
+
+                    window.location.href = data;
+                });
+
+            });
+    </script>
+}

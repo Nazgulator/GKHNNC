@@ -1,0 +1,29 @@
+﻿@{
+
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+<div class="row form-group">
+    @Html.DropDownList("Year", new SelectList(ViewBag.Years), new { @class = "form-control" })
+</div>
+@section Scripts {
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+    @Scripts.Render("~/scripts/jquery-3.3.1.js")
+    @Scripts.Render("~/Scripts/chosen.jquery.min.js")
+    <script>
+        //скрипт для обработки выбора года чтоб выводить дома по году и месяцу
+                        $('#Year').change(function () {
+                            var _this = $(this);
+
+                            var Y = $('#Year').val();//выбраное значение в селекте
+
+                            $("#Spisok").load('@Url.Action("VODAIndex", "Home")', { Year: Y });
+
+
+                           //идем в комплит воркс контроллер и там действие поиск по жэу отправляем выбранное значение в селекте, получаем дату список всех домов по жэу из БД перекинутых в лист стринг
+
+                            // alert("PING!");
+
+                        });
+    </script>
+}

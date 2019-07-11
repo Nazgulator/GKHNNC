@@ -251,6 +251,7 @@
     <Compile Include="Controllers\LogsController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\MarkaAvtomobilsController.cs" />
+    <Compile Include="Controllers\NegilayasController.cs" />
     <Compile Include="Controllers\OBSDsController.cs" />
     <Compile Include="Controllers\Opredelenie.cs" />
     <Compile Include="Controllers\OPUsController.cs" />
@@ -291,6 +292,8 @@
     <Compile Include="Models\Avtomobil.cs" />
     <Compile Include="Models\ChatMessage.cs" />
     <Compile Include="Models\AutoScan.cs" />
+    <Compile Include="Models\Negilaya.cs" />
+    <Compile Include="Models\Tarif.cs" />
     <Compile Include="Models\OPU.cs" />
     <Compile Include="Models\IPU.cs" />
     <Compile Include="Models\OBSD.cs" />
@@ -948,6 +951,15 @@
     <Content Include="Views\Houses\Edit.cshtml" />
     <Content Include="Views\Houses\Index.cshtml" />
     <Content Include="Views\Arendators\UploadComplete.cshtml" />
+    <Content Include="Views\Home\OtoplenieMonth.cshtml" />
+    <Content Include="Views\Home\VODAMenu.cshtml" />
+    <Content Include="Views\Home\VODAMain.cshtml" />
+    <Content Include="Views\Negilayas\Create.cshtml" />
+    <Content Include="Views\Negilayas\Delete.cshtml" />
+    <Content Include="Views\Negilayas\Details.cshtml" />
+    <Content Include="Views\Negilayas\Edit.cshtml" />
+    <Content Include="Views\Negilayas\Index.cshtml" />
+    <Content Include="Views\Home\OtchetMonth.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

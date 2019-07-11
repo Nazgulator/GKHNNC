@@ -18,6 +18,7 @@ using System.Collections;
 using Microsoft.AspNet.SignalR;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Globalization;
 
 namespace GKHNNC.Controllers
 {
@@ -99,40 +100,49 @@ namespace GKHNNC.Controllers
             int procount = 0;
             pro100 = excel.Count;
             OBSD OBSDKA = new OBSD();
-          
+            CultureInfo culture = new CultureInfo("en-US");
             //для каждой строки в экселе
             int lastadres = 0;
+            int counter = 0;
             foreach (List<string> L in excel)
             {
-
+                counter++;
                 bool EstService = false;
                 string ser = L[2].Replace(" ", "").ToUpper();
                 string adr = L[0].Replace(" ", "").ToUpper();
+             
                 decimal Saldo = 0;
                 decimal Nach = 0;
                 bool ignore = false;
                 try
                 {
-                    Saldo = Convert.ToDecimal(L[5]);
+                    Saldo = Convert.ToDecimal(L[5],culture);
 
                 }
                 catch
-                { }
+                {
+                }
                 try
                 {
 
-                    Nach = Convert.ToDecimal(L[3]);
+                    Nach = Convert.ToDecimal(L[3],culture);
                 }
                 catch
-                { }
+                {
+                }
 
-                if (Nach + Saldo == 0)
+                if (Nach== 0&&Saldo==0)
                 {
                     ignore = true;
                 }
 
                 if (!ignore)//Если не игнорить то ищем
                 {
+                    if (adr.Contains("ДЕТСКИЙ7"))
+                    {
+
+                    }
+
                     foreach (TableService S in Services)
                     {
 
@@ -227,7 +237,7 @@ namespace GKHNNC.Controllers
                                 try//сохраняем в БД
                                 {
                                     db.OBSDs.Add(OBSDKA);
-                                    db.SaveChanges();
+                                    await db.SaveChangesAsync();
                                 }
                                 catch (Exception e)
                                 {
@@ -251,8 +261,7 @@ namespace GKHNNC.Controllers
 
                 Adr[a] = Adr[a].Replace(" ", "").ToUpper();
             }
-
-           
+            
         }
 
         [HttpPost]
@@ -303,10 +312,13 @@ namespace GKHNNC.Controllers
                 //обрабатываем файл после загрузки
                 string Vkladka = "Общая";
                 string[] Names = new string[] { "адрес", "лицевой", "услуга", "начислениефактическое","фио","сальдоисходящее","квартира" };
-                List<List<string>> excel = ExcelSVNUpload.IMPORT(Server.MapPath("~/Files/" + fileName), Names,Vkladka);
+                string Error = "";
+                List<List<string>> excel = ExcelSVNUpload.IMPORT(Server.MapPath("~/Files/" + fileName), Names,out Error,Vkladka);
                 if (excel.Count < 1)
                 {
                     //если нифига не загрузилось то 
+                    ViewBag.Names = Names;
+                    ViewBag.Error = Error;
                     Console.WriteLine("Пустой массив значит файл не загрузился!(он уже удалился)");
                     return View("NotUpload");
                 }

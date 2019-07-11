@@ -16,7 +16,7 @@
     <h5>Загруженные данные:</h5>
     <div class="container">
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 @if (ViewBag.SVN)
                 {
                     <img src="~/Content/Images/SVNOn.png" class="img-responsive" style="height:50px;width:auto" />
@@ -26,7 +26,17 @@
                     <img src="~/Content/Images/SVNOff.png" href="/SVN/Upload" class="img-responsive" style="height:50px;width:auto" />
                 }
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
+                @if (ViewBag.IPU)
+                {
+                    <img src="~/Content/Images/IPUOn.png" class="img-responsive" style="height:50px;width:auto" />
+                }
+                else
+                {
+                    <img src="~/Content/Images/IPUOff.png" href="/IPU/Upload" class="img-responsive" style="height:50px;width:auto" />
+                }
+            </div>
+            <div class="col-md-3">
                 @if (ViewBag.UEV)
                 {
                     <img src="~/Content/Images/UEVOn.png" class="img-responsive" style="height:50px;width:auto" />
@@ -36,7 +46,7 @@
                     <img src="~/Content/Images/UEVOff.png" href="/UEV/Upload" class="img-responsive" style="height:50px;width:auto" />
                 }
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 @if (ViewBag.OPU)
                 {
                     <img src="~/Content/Images/OPUOn.png" class="img-responsive" style="height:50px;width:auto" />
@@ -46,13 +56,13 @@
                     <img src="~/Content/Images/OPUOff.png" href="/OPU/Upload" class="img-responsive" style="height:50px;width:auto" />
                 }
             </div>
-            </div>
         </div>
+    </div>
     <h3>Расчет горячей воды за @ViewBag.Year @ViewBag.Month</h3>
 
 
 
-    <table id="T" class="table table-bordered table-striped">
+    <table id="Table" class="table table-bordered table-striped">
         <tr>
             <th>
                 Адрес
@@ -68,10 +78,13 @@
                 Факт
             </th>
             <th>
-                УЭВ-План
+                ИПУ
             </th>
             <th>
-                УЭВ-Факт
+                УЭВ-ИПУ-План
+            </th>
+            <th>
+                УЭВ-ИПУ-Факт
             </th>
             <th>
                 ПУ
@@ -136,53 +149,100 @@
             {
                 cl6 = "bg-success";
             }
-            if (item.Primech != "")
+            if (item.Primech.Contains("*") || item.Primech.Contains("о"))
             {
                 cl5 = "bg-info";
             }
+            else { cl5 = cl4; }
+
+            string tit =  Convert.ToString(item.VFact - item.GVUEVM3);
 
 
 
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Adres)
+            </td>
 
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Adres)
-                </td>
+            <td class=@cl3>
+                @Html.DisplayFor(modelItem => item.Uev)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Plan)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Fact)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IPU)
+            </td>
+            <td class=@cl2>
+                @Html.DisplayFor(modelItem => item.RaznPlan)
+            </td>
+            <td class=@cl1>
+                @Html.DisplayFor(modelItem => item.RaznFact)
+            </td>
+            <td class=@cl4 + @cl5>
 
-                <td class=@cl3>
-                    @Html.DisplayFor(modelItem => item.Uev)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Plan)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Fact)
-                </td>
-                <td class=@cl2>
-                    @Html.DisplayFor(modelItem => item.RaznPlan)
-                </td>
-                <td class=@cl1>
-                    @Html.DisplayFor(modelItem => item.RaznFact)
-                </td>
-                <td class=@cl4 + @cl5>
+                <input type="checkbox" class="form-control" id="SelectAll" style="width:15px;height:15px" checked=@item.PU>
+            </td>
+            <td class=@cl5>
+                @Html.DisplayFor(modelItem => item.Primech)
+            </td>
+            <td class=@cl4 + @cl5 title=@tit>
+                @Html.DisplayFor(modelItem => item.GVUEVM3)
+            </td>
+            <td class=@cl6>
+                @Html.DisplayFor(modelItem => item.VFact)
+            </td>
+        </tr>
 
-                    <input type="checkbox" class="form-control" id="SelectAll" style="width:15px;height:15px" checked=@item.PU>
-                </td>
-                <td class=@cl5>
-                    @Html.DisplayFor(modelItem => item.Primech)
-                </td>
-                <td class=@cl4 + @cl5>
-                    @Html.DisplayFor(modelItem => item.GVUEVM3)
-                </td>
-                <td class=@cl6>
-                    @Html.DisplayFor(modelItem => item.VFact)
-                </td>
-            </tr>
 
         }
 
     </table>
-    <p><a href="/Home/Index" class="btn btn-success btn-block">В главное меню &raquo;</a> </p>
+    <p><a href="/Home/VODAIndex" class="btn btn-success btn-block"> Назад </a> </p>
+    <p><button tag ="ToExcel" class="btn btn-success btn-block">Экспорт в эксель &raquo;</button> </p>
 </body>
 </html>
+@section Scripts {
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+    @Scripts.Render("~/scripts/jquery-3.3.1.js")
+  
+    <script>
+        //Нажатие на кнопку "input[type='submit']"
+        $("button[tag='ToExcel']").click(function () {
 
+
+           
+           
+
+
+
+                var S = "";
+                var array = [];
+                var table = $("#Table");
+                var rows = table.children();
+                for (var i = 0; i < rows.length; i++) {
+                    var fields = rows.eq(i).children();
+                    var rowArray = [];
+                    for (var j = 0; j < fields.length; j++) {
+                        rowArray.push(fields[j].innerHTML);
+                        S += fields[j].innerHTML + ";";
+                    }
+
+                    array.push(rowArray);
+                    S += ";";
+                }
+                var T = table.html().replace("</tr>", "|").replace("<tr>", "").replace("<td>", "").replace("</td>", ";").replace(" ", "");
+
+                console.log(array);
+
+                $.post('@Url.Action("ExportToExcelJquery", "Home")', { selection: array }, function (data) {
+
+                    window.location.href = data;
+                });
+
+            });
+    </script>
+}

@@ -92,14 +92,20 @@ namespace GKHNNC.Controllers
                     OtopRub = Convert.ToDecimal(L[5].Replace(".", ","));
                 }
                 catch
-                { if (L[2] != "")
+                {
+                    if (L[2] != "")
                     {
                         Primech = L[2].Replace(" ", "");
                     } }
                 try
                 {
                     GWM3 = Convert.ToDecimal(L[3].Replace(".", ","));
+                    if (GWM3 < 0)
+                    {
+                        GWM3 = 0;
+                    }
                     GWRub = Convert.ToDecimal(L[6].Replace(".", ","));
+                    if (GWRub < 0){GWRub = 0;}
                 }
                 catch
                 {
@@ -107,13 +113,17 @@ namespace GKHNNC.Controllers
                 try
                 {
                     HWM3 = Convert.ToDecimal(L[4].Replace(".", ","));
-                    HWM3 = Convert.ToDecimal(L[7].Replace(".", ","));
+                    if (HWM3 < 0) { HWM3 = 0; }
+                    HWRub = Convert.ToDecimal(L[7].Replace(".", ","));
+                    if (HWRub < 0) { HWRub = 0; }
                 }
                 catch
                 {
                     if (L[4] != "")
                     {
                         Primech2 = L[4].Replace(" ", "");
+                        HWM3 = 0;
+                        HWRub = 0;
                     }
                 
                
@@ -150,7 +160,10 @@ namespace GKHNNC.Controllers
                             OPUKA.GWRub = GWRub;
                             OPUKA.HWRub = HWRub;
                             OPUKA.OtopRub = OtopRub;
-                            OPUKA.Primech = Primech;
+                            string prim = "";
+                            if (Primech.Length > Primech2.Length) { prim = Primech; }
+                            else { prim = Primech2; }
+                            OPUKA.Primech = prim;
                             OPUKA.Date = Date;
 
                             using (WorkContext db = new WorkContext())
@@ -283,10 +296,13 @@ namespace GKHNNC.Controllers
                 //обрабатываем файл после загрузки
                 string Vkladka = Date.Month.ToString();
                 string[] Names = new string[] { "адрес", "№дом", "гкалотопления(нараспределение)", "расходгвссопукуб,м", "расходхвссопукуб,м", "руботопление", "рубгор.вода", "рубхол.вода" };
-                List<List<string>> excel = ExcelSVNUpload.IMPORT(Server.MapPath("~/Files/" + fileName), Names, Vkladka);
+                string Error = "";
+                List<List<string>> excel = ExcelSVNUpload.IMPORT(Server.MapPath("~/Files/" + fileName), Names, out Error,Vkladka);
                 if (excel.Count < 1)
                 {
                     //если нифига не загрузилось то 
+                    ViewBag.Error = Error;
+                    ViewBag.Names = Names;
                     Console.WriteLine("Пустой массив значит файл не загрузился!(он уже удалился)");
                     return View("NotUpload");
                 }

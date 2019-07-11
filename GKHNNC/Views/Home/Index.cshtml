@@ -143,7 +143,7 @@
                                 </button>
                             </p>
                             <p>
-                                <button class="btn btn-success btn-lg" style="width:500Px" onclick="location.href='@Url.Action("VODAIndex", "Home")'">
+                                <button class="btn btn-success btn-lg" style="width:500Px" onclick="location.href='@Url.Action("VODAMain", "Home")'">
                                     <i class="glyphicon glyphicon-list-alt"></i> Программа "VODA" &raquo;
                                 </button>
                             </p>
@@ -202,6 +202,29 @@
                     </div>
 
                 </div>
+
+            }
+            if (User.Identity.Name.Contains("Teplotehnik") || User.Identity.Name.Contains("BuhKv"))
+            {
+                <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" onclick="location.href='@Url.Action("Index", "Houses")'">
+                        <i class="glyphicon glyphicon-map-marker"></i> Детализация по домам &raquo;
+                    </button>
+                </p>
+                <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" onclick="location.href='@Url.Action("VODAMain", "Home")'">
+                        <i class="glyphicon glyphicon-list-alt"></i> Расчет отопления и горячей воды  &raquo;
+                    </button>
+                </p>
+
+            }
+            if (User.Identity.Name.Contains("BuhKv"))
+            {
+                <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" onclick="location.href='@Url.Action("Index", "Arendators")'">
+                        <i class="glyphicon glyphicon-lock"></i> Арендаторы &raquo;
+                    </button>
+                </p>
 
             }
             if (User.Identity.Name.Contains("БухгалтерПоТопливу") || User.IsInRole("Администратор"))
@@ -270,10 +293,7 @@
         }
 
         <p><a href="http://gkhnsc.ru/" class="btn btn-success btn-lg" style="width:500Px"><i class="glyphicon glyphicon-new-window"></i>Web сайт &raquo;</a></p>
-        <div class="alert alert-success" role="alert">
-            Поздравляем с Днем Победы!!!
 
-        </div>
     }
     else
     {

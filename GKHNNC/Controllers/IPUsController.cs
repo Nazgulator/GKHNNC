@@ -242,11 +242,14 @@ namespace GKHNNC.Controllers
 
                 //обрабатываем файл после загрузки
                 string Vkladka = "для УЭВ по ГВС без ОПУ";
-                string[] Names = new string[] { "адрес", "начислениепонормативу(руб.)", "начислениепосчетчику(куб.м.)","Номер счетчика" };
-                List<List<string>> excel = ExcelSVNUpload.IMPORT(Server.MapPath("~/Files/" + fileName), Names, Vkladka);
+                string Error = "";
+                string[] Names = new string[] { "адрес", "начислениепонормативу(руб.)", "начислениепосчетчику(руб.)","Номер счетчика" };
+                List<List<string>> excel = ExcelSVNUpload.IMPORT(Server.MapPath("~/Files/" + fileName), Names,out Error, Vkladka);
                 if (excel.Count < 1)
                 {
                     //если нифига не загрузилось то 
+                    ViewBag.Error = Error;
+                    ViewBag.Names = Names;
                     Console.WriteLine("Пустой массив значит файл не загрузился!(он уже удалился)");
                     return View("NotUpload");
                 }

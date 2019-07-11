@@ -147,10 +147,13 @@ namespace GKHNNC.Controllers
               
 
                 string[] Names = new string[] { "STREET_HOUSE", "SERVICE", "DELIVER", "CHARGE_PLAN", "CHARGE_FACT", "MAKET" };
-                List<List<string>> excel = ExcelSVNUpload.IMPORT(Server.MapPath("~/Files/" + fileName),Names);
+                string Error = "";
+                List<List<string>> excel = ExcelSVNUpload.IMPORT(Server.MapPath("~/Files/" + fileName),Names,out Error);
                 if (excel.Count < 1)
                 {
                     //если нифига не загрузилось то 
+                    ViewBag.Error = Error;
+                    ViewBag.Names = Names;
                     Console.WriteLine("Пустой массив значит файл не загрузился!(он уже удалился)");
                     return View("NotUpload");
                 }
