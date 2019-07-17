@@ -173,7 +173,7 @@ namespace GKHNNC.Controllers
 
                 //найдем старые данные за этот месяц и заменим их не щадя
                 List<Arendator> dbArendator = db.Arendators.Where(x => x.Date.Year == Date.Year && x.Date.Month == Date.Month).ToList();
-
+                List<string> AR = new List<string>();
 
                 pro100 = dbArendator.Count;
                 foreach (Arendator S in dbArendator)
@@ -284,14 +284,17 @@ namespace GKHNNC.Controllers
                         string adr2 = excel[i][1].ToString();
                         adr += " " + adr2;//сохраняем в формате [ХХХХ 123]
                         adr = adr.ToUpper();
-                        adr = adr.Replace(",", "").Replace(" ","");
+                        adr = adr.Replace(",", "").Replace(" ","").Replace("A", "А");//Английскую в русскую А
                         
                         int AdrId = 0;
                         try
                         {
-                           AdrId =  db.Adres.Where(x => x.Adress.Equals(adr)).Select(y => y.Id).Single();//сохранили адрес
+                           AdrId =  db.Adres.Where(x => x.Adress.Equals(adr)).Select(y => y.Id).First();//сохранили адрес
                         }
-                        catch { continue; }//если адрес не нашли то пропустим данный шаг в цикле
+                        catch {
+                            continue;
+                        }//если адрес не нашли то пропустим данный шаг в цикле
+                        string Adr = "";
                         if (AdrId != 0 && ploshad != 0)
                         {
                             Adres A = db.Adres.Where(x => x.Id == AdrId).First();
@@ -299,6 +302,8 @@ namespace GKHNNC.Controllers
                             if (teplota12 != 0) { A.Teplota12 = teplota12; }
                             db.Entry(A).State = EntityState.Modified;
                             db.SaveChanges();
+                            Adr = A.Adress;
+                           
                         }
 
                         Ar.AdresId = AdrId;//пишем в адрес
@@ -307,15 +312,23 @@ namespace GKHNNC.Controllers
                         
                             while (j < excel.Count && excel[j][1] == "0")
                             {
-                                try { Ar.Name = excel[j][0]; } catch { }
-                                try { Ar.Teplota = Convert.ToDecimal(excel[j][2]); } catch { }
-                                try { Ar.Ploshad = Convert.ToDecimal(excel[j][3]); } catch { }
-                                try { Ar.Teplota12 = Convert.ToDecimal(excel[j][4]); } catch { }
-                                try { Ar.HotWater = Convert.ToDecimal(excel[j][5]); } catch { }
-                                try { Ar.ColdWater = Convert.ToDecimal(excel[j][6]); } catch { }
+                            
+                            try { Ar.Name = excel[j][0]; } catch {
+                            }
+                                try { Ar.Teplota = Convert.ToDecimal(excel[j][2]); } catch {
+                            }
+                                try { Ar.Ploshad = Convert.ToDecimal(excel[j][3]); } catch {
+                            }
+                                try { Ar.Teplota12 = Convert.ToDecimal(excel[j][4]); } catch {
+                            }
+                                try { Ar.HotWater = Convert.ToDecimal(excel[j][5]); } catch {
+                            }
+                                try { Ar.ColdWater = Convert.ToDecimal(excel[j][6]); } catch {
+                            }
                                 db.Arendators.Add(Ar);
                                 db.SaveChanges();
-                                j++;
+                            AR.Add(Adr + ";" + Ar.Name + ";" + Ar.HotWater);
+                            j++;
                             }
                         
                         i = j-1;
@@ -368,7 +381,7 @@ namespace GKHNNC.Controllers
                     ViewBag.Services = Services;
                     ViewBag.date = Date;
                     ViewBag.file = fileName;
-
+                    ViewBag.AR = AR;
                   
 
                     return View("UploadComplete");

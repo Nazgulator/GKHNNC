@@ -9,10 +9,27 @@
     <h2>Файл @ViewBag.file за @ViewBag.date загружен!</h2>
 
     <div class="alert alert-success" role="alert">
-      Все арендаторы определены.
+      Все  арендаторы определены.
     </div>
 </div>
+<table class="table-bordered table-striped">
+    @for (int i = 0; i < ViewBag.AR.Count; i++)
+    {
+        string[] S = @ViewBag.AR[i].Split(';');
+    <tr>
+        <td>
+            @S[0]
+        </td>
+        <td>
+            @S[1]
+        </td>
+        <td>
+            @S[2]
+        </td>
+    </tr>
 
+    }
+</table>
 
 <p><a href="/Arendators/Index" class="btn btn-success btn-default" style="width:100%" id="go1" hidden>Арендаторы >></a></p>
 <p><a href="/Home/Index" class="btn btn-success btn-default" style="width:100%" id="go2" hidden>Вернуться в главное меню >></a></p>

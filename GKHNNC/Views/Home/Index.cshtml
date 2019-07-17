@@ -104,7 +104,7 @@
 
             }
 
-            if (User.IsInRole("Администратор"))
+            if (User.IsInRole("Администратор") )
             {
 
 
@@ -204,7 +204,7 @@
                 </div>
 
             }
-            if (User.Identity.Name.Contains("Teplotehnik") || User.Identity.Name.Contains("BuhKv"))
+            if (User.Identity.Name.Contains("Teplotehnik") || User.Identity.Name.Contains("BuhKv") || User.Identity.Name.Contains("Voda"))
             {
                 <p>
                     <button class="btn btn-success btn-lg" style="width:500Px" onclick="location.href='@Url.Action("Index", "Houses")'">

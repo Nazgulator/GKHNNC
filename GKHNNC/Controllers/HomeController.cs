@@ -356,43 +356,51 @@ namespace GKHNNC.Controllers
                 SVNs = db.SVNs.Where(x => x.Date.Year == Year && x.Date.Month == Month).ToList();//берем все записи СВН за дату
             }
             catch { OH += "Данных СВН в " + Opr.MonthToNorm(Opr.MonthOpred(Month)) + " нет;"; }
+            
             try
             {
-                UEVs = db.UEVs.Where(x => x.Date.Year == Year && x.Date.Month == Month).ToList();
+                UEVs = db.UEVs.Where(x => x.Date.Year == Year && x.Date.Month == Month).Include(y=>y.Adres).ToList();
+               
+
             }
             catch { OH += "Данных УЭВ в " + Opr.MonthToNorm(Opr.MonthOpred(Month)) + " нет;"; }
             decimal HWPlan = 0;
             try
             {
-                HWPlan = SVNs.Where(y => y.ServiceId == 2 || y.ServiceId == 3).Sum(x => x.Plan);//суммируем горячую воду если она по 2 или 3 сервису идет
+                HWPlan = SVNs.Where(y => y.ServiceId == 2 ).Sum(x => x.Plan);//суммируем горячую воду если она по 2 гв на общее имущество только
             }
             catch { OH += "Горячая вода план за " + Opr.MonthToNorm(Opr.MonthOpred(Month)) + " не определена;"; }
             decimal HWFact = 0;
             try
             {
-                HWFact = SVNs.Where(y => y.ServiceId == 2 || y.ServiceId == 3).Sum(x => x.Fact);
+                HWFact = SVNs.Where(y => y.ServiceId == 2 ).Sum(x => x.Fact);//суммируем горячую воду если она по 2 гв на общее имущество только
             }
             catch { OH += "Горячая вода факт за " + Opr.MonthToNorm(Opr.MonthOpred(Month)) + " не определена;"; }
             decimal HWGEU = 0;
             try
             {
                 HWGEU = Arendators.Where(x => x.Name.Contains("ЖЭУ") && x.Name.Replace(" ", "").Contains("ЖЭУ3") == false).Sum(y => y.HotWater);//выбираем только жэу без ЖЭУ 3
+              
             }
             catch { OH += "Горячая вода ЖЭУ за " + Opr.MonthToNorm(Opr.MonthOpred(Month)) + " не определена;"; }
             decimal HWArenda = 0;
+            List<decimal> Ar = new List<decimal>();
             try
             {
                 HWArenda = Arendators.Where(x => x.Name.Contains("ЖЭУ") == false).Sum(y => y.HotWater);//берем все без жэу
+                Ar = Arendators.Where(x => x.Name.Contains("ЖЭУ") == false).Select(y=>y.Ploshad).ToList();
             }
             catch { OH += "Горячая вода Аренда за " + Opr.MonthToNorm(Opr.MonthOpred(Month)) + " не определена;"; }
             decimal HWUEV = 0;
             decimal HWUEVM3 = 0;
             decimal HWUEVGkal = 0;
+            List<int> U = new List<int>();
             try
             {
                 HWUEV = UEVs.Where(y=>y.KodUEV!=7225&&y.KodUEV!=29).Sum(x => x.HwVodaRub + x.HwEnergyRub);//Берем данные с УЭВ ГВруб + ГВэнергияруб
                 HWUEVM3 = UEVs.Where(y => y.KodUEV != 7225 && y.KodUEV != 29).Sum(x => x.HwVodaM3);
                 HWUEVGkal = UEVs.Where(y => y.KodUEV != 7225 && y.KodUEV != 29).Sum(x => x.HwEnergyGkal);//Берем данные с УЭВ ГВруб + ГВэнергияруб
+                U = UEVs.Where(y => y.KodUEV != 7225 && y.KodUEV != 29).Select(x=>x.KodUEV).Distinct().ToList();
             }
             catch { OH += "Горячая вода УЭВ за " + Opr.MonthToNorm(Opr.MonthOpred(Month)) + " не определена;"; }
             decimal HWNegilaya = 0;
@@ -453,6 +461,8 @@ namespace GKHNNC.Controllers
                 WS.Cells[2, gvsM3] = "ГВ м3";
                 WS.Cells[2, summa] = "Сумма";
 
+           
+
                 decimal NDS = 20;//ндс сейчас 20 подгрузить из таблицы за последнюю дату
                 decimal TarifHW = 102.08M;//тариф на теплую воду вынести в глобальные
                 decimal TeplotaVKube = 0.062M;//вынести в глобальные переменные
@@ -462,11 +472,15 @@ namespace GKHNNC.Controllers
                 decimal NegilayaRub = HWNegilaya * TarifHW;
                 decimal GVRubToM3 = HWUEV / TarifHW;
                 decimal GVRubToGkal = GVRubToM3 * TeplotaVKube * tep;
-                decimal GEUGVRubToM3 = HWGEU / TarifHW;
+                decimal GEUGVRubToM3 = HWGEU;
                 decimal GEUGVRubToGkal = GEUGVRubToM3 * TeplotaVKube * tep;
-
-                //ЗДЕСЬ
-                WS.Cells[punktHW, podrazd] = "1.Собственные нужды (ЖЭУ)";
+            //Из объёмов в рубли
+            decimal HWGEUM3 = HWGEU;
+            decimal HWArendaM3 = HWArenda;
+                 HWArenda = HWArenda * TarifHW;
+                 HWGEU = HWGEU * TarifHW;
+            //ЗДЕСЬ
+            WS.Cells[punktHW, podrazd] = "1.Собственные нужды (ЖЭУ)";
                 WS.Cells[punktHW, gvsGK] = Math.Round(GEUGVRubToGkal, 2);
                 WS.Cells[punktHW, gvsM3] = Math.Round(GEUGVRubToM3, 2);
                 // WS.Cells[2, summa + 1] = "ОБСД";
@@ -484,12 +498,15 @@ namespace GKHNNC.Controllers
                 decimal GVSodergObshImush = HWFact;//горячая вода на общее это ГВФАКТ
                 WS.Cells[punktHW, podrazd] = "2.Жилищный фонд";
 
-                decimal Obiem = HWUEVM3 + HWIPUM3 - GEUGVRubToM3 - GVRubToM3 - RubliVObiem(KvarsisSoranEol + HWFact, TarifHW,NDS);
-                decimal Obiem2 = HWUEVGkal + HWIPUGkal - GEUGVRubToGkal - GVRubToGkal - RubliVObiem(KvarsisSoranEol + HWFact, TarifHW,NDS) * TeplotaVKube *tep;
+                decimal Obiem = HWUEVM3 + RubliVObiem(HWIPU - HWGEU - HWFact - KvarsisSoranEol - HWArenda - HWNegilaya, TarifHW,NDS);
+                decimal IPUm3 = -RubliVObiem(HWIPU, TarifHW, NDS);
+                decimal IPUGkal = -IPUm3 * TeplotaVKube * tep;
+                decimal Obiem2 = Obiem * TeplotaVKube *tep;
                 //сибэко не участвует в распределении УЭВ Также ИПУ не суммируется  - summGvFact99
                 WS.Cells[punktHW, gvsGK] = Math.Round(Obiem2, 2);
                 WS.Cells[punktHW, gvsM3] = Math.Round(Obiem, 2);//(Convert.ToDecimal(IPU) /Tarif0)
-                WS.Cells[punktHW, summa] = Math.Round(HWUEV + HWIPU - KvarsisSoranEol - GeuHWBezGeu3 - HWArenda - GVSodergObshImush, 2);//общая сумма по домам из таблицы Зиминой 1830 + сумма ИПУ (она минусовая)- ЭОЛСОРАНКВАРСИС - Жэу без Жэу3 - ЕлесинаАренда- ГВ на содерж
+            WS.Cells[punktHW, summa].FormulaLocal = "=E4-F4-G4-H4+I4-J4";
+           // WS.Cells[punktHW, summa] = Math.Round(HWUEV + HWIPU - KvarsisSoranEol - GeuHWBezGeu3 - HWArenda - GVSodergObshImush, 2);//общая сумма по домам из таблицы Зиминой 1830 + сумма ИПУ (она минусовая)- ЭОЛСОРАНКВАРСИС - Жэу без Жэу3 - ЕлесинаАренда- ГВ на содерж
                 WS.Cells[punktHW - 1, summa + 1] = "Сумма";
                 WS.Cells[punktHW - 1, summa + 5] = "ИПУ";
                 // WS.Cells[punktHW - 1, summa + 2].width = 30;
@@ -521,13 +538,14 @@ namespace GKHNNC.Controllers
 
                 WS.Cells[punktHW, podrazd] = "3.Аренда";
 
-                Obiem = GVRubToM3 + HWNegilayaM3 + RubliVObiem(KvarsisSoranEol, TarifHW,NDS);
-                Obiem2 = GVRubToGkal + HWNegilayaGkal + RubliVObiem(KvarsisSoranEol, TarifHW,NDS) *TeplotaVKube *tep;
+                Obiem = RubliVObiem(HWNegilaya+HWArenda+KvarsisSoranEol, TarifHW,NDS);
+                Obiem2 = Obiem*TeplotaVKube *tep;
                 WS.Cells[punktHW, gvsGK] = Math.Round(Obiem2, 2);//ГВС м3*конвертатор в тепло + нежилая часть гкал 
                 WS.Cells[punktHW, gvsM3] = Math.Round(Obiem, 2);//Convert.ToDecimal(GVAll)+Convert.ToDecimal(NCHW[mes]), 2);//Суммируем Аренда Елесиной + Нежилая часть м3
-                WS.Cells[punktHW, summa] = Math.Round(HWArenda + HWNegilaya + KvarsisSoranEol, 2);//Аренда+Нежилая+КварсисСоранЭол
+            WS.Cells[punktHW, summa].FormulaLocal = "=СУММ(E5:G5)";
+            //WS.Cells[punktHW, summa] = Math.Round(HWArenda + HWNegilaya + KvarsisSoranEol, 2);//Аренда+Нежилая+КварсисСоранЭол
 
-                range = WS.get_Range("A" + Convert.ToString(punktHW), "G" + Convert.ToString(punktHW));
+            range = WS.get_Range("A" + Convert.ToString(punktHW), "G" + Convert.ToString(punktHW));
                 range.Columns.Interior.Color = System.Drawing.Color.FromArgb(255, 200, 255, 255);
                 range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
                 range = WS.get_Range("E" + Convert.ToString(punktHW + 1), "G" + Convert.ToString(punktHW + 1));
@@ -550,8 +568,9 @@ namespace GKHNNC.Controllers
                 WS.Cells[punktHW, podrazd] = "4.На содерж. общего имущества УЭВ";
                 Obiem = RubliVObiem(HWFact, TarifHW,NDS);
                 Obiem2 = Obiem *TeplotaVKube * tep;
-                WS.Cells[punktHW, summa] = Math.Round(HWFact, 2); //Сумма ГВ 
-                WS.Cells[punktHW, gvsM3] = Math.Round(Obiem, 2); //ГВ М3
+              // WS.Cells[punktHW, summa].FormulaLocal = "=СУММ(E6:J6)";
+            WS.Cells[punktHW, summa] = Math.Round(HWFact, 2); //Сумма ГВ 
+            WS.Cells[punktHW, gvsM3] = Math.Round(Obiem, 2); //ГВ М3
                 WS.Cells[punktHW, gvsGK] = Math.Round(Obiem2, 3); //ГВ ГКал
 
                 WS.Cells[punktHW - 1, summa + 1] = Math.Round(NegilayaRub, 2);
@@ -584,10 +603,19 @@ namespace GKHNNC.Controllers
                 range.EntireColumn.ColumnWidth = 14;
                 range.EntireColumn.Hidden = true;
 
+            punktHW++;
+            WS.Cells[punktHW, podrazd] = "5.Корректировака по ИПУ";
+            WS.Cells[punktHW, summa] = HWIPU;//Math.Round(summGvFact99+ summGvFact+ Convert.ToDouble(Convert.ToDecimal(GVAllRub) + NCRub));
+            WS.Cells[punktHW, gvsM3] =  HWIPUM3; //ГВ М3
+            WS.Cells[punktHW, gvsGK]= HWIPUGkal; //Сумму делим на тариф ГВ умножить на Конвертатор в тепло сибэко (0,064...) * 0.98
+            range = WS.get_Range("A" + Convert.ToString(punktHW), "D" + Convert.ToString(punktHW));
+            range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range = WS.get_Range("A" + punktHW.ToString(), "D" + punktHW.ToString());
+            range.Columns.Interior.Color = System.Drawing.Color.FromArgb(255, 240, 255, 255);
+            
 
-
-                punktHW++;
-                WS.Cells[punktHW, podrazd] = "5.Итог";
+            punktHW++;
+                WS.Cells[punktHW, podrazd] = "6.Итог";
                 WS.Cells[punktHW, summa].FormulaLocal = "=СУММ(D3:D6)";//Math.Round(summGvFact99+ summGvFact+ Convert.ToDouble(Convert.ToDecimal(GVAllRub) + NCRub));
                 WS.Cells[punktHW, gvsM3].FormulaLocal = "=СУММ(C3:C6)"; //ГВ М3
                 WS.Cells[punktHW, gvsGK].FormulaLocal = "=СУММ(B3:B6)"; //Сумму делим на тариф ГВ умножить на Конвертатор в тепло сибэко (0,064...) * 0.98
@@ -636,6 +664,11 @@ namespace GKHNNC.Controllers
                 range = WS.get_Range("A1", "D" + (maxCount + stroka2).ToString());
 
                 range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            //теперь перейдем к расчету ГВ
+
+
+
 
             string path = Server.MapPath("~/Content/OtchetHW.xlsx");
             string filename = "OtchetHW.xlsx";
