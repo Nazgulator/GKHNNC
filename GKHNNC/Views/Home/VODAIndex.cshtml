@@ -56,7 +56,7 @@
             {
                 string cl1 = "btn btn-secondary";
                 if (ViewBag.Go[i] < 4 && ViewBag.Go[i] > 0) { cl1 = "btn btn-warning"; }
-                if (ViewBag.Go[i] == 4) { cl1 = "btn btn-success"; }
+                if (ViewBag.Go[i] >= 4) { cl1 = "btn btn-success"; }
                 <div class="col-md-2">
 
                     <button class="@cl1" onclick="location.href='@Url.Action("OtoplenieMonth", "Home", new { Month = i+1, Year = DateTime.Now.Year } )'">
@@ -71,7 +71,7 @@
             {
                 string cl1 = "btn btn-secondary";
                 if (ViewBag.Go[i] < 4 && ViewBag.Go[i] > 0) { cl1 = "btn btn-warning"; }
-                if (ViewBag.Go[i] == 4) { cl1 = "btn btn-success"; }
+                if (ViewBag.Go[i] >= 4) { cl1 = "btn btn-success"; }
 
                 <div class="col-md-2">
 
@@ -93,7 +93,7 @@
             {
                 string cl1 = "btn btn-secondary";
                 if (ViewBag.Go[i] < 4 && ViewBag.Go[i] > 0) { cl1 = "btn btn-warning"; }
-                if (ViewBag.Go[i] == 4) { cl1 = "btn btn-success"; }
+                if (ViewBag.Go[i] == 4&& ViewBag.Arenda[i]==true) { cl1 = "btn btn-success"; }
                 <div class="col-md-2">
 
                     <button class="@cl1" onclick="location.href='@Url.Action("OtchetMonth", "Home", new { Month = i+1, Year = DateTime.Now.Year } )'">

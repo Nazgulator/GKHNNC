@@ -465,6 +465,8 @@ namespace GKHNNC.Controllers
 
                 decimal NDS = 20;//ндс сейчас 20 подгрузить из таблицы за последнюю дату
                 decimal TarifHW = 102.08M;//тариф на теплую воду вынести в глобальные
+                decimal TarifEnergy = 1102.03M;//тариф на отопление вынести в глобальные
+                decimal TarifCW = 16.73M;
                 decimal TeplotaVKube = 0.062M;//вынести в глобальные переменные
                 int punktHW = 3;
                 decimal tep = 0.98M;
@@ -481,8 +483,8 @@ namespace GKHNNC.Controllers
                  HWGEU = HWGEU * TarifHW;
             //ЗДЕСЬ
             WS.Cells[punktHW, podrazd] = "1.Собственные нужды (ЖЭУ)";
-                WS.Cells[punktHW, gvsGK] = Math.Round(GEUGVRubToGkal, 2);
-                WS.Cells[punktHW, gvsM3] = Math.Round(GEUGVRubToM3, 2);
+                WS.Cells[punktHW, gvsGK] = Math.Round(HWGEUM3*TepVK, 2);
+                WS.Cells[punktHW, gvsM3] = Math.Round(HWGEUM3, 2);
                 // WS.Cells[2, summa + 1] = "ОБСД";
                 WS.Cells[punktHW, summa] = Math.Round(HWGEU, 2);
 
@@ -497,11 +499,13 @@ namespace GKHNNC.Controllers
                 decimal GeuHWBezGeu3 = HWGEU;
                 decimal GVSodergObshImush = HWFact;//горячая вода на общее это ГВФАКТ
                 WS.Cells[punktHW, podrazd] = "2.Жилищный фонд";
+                decimal ArendaM3 = Math.Round(HWArendaM3 + HWNegilayaM3+  RubliVObiem(KvarsisSoranEol, TarifHW, NDS),2);//считаем аренду объём
+                decimal ArendaGkal = Math.Round(HWArendaM3 *TepVK + HWNegilayaGkal + RubliVObiem(KvarsisSoranEol, TarifHW, NDS)*TepVK,2);//считаем аренду объём
 
-                decimal Obiem = HWUEVM3 + RubliVObiem(HWIPU - HWGEU - HWFact - KvarsisSoranEol - HWArenda - HWNegilaya, TarifHW,NDS);
+                decimal Obiem = HWUEVM3 + HWIPUM3 - HWGEUM3 + RubliVObiem(- HWFact, TarifHW,NDS)-ArendaM3;
                 decimal IPUm3 = -RubliVObiem(HWIPU, TarifHW, NDS);
                 decimal IPUGkal = -IPUm3 * TeplotaVKube * tep;
-                decimal Obiem2 = Obiem * TeplotaVKube *tep;
+                decimal Obiem2 = HWUEVGkal + HWIPUGkal - HWGEUM3*TepVK+ RubliVObiem(-HWFact, TarifHW, NDS)*TepVK - ArendaGkal;
                 //сибэко не участвует в распределении УЭВ Также ИПУ не суммируется  - summGvFact99
                 WS.Cells[punktHW, gvsGK] = Math.Round(Obiem2, 2);
                 WS.Cells[punktHW, gvsM3] = Math.Round(Obiem, 2);//(Convert.ToDecimal(IPU) /Tarif0)
@@ -519,12 +523,12 @@ namespace GKHNNC.Controllers
                 WS.Cells[punktHW - 1, summa + 6] = "ГВ СОИ УЭВ";
                 // WS.Cells[punktHW - 1, summa + 7] = "ГВ СОИ С.ЭКО";
                 // WS.Cells[punktHW - 1, summa + 6].width = 30;
-                WS.Cells[punktHW, summa + 1] = HWUEV;
-                WS.Cells[punktHW, summa + 5] = HWIPU;
-                WS.Cells[punktHW, summa + 3] = KvarsisSoranEol;
-                WS.Cells[punktHW, summa + 4] = GeuHWBezGeu3;
-                WS.Cells[punktHW, summa + 2] = HWArenda;
-                WS.Cells[punktHW, summa + 6] = GVSodergObshImush;
+                WS.Cells[punktHW, summa + 1] = Math.Round(HWUEV, 2);
+                WS.Cells[punktHW, summa + 5] = Math.Round(HWIPU, 2);
+                WS.Cells[punktHW, summa + 3] = Math.Round(KvarsisSoranEol, 2);
+                WS.Cells[punktHW, summa + 4] = Math.Round(GeuHWBezGeu3, 2);
+                WS.Cells[punktHW, summa + 2] = Math.Round(HWArenda, 2);
+                WS.Cells[punktHW, summa + 6] = Math.Round(GVSodergObshImush, 2);
                 // WS.Cells[punktHW, summa + 7] = summGvFact99;
                 range = WS.get_Range("A" + Convert.ToString(punktHW), "J" + Convert.ToString(punktHW));
                 range.Columns.Interior.Color = System.Drawing.Color.FromArgb(255, 255, 255, 200);
@@ -538,10 +542,9 @@ namespace GKHNNC.Controllers
 
                 WS.Cells[punktHW, podrazd] = "3.Аренда";
 
-                Obiem = RubliVObiem(HWNegilaya+HWArenda+KvarsisSoranEol, TarifHW,NDS);
-                Obiem2 = Obiem*TeplotaVKube *tep;
-                WS.Cells[punktHW, gvsGK] = Math.Round(Obiem2, 2);//ГВС м3*конвертатор в тепло + нежилая часть гкал 
-                WS.Cells[punktHW, gvsM3] = Math.Round(Obiem, 2);//Convert.ToDecimal(GVAll)+Convert.ToDecimal(NCHW[mes]), 2);//Суммируем Аренда Елесиной + Нежилая часть м3
+
+                WS.Cells[punktHW, gvsM3] = Math.Round(ArendaM3, 2);//Convert.ToDecimal(GVAll)+Convert.ToDecimal(NCHW[mes]), 2);//Суммируем Аренда Елесиной + Нежилая часть м3
+                WS.Cells[punktHW, gvsGK] = Math.Round(ArendaGkal, 2);//ГВС м3*конвертатор в тепло + нежилая часть гкал 
             WS.Cells[punktHW, summa].FormulaLocal = "=СУММ(E5:G5)";
             //WS.Cells[punktHW, summa] = Math.Round(HWArenda + HWNegilaya + KvarsisSoranEol, 2);//Аренда+Нежилая+КварсисСоранЭол
 
@@ -605,9 +608,9 @@ namespace GKHNNC.Controllers
 
             punktHW++;
             WS.Cells[punktHW, podrazd] = "5.Корректировака по ИПУ";
-            WS.Cells[punktHW, summa] = HWIPU;//Math.Round(summGvFact99+ summGvFact+ Convert.ToDouble(Convert.ToDecimal(GVAllRub) + NCRub));
-            WS.Cells[punktHW, gvsM3] =  HWIPUM3; //ГВ М3
-            WS.Cells[punktHW, gvsGK]= HWIPUGkal; //Сумму делим на тариф ГВ умножить на Конвертатор в тепло сибэко (0,064...) * 0.98
+            WS.Cells[punktHW, summa] = Math.Round(HWIPU, 2);//Math.Round(summGvFact99+ summGvFact+ Convert.ToDouble(Convert.ToDecimal(GVAllRub) + NCRub));
+            WS.Cells[punktHW, gvsM3] = Math.Round(HWIPUM3, 2); //ГВ М3
+            WS.Cells[punktHW, gvsGK]= Math.Round(HWIPUGkal, 2); //Сумму делим на тариф ГВ умножить на Конвертатор в тепло сибэко (0,064...) * 0.98
             range = WS.get_Range("A" + Convert.ToString(punktHW), "D" + Convert.ToString(punktHW));
             range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
             range = WS.get_Range("A" + punktHW.ToString(), "D" + punktHW.ToString());
@@ -665,7 +668,295 @@ namespace GKHNNC.Controllers
 
                 range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
-            //теперь перейдем к расчету ГВ
+            //теперь перейдем к расчету Отопления !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+
+       
+            
+            HWPlan = 0;
+          
+            HWFact = 0;
+            
+            HWGEU = 0;
+            try
+            {
+                HWGEU = Arendators.Where(x => x.Name.Contains("ЖЭУ") && x.Name.Replace(" ", "").Contains("ЖЭУ3") == false).Sum(y => y.Teplota);//выбираем только жэу без ЖЭУ 3
+
+            }
+            catch { OH += "Отопление ЖЭУ за " + Opr.MonthToNorm(Opr.MonthOpred(Month)) + " не определено;"; }
+            HWArenda = 0;
+            Ar = new List<decimal>();
+            try
+            {
+                HWArenda = Arendators.Where(x => x.Name.Contains("ЖЭУ") == false).Sum(y => y.Teplota);//берем все без жэу
+                Ar = Arendators.Where(x => x.Name.Contains("ЖЭУ") == false).Select(y => y.Ploshad).ToList();
+            }
+            catch { OH += "Отопление Аренда за " + Opr.MonthToNorm(Opr.MonthOpred(Month)) + " не определена;"; }
+            HWUEV = 0;
+            HWUEVM3 = 0;
+            HWUEVGkal = 0;
+            U = new List<int>();
+            try
+            {
+                HWUEV = UEVs.Where(y => y.KodUEV != 7225 && y.KodUEV != 29).Sum(x => x.OtEnergyRub);//Берем данные с УЭВ 
+                HWUEVM3 = UEVs.Where(y => y.KodUEV != 7225 && y.KodUEV != 29).Sum(x => x.OtEnergyGkal);
+                HWUEVGkal = UEVs.Where(y => y.KodUEV != 7225 && y.KodUEV != 29).Sum(x => x.OtEnergyGkal);//Берем данные с УЭВ Гкал
+                U = UEVs.Where(y => y.KodUEV != 7225 && y.KodUEV != 29).Select(x => x.KodUEV).Distinct().ToList();
+            }
+            catch { OH += "Отопление УЭВ за " + Opr.MonthToNorm(Opr.MonthOpred(Month)) + " не определена;"; }
+            HWNegilaya = 0;
+            HWNegilayaM3 = 0;
+            HWNegilayaGkal = 0;
+            try
+            {
+                HWNegilaya = UEVs.Where(y => y.KodUEV == 7225).Sum(x => x.OtEnergyRub);//Нежилая в рублях
+                HWNegilayaM3 = UEVs.Where(y => y.KodUEV == 7225).Sum(x => x.OtEnergyGkal);//Нежилая в объёмах
+                HWNegilayaGkal = UEVs.Where(y => y.KodUEV == 7225).Sum(x => x.OtEnergyGkal);//Нежилая в гкал
+            }
+            catch { OH += "Отопление Нежилой части не найдена в данных УЭВ за " + Opr.MonthToNorm(Opr.MonthOpred(Month)) + ";"; }
+            HWIPU = 0;
+            HWIPUGkal = 0;
+            HWIPUM3 = 0;
+            try
+            {
+                HWIPU = UEVs.Where(y => y.KodUEV == 29).Sum(x => x.OtEnergyRub);//Берем данные с УЭВ ГВруб + ГВэнергияруб
+                HWIPUGkal = UEVs.Where(y => y.KodUEV == 29).Sum(x => x.OtEnergyGkal);//Берем данные с УЭВ ГВруб + ГВэнергияруб
+                HWIPUM3 = UEVs.Where(y => y.KodUEV == 29).Sum(x => x.OtEnergyGkal);//Берем данные с УЭВ ГВруб + ГВэнергияруб
+            }
+            catch { OH += "Отопление ИПУ не найдено в данных УЭВ за " + Opr.MonthToNorm(Opr.MonthOpred(Month)) + ";"; }
+            SoranEol = new List<int>();
+            OBSDs = new List<OBSD>();
+            HWSoEoKv = 0;//Соран ЭОЛ и КВАРСИС 
+            try
+            {
+                //тут ищем нежилую по лицевым счетам
+                SoranEol = db.Negilayas.Select(x => x.CodeOBSD).ToList();
+                OBSDs = db.OBSDs.Where(x => x.Date.Year == Year && x.Date.Month == Month && (x.TableServiceId == 1)).ToList();
+            }
+            catch { OH += "СоранЭолКварсис отопление не найдено в данных ОБСД за " + Opr.MonthToNorm(Opr.MonthOpred(Month)) + ";"; }
+            foreach (int i in SoranEol)
+            {
+                HWSoEoKv += OBSDs.Where(x => x.Licevoi == i).Sum(y => y.Nachislenie);
+
+            }
+
+
+            
+
+        
+            ApExcel.Worksheets.Add(Type.Missing);
+            WS = (Excel.Worksheet)WbExcel.Sheets[1];//берем 1 лист
+            WS.Name = "Справка по ТЭ'ЖКХННЦ' " + Opr.MonthOpred(Month);
+
+            podrazd = 1;
+            gvsM3 = 3;
+            gvsGK = 2;
+            summa = 3;
+            maxCount = 0;//общее количество строк
+            stroka2 = 2;//начало 2 строки
+
+            WS.Cells[1, 1] = "Справка о распределении затрат теплоэнергии по подразделениям ФГУП 'ЖКХ ННЦ ' за " + Opr.MonthOpred(Month);
+            WS.Cells[2, podrazd] = "Подразделения";
+            WS.Cells[2, gvsGK] = "ГВ гКал";
+            WS.Cells[2, summa] = "Сумма";
+
+
+
+           
+            
+            
+            punktHW = 3;
+            NegilayaRub = HWNegilaya * TarifEnergy;
+            GVRubToM3 = HWUEV / TarifEnergy;
+            GVRubToGkal = GVRubToM3 * TeplotaVKube * tep;
+            GEUGVRubToGkal = HWGEU;//Есть только теплота и ничего больше
+            //Из объёмов в рубли
+            decimal HWGEUGkal = HWGEU;//на самом деле гКал
+            decimal HWArendaGkal = HWArenda;
+            HWArenda = HWArenda * TarifEnergy;//а это теперь в рублях
+            HWGEU = HWGEU * TarifEnergy;
+            //ЗДЕСЬ
+            WS.Cells[punktHW, podrazd] = "1.Собственные нужды (ЖЭУ)";
+            WS.Cells[punktHW, gvsGK] = Math.Round(HWGEUGkal, 2);
+            // WS.Cells[2, summa + 1] = "ОБСД";
+            WS.Cells[punktHW, summa] = Math.Round(HWGEU, 2);
+
+            range = WS.get_Range("A" + Convert.ToString(punktHW), "D" + Convert.ToString(punktHW));
+            range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.Columns.Interior.Color = System.Drawing.Color.FromArgb(255, 255, 255, 240);
+
+            punktHW++;
+            IPU = HWIPU;//руб
+            ElesinaArenda = HWArenda + HWNegilaya;//Аренда еслесиной + нежилая часть
+            KvarsisSoranEol = HWSoEoKv;
+            GeuHWBezGeu3 = HWGEU;
+            GVSodergObshImush = HWFact;//горячая вода на общее это ГВФАКТ
+            WS.Cells[punktHW, podrazd] = "2.Жилищный фонд";
+
+            Obiem = HWUEVGkal + HWIPUGkal - HWGEUGkal +  RubliVObiem(-HWFact - KvarsisSoranEol - HWArenda - HWNegilaya, TarifEnergy, NDS);
+            IPUm3 = -RubliVObiem(HWIPU, TarifEnergy, NDS);
+            IPUGkal = -IPUGkal;
+            Obiem2 = Obiem;
+            //сибэко не участвует в распределении УЭВ Также ИПУ не суммируется  - summGvFact99
+            WS.Cells[punktHW, gvsGK] = Math.Round(Obiem2, 2);
+            WS.Cells[punktHW, summa].FormulaLocal = "=D4-E4-F4-G4+H4-I4";
+            // WS.Cells[punktHW, summa] = Math.Round(HWUEV + HWIPU - KvarsisSoranEol - GeuHWBezGeu3 - HWArenda - GVSodergObshImush, 2);//общая сумма по домам из таблицы Зиминой 1830 + сумма ИПУ (она минусовая)- ЭОЛСОРАНКВАРСИС - Жэу без Жэу3 - ЕлесинаАренда- ГВ на содерж
+            WS.Cells[punktHW - 1, summa + 1] = "Сумма";
+            WS.Cells[punktHW - 1, summa + 5] = "ИПУ";
+            // WS.Cells[punktHW - 1, summa + 2].width = 30;
+            WS.Cells[punktHW - 1, summa + 3] = "СОРАН,ЭОЛ,Кв.";
+            // WS.Cells[punktHW - 1, summa + 3].width = 30;
+            WS.Cells[punktHW - 1, summa + 4] = "ЖЭУ без ЖЕУ3";
+            // WS.Cells[punktHW - 1, summa + 4].width = 30;
+            WS.Cells[punktHW - 1, summa + 2] = "Аренда";
+            // WS.Cells[punktHW - 1, summa + 5].width = 30;
+            WS.Cells[punktHW - 1, summa + 6] = "ГВ СОИ УЭВ";
+            // WS.Cells[punktHW - 1, summa + 7] = "ГВ СОИ С.ЭКО";
+            // WS.Cells[punktHW - 1, summa + 6].width = 30;
+            WS.Cells[punktHW, summa + 1] = Math.Round(HWUEV,2);
+            WS.Cells[punktHW, summa + 5] = Math.Round(HWIPU, 2);
+            WS.Cells[punktHW, summa + 3] = Math.Round(KvarsisSoranEol, 2);
+            WS.Cells[punktHW, summa + 4] = Math.Round(GeuHWBezGeu3, 2);
+            WS.Cells[punktHW, summa + 2] = Math.Round(HWArenda, 2);
+            WS.Cells[punktHW, summa + 6] = Math.Round(GVSodergObshImush, 2);
+            // WS.Cells[punktHW, summa + 7] = summGvFact99;
+            range = WS.get_Range("A" + Convert.ToString(punktHW), "I" + Convert.ToString(punktHW));
+            range.Columns.Interior.Color = System.Drawing.Color.FromArgb(255, 255, 255, 200);
+            range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            range = WS.get_Range("D" + Convert.ToString(punktHW - 1), "I" + Convert.ToString(punktHW - 1));
+            range.Columns.Interior.Color = System.Drawing.Color.FromArgb(255, 255, 255, 200);
+            range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            punktHW++;
+
+            WS.Cells[punktHW, podrazd] = "3.Аренда";
+
+            Obiem = RubliVObiem(HWNegilaya + HWArenda + KvarsisSoranEol, TarifEnergy, NDS);
+            Obiem2 = Obiem;
+            WS.Cells[punktHW, gvsGK] = Math.Round(Obiem2, 2);//ГВС м3*конвертатор в тепло + нежилая часть гкал 
+            WS.Cells[punktHW, summa].FormulaLocal = "=СУММ(E5:G5)";
+            //WS.Cells[punktHW, summa] = Math.Round(HWArenda + HWNegilaya + KvarsisSoranEol, 2);//Аренда+Нежилая+КварсисСоранЭол
+
+            range = WS.get_Range("A" + Convert.ToString(punktHW), "F" + Convert.ToString(punktHW));
+            range.Columns.Interior.Color = System.Drawing.Color.FromArgb(255, 200, 255, 255);
+            range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range = WS.get_Range("D" + Convert.ToString(punktHW + 1), "F" + Convert.ToString(punktHW + 1));
+            range.Columns.Interior.Color = System.Drawing.Color.FromArgb(255, 200, 255, 255);
+            range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            WS.Cells[punktHW, summa + 4] = "Тарифы:";
+            // WS.Cells[punktHW - 1, summa + 3].width = 30;
+            // WS.Cells[punktHW, summa + 4] = "Отопление";
+            // WS.Cells[punktHW - 1, summa + 4].width = 30;
+            WS.Cells[punktHW, summa + 5] = "ГВ на Общ.Им.";
+            // WS.Cells[punktHW - 1, summa + 5].width = 30;
+            // WS.Cells[punktHW, summa + 6] = "ХВ на Общ.Им.";
+            WS.Cells[punktHW, summa + 6] = "Теплота в m3";
+
+            punktHW++;
+            //тут
+
+
+            WS.Cells[punktHW, podrazd] = "4.На содерж. общего имущества УЭВ";
+            Obiem = RubliVObiem(HWFact, TarifEnergy, NDS);
+            Obiem2 = Obiem;
+            // WS.Cells[punktHW, summa].FormulaLocal = "=СУММ(E6:J6)";
+            WS.Cells[punktHW, summa] = Math.Round(HWFact, 2); //Сумма ГВ 
+            WS.Cells[punktHW, gvsGK] = Math.Round(Obiem2, 3); //ГВ ГКал
+
+            WS.Cells[punktHW - 1, summa + 1] = Math.Round(NegilayaRub, 2);
+            WS.Cells[punktHW - 1, summa + 2] = Math.Round(HWArenda, 2);
+            WS.Cells[punktHW - 1, summa + 3] = Math.Round(KvarsisSoranEol, 2);
+
+            WS.Cells[punktHW, summa + 1] = "Нежилая часть";
+            WS.Cells[punktHW, summa + 2] = "Аренда";
+            WS.Cells[punktHW, summa + 3] = "СОРАН,ЭОЛ,КВ.";
+            WS.Cells[punktHW, summa + 4] = "УЭВ";
+            // WS.Cells[punktHW, summa + 4] = Tarif0;
+            WS.Cells[punktHW, summa + 5] = TarifEnergy;
+            //  WS.Cells[punktHW, summa + 6] = Tarif2;
+            WS.Cells[punktHW, summa + 6] = TeplotaVKube;
+
+
+            range = WS.get_Range("A" + Convert.ToString(punktHW), "C" + Convert.ToString(punktHW));
+            range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.Columns.Interior.Color = System.Drawing.Color.FromArgb(255, 240, 255, 255);
+
+            range = WS.get_Range("G" + Convert.ToString(punktHW), "I" + Convert.ToString(punktHW));
+
+            range.Columns.Interior.Color = System.Drawing.Color.FromArgb(255, 240, 255, 255);
+
+            range = WS.get_Range("G" + Convert.ToString(punktHW - 1), "I" + Convert.ToString(punktHW));//последняя чать квадрат
+            range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            // WS.Cells[punktHW, summa + 1] = Math.Round(Convert.ToDecimal(OBSD[mes, 3]));
+            range = WS.get_Range("D1", "K1");
+            range.EntireColumn.ColumnWidth = 14;
+            range.EntireColumn.Hidden = true;
+
+            punktHW++;
+            WS.Cells[punktHW, podrazd] = "5.Корректировака по ИПУ";
+            WS.Cells[punktHW, summa] = HWIPU;//Math.Round(summGvFact99+ summGvFact+ Convert.ToDouble(Convert.ToDecimal(GVAllRub) + NCRub));
+            WS.Cells[punktHW, gvsGK] = HWIPUGkal; //Сумму делим на тариф ГВ умножить на Конвертатор в тепло сибэко (0,064...) * 0.98
+            range = WS.get_Range("A" + Convert.ToString(punktHW), "C" + Convert.ToString(punktHW));
+            range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range = WS.get_Range("A" + punktHW.ToString(), "C" + punktHW.ToString());
+            range.Columns.Interior.Color = System.Drawing.Color.FromArgb(255, 240, 255, 255);
+
+
+            punktHW++;
+            WS.Cells[punktHW, podrazd] = "6.Итог";
+            WS.Cells[punktHW, summa].FormulaLocal = "=СУММ(D3:D6)";//Math.Round(summGvFact99+ summGvFact+ Convert.ToDouble(Convert.ToDecimal(GVAllRub) + NCRub));
+            WS.Cells[punktHW, gvsM3].FormulaLocal = "=СУММ(C3:C6)"; //ГВ М3
+            WS.Cells[punktHW, gvsGK].FormulaLocal = "=СУММ(B3:B6)"; //Сумму делим на тариф ГВ умножить на Конвертатор в тепло сибэко (0,064...) * 0.98
+            range = WS.get_Range("A" + Convert.ToString(punktHW), "C" + Convert.ToString(punktHW));
+            range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range = WS.get_Range("A" + punktHW.ToString(), "C" + punktHW.ToString());
+            range.Columns.Interior.Color = System.Drawing.Color.FromArgb(255, 255, 225, 200);
+            range.Font.Bold = true;
+
+
+
+
+            //ширина столбцов
+            range = WS.Cells[maxCount + stroka2, podrazd];//столбец подразделение ширина
+            range.ColumnWidth = 40;
+
+            //range.NumberFormat = "@";
+
+            range = WS.Cells[maxCount + stroka2, gvsM3];//столбец M3
+            range.ColumnWidth = 12;
+            range.NumberFormat = "@";
+
+            range = WS.Cells[maxCount + stroka2, gvsGK];//столбец GK
+            range.ColumnWidth = 12;
+            range.NumberFormat = "0.00";
+
+            range = WS.Cells[maxCount + stroka2, summa];//столбец сумма
+            range.ColumnWidth = 12;
+            range.NumberFormat = "0.00";
+
+
+
+            range = WS.get_Range("A1", "C1");
+            range.Merge(Type.Missing);
+
+            range.Font.Bold = true;
+            range.Font.Size = 13;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.RowHeight = 40;
+            range.WrapText = true;//перенос по словам
+
+            range = WS.get_Range("A2", "C2");
+            range.Font.Bold = true;
+            //Выделяем всю таблицу
+
+            range = WS.get_Range("A1", "C" + (maxCount + stroka2).ToString());
+
+            range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
 
 
@@ -873,6 +1164,7 @@ namespace GKHNNC.Controllers
            
             ViewBag.Month = Opr.MonthZabit();
             int[] Go =new int[12];
+            bool[] Arenda = new bool[12];
             for (int i=1;i<13;i++)
             {
                 
@@ -884,8 +1176,11 @@ namespace GKHNNC.Controllers
                 if (z > 0) { Go[i - 1]++; }
                 int d = db.IPUs.Where(a => a.Date.Year == year && a.Date.Month == i).Count();
                 if (d > 0) { Go[i - 1]++; }
+                int f = db.Arendators.Where(a => a.Date.Year == year && a.Date.Month == i).Count();
+                if (f > 0) { Arenda[i - 1] = true; }
             }
             ViewBag.Go = Go;
+            ViewBag.Arenda = Arenda;
             return View();
 
         }
