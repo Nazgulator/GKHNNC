@@ -49,6 +49,22 @@ namespace GKHNNC.DAL
 
         public System.Data.Entity.DbSet<GKHNNC.Models.Negilaya> Negilayas { get; set; }
 
+        public System.Data.Entity.DbSet<GKHNNC.Models.DOMFundament> DOMFundaments { get; set; }
+
+        public System.Data.Entity.DbSet<GKHNNC.Models.FundamentMaterial> FundamentMaterials { get; set; }
+
+        public System.Data.Entity.DbSet<GKHNNC.Models.FundamentType> FundamentTypes { get; set; }
+
+        public System.Data.Entity.DbSet<GKHNNC.Models.RoofForm> RoofForms { get; set; }
+
+        public System.Data.Entity.DbSet<GKHNNC.Models.RoofType> RoofTypes { get; set; }
+
+        public System.Data.Entity.DbSet<GKHNNC.Models.RoofVid> RoofVids { get; set; }
+
+        public System.Data.Entity.DbSet<GKHNNC.Models.RoofUteplenie> RoofUteplenies { get; set; }
+
+        public System.Data.Entity.DbSet<GKHNNC.Models.DOMRoof> DOMRoofs { get; set; }
+
 
         //protected override void OnModelCreating(DbModelBuilder modelBuilder)
 

@@ -983,7 +983,11 @@ namespace GKHNNC.Controllers
 
             
         }
-        public ActionResult OtoplenieMonth(int Month,int Year)
+        public ActionResult TechPasport()
+        {
+            return View();
+        }
+            public ActionResult OtoplenieMonth(int Month,int Year)
         {
             if (Year == null)//если год не указан
             {

@@ -1,0 +1,99 @@
+﻿@model IEnumerable<GKHNNC.Models.DOMRoof>
+
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+<body>
+    <p>
+        @Html.ActionLink("Создать", "Create", null, new {@class = "btn btn-success btn-block"})
+    </p>
+    <table id="T" class="table table-bordered table-striped">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Adres.Adress)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Form.Form)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Type.Type)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Uteplenie.Uteplenie)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Vid.Vid)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.YearKrovlya)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Year)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Ploshad)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IznosKrovlya)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Iznos)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Date)
+            </th>
+            <th></th>
+        </tr>
+    
+    @foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Adres.Adress)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Form.Form)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Type.Type)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Uteplenie.Uteplenie)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Vid.Vid)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.YearKrovlya)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Year)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Ploshad)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IznosKrovlya)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Iznos)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Date)
+            </td>
+            <td>
+                @Html.ActionLink("Редактировать", "Edit", new { id=item.Id }) |
+                @Html.ActionLink("Удалить", "Delete", new { id=item.Id })
+            </td>
+        </tr>
+    }
+    
+    </table>
+    <p><a href="/Home/Index" class="btn btn-success btn-block">В главное меню &raquo;</a> </p>
+</body>
+</html>
