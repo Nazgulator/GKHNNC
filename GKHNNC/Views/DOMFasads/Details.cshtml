@@ -1,0 +1,75 @@
+﻿@model GKHNNC.Models.DOMFasad
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>DOMFasad</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Adres.Adress)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Adres.Adress)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Material.Material)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Material.Material)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Type.Type)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Type.Type)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Uteplenie.Uteplenie)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Uteplenie.Uteplenie)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Iznos)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Iznos)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Year)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Year)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Date)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Date)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

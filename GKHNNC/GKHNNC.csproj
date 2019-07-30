@@ -242,10 +242,14 @@
     <Compile Include="Controllers\AvtoScansController.cs" />
     <Compile Include="Controllers\ChatMessagesController.cs" />
     <Compile Include="Controllers\CompleteWorksController.cs" />
+    <Compile Include="Controllers\DOMFasadsController.cs" />
     <Compile Include="Controllers\DOMFundamentsController.cs" />
     <Compile Include="Controllers\DOMRoofsController.cs" />
     <Compile Include="Controllers\ExcelExportMonth.cs" />
     <Compile Include="Controllers\EzdkasController.cs" />
+    <Compile Include="Controllers\FasadMaterialsController.cs" />
+    <Compile Include="Controllers\FasadTypesController.cs" />
+    <Compile Include="Controllers\FasadUtepleniesController.cs" />
     <Compile Include="Controllers\FundamentMaterialsController.cs" />
     <Compile Include="Controllers\FundamentTypesController.cs" />
     <Compile Include="Controllers\GEUsController.cs" />
@@ -294,7 +298,11 @@
     <Compile Include="Models\Adres.cs" />
     <Compile Include="Models\AdresView.cs" />
     <Compile Include="Models\Agent.cs" />
+    <Compile Include="Models\DOMFasad.cs" />
     <Compile Include="Models\DOMRoof.cs" />
+    <Compile Include="Models\FasadUteplenie.cs" />
+    <Compile Include="Models\FasadMaterial.cs" />
+    <Compile Include="Models\FasadType.cs" />
     <Compile Include="Models\RoofUteplenie.cs" />
     <Compile Include="Models\RoofForm.cs" />
     <Compile Include="Models\RoofVid.cs" />
@@ -1017,6 +1025,26 @@
     <Content Include="Views\DOMRoofs\Details.cshtml" />
     <Content Include="Views\DOMRoofs\Edit.cshtml" />
     <Content Include="Views\DOMRoofs\Index.cshtml" />
+    <Content Include="Views\FasadTypes\Create.cshtml" />
+    <Content Include="Views\FasadTypes\Delete.cshtml" />
+    <Content Include="Views\FasadTypes\Details.cshtml" />
+    <Content Include="Views\FasadTypes\Edit.cshtml" />
+    <Content Include="Views\FasadTypes\Index.cshtml" />
+    <Content Include="Views\FasadMaterials\Create.cshtml" />
+    <Content Include="Views\FasadMaterials\Delete.cshtml" />
+    <Content Include="Views\FasadMaterials\Details.cshtml" />
+    <Content Include="Views\FasadMaterials\Edit.cshtml" />
+    <Content Include="Views\FasadMaterials\Index.cshtml" />
+    <Content Include="Views\FasadUteplenies\Create.cshtml" />
+    <Content Include="Views\FasadUteplenies\Delete.cshtml" />
+    <Content Include="Views\FasadUteplenies\Details.cshtml" />
+    <Content Include="Views\FasadUteplenies\Edit.cshtml" />
+    <Content Include="Views\FasadUteplenies\Index.cshtml" />
+    <Content Include="Views\DOMFasads\Create.cshtml" />
+    <Content Include="Views\DOMFasads\Delete.cshtml" />
+    <Content Include="Views\DOMFasads\Details.cshtml" />
+    <Content Include="Views\DOMFasads\Edit.cshtml" />
+    <Content Include="Views\DOMFasads\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

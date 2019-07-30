@@ -1,0 +1,70 @@
+﻿@model IEnumerable<GKHNNC.Models.DOMFasad>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+<h2>Главная</h2>
+
+<p>
+    @Html.ActionLink("Создать", "Create", null, new {@class = "btn btn-success btn-block"})
+</p>
+<table id="T" class="table table-bordered table-striped">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Adres.Adress)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Material.Material)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Type.Type)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Uteplenie.Uteplenie)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Iznos)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Year)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Date)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Adres.Adress)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Material.Material)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Type.Type)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Uteplenie.Uteplenie)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Iznos)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Year)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Date)
+        </td>
+        <td>
+            @Html.ActionLink("Редактировать", "Edit", new { id=item.Id }) |
+            @Html.ActionLink("Удалить", "Delete", new { id=item.Id })
+        </td>
+    </tr>
+}
+
+</table>
+<p><a href="/Home/Index" class="btn btn-success btn-block">В главное меню &raquo;</a> </p>

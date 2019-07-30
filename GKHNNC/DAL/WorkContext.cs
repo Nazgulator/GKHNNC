@@ -65,6 +65,14 @@ namespace GKHNNC.DAL
 
         public System.Data.Entity.DbSet<GKHNNC.Models.DOMRoof> DOMRoofs { get; set; }
 
+        public System.Data.Entity.DbSet<GKHNNC.Models.FasadType> FasadTypes { get; set; }
+
+        public System.Data.Entity.DbSet<GKHNNC.Models.FasadMaterial> FasadMaterials { get; set; }
+
+        public System.Data.Entity.DbSet<GKHNNC.Models.FasadUteplenie> FasadUteplenies { get; set; }
+
+        public System.Data.Entity.DbSet<GKHNNC.Models.DOMFasad> DOMFasads { get; set; }
+
 
         //protected override void OnModelCreating(DbModelBuilder modelBuilder)
 
