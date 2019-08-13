@@ -1061,6 +1061,7 @@ namespace GKHNNC.Controllers
             string Worksdb = db.Works.Where(a => a.WorkId==ID).Select(b => b.Izmerenie).First();
             return Json(Worksdb);
         }
+
         public ActionResult SaveCompleteWork (string selection)
         {
             //адрес дата группа измерение ИД номер 

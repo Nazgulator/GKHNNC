@@ -1,0 +1,83 @@
+﻿@model GKHNNC.Models.DOMRoom
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>DOMRoom</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Adres.Adress)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Adres.Adress)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Door.Door)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Door.Door)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Overlap.Overlap)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Overlap.Overlap)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Type.Type)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Type.Type)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Window.Window)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Window.Window)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Lodgi)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Lodgi)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Balkon)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Balkon)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Date)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Date)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

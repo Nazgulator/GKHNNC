@@ -1,0 +1,331 @@
+﻿@model IEnumerable<GKHNNC.Models.ASControl>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+<h2>Управление выездами</h2>
+<h3>@ViewBag.Date.Day - @ViewBag.Date.Month - @ViewBag.Date.Year</h3>
+
+
+<div class="container">
+    <div class="table">
+        <div class="row">
+            <div class="col-md-3">
+                Автомобиль
+            </div>
+            <div class="col-md-7">
+                Примечание
+            </div>
+            <div class="col-md-2">
+                Добавить
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                @Html.DropDownList("AvtoLB", new SelectList(ViewBag.Avto, "Value", "Text"), new { @class = "form-control" })
+                <small id="AdressHelp" class="form-text text-muted">Выберите Автомобиль из списка</small>
+            </div>
+            <div class="col-md-7">
+                <input id="Primech" class="form-control">
+
+                <small id="AdressHelp" class="form-text text-muted">Напишите примечание, если необходимо.</small>
+            </div>
+            <div class="col-md-2">
+                <input id="ADD" type="button" value="+" class="btn btn-success" />
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container">
+    @if (Model.Count() == 0)
+    {<h3>На текущий момент выездов нет.</h3>
+        <p>  </p>
+
+    }
+    else
+    {
+        <table id="T" class="table table-bordered table-striped">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Avto)
+                </th>
+
+                <th>
+                    @Html.DisplayNameFor(model => model.KMAS)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.DUT)
+                </th>
+
+                <th>
+                    Километраж (водитель)
+                </th>
+
+                <th>
+                    @Html.DisplayNameFor(model => model.Primech)
+                </th>
+                <th>
+                    Наблюдений
+                </th>
+                <th>
+                    Потеря связи
+                </th>
+                <th></th>
+            </tr>
+            @{ int counter = 0;}
+            @foreach (var item in Model)
+            {
+                if (counter < ViewBag.Counter)
+                {
+                    string cl = ""; string check = ""; string btn = "btn btn-success";
+                    //если больше 3 наблюдений а данные все еще нулевые то помечаем машину как потеря связи
+                    if (item.Avto.Glonass == true && item.DUT == 0 && item.KMAS == 0 && ViewBag.Nabludenii[counter] >= 2 && ViewBag.Nabludenii[counter] < 4) { cl = "bg-warning"; btn = "btn btn-warning"; }
+                    if (item.Avto.Glonass == true && item.DUT == 0 && item.KMAS == 0 && ViewBag.Nabludenii[counter] >= 4) { cl = "bg-danger"; check = "checked"; btn = "btn btn-danger"; }
+
+
+                    <tr id="@counter" value="@item.Id">
+                        <td class=@cl>
+                            @Html.DisplayFor(modelItem => item.Avto.Number)
+                        </td>
+                        <td class=@cl>
+                            @Html.DisplayFor(modelItem => item.KMAS)
+                        </td>
+                        <td class=@cl>
+                            @Html.DisplayFor(modelItem => item.DUT)
+                        </td>
+
+                        <td class=@cl>
+                            <input id="KM_@item.Id" value="@item.KM" class="form-control">
+                            <small id="AdressHelp" class="form-text text-muted">Пробег в формате 7.32</small>
+                        </td>
+                        <td class=@cl>
+
+                            <input id="Primech_@item.Id" value="@item.Primech" class="form-control">
+                        </td>
+                        <td class=@cl>
+
+                            @ViewBag.Nabludenii[counter]
+                        </td>
+                        <td class=@cl>
+
+                            @if (item.Avto.Glonass == false)
+                            {<p>Датчик не установлен!</p> }
+                            else
+                            { <input type="checkbox" class="form-control" @check>}
+                        </td>
+                        <td class=@cl>
+                            @if (item.DateClose < item.Date)
+                            {
+                                <button id="@counter" tag="@item.Id" class="@btn" data-toggle="modal" data-target="#MODAL" style="width: 100%">Закрыть</button>
+
+                            }
+                            else
+                            {
+                                <input id="END" tag="@item.Id" type="button" value="Рейс завершён" class="btn" />
+                            }
+
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    if (counter == ViewBag.Counter)
+                    {
+
+
+                        <tr>
+                            <td colspan="8" style="text-align:center"><h3>Открытые выезды в предыдущие дни </h3></td>
+                        </tr>
+                    }
+
+                    string cl = ""; string check = ""; string btn = "btn btn-success";
+                    //если больше 3 наблюдений а данные все еще нулевые то помечаем машину как потеря связи
+                    if (item.Avto.Glonass == true && item.DUT == 0 && item.KMAS == 0) { cl = "bg-warning"; btn = "btn btn-warning"; }
+                    if (item.Avto.Glonass == true && item.DUT == 0 && item.KMAS == 0) { cl = "bg-danger"; check = "checked"; btn = "btn btn-danger"; }
+
+                    <tr id="@counter" value="@item.Id">
+                        <td class=@cl>
+                            @Html.DisplayFor(modelItem => item.Avto.Number)
+                        </td>
+                        <td class=@cl>
+                            @Html.DisplayFor(modelItem => item.KMAS)
+                        </td>
+                        <td class=@cl>
+                            @Html.DisplayFor(modelItem => item.DUT)
+                        </td>
+
+                        <td class=@cl>
+                            <input id="KM_@item.Id" value="@item.KM" class="form-control">
+                            <small id="AdressHelp" class="form-text text-muted">Пробег в формате 7.32</small>
+                        </td>
+                        <td class=@cl>
+
+                            <input id="Primech_@item.Id" value="@item.Primech" class="form-control">
+                        </td>
+                        <td class=@cl>
+                            От @item.Date.Day-@item.Date.Month
+                        </td>
+                        <td class=@cl>
+
+                            @if (item.Avto.Glonass == false)
+                            {<p>Датчик не установлен!</p> }
+                            else
+                            { <input type="checkbox" class="form-control" @check>}
+                        </td>
+                        <td class=@cl>
+                            @if (item.DateClose < item.Date)
+                            {
+                                <button id="@counter" tag="@item.Id" class="@btn" data-toggle="modal" data-target="#MODAL" style="width: 100%">Закрыть</button>
+
+                            }
+                            else
+                            {
+                                <input id="END" tag="@item.Id" type="button" value="Рейс завершён" class="btn" />
+                            }
+
+                        </td>
+                    </tr>
+                }
+                counter++;
+            }
+
+        </table>
+    }
+</div>
+<p><a href="/Home/Index" class="btn btn-success btn-block">В главное меню &raquo;</a> </p>
+
+
+<!-- Modal -->
+<div class="modal fade" id="MODAL" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>ОШИБКА ЗАПОЛНЕНИЯ!</h3>
+                <div class="MTEXT">
+
+                    <button id="X" type="button" class="close hide" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+
+                    <h4>Загрузка данных, пожалуйста подождите...</h4>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+    @Scripts.Render("~/scripts/jquery-3.3.1.js")
+    @Scripts.Render("~/Scripts/chosen.jquery.min.js")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/scripts/validate.js")
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+    @Scripts.Render("~/scripts/jquery.unobtrusive.min.js")
+
+
+
+
+
+    <script>
+        //скрипт отправки данных в БД
+        $("#ADD").click(function () {
+            var S = $("#ADD");
+            var Avto = $("#AvtoLB").val();
+            var Primech = $("#Primech").val();
+
+
+            console.log("Добавляем " + Avto);
+            var ss = Avto + ";" + Primech + ";";
+                 $.post('@Url.Action("AddAvto", "ASControls")', { selection: ss }, function (data)
+            {
+                     window.location.replace("/ASControls/Index");//редирект
+
+
+            });
+
+
+
+
+        });
+
+    </script>
+    <script>
+        //скрипт отправки данных в БД
+        $("#CLOSE").click(function () {
+            var S = $("#CLOSE").attr("tag");
+            var KM = $("#KM").val();
+            var Primech = $("#Primech2").val();
+
+
+                console.log("Завершаем " + S+" KM="+KM );
+                var ss = S + ";" + KM + ";" + Primech;
+                $.post('@Url.Action("CloseAvto", "ASControls")', { selection: ss }, function (data) {
+                    window.location.replace("/ASControls/Index");//редирект
+
+
+                });
+
+
+
+
+        });
+
+    </script>
+    <script>
+        //скрипт отправки данных в БД
+         $("button").click(function () {
+             var Id = $("#T tr[id^=" + this.id + "]").attr("value");
+             var KM = $("#KM_"+Id).val();
+             var Primech = $("#Primech_"+Id).val();
+              console.log("Завершаем " + Id);
+            var ss = Id + ";" + KM + ";" + Primech;
+                 $.post('@Url.Action("CloseAvto", "ASControls")', { selection: ss }, function (data)
+                 {
+                     if (data == '') {
+                         window.location.replace("/ASControls/Index");//редирект
+                     }
+                     else
+                     {
+                         $("div.MTEXT").text(data);  
+                     }
+
+            });
+
+
+
+
+
+
+
+
+
+        });
+
+    </script>
+    <script>
+        var time = new Date().getTime();
+        $(document.body).bind("mousemove keypress", function (e) {
+            time = new Date().getTime();
+        });
+
+        function refresh() {
+            console.log("Обновляем страницу");
+            if (new Date().getTime() - time >= 60000)
+                window.location.replace("/ASControls/Index");
+            else
+                setTimeout(refresh, 10000);
+        }
+
+        setTimeout(refresh, 10000);
+    </script>
+
+
+
+
+}

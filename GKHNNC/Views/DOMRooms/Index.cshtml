@@ -1,0 +1,76 @@
+﻿@model IEnumerable<GKHNNC.Models.DOMRoom>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+<h2>Главная</h2>
+
+<p>
+    @Html.ActionLink("Создать", "Create", null, new {@class = "btn btn-success btn-block"})
+</p>
+<table id="T" class="table table-bordered table-striped">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Adres.Adress)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Door.Door)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Overlap.Overlap)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Type.Type)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Window.Window)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Lodgi)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Balkon)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Date)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Adres.Adress)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Door.Door)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Overlap.Overlap)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Type.Type)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Window.Window)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Lodgi)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Balkon)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Date)
+        </td>
+        <td>
+            @Html.ActionLink("Редактировать", "Edit", new { id=item.Id }) |
+            @Html.ActionLink("Удалить", "Delete", new { id=item.Id })
+        </td>
+    </tr>
+}
+
+</table>
+<p><a href="/Home/Index" class="btn btn-success btn-block">В главное меню &raquo;</a> </p>

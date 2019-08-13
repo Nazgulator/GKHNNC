@@ -31,7 +31,10 @@ namespace GKHNNC.DAL
         public DbSet<MarkaAvtomobil> MarkaAvtomobils { get; set; }
         public DbSet<TypeAvto> TypeAvtos { get; set; }
         public DbSet<Avtomobil> Avtomobils { get; set; }
-        public DbSet<TableService> TableServices { get; set; }     
+        public DbSet<TableService> TableServices { get; set; }
+        public DbSet<AS24> AS24 { get; set; }
+
+
         public System.Data.Entity.DbSet<GKHNNC.Models.Adres> Adres { get; set; }
         public System.Data.Entity.DbSet<GKHNNC.Models.SVN> SVNs { get; set; }
 
@@ -72,6 +75,18 @@ namespace GKHNNC.DAL
         public System.Data.Entity.DbSet<GKHNNC.Models.FasadUteplenie> FasadUteplenies { get; set; }
 
         public System.Data.Entity.DbSet<GKHNNC.Models.DOMFasad> DOMFasads { get; set; }
+
+        public System.Data.Entity.DbSet<GKHNNC.Models.RoomDoor> RoomDoors { get; set; }
+
+        public System.Data.Entity.DbSet<GKHNNC.Models.RoomOverlap> RoomOverlaps { get; set; }
+
+        public System.Data.Entity.DbSet<GKHNNC.Models.RoomType> RoomTypes { get; set; }
+
+        public System.Data.Entity.DbSet<GKHNNC.Models.RoomWindow> RoomWindows { get; set; }
+
+        public System.Data.Entity.DbSet<GKHNNC.Models.DOMRoom> DOMRooms { get; set; }
+
+        public System.Data.Entity.DbSet<GKHNNC.Models.ASControl> ASControls { get; set; }
 
 
         //protected override void OnModelCreating(DbModelBuilder modelBuilder)

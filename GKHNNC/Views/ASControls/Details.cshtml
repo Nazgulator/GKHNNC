@@ -1,0 +1,115 @@
+﻿@model GKHNNC.Models.ASControl
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>ASControl</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.AvtoId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AvtoId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Date)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Date)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Go)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Go)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Primech)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Primech)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.KMAS)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.KMAS)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.KM)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.KM)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DUT)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DUT)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Start)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Start)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.End)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.End)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Zapravleno)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Zapravleno)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Sliv)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Sliv)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
