@@ -33,7 +33,7 @@ namespace GKHNNC.Controllers
             List<ASControl> ASC = new List<ASControl>();
             try
             {
-                ASC = db.ASControls.Where(x => x.Date.Year == Date.Year && x.Date.Month == Date.Month && x.Date.Day == Date.Day).Include(x => x.Avto).ToList();
+                ASC = db.ASControls.Where(x => x.Date.Year == Date.Year && x.Date.Month == Date.Month && x.Date.Day == Date.Day).Include(x => x.Avto).Include(x=>x.Avto.Type).ToList();
             }
             catch(Exception e)
             {            }
@@ -56,13 +56,35 @@ namespace GKHNNC.Controllers
                 List<AS24> A24 = new List<AS24>();
                 try
                 {//берем все записи с данной тачкой
-                    A24 = AS24db.Where(x => x.AvtoId == AC.AvtoId&&x.Date.Hour>=AC.Date.Hour).ToList();
+                    A24 = AS24db.Where(x => x.AvtoId == AC.AvtoId).OrderByDescending(y=>y.Date).ToList();
                 }
                 catch { }
+                ViewBag.NoSvaz = "";
+                //ViewBag.Mesta = "";
+                AC.Mesta = new List<string>();
+                AC.Mesta.Add("Движений нет.");
+                AC.NoSvaz = new List<string>();
+                AC.NoSvaz.Add("Потерь нет.");
                 foreach (AS24 A in A24)
                 {
+                    
                     KMAS += A.KM;
                     DUT += A.DUT;
+                    
+                    if (A.Mesta!=""&&A.Mesta!=null)
+                    {
+                        AC.Mesta = new List<string>();
+                        AC.Mesta.AddRange(A.Mesta.Split(';'));
+                        
+                    }
+                    if (A.NoSvaz != "" && A.NoSvaz != null)
+                    {
+                        AC.NoSvaz = new List<string>();
+                        AC.NoSvaz.AddRange(A.NoSvaz.Split(';'));
+
+                    }
+
+                    // ViewBag.Mesta = A.Mesta;//места, посещённые автомобилем
                     counter++;
                 }
                 Nabludenii.Add(counter);
@@ -75,7 +97,7 @@ namespace GKHNNC.Controllers
             List<ASControl> ASCOld = new List<ASControl>();
             try
             {
-                ASCOld = db.ASControls.Where(x => x.DateClose<x.Date&&x.Date.Day!=Date.Day).Include(x => x.Avto).OrderBy(x=>x.Date).ToList();
+                ASCOld = db.ASControls.Where(x => x.DateClose<x.Date&&x.Date.Day!=Date.Day).Include(x => x.Avto).Include(x=>x.Avto.Type).OrderBy(x=>x.Date).ToList();
             }
             catch { }
 
@@ -101,7 +123,7 @@ namespace GKHNNC.Controllers
             List<ASControl> ASC = new List<ASControl>();
             try
             {
-                ASC = db.ASControls.Where(x => x.Date.Year == Date.Year && x.Date.Month == Date.Month && x.Date.Day == Date.Day).Include(x => x.Avto).ToList();
+                ASC = db.ASControls.Where(x => x.Date.Year == Date.Year && x.Date.Month == Date.Month && x.Date.Day == Date.Day).Include(x => x.Avto).Include(x=>x.Avto.Type).ToList();
             }
             catch (Exception e)
             { }
@@ -127,10 +149,14 @@ namespace GKHNNC.Controllers
                     A24 = AS24db.Where(x => x.AvtoId == AC.AvtoId && x.Date.Hour >= AC.Date.Hour).ToList();
                 }
                 catch { }
+                ViewBag.NoSvaz = "";
+                ViewBag.Mesta = "";
                 foreach (AS24 A in A24)
                 {
                     KMAS += A.KM;
                     DUT += A.DUT;
+                    ViewBag.NoSvaz = A.NoSvaz;//обрывы связи данные
+                    ViewBag.Mesta = A.Mesta;//места, посещённые автомобилем
                     counter++;
                 }
 
@@ -145,7 +171,7 @@ namespace GKHNNC.Controllers
             List<ASControl> ASCOld = new List<ASControl>();
             try
             {
-                ASCOld = db.ASControls.Where(x =>  x.Date.Year==Date.Year&&x.Date.Month == Date.Month&& x.Warning==true).Include(x => x.Avto).OrderBy(x => x.Date).ToList();
+                ASCOld = db.ASControls.Where(x =>  x.Date.Year==Date.Year&&x.Date.Month == Date.Month&& x.Warning==true).Include(x => x.Avto).Include(x => x.Avto.Type).OrderBy(x => x.Date).ToList();
             }
             catch { }
 
@@ -262,7 +288,7 @@ namespace GKHNNC.Controllers
             string Data = "";
             //если не вбит пробег то возврат обратно
             
-            if (KM == 0) { Data = "Чтобы закрыть выезд, введите километраж автомобиля (записанный водителем в путёвке) в соответствующее поле. Километраж точно больше нуля!"; return Json(Data); }
+            if (KM == 0) { Data = "Чтобы закрыть выезд, введите километраж автомобиля (записанный водителем в путёвке) в соответствующее поле. Километраж должен быть нуля!"; return Json(Data); }
             try
             {
                 db.Entry(ASC).State = EntityState.Modified;

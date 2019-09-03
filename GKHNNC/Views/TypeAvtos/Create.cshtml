@@ -7,26 +7,41 @@
 
 <h2>Создать</h2>
 
-@using (Html.BeginForm()) 
+@using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-<div class="container">
-    <div class="form-horizontal">
 
-        <div class="row col-md-6 col-md-offset-3">
-            <div class="col-md-12">
-                @Html.LabelFor(model => model.Type, htmlAttributes: new { @class = "control-label" })
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="container">
+        <div class="form-horizontal">
 
-            </div>
-            <div class="row col-md-12 ">
-                <p> </p>
-            </div>
+            <div class="row col-md-6 col-md-offset-3">
+                <div class="col-md-12">
+                    @Html.LabelFor(model => model.Type, htmlAttributes: new { @class = "control-label" })
+
+                </div>
+
+                <div class="row col-md-12 ">
+                    <p> </p>
+                </div>
                 <div class="col-md-12">
                     @Html.EditorFor(model => model.Type, new { htmlAttributes = new { @class = "form-control" } })
                     @Html.ValidationMessageFor(model => model.Type, "", new { @class = "text-danger" })
+                </div>
+                <div class="col-md-12">
+                    Изображение
+
+                </div>
+                <div class="col-md-12">
+                    @Html.EditorFor(model => model.Ico,"ico", new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Ico, "", new { @class = "text-danger" })
+                </div>
+                <div>
+                    
+
+                        <img id="imag"src="~/Content/Images/1.png" class="img-responsive" height="64" width="128" data-toggle="tooltip" data-placement="top" title="Изображение">
+                    
                 </div>
             </div>
             <div class="row col-md-6 col-md-offset-3">
@@ -47,4 +62,37 @@
             </div>
         </div>
     </div>
- }
+}
+@section Scripts {
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+    @Scripts.Render("~/scripts/jquery-3.3.1.js")
+    @Scripts.Render("~/Scripts/chosen.jquery.min.js")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/scripts/validate.js")
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+    @Scripts.Render("~/scripts/jquery.unobtrusive.min.js")
+
+
+
+
+
+    <script>
+        //поиск изображения в файлах и вывод
+        $("#Ico").change(function () {
+            var ico = $("#Ico").val();
+            console.log("Ищем " + ico);
+            $("#imag").attr("src", "../Content/Images/" + ico + ".png") ;
+           
+        
+
+        });
+
+    </script>
+   
+
+
+
+
+}

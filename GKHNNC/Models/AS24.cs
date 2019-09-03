@@ -36,5 +36,10 @@ namespace GKHNNC.Models
         [Display(Name = "Заправлено")]
         public decimal Zapravleno { get; set; }
 
+        [Display(Name = "Хронология")]
+        public string Mesta { get; set; }
+
+        [Display(Name = "Потери связи")]
+        public string NoSvaz { get; set; }
     }
 }

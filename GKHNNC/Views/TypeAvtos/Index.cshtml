@@ -15,20 +15,28 @@
         <th>
             @Html.DisplayNameFor(model => model.Type)
         </th>
+        <th>
+            Изображение
+        </th>
         <th></th>
     </tr>
 
 @foreach (var item in Model) {
+    string img = "1.png";
+    img = item.Ico.ToString() + ".png";
     <tr>
         <td>
             @Html.DisplayFor(modelItem => item.Type)
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+            <img src="~/Content/Images/@img" class="img-responsive" height="64" width="128">
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+            @Html.ActionLink("Delete", "Delete", new { id = item.Id })
         </td>
     </tr>
 }
 
 </table>
-<p><a href="/Home/Index" class="btn btn-success btn-block" ">В главное меню &raquo;</a> </p>
+<p><a href="/Home/Index" class="btn btn-success btn-block" >В главное меню &raquo;</a> </p>

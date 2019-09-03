@@ -39,6 +39,7 @@ namespace GKHNNC.Controllers
         // GET: TypeAvtos/Create
         public ActionResult Create()
         {
+
             return View();
         }
 
@@ -47,7 +48,7 @@ namespace GKHNNC.Controllers
         // сведения см. в статье https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Type")] TypeAvto typeAvto)
+        public ActionResult Create([Bind(Include = "Id,Type,Ico")] TypeAvto typeAvto)
         {
             if (ModelState.IsValid)
             {
@@ -79,7 +80,7 @@ namespace GKHNNC.Controllers
         // сведения см. в статье https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Type")] TypeAvto typeAvto)
+        public ActionResult Edit([Bind(Include = "Id,Type,Ico")] TypeAvto typeAvto)
         {
             if (ModelState.IsValid)
             {

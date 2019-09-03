@@ -57,7 +57,11 @@ namespace GKHNNC.Models
         [Display(Name = "Потеря связи")]
         public bool Warning { get; set; }
 
+        [Display(Name = "Места")]
+        public List<string> Mesta { get; set; }
 
+        [Display(Name = "Потери связи")]
+        public List<string> NoSvaz { get; set; }
 
 
     }

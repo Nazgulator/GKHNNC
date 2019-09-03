@@ -38,7 +38,7 @@
         </div>
     </div>
 </div>
-<div class="container">
+<table class="container">
     @if (Model.Count() == 0)
     {<h3>На текущий момент выездов нет.</h3>
         <p>  </p>
@@ -46,8 +46,14 @@
     }
     else
     {
-        <table id="T" class="table table-bordered table-striped">
+        <table id="T" class="table table-bordered ">
             <tr>
+                <th>
+
+                </th>
+                <th>
+                    Тип автомобиля
+                </th>
                 <th>
                     @Html.DisplayNameFor(model => model.Avto)
                 </th>
@@ -67,53 +73,145 @@
                     @Html.DisplayNameFor(model => model.Primech)
                 </th>
                 <th>
-                    Наблюдений
+                    Движения
                 </th>
                 <th>
-                    Потеря связи
+                    Потери связи
                 </th>
-                <th></th>
+                <th>
+                    Проверки
+                </th>
+                <th>
+                    Связь
+                </th>
+                <th>
+                    Закрытие выезда
+                </th>
             </tr>
-            @{ int counter = 0;}
+            @{ int counter = 0;
+
+
+            }
             @foreach (var item in Model)
             {
                 if (counter < ViewBag.Counter)
                 {
-                    string cl = ""; string check = ""; string btn = "btn btn-success";
-                    //если больше 3 наблюдений а данные все еще нулевые то помечаем машину как потеря связи
-                    if (item.Avto.Glonass == true && item.DUT == 0 && item.KMAS == 0 && ViewBag.Nabludenii[counter] >= 2 && ViewBag.Nabludenii[counter] < 4) { cl = "bg-warning"; btn = "btn btn-warning"; }
-                    if (item.Avto.Glonass == true && item.DUT == 0 && item.KMAS == 0 && ViewBag.Nabludenii[counter] >= 4) { cl = "bg-danger"; check = "checked"; btn = "btn btn-danger"; }
+                    int NoSvazMin = 0;
+                    decimal koef = 0;
 
+                    if (item.NoSvaz != null && item.NoSvaz[0].Contains("@"))
+                    {
+                        for (int h = 0; h < item.NoSvaz.Count; h++)
+                        {
+                            if (item.NoSvaz[h] != "")
+                            {
+                                string[] SS = item.NoSvaz[h].Split('@');//получаем дату и длительность
+                                string[] SSS = SS[1].Split(':');//бьём длительность на часы минуты секунды
+                                int ind = SS[0].IndexOf(":") - 2;
+                                item.NoSvaz[h] = SS[0].Remove(0, ind);
+                                NoSvazMin += Convert.ToInt32(SSS[1]);//берем минуты так как макс диапазон 10 минут
+                            }
+                            else
+                            {
+                                item.NoSvaz.RemoveAt(h);
+                            }
+                        }
+                        item.NoSvaz.Add("Связи не было " + NoSvazMin.ToString() + " минут");
+                        koef = Convert.ToDecimal(NoSvazMin) / 60;
+
+                    }
+
+
+                    if (item.Mesta != null && item.Mesta[0].Contains("@"))
+                    {
+
+                        for (int h = 0; h < item.Mesta.Count(); h++)
+                        {
+                            if (item.Mesta[h] != "")
+                            {
+                                string[] SS = item.Mesta[h].Split('@');
+                                item.Mesta[h] = SS[1].Replace("Новосибирск", "").Replace(",", "").Replace(" ", "");
+                            }
+                        }
+                        item.Mesta = item.Mesta.Distinct().ToList();
+                    }
+                    string DvigName = "Не двигается";
+                    string DvigClass = "btn btn-danger";
+                    if (item.Mesta.Count > 2)
+                    {
+                        DvigName = "В движении";
+                        DvigClass = "btn btn-success";
+                    }
+                    item.Mesta.Insert(0, DvigName);
+                    string Atype = item.Avto.Type.Ico.ToString() + ".png";
+                    string cl = ""; string check = "S1.png"; string btn = "btn btn-success"; string img = ""; string svyaz = "Связь с автомобилем есть.Данные передаются.";
+                    if (item.Avto.Glonass == false) { check = "S4.png"; svyaz = "На автомобиле не установлен датчик."; }
+                    else
+                    {
+                        //если больше 3 наблюдений а данные все еще нулевые то помечаем машину как потеря связи
+                        if (item.Avto.Glonass == true && item.DUT == 0 && item.KMAS == 0 && ViewBag.Nabludenii[counter] >= 2 && ViewBag.Nabludenii[counter] < 4) { cl = "bg-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W1.png"; svyaz = "Данные от автомобиля не поступали в течение нескольких часов."; }
+                        if (item.Avto.Glonass == true && koef > 0.25m && koef < 0.5m) { cl = "bg-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W1.png"; svyaz += "Связи небыло " + NoSvazMin + " минут"; }
+                        if (item.Avto.Glonass == true && item.DUT == 0 && item.KMAS == 0 && ViewBag.Nabludenii[counter] >= 4) { cl = "bg-danger"; check = "S3.png"; btn = "btn btn-danger"; img = "W2.png"; svyaz = "Потеря связи! Данные не поступали более 4 часов!"; }
+                        if (item.Avto.Glonass == true && koef >= 0.5m) { cl = "bg-danger"; check = "S3.png"; btn = "btn btn-danger"; img = "W2.png"; svyaz += "Связи небыло " + NoSvazMin + " минут"; }
+                    }
 
                     <tr id="@counter" value="@item.Id">
                         <td class=@cl>
-                            @Html.DisplayFor(modelItem => item.Avto.Number)
+                            <center>
+                                @if (img != "")
+                                {
+                                    <img src="~/Content/Images/@img" class="img-responsive">
+                                }
+                            </center>
+                        </td>
+                        <td class="">
+                            <img src="~/Content/Images/@Atype" class="img-responsive" height="64" width="128" data-toggle="tooltip" data-placement="top" title="@Html.DisplayFor(modelItem => item.Avto.Type.Type)">
+                        </td>
+
+                        <th class=@cl>
+                            <center>
+                                @Html.DisplayFor(modelItem => item.Avto.Number)
+                            </center>
+                        </th>
+
+                        <td class=@cl>
+                            <Center>
+                                @Html.DisplayFor(modelItem => item.KMAS)
+                            </Center>
                         </td>
                         <td class=@cl>
-                            @Html.DisplayFor(modelItem => item.KMAS)
-                        </td>
-                        <td class=@cl>
-                            @Html.DisplayFor(modelItem => item.DUT)
+                            <center>
+                                @Html.DisplayFor(modelItem => item.DUT)
+                            </center>
                         </td>
 
                         <td class=@cl>
                             <input id="KM_@item.Id" value="@item.KM" class="form-control">
-                            <small id="AdressHelp" class="form-text text-muted">Пробег в формате 7.32</small>
+
                         </td>
                         <td class=@cl>
 
                             <input id="Primech_@item.Id" value="@item.Primech" class="form-control">
                         </td>
-                        <td class=@cl>
+                        <td style="text-align:center" class=@cl>
+                           
+                            @Html.DropDownList("Mesta", new MultiSelectList(@item.Mesta), new { @class = "form-control" })
 
-                            @ViewBag.Nabludenii[counter]
+                        </td>
+                        <td style="text-align:center" class=@cl>
+
+                            @Html.DropDownList("Svaz", new MultiSelectList(@item.NoSvaz), new { @class = "form-control" })
+
+                        </td>
+                        <td style="text-align:center" class=@cl>
+                            <center>
+                                @ViewBag.Nabludenii[counter]
+                            </center>
                         </td>
                         <td class=@cl>
-
-                            @if (item.Avto.Glonass == false)
-                            {<p>Датчик не установлен!</p> }
-                            else
-                            { <input type="checkbox" class="form-control" @check>}
+                            <center>
+                                <img src="~/Content/Images/@check" class="img-responsive" height="32" width="32" data-toggle="tooltip" data-placement="top" title="@svyaz">
+                            </center>
                         </td>
                         <td class=@cl>
                             @if (item.DateClose < item.Date)
@@ -136,45 +234,97 @@
 
 
                         <tr>
-                            <td colspan="8" style="text-align:center"><h3>Открытые выезды в предыдущие дни </h3></td>
+                            <td colspan="10" style="text-align:center"><h3>Открытые выезды в предыдущие дни </h3></td>
+                        </tr>
+                        <tr>
+                            <th>
+
+                            </th>
+                            <th>
+                                Тип автомобиля
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Avto)
+                            </th>
+
+                            <th>
+                                @Html.DisplayNameFor(model => model.KMAS)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.DUT)
+                            </th>
+
+                            <th>
+                                Километраж (водитель)
+                            </th>
+
+                            <th>
+                                @Html.DisplayNameFor(model => model.Primech)
+                            </th>
+                            <th>
+                                Дата выезда
+                            </th>
+                            <th>
+                                Связь
+                            </th>
+                            <th></th>
                         </tr>
                     }
+                    string Atype = item.Avto.Type.Ico.ToString() + ".png";
+                    string cl = ""; string check = "S1.png"; string btn = "btn btn-success"; string img = ""; string svyaz = "Связь с автомобилем есть.Данные передаются.";
+                    if (item.Avto.Glonass == false) { check = "S4.png"; svyaz = "На автомобиле не установлен датчик."; }
+                    else
+                    {
+                        //если данных нет
 
-                    string cl = ""; string check = ""; string btn = "btn btn-success";
-                    //если больше 3 наблюдений а данные все еще нулевые то помечаем машину как потеря связи
-                    if (item.Avto.Glonass == true && item.DUT == 0 && item.KMAS == 0) { cl = "bg-warning"; btn = "btn btn-warning"; }
-                    if (item.Avto.Glonass == true && item.DUT == 0 && item.KMAS == 0) { cl = "bg-danger"; check = "checked"; btn = "btn btn-danger"; }
-
+                        if (item.Avto.Glonass == true && item.DUT == 0 && item.KMAS == 0) { cl = "bg-danger"; check = "S3.png"; btn = "btn btn-danger"; img = "W2.png"; svyaz = "Потеря связи! В течение всего дня данных не поступило!"; }
+                    }
                     <tr id="@counter" value="@item.Id">
+                        <td class="@cl">
+                            @if (img != "")
+                            {
+                                <img src="~/Content/Images/@img" class="img-responsive">
+                            }
+                        </td>
+                        <td class="">
+                            <img src="~/Content/Images/@Atype" class="img-responsive" height="64" width="128" data-toggle="tooltip" data-placement="top" title="@Html.DisplayFor(modelItem => item.Avto.Type.Type)">
+                        </td>
+                        <th class=@cl>
+                            <center>
+                                @Html.DisplayFor(modelItem => item.Avto.Number)
+                            </center>
+                        </th>
+
                         <td class=@cl>
-                            @Html.DisplayFor(modelItem => item.Avto.Number)
+                            <center>
+                                @Html.DisplayFor(modelItem => item.KMAS)
+                            </center>
                         </td>
                         <td class=@cl>
-                            @Html.DisplayFor(modelItem => item.KMAS)
-                        </td>
-                        <td class=@cl>
-                            @Html.DisplayFor(modelItem => item.DUT)
+                            <center>
+                                @Html.DisplayFor(modelItem => item.DUT)
+                            </center>
                         </td>
 
                         <td class=@cl>
                             <input id="KM_@item.Id" value="@item.KM" class="form-control">
-                            <small id="AdressHelp" class="form-text text-muted">Пробег в формате 7.32</small>
+
                         </td>
                         <td class=@cl>
 
                             <input id="Primech_@item.Id" value="@item.Primech" class="form-control">
                         </td>
                         <td class=@cl>
-                            От @item.Date.Day-@item.Date.Month
+                            <center>
+                                @item.Date.Day/@item.Date.Month/@item.Date.Year
+                            </center>
                         </td>
                         <td class=@cl>
-
-                            @if (item.Avto.Glonass == false)
-                            {<p>Датчик не установлен!</p> }
-                            else
-                            { <input type="checkbox" class="form-control" @check>}
+                            <Center>
+                                <img src="~/Content/Images/@check" class="img-responsive" height="32" width="32" data-toggle="tooltip" data-placement="top" title="@svyaz">
+                            </Center>
                         </td>
-                        <td class=@cl>
+                        <td class=@cl style="text-align:center">
                             @if (item.DateClose < item.Date)
                             {
                                 <button id="@counter" tag="@item.Id" class="@btn" data-toggle="modal" data-target="#MODAL" style="width: 100%">Закрыть</button>
@@ -211,7 +361,14 @@
 
                     <h4>Загрузка данных, пожалуйста подождите...</h4>
                 </div>
+                <div class="">
 
+                    <button id="X" type="button" class="close hide" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+
+                    <h4>Данные наблюдений </h4>
+                </div>
             </div>
         </div>
     </div>

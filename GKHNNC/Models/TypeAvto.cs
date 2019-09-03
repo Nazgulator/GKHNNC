@@ -17,6 +17,8 @@ namespace GKHNNC.Models
 
         [Display(Name = "Тип автомобиля")]
         public string Type { get; set; }
+        [Display(Name = "Иконка автомобиля")]
+        public int Ico { get; set; }
 
     }
 }

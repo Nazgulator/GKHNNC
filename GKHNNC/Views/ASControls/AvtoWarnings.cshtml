@@ -12,14 +12,20 @@
 
 <div class="container">
     @if (Model.Count() == 0)
-    {<h3>На текущий момент выездов нет.</h3>
+    {<h3>На текущий момент проблем нет.</h3>
         <p>  </p>
 
     }
     else
     {
-        <table id="T" class="table table-bordered table-striped">
+         <table id="T" class="table table-bordered ">
             <tr>
+                <th>
+                    Проблемы
+                </th>
+                <th>
+                    Тип автомобиля
+                </th>
                 <th>
                     @Html.DisplayNameFor(model => model.Avto)
                 </th>
@@ -39,56 +45,92 @@
                     @Html.DisplayNameFor(model => model.Primech)
                 </th>
                 <th>
-                    Наблюдений
+                    Проверки
                 </th>
                 <th>
-                    Потеря связи
+                    Связь
                 </th>
-                
+                <th>
+                    Закрытие выезда
+                </th>
             </tr>
             @{ int counter = 0;}
             @foreach (var item in Model)
             {
                 if (counter < ViewBag.Counter)
                 {
-                    string cl = ""; string check = ""; string btn = "btn btn-success"; bool go = false;
-                    //если больше 3 наблюдений а данные все еще нулевые то помечаем машину как потеря связи
-                    if (item.Avto.Glonass == true && item.DUT == 0 && item.KMAS == 0 && ViewBag.Nabludenii[counter] >= 2 && ViewBag.Nabludenii[counter] < 4) { cl = "bg-warning"; btn = "btn btn-warning"; go = true; }
-                    if (item.Avto.Glonass == true && item.DUT == 0 && item.KMAS == 0 && ViewBag.Nabludenii[counter] >= 4) { cl = "bg-danger"; check = "checked"; btn = "btn btn-danger"; go = true; }
-                    if (go == true)
+                    string Atype = item.Avto.Type.Ico.ToString()+".png";
+                    string cl = ""; string check = "S1.png"; string btn = "btn btn-success"; string img = "";string svyaz = "Связь с автомобилем есть.Данные передаются.";
+                    if (item.Avto.Glonass == false) { check = "S4.png"; svyaz = "На автомобиле не установлен датчик."; }
+                    else
                     {
+                        //если больше 3 наблюдений а данные все еще нулевые то помечаем машину как потеря связи
+                        if (item.Avto.Glonass == true && item.DUT == 0 && item.KMAS == 0 && ViewBag.Nabludenii[counter] >= 2 && ViewBag.Nabludenii[counter] < 4) { cl = "bg-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W1.png"; svyaz = "Данные от автомобиля не поступали в течение нескольких часов."; }
+                        if (item.Avto.Glonass == true && item.DUT == 0 && item.KMAS == 0 && ViewBag.Nabludenii[counter] >= 4) { cl = "bg-danger"; check = "S3.png"; btn = "btn btn-danger"; img = "W2.png"; svyaz = "Потеря связи! Данные не поступали более 4 часов!"; }
+                    }
+                    if (item.Avto.Glonass == true && item.DUT == 0 && item.KMAS == 0 && ViewBag.Nabludenii[counter] >= 2)
+                    {
+            <tr id="@counter" value="@item.Id">
+                <td class=@cl>
+                    <center>
+                        @if (img != "")
+                        {
+                            <img src="~/Content/Images/@img" class="img-responsive" height="32" width="32">
+                        }
+                    </center>
+                </td>
+                <td class="">
+                    <img src="~/Content/Images/@Atype" class="img-responsive" height="64" width="128" data-toggle="tooltip" data-placement="top" title="@Html.DisplayFor(modelItem => item.Avto.Type.Type)">
+                </td>
 
-                    <tr id="@counter" value="@item.Id">
-                        <td class=@cl>
-                            @Html.DisplayFor(modelItem => item.Avto.Number)
-                        </td>
-                        <td class=@cl>
-                            @Html.DisplayFor(modelItem => item.KMAS)
-                        </td>
-                        <td class=@cl>
-                            @Html.DisplayFor(modelItem => item.DUT)
-                        </td>
+                <th class=@cl>
+                    <center>
+                        @Html.DisplayFor(modelItem => item.Avto.Number)
+                    </center>
+                </th>
 
-                        <td class=@cl>
-                            <input id="KM_@item.Id" value="@item.KM" class="form-control">
-                            <small id="AdressHelp" class="form-text text-muted">Число в формате 7.32</small>
-                        </td>
-                        <td class=@cl>
+                <td class=@cl>
+                    <Center>
+                        @Html.DisplayFor(modelItem => item.KMAS)
+                    </Center>
+                </td>
+                <td class=@cl>
+                    <center>
+                        @Html.DisplayFor(modelItem => item.DUT)
+                    </center>
+                </td>
 
-                            <input id="Primech_@item.Id" value="@item.Primech" class="form-control">
-                        </td>
-                        <td class=@cl>
+                <td class=@cl>
+                    <input id="KM_@item.Id" value="@item.KM" class="form-control">
 
-                            @ViewBag.Nabludenii[counter]
-                        </td>
-                        <td class=@cl>
+                </td>
+                <td class=@cl>
 
-                            @if (item.Avto.Glonass == false)
-                            {<p>Датчик не установлен!</p> }
-                            else
-                            { <input type="checkbox" class="form-control" @check>}
-                        </td>
-                    </tr>
+                    <input id="Primech_@item.Id" value="@item.Primech" class="form-control">
+                </td>
+                <td style="text-align:center" class=@cl>
+                    <center>
+                        @ViewBag.Nabludenii[counter]
+                    </center>
+                </td>
+                <td class=@cl>
+                    <center>
+                        <img src="~/Content/Images/@check" class="img-responsive" height="32" width="32" data-toggle="tooltip" data-placement="top" title="@svyaz">
+                    </center>
+                </td>
+                <td class=@cl>
+                    @if (item.DateClose < item.Date)
+                    {
+                        <button id="@counter" tag="@item.Id" class="@btn" data-toggle="modal" data-target="#MODAL" style="width: 100%">Рейс не закрыт!</button>
+
+                    }
+                    else
+                    {
+                        <input id="END" tag="@item.Id" type="button" value="Рейс завершён @item.DateClose.Day/@item.DateClose.Month/@item.DateClose.Year" class="btn" />
+                    }
+
+                </td>
+            </tr>
                     }
                 }
                 else
@@ -98,47 +140,113 @@
 
 
                         <tr>
-                            <td colspan="8" style="text-align:center"><h3>Проблемы в предыдущие дни этого месяца</h3></td>
+                            <td colspan="10" style="text-align:center"><h3>Проблемы в предыдущие дни </h3></td>
+                        </tr>
+                        <tr>
+                            <th>
+                                Проблемы
+                            </th>
+                            <th>
+                                Тип автомобиля
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Avto)
+                            </th>
+
+                            <th>
+                                @Html.DisplayNameFor(model => model.KMAS)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.DUT)
+                            </th>
+
+                            <th>
+                                Километраж (водитель)
+                            </th>
+
+                            <th>
+                                @Html.DisplayNameFor(model => model.Primech)
+                            </th>
+                            <th>
+                                Дата выезда
+                            </th>
+                            <th>
+                                Связь
+                            </th>
+                            <th></th>
                         </tr>
                     }
-
-                    string cl = ""; string check = ""; string btn = "btn btn-success"; bool go = false;
-                    //если больше 3 наблюдений а данные все еще нулевые то помечаем машину как потеря связи
-                    if (item.Avto.Glonass == true && item.DUT == 0 && item.KMAS == 0 ) { cl = "bg-warning"; btn = "btn btn-warning"; go = true; }
-                    if (item.Avto.Glonass == true && item.DUT == 0 && item.KMAS == 0 ) { cl = "bg-danger"; check = "checked"; btn = "btn btn-danger";go = true; }
-                    if (go == true)
+                    string Atype = item.Avto.Type.Ico.ToString() + ".png";
+                    string cl = ""; string check = "S1.png"; string btn = "btn btn-success"; string img = ""; string svyaz = "Связь с автомобилем есть.Данные передаются.";
+                    if (item.Avto.Glonass == false) { check = "S4.png"; svyaz = "На автомобиле не установлен датчик."; }
+                    else
                     {
-                    <tr id="@counter" value="@item.Id">
-                        <td class=@cl>
-                            @Html.DisplayFor(modelItem => item.Avto.Number)
-                        </td>
-                        <td class=@cl>
-                            @Html.DisplayFor(modelItem => item.KMAS)
-                        </td>
-                        <td class=@cl>
-                            @Html.DisplayFor(modelItem => item.DUT)
-                        </td>
+                        //если данных нет 
 
-                        <td class=@cl>
-                            <input id="KM_@item.Id" value="@item.KM" class="form-control">
-                            <small id="AdressHelp" class="form-text text-muted">Число в формате 7.32</small>
-                        </td>
-                        <td class=@cl>
+                        if (item.Avto.Glonass == true && (item.DUT == 0 || item.KMAS == 0)) { cl = "bg-danger"; check = "S3.png"; btn = "btn btn-danger"; img = "W2.png"; svyaz = "Потеря связи! В течение всего дня данных не поступило!"; }
+                    }
+                    if (item.Avto.Glonass == true && (item.DUT == 0 || item.KMAS == 0))
+                    {
+                        <tr id="@counter" value="@item.Id">
+                            <td class="@cl">
+                                @if (img != "")
+                                {
+                                <center>
+                                    <img src="~/Content/Images/@img" class="img-responsive" height="32" width="32">
+                                </center>
+                                }
+                            </td>
+                            <td class="">
+                                <img src="~/Content/Images/@Atype" class="img-responsive" height="64" width="128" data-toggle="tooltip" data-placement="top" title="@Html.DisplayFor(modelItem => item.Avto.Type.Type)">
+                            </td>
+                            <th class=@cl>
+                                <center>
+                                    @Html.DisplayFor(modelItem => item.Avto.Number)
+                                </center>
+                            </th>
 
-                            <input id="Primech_@item.Id" value="@item.Primech" class="form-control">
-                        </td>
-                        <td class=@cl>
-                            От @item.Date.Day-@item.Date.Month
-                        </td>
-                        <td class=@cl>
+                            <td class=@cl>
+                                <center>
+                                    @Html.DisplayFor(modelItem => item.KMAS)
+                                </center>
+                            </td>
+                            <td class=@cl>
+                                <center>
+                                    @Html.DisplayFor(modelItem => item.DUT)
+                                </center>
+                            </td>
 
-                            @if (item.Avto.Glonass == false)
-                            {<p>Датчик не установлен!</p> }
-                            else
-                            { <input type="checkbox" class="form-control" @check>}
-                        </td>
+                            <td class=@cl>
+                                <input id="KM_@item.Id" value="@item.KM" class="form-control">
 
-                    </tr>
+                            </td>
+                            <td class=@cl >
+
+                                <input id="Primech_@item.Id" value="@item.Primech" class="form-control">
+                            </td>
+                            <td class=@cl>
+                                <center>
+                                    @item.Date.Day/@item.Date.Month/@item.Date.Year
+                                </center>
+                            </td>
+                            <td class=@cl>
+                                <Center>
+                                    <img src="~/Content/Images/@check" class="img-responsive" height="32" width="32" data-toggle="tooltip" data-placement="top" title="@svyaz">
+                                </Center>
+                            </td>
+                            <td class=@cl style="text-align:center">
+                                @if (item.DateClose < item.Date)
+                                {
+                                    <button id="@counter" tag="@item.Id" class="@btn" data-toggle="modal" data-target="#MODAL" style="width: 100%">Рейс не закрыт!!!</button>
+
+                                }
+                                else
+                                {
+                                    <input id="END" tag="@item.Id" type="button" value="Рейс завершён @item.DateClose.Day/@item.DateClose.Month/@item.DateClose.Year" class="btn" />
+                                }
+
+                            </td>
+                        </tr>
                     }
                 }
                 counter++;
@@ -165,78 +273,7 @@
 
 
 
-    <script>
-        //скрипт отправки данных в БД
-        $("#ADD").click(function () {
-            var S = $("#ADD");
-            var Avto = $("#AvtoLB").val();
-            var Primech = $("#Primech").val();
-
-
-            console.log("Добавляем " + Avto);
-            var ss = Avto + ";" + Primech + ";";
-                 $.post('@Url.Action("AddAvto", "ASControls")', { selection: ss }, function (data)
-            {
-                     window.location.replace("/ASControls/AvtoWarnings");//редирект
-
-
-            });
-
-
-
-
-        });
-
-    </script>
-    <script>
-        //скрипт отправки данных в БД
-        $("#CLOSE").click(function () {
-            var S = $("#CLOSE").attr("tag");
-            var KM = $("#KM").val();
-            var Primech = $("#Primech2").val();
-
-
-            console.log("Завершаем " + S);
-            var ss = S + ";" + KM + ";" + Primech;
-                 $.post('@Url.Action("CloseAvto", "ASControls")', { selection: ss }, function (data)
-            {
-                     window.location.replace("/ASControls/AvtoWarnings");//редирект
-
-
-            });
-
-
-
-
-        });
-
-    </script>
-    <script>
-        //скрипт отправки данных в БД
-         $("button").click(function () {
-             var Id = $("#T tr[id^=" + this.id + "]").attr("value");
-             var KM = $("#KM_"+Id).val();
-             var Primech = $("#Primech_"+Id).val();
-              console.log("Завершаем " + Id);
-            var ss = Id + ";" + KM + ";" + Primech;
-                 $.post('@Url.Action("CloseAvto", "ASControls")', { selection: ss }, function (data)
-            {
-                     window.location.replace("/ASControls/AvtoWarnings");//редирект
-
-
-            });
-
-
-
-
-
-
-
-
-
-        });
-
-    </script>
+    
     <script>
         var time = new Date().getTime();
         $(document.body).bind("mousemove keypress", function (e) {
@@ -246,7 +283,7 @@
         function refresh() {
             console.log("Обновляем страницу");
             if (new Date().getTime() - time >= 60000)
-                window.location.replace("/ASControls/Index");
+                window.location.replace("/ASControls/AvtoWarnings");
             else
                 setTimeout(refresh, 10000);
         }
