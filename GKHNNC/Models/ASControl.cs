@@ -21,6 +21,13 @@ namespace GKHNNC.Models
         [Display(Name = "Автомобиль")]
         public Avtomobil Avto { get; set; }
 
+        [Display(Name = "Водитель")]
+        public int? VoditelId { get; set; }
+
+        [Display(Name = "Водитель")]
+        public Voditel Voditel { get; set; }
+
+
         [Display(Name = "Дата")]
         public DateTime Date { get; set; }
 
@@ -62,6 +69,8 @@ namespace GKHNNC.Models
 
         [Display(Name = "Потери связи")]
         public List<string> NoSvaz { get; set; }
+
+        
 
 
     }

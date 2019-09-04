@@ -33,7 +33,7 @@ namespace GKHNNC.Controllers
             List<ASControl> ASC = new List<ASControl>();
             try
             {
-                ASC = db.ASControls.Where(x => x.Date.Year == Date.Year && x.Date.Month == Date.Month && x.Date.Day == Date.Day).Include(x => x.Avto).Include(x=>x.Avto.Type).ToList();
+                ASC = db.ASControls.Where(x => x.Date.Year == Date.Year && x.Date.Month == Date.Month && x.Date.Day == Date.Day).Include(x => x.Avto).Include(x=>x.Avto.Type).Include(x=>x.Voditel).ToList();
             }
             catch(Exception e)
             {            }
@@ -56,7 +56,7 @@ namespace GKHNNC.Controllers
                 List<AS24> A24 = new List<AS24>();
                 try
                 {//берем все записи с данной тачкой
-                    A24 = AS24db.Where(x => x.AvtoId == AC.AvtoId).OrderByDescending(y=>y.Date).ToList();
+                    A24 = AS24db.Where(x => x.AvtoId == AC.AvtoId && x.Date.Hour >= AC.Date.Hour).OrderBy(y=>y.Date).ToList();
                 }
                 catch { }
                 ViewBag.NoSvaz = "";
@@ -64,12 +64,9 @@ namespace GKHNNC.Controllers
                 AC.Mesta = new List<string>();
                 AC.Mesta.Add("Движений нет.");
                 AC.NoSvaz = new List<string>();
-                AC.NoSvaz.Add("Потерь нет.");
+                //AC.NoSvaz.Add("Потерь нет.");
                 foreach (AS24 A in A24)
                 {
-                    
-                    KMAS += A.KM;
-                    DUT += A.DUT;
                     
                     if (A.Mesta!=""&&A.Mesta!=null)
                     {
@@ -77,12 +74,18 @@ namespace GKHNNC.Controllers
                         AC.Mesta.AddRange(A.Mesta.Split(';'));
                         
                     }
+                    //A.NoSvaz = A.NoSvaz.Replace(" ", "");
                     if (A.NoSvaz != "" && A.NoSvaz != null)
                     {
-                        AC.NoSvaz = new List<string>();
+                        //AC.NoSvaz = new List<string>();
                         AC.NoSvaz.AddRange(A.NoSvaz.Split(';'));
+                        AC.NoSvaz.RemoveAt(AC.NoSvaz.Count-1);
 
                     }
+
+                    KMAS += A.KM;
+                    DUT += A.DUT;
+
 
                     // ViewBag.Mesta = A.Mesta;//места, посещённые автомобилем
                     counter++;
@@ -97,7 +100,7 @@ namespace GKHNNC.Controllers
             List<ASControl> ASCOld = new List<ASControl>();
             try
             {
-                ASCOld = db.ASControls.Where(x => x.DateClose<x.Date&&x.Date.Day!=Date.Day).Include(x => x.Avto).Include(x=>x.Avto.Type).OrderBy(x=>x.Date).ToList();
+                ASCOld = db.ASControls.Where(x => x.DateClose<x.Date&&x.Date.Day!=Date.Day).Include(x => x.Avto).Include(x=>x.Avto.Type).OrderByDescending(x=>x.Date).ToList();
             }
             catch { }
 
@@ -106,7 +109,8 @@ namespace GKHNNC.Controllers
             ViewBag.Counter = ASC.Count();//сохраняем количество записей за текущий день.
             ASC.AddRange(ASCOld);//добавляем в конец списка все не закрытые записи
             ViewBag.Nabludenii = Nabludenii;//массив с числом наблюдений по часам
-            ViewBag.Avto = db.Avtomobils.OrderBy(x => x.Number).Select(a => new SelectListItem { Value = a.Id.ToString(), Text = a.Number, }).ToList(); 
+            ViewBag.Avto = db.Avtomobils.OrderBy(x => x.Number).Select(a => new SelectListItem { Value = a.Id.ToString(), Text = a.Number, }).ToList();
+            ViewBag.Voditel = db.Voditels.OrderBy(x => x.Name).Select(a => new SelectListItem { Value = a.Id.ToString(), Text = a.Name, }).ToList();
             return View(ASC);
         }
 
@@ -229,13 +233,16 @@ namespace GKHNNC.Controllers
         {
             string[] S = selection.Split(';');
             int AvtoId = Convert.ToInt32(S[0]);
+            int VoditelId = Convert.ToInt32(S[2]);
 
             ASControl ASC = new ASControl();
             Avtomobil Avto = db.Avtomobils.Where(a => a.Id == AvtoId).First();
+            Voditel Vod = db.Voditels.Where(a => a.Id == VoditelId).First();
 
             ASC.Go = true;
             ASC.KM = 0;
             ASC.Primech = S[1];
+            ASC.VoditelId = VoditelId;
             ASC.Sliv = 0;
             ASC.Start = 0;
             ASC.Zapravleno = 0;
@@ -288,7 +295,7 @@ namespace GKHNNC.Controllers
             string Data = "";
             //если не вбит пробег то возврат обратно
             
-            if (KM == 0) { Data = "Чтобы закрыть выезд, введите километраж автомобиля (записанный водителем в путёвке) в соответствующее поле. Километраж должен быть нуля!"; return Json(Data); }
+            if (KM == 0) { Data = "Чтобы закрыть выезд, введите пробег автомобиля (записанный водителем в путёвке) в соответствующее поле. Пробег должен быть больше нуля!"; return Json(Data); }
             try
             {
                 db.Entry(ASC).State = EntityState.Modified;

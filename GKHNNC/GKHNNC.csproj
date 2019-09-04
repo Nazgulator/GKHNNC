@@ -277,6 +277,7 @@
     <Compile Include="Controllers\SVNsController.cs" />
     <Compile Include="Controllers\TableServicesController.cs" />
     <Compile Include="Controllers\UEVsController.cs" />
+    <Compile Include="Controllers\VoditelsController.cs" />
     <Compile Include="Ezdkas.cs">
       <DependentUpon>WorkCenterContext.tt</DependentUpon>
     </Compile>
@@ -304,6 +305,7 @@
     <Compile Include="Models\Adres.cs" />
     <Compile Include="Models\AdresView.cs" />
     <Compile Include="Models\Agent.cs" />
+    <Compile Include="Models\Voditel.cs" />
     <Compile Include="Models\AS24.cs" />
     <Compile Include="Models\ASControl.cs" />
     <Compile Include="Models\DOMView.cs" />
@@ -1138,6 +1140,11 @@
     <Content Include="Views\ASControls\Edit.cshtml" />
     <Content Include="Views\ASControls\Index.cshtml" />
     <Content Include="Views\ASControls\AvtoWarnings.cshtml" />
+    <Content Include="Views\Voditels\Create.cshtml" />
+    <Content Include="Views\Voditels\Delete.cshtml" />
+    <Content Include="Views\Voditels\Details.cshtml" />
+    <Content Include="Views\Voditels\Edit.cshtml" />
+    <Content Include="Views\Voditels\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

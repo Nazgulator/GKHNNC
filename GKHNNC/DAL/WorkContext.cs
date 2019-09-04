@@ -88,6 +88,8 @@ namespace GKHNNC.DAL
 
         public System.Data.Entity.DbSet<GKHNNC.Models.ASControl> ASControls { get; set; }
 
+        public System.Data.Entity.DbSet<GKHNNC.Models.Voditel> Voditels { get; set; }
+
 
         //protected override void OnModelCreating(DbModelBuilder modelBuilder)
 

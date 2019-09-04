@@ -259,6 +259,7 @@
                         <i class="glyphicon glyphicon-dashboard"></i> Список автомобилей &raquo;
                     </button>
                 </p>
+
                 <p>
                     <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Ezdkas")'">
                         <i class="glyphicon glyphicon-transfer"></i> Ездки &raquo;
@@ -281,6 +282,11 @@
             }
             if (User.Identity.Name.Contains("БухгалтерПоТопливу") || User.IsInRole("Администратор") || User.Identity.Name.Contains("ДиспетчерУАТ"))
             {
+                <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Voditels")'">
+                        <i class="glyphicon glyphicon-user"></i> Список водителей &raquo;
+                    </button>
+                </p>
                 <p>
                     <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "ASControls")'">
                         <i class="glyphicon glyphicon-scale"></i> Управление выездами &raquo;
