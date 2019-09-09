@@ -121,13 +121,19 @@ namespace GKHNNC.Controllers
             DateTime Date = DateTime.Now;
             ViewBag.Date = Date;
 
-
+            //берем автомобили вышедшие в рейс
+            List<int> ASId = db.ASControls.Where(x => x.Date.Year == Date.Year && x.Date.Month == Date.Month && x.Date.Day == Date.Day).Select(y => y.Avto.Id).ToList();
+            List<Avtomobil> Avtos = new List<Avtomobil>();
+            foreach (int i in ASId)
+            {
+                Avtos.Add(db.Avtomobils.Where(x => x.Id == i).First());
+            }
 
             //берем все записи контрола за этот день и пробиваем по базе АС24
             List<ASControl> ASC = new List<ASControl>();
             try
             {
-                ASC = db.ASControls.Where(x => x.Date.Year == Date.Year && x.Date.Month == Date.Month && x.Date.Day == Date.Day).Include(x => x.Avto).Include(x=>x.Avto.Type).ToList();
+                ASC = db.ASControls.Where(x => x.Date.Year == Date.Year && x.Date.Month == Date.Month && x.Date.Day == Date.Day).Include(x => x.Avto).Include(x => x.Avto.Type).Include(x => x.Voditel).ToList();
             }
             catch (Exception e)
             { }
@@ -150,24 +156,45 @@ namespace GKHNNC.Controllers
                 List<AS24> A24 = new List<AS24>();
                 try
                 {//берем все записи с данной тачкой
-                    A24 = AS24db.Where(x => x.AvtoId == AC.AvtoId && x.Date.Hour >= AC.Date.Hour).ToList();
+                    A24 = AS24db.Where(x => x.AvtoId == AC.AvtoId && x.Date.Hour >= AC.Date.Hour).OrderBy(y => y.Date).ToList();
                 }
                 catch { }
                 ViewBag.NoSvaz = "";
-                ViewBag.Mesta = "";
+                //ViewBag.Mesta = "";
+                AC.Mesta = new List<string>();
+                AC.Mesta.Add("Движений нет.");
+                AC.NoSvaz = new List<string>();
+                //AC.NoSvaz.Add("Потерь нет.");
                 foreach (AS24 A in A24)
                 {
+                 
+
+                    if (A.Mesta != "" && A.Mesta != null)
+                    {
+                        AC.Mesta = new List<string>();
+                        AC.Mesta.AddRange(A.Mesta.Split(';'));
+
+                    }
+                    //A.NoSvaz = A.NoSvaz.Replace(" ", "");
+                    if (A.NoSvaz != "" && A.NoSvaz != null)
+                    {
+                        //AC.NoSvaz = new List<string>();
+                        AC.NoSvaz.AddRange(A.NoSvaz.Split(';'));
+                        AC.NoSvaz.RemoveAt(AC.NoSvaz.Count - 1);
+
+                    }
+
+
                     KMAS += A.KM;
                     DUT += A.DUT;
-                    ViewBag.NoSvaz = A.NoSvaz;//обрывы связи данные
-                    ViewBag.Mesta = A.Mesta;//места, посещённые автомобилем
+
+
+                    // ViewBag.Mesta = A.Mesta;//места, посещённые автомобилем
                     counter++;
                 }
-
-                    Nabludenii.Add(counter);
-                    AC.KMAS = KMAS;
-                    AC.DUT = DUT;
-              
+                Nabludenii.Add(counter);
+                AC.KMAS = KMAS;
+                AC.DUT = DUT;
 
             }
 
@@ -175,7 +202,7 @@ namespace GKHNNC.Controllers
             List<ASControl> ASCOld = new List<ASControl>();
             try
             {
-                ASCOld = db.ASControls.Where(x =>  x.Date.Year==Date.Year&&x.Date.Month == Date.Month&& x.Warning==true).Include(x => x.Avto).Include(x => x.Avto.Type).OrderBy(x => x.Date).ToList();
+                ASCOld = db.ASControls.Where(x => (x.DateClose < x.Date && x.Date.Day != Date.Day&&x.Warning==true)||x.Podtvergdeno==true).Include(x => x.Avto).Include(x => x.Avto.Type).OrderByDescending(x => x.Date).ToList();
             }
             catch { }
 
@@ -185,6 +212,7 @@ namespace GKHNNC.Controllers
             ASC.AddRange(ASCOld);//добавляем в конец списка все не закрытые записи
             ViewBag.Nabludenii = Nabludenii;//массив с числом наблюдений по часам
             ViewBag.Avto = db.Avtomobils.OrderBy(x => x.Number).Select(a => new SelectListItem { Value = a.Id.ToString(), Text = a.Number, }).ToList();
+            ViewBag.Voditel = db.Voditels.OrderBy(x => x.Name).Select(a => new SelectListItem { Value = a.Id.ToString(), Text = a.Name, }).ToList();
             return View(ASC);
         }
 
@@ -250,7 +278,8 @@ namespace GKHNNC.Controllers
             ASC.AvtoId = AvtoId;
             ASC.Date = DateTime.Now;
             ASC.DateClose = new DateTime(2001, 1, 1, 0, 0, 0);
-            
+            ASC.Podtvergdeno = false;
+
 
             string Data = "";
 
@@ -287,20 +316,65 @@ namespace GKHNNC.Controllers
             
             
             ASControl ASC = db.ASControls.Where(a => a.Id == Id).First();
-
-            
             ASC.KM = KM;
             ASC.Primech = S[2];
             ASC.DateClose = DateTime.Now;
             string Data = "";
-            //если не вбит пробег то возврат обратно
+            int HourClose = ASC.DateClose.Hour;
+            if (ASC.DateClose.Day > ASC.Date.Day||ASC.DateClose.Month>=ASC.Date.Month) { HourClose=23; }//если закрывают на следующий день то ставим время 23:00 считаем как закрыто с опозданием
+
+            //Ищем потери связи за весь период на AS24
+            List<AS24> db24 = new List<AS24>(); 
+            try
+            {
+               db24 =  db.AS24.Where(a => a.AvtoId == a.Id && a.Date.Year == ASC.Date.Year && a.Date.Month == ASC.Date.Month && a.Date.Day == ASC.Date.Day && a.Date.Hour >= ASC.Date.Hour && a.Date.Hour <= HourClose).ToList();
+            }
+            catch
+            {
+
+            }
+            int NoSvazMin = 0;
+            decimal koef = 0;
             
+            for (int i =0;i<db24.Count;i++)
+            {
+
+                    if (db24[i].NoSvaz != "")
+                    {
+                        string[] SS = db24[i].NoSvaz.Split('@');//получаем дату и длительность
+                        string[] SSS = SS[1].Split(':');//бьём длительность на часы минуты секунды
+                        int ind = SS[0].IndexOf(":") - 2;
+                        NoSvazMin += Convert.ToInt32(SSS[1]);//берем минуты так как макс диапазон 10 минут
+                    }
+                    else
+                    {
+
+                    }
+
+            }
+            koef = Convert.ToDecimal(NoSvazMin) / (60 * db24.Count);//проверяем общую длительность потерь связи. Если она больше 25 процентов отправляем на подтверждение 
+            if (koef >0.25m)
+            {
+                ASC.Podtvergdeno = true;//при истине отправляем на проверку
+                ASC.Primech += " Больше 25% потери связи.";
+                //ASC.Warning = true;
+            }
+            else
+            {
+                ASC.Podtvergdeno = false;
+            }
+
+
+            //если не вбит пробег то возврат обратно
+
             if (KM == 0) { Data = "Чтобы закрыть выезд, введите пробег автомобиля (записанный водителем в путёвке) в соответствующее поле. Пробег должен быть больше нуля!"; return Json(Data); }
             try
             {
-                db.Entry(ASC).State = EntityState.Modified;
-                db.SaveChanges();
-                Data = "";
+
+                    db.Entry(ASC).State = EntityState.Modified;
+                    db.SaveChanges();
+                    Data = "";
+
             }
             catch (Exception e)
             {

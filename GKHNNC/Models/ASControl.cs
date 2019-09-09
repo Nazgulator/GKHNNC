@@ -70,7 +70,10 @@ namespace GKHNNC.Models
         [Display(Name = "Потери связи")]
         public List<string> NoSvaz { get; set; }
 
-        
+        [Display(Name = "Подтверждено")]
+        public bool Podtvergdeno { get; set; }
+
+
 
 
     }
