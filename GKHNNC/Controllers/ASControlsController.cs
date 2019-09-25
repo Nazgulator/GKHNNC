@@ -44,7 +44,7 @@ namespace GKHNNC.Controllers
             {
                
                AS24db = db.AS24.Where(x => x.Date.Year == Date.Year && x.Date.Month == Date.Month && x.Date.Day == Date.Day).ToList();
-               HourSnyatia = AS24db.Select(x=>x.Date.Hour).Distinct().Select(a => new SelectListItem { Value = a.ToString(), Text = a.ToString()+":00"+"(час:мин)", }).ToList();
+                HourSnyatia = AS24db.Select(x => x.Date.Hour).Distinct().OrderBy(x => x).Select(a => new SelectListItem { Value = a.ToString(), Text = a.ToString() + ":00" + "(час:мин)", }).ToList();
 
             }
             catch { }
@@ -149,7 +149,7 @@ namespace GKHNNC.Controllers
             {
 
                 AS24db = db.AS24.Where(x => x.Date.Year == Date.Year && x.Date.Month == Date.Month && x.Date.Day == Date.Day).ToList();
-                HourSnyatia = AS24db.Select(x => x.Date.Hour).Distinct().Select(a => new SelectListItem { Value = a.ToString(), Text = a.ToString() + ":00" + "(час:мин)", }).ToList();
+                HourSnyatia = AS24db.Select(x => x.Date.Hour).Distinct().OrderBy(x => x).Select(a => new SelectListItem { Value = a.ToString(), Text = a.ToString() + ":00" + "(час:мин)", }).ToList();
 
             }
             catch { }
@@ -241,6 +241,7 @@ namespace GKHNNC.Controllers
             }
             List<SelectListItem> M = new List<SelectListItem>();
             SelectListItem TecMech = db.Mechanics.Where(x=>x.Id==MechId).Select(a => new SelectListItem { Value = a.Id.ToString(), Text = a.Name }).First();
+            ViewBag.TecMech = TecMech.Text;
             M.AddRange(db.Mechanics.OrderBy(x => x.Id).Select(a => new SelectListItem { Value = a.Id.ToString(), Text = a.Name }).ToList());
             M.RemoveAt(MechId-1);
             M.Insert(0, TecMech);
@@ -256,10 +257,11 @@ namespace GKHNNC.Controllers
             string[] S = selection.Split(';');
             // Установить значения в нем
             cookie["MechId"] = S[0];
-            
+            cookie.Expires = DateTime.Now.AddMonths(1);
 
             // Добавить куки в ответ
             Response.Cookies.Add(cookie);
+            
             return Json("Mechanic");
         }
 
@@ -281,7 +283,7 @@ namespace GKHNNC.Controllers
             List<ASControl> ASC = new List<ASControl>();
             try
             {
-                ASC = db.ASControls.Where(x => x.Date.Year == Date.Year && x.Date.Month == Date.Month && x.Date.Day == Date.Day).Include(x => x.Avto).Include(x => x.Avto.Type).Include(x => x.Voditel).ToList();
+                ASC = db.ASControls.Where(x => x.Date.Year == Date.Year && x.Date.Month == Date.Month && x.Date.Day == Date.Day&&x.DateClose.Day!=x.Date.Day).Include(x => x.Avto).Include(x => x.Avto.Type).Include(x => x.Voditel).ToList();
             }
             catch (Exception e)
             { }
@@ -292,7 +294,7 @@ namespace GKHNNC.Controllers
             {
 
                 AS24db = db.AS24.Where(x => x.Date.Year == Date.Year && x.Date.Month == Date.Month && x.Date.Day == Date.Day).ToList();
-                HourSnyatia = AS24db.Select(x => x.Date.Hour).Distinct().Select(a => new SelectListItem { Value = a.ToString(), Text = a.ToString() + ":00" + "(час:мин)", }).ToList();
+                HourSnyatia = AS24db.Select(x => x.Date.Hour).Distinct().OrderBy(x=>x).Select(a => new SelectListItem { Value = a.ToString(), Text = a.ToString() + ":00" + "(час:мин)", }).ToList();
 
             }
             catch { }
@@ -456,14 +458,19 @@ namespace GKHNNC.Controllers
             List<ASControl> ASCOld = new List<ASControl>();
             try
             {
-                ASCOld = db.ASControls.Where(x => (x.DateClose < x.Date && x.Date.Day != Date.Day&&x.Warning==true)||x.Podtvergdeno==true).Include(x => x.Avto).Include(x => x.Avto.Type).OrderByDescending(x => x.Date).ToList();
+                ASCOld = db.ASControls.Where(x => x.DateClose < x.Date && x.Date.Day != Date.Day&&x.Warning==true&&x.Podtvergdeno==false).Include(x => x.Avto).Include(x => x.Avto.Type).OrderByDescending(x => x.Date).ToList();
+            }
+            catch { }
+            List<ASControl> ASCPodtvergdenie = new List<ASControl>();
+            try
+            {
+                ASCPodtvergdenie = db.ASControls.Where(x => x.Podtvergdeno == true).Include(x => x.Avto).Include(x => x.Avto.Type).OrderByDescending(x => x.Date).ToList();
             }
             catch { }
 
-
-
             ViewBag.Counter = ASC.Count();//сохраняем количество записей за текущий день.
             ASC.AddRange(ASCOld);//добавляем в конец списка все не закрытые записи
+            ASC.AddRange(ASCPodtvergdenie);//добавляем в конец списка все не закрытые записи
             ViewBag.Nabludenii = Nabludenii;//массив с числом наблюдений по часам
             ViewBag.Avto = db.Avtomobils.OrderBy(x => x.Number).Select(a => new SelectListItem { Value = a.Id.ToString(), Text = a.Number, }).ToList();
             ViewBag.Voditel = db.Voditels.OrderBy(x => x.Name).Select(a => new SelectListItem { Value = a.Id.ToString(), Text = a.Name, }).ToList();
@@ -639,6 +646,47 @@ namespace GKHNNC.Controllers
                     db.Entry(ASC).State = EntityState.Modified;
                     db.SaveChanges();
                     Data = "";
+
+            }
+            catch (Exception e)
+            {
+                Data = "Неудача";
+            }
+
+            return Json(Data);
+        }
+
+        [HttpPost]
+        public ActionResult PodtverditAvto(string selection)
+        {
+            string[] S = selection.Split(';');
+            int Id = Convert.ToInt32(S[0]);
+            //если адекватно написаны километры то сохраняем иначе 0
+            decimal KM = 0;
+            try
+            {
+                KM = Convert.ToDecimal(S[1]);
+            }
+            catch
+            {
+
+            }
+
+
+            ASControl ASC = db.ASControls.Where(a => a.Id == Id).First();
+            ASC.KM = KM;
+            ASC.Primech = S[2];
+            ASC.Podtvergdeno = false; 
+            string Data = "";
+            //если не вбит пробег то возврат обратно
+
+            if (KM == 0) { Data = "Чтобы закрыть выезд, введите пробег автомобиля (записанный водителем в путёвке) в соответствующее поле. Пробег должен быть больше нуля!"; return Json(Data); }
+            try
+            {
+
+                db.Entry(ASC).State = EntityState.Modified;
+                db.SaveChanges();
+                Data = "";
 
             }
             catch (Exception e)

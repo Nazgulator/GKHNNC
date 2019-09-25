@@ -22,126 +22,126 @@
             Текущие выезды
         </h3>
 
-            if (Model.Count() == 0)
-            {
-                <h3>На текущий момент выездов нет.</h3>
-                <p>  </p>
+        if (Model.Count() == 0)
+        {
+            <h3>На текущий момент выездов нет.</h3>
+            <p>  </p>
 
-            }
-            else
-            {
-                <table id="T" class="table table-bordered ">
-                    <tr>
-                        <th>
+        }
+        else
+        {
+            <table id="T" class="table table-bordered ">
+                <tr>
+                    <th>
 
-                        </th>
-                        <th style="text-align:center">
-                            Тип автомобиля
-                        </th>
-                        <th style="text-align:center">
-                            @Html.DisplayNameFor(model => model.Avto)
-                        </th>
+                    </th>
+                    <th style="text-align:center">
+                        Тип автомобиля
+                    </th>
+                    <th style="text-align:center">
+                        @Html.DisplayNameFor(model => model.Avto)
+                    </th>
 
-                        <th style="text-align:center">
-                            Пробег(GPS)
-                        </th>
-                        <th style="text-align:center">
-                            Расход(ДУТ)
-                        </th>
+                    <th style="text-align:center">
+                        Пробег(GPS)
+                    </th>
+                    <th style="text-align:center">
+                        Расход(ДУТ)
+                    </th>
 
-                        <th style="text-align:center">
-                            Пробег(водитель)
-                        </th>
+                    <th style="text-align:center">
+                        Пробег(водитель)
+                    </th>
 
-                        <th style="text-align:center">
-                            @Html.DisplayNameFor(model => model.Primech)
-                        </th>
-                        <th style="text-align:center">
-                            Движения
-                        </th>
-                        <th style="text-align:center">
-                            Потери связи
-                        </th>
-                        <th style="text-align:center">
-                            Проверки
-                        </th>
-                        <th style="text-align:center">
-                            Связь
-                        </th>
-                        <th style="text-align:center">
-                            Закрытие выезда
-                        </th>
-                    </tr>
-                    @{ int counter = 0;
+                    <th style="text-align:center">
+                        @Html.DisplayNameFor(model => model.Primech)
+                    </th>
+                    <th style="text-align:center">
+                        Движения
+                    </th>
+                    <th style="text-align:center">
+                        Потери связи
+                    </th>
+                    <th style="text-align:center">
+                        Проверки
+                    </th>
+                    <th style="text-align:center">
+                        Связь
+                    </th>
+                    <th style="text-align:center">
+                        Закрытие выезда
+                    </th>
+                </tr>
+                @{ int counter = 0;
 
 
-                    }
-                    @foreach (var item in Model)
+                }
+                @foreach (var item in Model)
+                {
+                    if (counter < ViewBag.Counter)
                     {
-                        if (counter < ViewBag.Counter)
+                        int NoSvazMin = 0;
+                        decimal koef = 0;
+
+                        if (item.NoSvaz.Count > 0 && item.NoSvaz[0].Contains("@"))
                         {
-                            int NoSvazMin = 0;
-                            decimal koef = 0;
-
-                            if (item.NoSvaz.Count > 0 && item.NoSvaz[0].Contains("@"))
+                            for (int h = 0; h < item.NoSvaz.Count; h++)
                             {
-                                for (int h = 0; h < item.NoSvaz.Count; h++)
+                                if (item.NoSvaz[h] != "")
                                 {
-                                    if (item.NoSvaz[h] != "")
-                                    {
-                                        string[] SS = item.NoSvaz[h].Split('@');//получаем дату и длительность
-                                        string[] SSS = SS[1].Split(':');//бьём длительность на часы минуты секунды
-                                        int ind = SS[0].IndexOf(":") - 2;
-                                        item.NoSvaz[h] = SS[0].Remove(0, ind);
-                                        NoSvazMin += Convert.ToInt32(SSS[1]);//берем минуты так как макс диапазон 10 минут
-                                    }
-                                    else
-                                    {
-                                        item.NoSvaz.RemoveAt(h);
-                                    }
+                                    string[] SS = item.NoSvaz[h].Split('@');//получаем дату и длительность
+                                    string[] SSS = SS[1].Split(':');//бьём длительность на часы минуты секунды
+                                    int ind = SS[0].IndexOf(":") - 2;
+                                    item.NoSvaz[h] = SS[0].Remove(0, ind);
+                                    NoSvazMin += Convert.ToInt32(SSS[1]);//берем минуты так как макс диапазон 10 минут
                                 }
-                                item.NoSvaz.Add("Связи не было " + NoSvazMin.ToString() + " минут");
-                                koef = Convert.ToDecimal(NoSvazMin) / (60 * ViewBag.Nabludenii[counter]);
-
-                            }
-
-
-                            if (item.Mesta != null && item.Mesta[0].Contains("@"))
-                            {
-
-                                for (int h = 0; h < item.Mesta.Count(); h++)
+                                else
                                 {
-                                    if (item.Mesta[h] != "")
-                                    {
-                                        string[] SS = item.Mesta[h].Split('@');
-                                        item.Mesta[h] = SS[1].Replace("Новосибирск", "").Replace(",", "").Replace(" ", "");
-                                    }
+                                    item.NoSvaz.RemoveAt(h);
                                 }
-                                item.Mesta = item.Mesta.Distinct().ToList();
                             }
-                            string DvigName = "Не двигается";
-                            string DvigClass = "btn btn-danger";
-                            if (item.Mesta.Count > 2)
-                            {
-                                DvigName = "В движении";
-                                DvigClass = "btn btn-success";
-                            }
-                            item.Mesta.Insert(0, DvigName);
-                            string Atype = item.Avto.Type.Ico.ToString() + ".png";
-                            string cl = ""; string check = "S1.png"; string btn = "btn btn-success"; string img = ""; string svyaz = "Связь с автомобилем есть.Данные передаются.";
-                            if (item.Avto.Glonass == false) { check = "S4.png"; svyaz = "На автомобиле не установлен датчик."; }
-                            else
-                            {
-                                //если больше 3 наблюдений а данные все еще нулевые то помечаем машину как потеря связи
-                                if (item.Avto.Glonass == true && koef > 0.25m && koef < 0.5m) { cl = "bg-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W1.png"; svyaz = "Связи не было " + NoSvazMin + " минут"; }
-                                if (item.Avto.Glonass == true && item.DUT == 0 && item.KMAS == 0 && ViewBag.Nabludenii[counter] >= 2 && ViewBag.Nabludenii[counter] < 4) { cl = "bg-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W1.png"; svyaz = "Данные от автомобиля не поступали в течение нескольких часов."; }
+                            item.NoSvaz.Add("Связи не было " + NoSvazMin.ToString() + " минут");
+                            koef = Convert.ToDecimal(NoSvazMin) / (60 * ViewBag.Nabludenii[counter]);
 
-                                if (item.Avto.Glonass == true && koef >= 0.5m) { cl = "bg-danger"; check = "S3.png"; btn = "btn btn-danger"; img = "W2.png"; svyaz = "Связи не было " + NoSvazMin + " минут"; }
-                                if (item.Avto.Glonass == true && item.DUT == 0 && item.KMAS == 0 && ViewBag.Nabludenii[counter] >= 4) { cl = "bg-danger"; check = "S3.png"; btn = "btn btn-danger"; img = "W2.png"; svyaz = "Потеря связи! Данные не поступали более 4 часов!"; }
+                        }
 
-                            }
-                            if (cl != "")
+
+                        if (item.Mesta != null && item.Mesta[0].Contains("@"))
+                        {
+
+                            for (int h = 0; h < item.Mesta.Count(); h++)
                             {
+                                if (item.Mesta[h] != "")
+                                {
+                                    string[] SS = item.Mesta[h].Split('@');
+                                    item.Mesta[h] = SS[1].Replace("Новосибирск", "").Replace(",", "").Replace(" ", "");
+                                }
+                            }
+                            item.Mesta = item.Mesta.Distinct().ToList();
+                        }
+                        string DvigName = "Не двигается";
+                        string DvigClass = "btn btn-danger";
+                        if (item.Mesta.Count > 2)
+                        {
+                            DvigName = "В движении";
+                            DvigClass = "btn btn-success";
+                        }
+                        item.Mesta.Insert(0, DvigName);
+                        string Atype = item.Avto.Type.Ico.ToString() + ".png";
+                        string cl = ""; string check = "S1.png"; string btn = "btn btn-success"; string img = ""; string svyaz = "Связь с автомобилем есть.Данные передаются.";
+                        if (item.Avto.Glonass == false) { check = "S4.png"; svyaz = "На автомобиле не установлен датчик."; }
+                        else
+                        {
+                            //если больше 3 наблюдений а данные все еще нулевые то помечаем машину как потеря связи
+                            if (item.Avto.Glonass == true && koef > 0.25m && koef < 0.5m) { cl = "bg-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W1.png"; svyaz = "Связи не было " + NoSvazMin + " минут"; }
+                            if (item.Avto.Glonass == true && item.DUT == 0 && item.KMAS == 0 && ViewBag.Nabludenii[counter] >= 2 && ViewBag.Nabludenii[counter] < 4) { cl = "bg-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W1.png"; svyaz = "Данные от автомобиля не поступали в течение нескольких часов."; }
+
+                            if (item.Avto.Glonass == true && koef >= 0.5m) { cl = "bg-danger"; check = "S3.png"; btn = "btn btn-danger"; img = "W2.png"; svyaz = "Связи не было " + NoSvazMin + " минут"; }
+                            if (item.Avto.Glonass == true && item.DUT == 0 && item.KMAS == 0 && ViewBag.Nabludenii[counter] >= 4) { cl = "bg-danger"; check = "S3.png"; btn = "btn btn-danger"; img = "W2.png"; svyaz = "Потеря связи! Данные не поступали более 4 часов!"; }
+
+                        }
+                        if (cl != "")
+                        {
                             <tr id="@counter" value="@item.Id">
                                 <td class=@cl>
                                     <center>
@@ -209,169 +209,214 @@
                                     }
                                     else
                                     {
-                                        <input id="END" tag="@item.Id" type="button" value="Рейс завершён" class="btn" />
+                                        if (item.Podtvergdeno != true)
+                                        {
+                                            <input id="END" tag="@item.Id" type="button" value="Рейс завершён" class="btn" />
+                                        }
+                                        else
+                                        {
+                                            <input id="END" tag="@item.Id" type="button" value="Подтвердить закрытие" class="btn btn-warning" />
+                                        }
+
                                     }
 
                                 </td>
                             </tr>
-                            }
                         }
-                        else
+                    }
+                    else
+                    {
+                        if (counter == ViewBag.Counter)
                         {
-                            if (counter == ViewBag.Counter)
-                            {
 
 
-                                <tr>
-                                    <td colspan="12" style="text-align:center"><h3>Открытые выезды в предыдущие дни </h3></td>
-                                </tr>
-                                <tr>
-                                    <th>
+                            <tr>
+                                <td colspan="12" style="text-align:center"><h3>Открытые выезды в предыдущие дни </h3></td>
+                            </tr>
+                            <tr>
+                                <th>
 
-                                    </th>
-                                    <th style="text-align:center">
-                                        Тип автомобиля
-                                    </th>
-                                    <th style="text-align:center">
-                                        @Html.DisplayNameFor(model => model.Avto)
-                                    </th>
-
-                                    <th style="text-align:center">
-                                        Пробег(GPS)
-                                    </th>
-                                    <th style="text-align:center">
-                                        Расход(ДУТ)
-                                    </th>
-
-                                    <th style="text-align:center">
-                                        Пробег(водитель)
-                                    </th>
-
-                                    <th style="text-align:center">
-                                        @Html.DisplayNameFor(model => model.Primech)
-                                    </th>
-                                    <th style="text-align:center">
-                                        Дата выезда
-                                    </th>
-                                    <th style="text-align:center">
-                                        Связь
-                                    </th>
-                                    <th colspan="4"></th>
-                                </tr>
-                            }
-                            string Atype = item.Avto.Type.Ico.ToString() + ".png";
-                            string cl = ""; string check = "S1.png"; string btn = "btn btn-success"; string img = ""; string svyaz = "Связь с автомобилем есть.Данные передаются.";
-                            if (item.Avto.Glonass == false) { check = "S4.png"; svyaz = "На автомобиле не установлен датчик."; }
-                            else
-                            {
-                                //если данных нет
-
-                                if (item.Avto.Glonass == true && item.DUT == 0 && item.KMAS == 0) { cl = "bg-danger"; check = "S3.png"; btn = "btn btn-danger"; img = "W2.png"; svyaz = "Потеря связи! В течение всего дня данных не поступило!"; }
-                            }
-                            <tr id="@counter" value="@item.Id">
-                                <td class="@cl">
-                                    @if (img != "")
-                                    {
-                                        <img src="~/Content/Images/@img" class="img-responsive">
-                                    }
-                                </td>
-                                <td class="">
-                                    <img src="~/Content/Images/@Atype" class="img-responsive" height="64" width="128" data-toggle="tooltip" data-placement="top" title="@Html.DisplayFor(modelItem => item.Avto.Type.Type)">
-                                </td>
-                                <th class=@cl>
-                                    <center>
-                                        @Html.DisplayFor(modelItem => item.Avto.Number)
-                                    </center>
+                                </th>
+                                <th style="text-align:center">
+                                    Тип автомобиля
+                                </th>
+                                <th style="text-align:center">
+                                    @Html.DisplayNameFor(model => model.Avto)
                                 </th>
 
-                                <td class=@cl>
-                                    <center>
-                                        @Html.DisplayFor(modelItem => item.KMAS)
-                                    </center>
-                                </td>
-                                <td class=@cl>
-                                    <center>
-                                        @Html.DisplayFor(modelItem => item.DUT)
-                                    </center>
-                                </td>
+                                <th style="text-align:center">
+                                    Пробег(GPS)
+                                </th>
+                                <th style="text-align:center">
+                                    Расход(ДУТ)
+                                </th>
 
-                                <td class=@cl>
-                                    <input id="KM_@item.Id" value="@item.KM" class="form-control">
+                                <th style="text-align:center">
+                                    Пробег(водитель)
+                                </th>
 
-                                </td>
-                                <td class=@cl>
+                                <th style="text-align:center">
+                                    @Html.DisplayNameFor(model => model.Primech)
+                                </th>
+                                <th style="text-align:center">
+                                    Дата выезда
+                                </th>
+                                <th style="text-align:center">
+                                    Связь
+                                </th>
+                                <th colspan="4"></th>
+                            </tr>
+                        }
+                        string Atype = item.Avto.Type.Ico.ToString() + ".png";
+                        string cl = ""; string check = "S1.png"; string btn = "btn btn-success"; string img = ""; string svyaz = "Связь с автомобилем есть.Данные передаются.";
+                        if (item.Avto.Glonass == false) { check = "S4.png"; svyaz = "На автомобиле не установлен датчик."; }
+                        else
+                        {
+                            //если данных нет
 
-                                    <input id="Primech_@item.Id" value="@item.Primech" class="form-control">
-                                </td>
-                                <td class=@cl>
-                                    <center>
-                                        @item.Date.Day/@item.Date.Month/@item.Date.Year
-                                    </center>
-                                </td>
-                                <td class=@cl>
-                                    <Center>
-                                        <img src="~/Content/Images/@check" class="img-responsive" height="32" width="32" data-toggle="tooltip" data-placement="top" title="@svyaz">
-                                    </Center>
-                                </td>
-                                <td colspan="4" class=@cl style="text-align:center">
-                                    @if (item.DateClose < item.Date)
+                            if (item.Avto.Glonass == true && item.DUT == 0 && item.KMAS == 0) { cl = "bg-danger"; check = "S3.png"; btn = "btn btn-danger"; img = "W2.png"; svyaz = "Потеря связи! В течение всего дня данных не поступило!"; }
+                        }
+                        <tr id="@counter" value="@item.Id">
+                            <td class="@cl">
+                                @if (img != "")
+                                {
+                                    <img src="~/Content/Images/@img" class="img-responsive">
+                                }
+                            </td>
+                            <td class="">
+                                <img src="~/Content/Images/@Atype" class="img-responsive" height="64" width="128" data-toggle="tooltip" data-placement="top" title="@Html.DisplayFor(modelItem => item.Avto.Type.Type)">
+                            </td>
+                            <th class=@cl>
+                                <center>
+                                    @Html.DisplayFor(modelItem => item.Avto.Number)
+                                </center>
+                            </th>
+
+                            <td class=@cl>
+                                <center>
+                                    @Html.DisplayFor(modelItem => item.KMAS)
+                                </center>
+                            </td>
+                            <td class=@cl>
+                                <center>
+                                    @Html.DisplayFor(modelItem => item.DUT)
+                                </center>
+                            </td>
+
+                            <td class=@cl>
+                                <input id="KM_@item.Id" value="@item.KM" class="form-control">
+
+                            </td>
+                            <td class=@cl>
+
+                                <input id="Primech_@item.Id" value="@item.Primech" class="form-control">
+                            </td>
+                            <td class=@cl>
+                                <center>
+                                    @item.Date.Day/@item.Date.Month/@item.Date.Year
+                                </center>
+                            </td>
+                            <td class=@cl>
+                                <Center>
+                                    <img src="~/Content/Images/@check" class="img-responsive" height="32" width="32" data-toggle="tooltip" data-placement="top" title="@svyaz">
+                                </Center>
+                            </td>
+                            <td colspan="4" class=@cl style="text-align:center">
+                                @if (item.DateClose < item.Date)
+                                {
+                                    <button id="@counter" tag="P" value="X" class="@btn" data-toggle="modal" data-target="#MODAL" style="width: 100%">Закрыть</button>
+
+                                }
+                                else
+                                {
+                                    if (item.Podtvergdeno != true)
                                     {
-                                        <button id="@counter" tag="@item.Id" class="@btn" data-toggle="modal" data-target="#MODAL" style="width: 100%">Закрыть</button>
-
+                                        <input id="END" tag="@item.Id" type="button" value="Рейс завершён" class="btn" />
                                     }
                                     else
                                     {
-                                        <input id="END" tag="@item.Id" type="button" value="Рейс завершён" class="btn" />
+                                        <button id="@counter" tag="P" value="P" class="@btn" data-toggle="modal" data-target="#MODAL" style="width: 100%">Подтвердить закрытие</button>
                                     }
+                                }
 
-                                </td>
-                            </tr>
-                        }
-                        counter++;
+                            </td>
+                        </tr>
                     }
+                    counter++;
+                }
 
-                </table>
-            }
-   
-}
-    </div>
-    <p><a href="/ASControls/Index" class="btn btn-success btn-block">К управлению выездами &raquo;</a> </p>
-    <p><a href="/Home/Index" class="btn btn-success btn-block">В главное меню &raquo;</a> </p>
-
-    @section Scripts {
-        @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
-        @Scripts.Render("~/scripts/jquery-3.3.1.js")
-        @Scripts.Render("~/Scripts/chosen.jquery.min.js")
-        @Scripts.Render("~/bundles/jqueryval")
-        @Scripts.Render("~/bundles/jquery")
-        @Scripts.Render("~/bundles/bootstrap")
-        @Scripts.Render("~/scripts/validate.js")
-        @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
-        @Scripts.Render("~/scripts/jquery.unobtrusive.min.js")
-
-
-
-
-
-
-        <script>
-            var time = new Date().getTime();
-            $(document.body).bind("mousemove keypress", function (e) {
-                time = new Date().getTime();
-            });
-
-            function refresh() {
-                console.log("Обновляем страницу");
-                if (new Date().getTime() - time >= 60000)
-                    window.location.replace("/ASControls/AvtoWarnings");
-                else
-                    setTimeout(refresh, 10000);
-            }
-
-            setTimeout(refresh, 10000);
-        </script>
-
-
-
+            </table>
+        }
 
     }
+</div>
+<p><a href="/ASControls/Index" class="btn btn-success btn-block">К управлению выездами &raquo;</a> </p>
+<p><a href="/Home/Index" class="btn btn-success btn-block">В главное меню &raquo;</a> </p>
+
+@section Scripts {
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+    @Scripts.Render("~/scripts/jquery-3.3.1.js")
+    @Scripts.Render("~/Scripts/chosen.jquery.min.js")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/scripts/validate.js")
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+    @Scripts.Render("~/scripts/jquery.unobtrusive.min.js")
+
+
+
+
+
+
+    <script>
+        var time = new Date().getTime();
+        $(document.body).bind("mousemove keypress", function (e) {
+            time = new Date().getTime();
+        });
+
+        function refresh() {
+            console.log("Обновляем страницу");
+            if (new Date().getTime() - time >= 60000)
+                window.location.replace("/ASControls/AvtoWarnings");
+            else
+                setTimeout(refresh, 10000);
+        }
+
+        setTimeout(refresh, 10000);
+    </script>
+
+    <script>
+        //скрипт закрытия выездов или подтверждения
+         $("button").click(function () {
+             var Id = $("#T tr[id^=" + this.id + "]").attr("value");
+             var Value = this.getAttribute('value');
+             var KM = $("#KM_"+Id).val();
+             var Primech = $("#Primech_"+Id).val();
+              console.log("Завершаем " + Id+"Валю"+ Value);
+             var ss = Id + ";" + KM + ";" + Primech;
+             if (Value == 'X') {
+                 $.post('@Url.Action("CloseAvto", "ASControls")', { selection: ss }, function (data) {
+                     if (data == '') {
+                         window.location.replace("/ASControls/AvtoWarnings");//редирект
+                     }
+                     else {
+                         $("div.MTEXT").text(data);
+                     }
+
+                 });
+             }
+             else
+             {
+                  $.post('@Url.Action("PodtverditAvto", "ASControls")', { selection: ss }, function (data) {
+                     
+                      window.location.replace("/ASControls/AvtoWarnings");//редирект
+
+                 });
+             }
+
+        });
+    </script>
+
+
+}

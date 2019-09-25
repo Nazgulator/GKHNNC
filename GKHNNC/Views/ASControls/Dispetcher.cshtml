@@ -5,7 +5,7 @@
     Layout = "~/Views/Shared/_Layout0.cshtml";
 }
 
-<h2>Управление выездами</h2>
+<h2>Диспетчерская</h2>
 <h3>@ViewBag.Date.Day - @ViewBag.Date.Month - @ViewBag.Date.Year</h3>
 
 
@@ -70,7 +70,7 @@
 <h3>
     Текущие выезды
 </h3>
-
+<div class="container">
     @if (Model.Count() == 0)
     {
         <h3>На текущий момент выездов нет.</h3>
@@ -91,20 +91,24 @@
                     @Html.DisplayNameFor(model => model.Avto)
                 </th>
                 <!--
-                    <th style="text-align:center">
-                        Пробег(GPS)
-                    </th>
-                    <th style="text-align:center">
-                        Расход(ДУТ)
-                    </th>
-        -->
+                                        <th style="text-align:center">
+                                            Пробег(GPS)
+                                        </th>
+                                        <th style="text-align:center">
+                                            Расход(ДУТ)
+                                        </th>
 
-                <th style="text-align:center">
-                    Пробег(водитель)
-                </th>
 
+                                    <th style="text-align:center">
+                                        Пробег(водитель)
+                                    </th>
+
+                                <th style="text-align:center">
+                                    @Html.DisplayNameFor(model => model.Primech)
+                                </th>
+                -->
                 <th style="text-align:center">
-                    @Html.DisplayNameFor(model => model.Primech)
+                    Время выезда
                 </th>
                 <th style="text-align:center">
                     Движения
@@ -113,16 +117,16 @@
                     Потери связи
                 </th>
                 <!-- <th style="text-align:center">
-            Проверки
-        </th> -->
+                    Проверки
+                </th> -->
 
                 <th style="text-align:center">
                     Связь
                 </th>
                 <!-- <th style="text-align:center">
-            Закрытие выезда
-        </th>
-            -->
+                    Закрытие выезда
+                </th>
+                    -->
             </tr>
             @{ int counter = 0;
 
@@ -152,11 +156,11 @@
                                 item.NoSvaz.RemoveAt(h);
                             }
                         }
-                        item.NoSvaz.Add("Связи не было " + NoSvazMin.ToString() + " минут");
+                        item.NoSvaz.Insert(0, "Связи не было " + NoSvazMin.ToString() + " минут");
                         koef = 1;
                         if (ViewBag.Nabludenii[counter] != 0)
                         {
-                          koef=  Convert.ToDecimal(NoSvazMin) / (60 * ViewBag.Nabludenii[counter]);
+                            koef = Convert.ToDecimal(NoSvazMin) / (60 * ViewBag.Nabludenii[counter]);
                         }
 
                     }
@@ -207,7 +211,9 @@
                             </center>
                         </td>
                         <td class="">
-                            <img src="~/Content/Images/@Atype" class="img-responsive" height="64" width="128" data-toggle="tooltip" data-placement="top" title="@Html.DisplayFor(modelItem => item.Avto.Type.Type)">
+                            <Center>
+                                <img src="~/Content/Images/@Atype" class="img-responsive" height="64" width="128" data-toggle="tooltip" data-placement="top" title="@Html.DisplayFor(modelItem => item.Avto.Type.Type)">
+                            </Center>
                         </td>
 
                         <th class=@cl>
@@ -227,7 +233,7 @@
                                         @Html.DisplayFor(modelItem => item.DUT)
                                     </center>
                                 </td>
-                -->
+
                         <td class=@cl>
                             <input id="KM_@item.Id" value="@item.KM" class="form-control">
 
@@ -236,6 +242,13 @@
 
                             <input id="Primech_@item.Id" value="@item.Primech" class="form-control">
                         </td>
+                             -->
+                        <th style="text-align:center" class=@cl>
+                            <Center>
+                                @item.Date.Hour : @item.Date.Minute
+                            </Center>
+
+                        </th>
                         <td style="text-align:center" class=@cl>
 
                             @Html.DropDownList("Mesta", new MultiSelectList(@item.Mesta), new { @class = "form-control" })
@@ -247,31 +260,31 @@
 
                         </td>
                         <!--
-                <td style="text-align:center" class=@cl>
-                    <center>
-                        @ViewBag.Nabludenii[counter]
-                    </center>
-                </td>
-                    -->
+                        <td style="text-align:center" class=@cl>
+                            <center>
+                                @ViewBag.Nabludenii[counter]
+                            </center>
+                        </td>
+                            -->
                         <td class=@cl>
                             <center>
                                 <img src="~/Content/Images/@check" class="img-responsive" height="32" width="32" data-toggle="tooltip" data-placement="top" title="@svyaz">
                             </center>
                         </td>
                         <!--
-                <td class=@cl>
-                  if (item.DateClose < item.Date)
-                 //   {
-                        <button id="@counter" tag="@item.Id" class="@btn" data-toggle="modal" data-target="#MODAL" style="width: 100%">Закрыть</button>
+                        <td class=@cl>
+                          if (item.DateClose < item.Date)
+                         //   {
+                                <button id="@counter" tag="@item.Id" class="@btn" data-toggle="modal" data-target="#MODAL" style="width: 100%">Закрыть</button>
 
-                 //   }
-                 //   else
-                 //   {
-                        <input id="END" tag="@item.Id" type="button" value="Рейс завершён" class="btn" />
-                 //   }
+                         //   }
+                         //   else
+                         //   {
+                                <input id="END" tag="@item.Id" type="button" value="Рейс завершён" class="btn" />
+                         //   }
 
-                </td>
-                    -->
+                        </td>
+                            -->
                     </tr>
 
                 }
@@ -284,60 +297,61 @@
                         @Html.DropDownList("HS", new SelectList(ViewBag.HourSnyatia, "Value", "Text"), new { @class = "form-control" })
                     </Center>
                 </td>
-                <td colspan="4"></td>
+
             </tr>
         </table>
 
 
-        }
-        
-    
+    }
     <p><a href="/Home/Index" class="btn btn-success btn-block">В главное меню &raquo;</a> </p>
+</div>
+
+    
 
 
     <!-- Modal -->
-                <div class="modal fade" id="MODAL" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-xl" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h3>ОШИБКА ЗАПОЛНЕНИЯ!</h3>
-                                <div class="MTEXT">
+    <div class="modal fade" id="MODAL" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>ОШИБКА ЗАПОЛНЕНИЯ!</h3>
+                    <div class="MTEXT">
 
-                                    <button id="X" type="button" class="close hide" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
+                        <button id="X" type="button" class="close hide" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
 
-                                    <h4>Загрузка данных, пожалуйста подождите...</h4>
-                                </div>
-                                <div class="">
+                        <h4>Загрузка данных, пожалуйста подождите...</h4>
+                    </div>
+                    <div class="">
 
-                                    <button id="X" type="button" class="close hide" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
+                        <button id="X" type="button" class="close hide" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
 
-                                    <h4>Данные наблюдений </h4>
-                                </div>
-                            </div>
-                        </div>
+                        <h4>Данные наблюдений </h4>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
 
-                @section Scripts {
-                    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
-                    @Scripts.Render("~/scripts/jquery-3.3.1.js")
-                    @Scripts.Render("~/Scripts/chosen.jquery.min.js")
-                    @Scripts.Render("~/bundles/jqueryval")
-                    @Scripts.Render("~/bundles/jquery")
-                    @Scripts.Render("~/bundles/bootstrap")
-                    @Scripts.Render("~/scripts/validate.js")
-                    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
-                    @Scripts.Render("~/scripts/jquery.unobtrusive.min.js")
+    @section Scripts {
+        @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+        @Scripts.Render("~/scripts/jquery-3.3.1.js")
+        @Scripts.Render("~/Scripts/chosen.jquery.min.js")
+        @Scripts.Render("~/bundles/jqueryval")
+        @Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/bundles/bootstrap")
+        @Scripts.Render("~/scripts/validate.js")
+        @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+        @Scripts.Render("~/scripts/jquery.unobtrusive.min.js")
 
 
 
 
 
-                    <script>
+        <script>
         //скрипт отправки данных в БД
         $("#ADD").click(function () {
             var S = $("#ADD");
@@ -362,8 +376,8 @@
 
         });
 
-                    </script>
-                    <script>
+        </script>
+        <script>
         //скрипт отправки данных в БД
         $("#CLOSE").click(function () {
             var S = $("#CLOSE").attr("tag");
@@ -384,8 +398,8 @@
 
         });
 
-                    </script>
-                    <script>
+        </script>
+        <script>
         //скрипт отправки данных в БД
          $("button").click(function () {
              var Id = $("#T tr[id^=" + this.id + "]").attr("value");
@@ -415,25 +429,25 @@
 
         });
 
-                    </script>
-                    <script>
-                        var time = new Date().getTime();
-                        $(document.body).bind("mousemove keypress", function (e) {
-                            time = new Date().getTime();
-                        });
+        </script>
+        <script>
+            var time = new Date().getTime();
+            $(document.body).bind("mousemove keypress", function (e) {
+                time = new Date().getTime();
+            });
 
-                        function refresh() {
-                            console.log("Обновляем страницу");
-                            if (new Date().getTime() - time >= 60000)
-                                window.location.replace("/ASControls/Dispetcher");
-                            else
-                                setTimeout(refresh, 10000);
-                        }
+            function refresh() {
+                console.log("Обновляем страницу");
+                if (new Date().getTime() - time >= 60000)
+                    window.location.replace("/ASControls/Dispetcher");
+                else
+                    setTimeout(refresh, 10000);
+            }
 
-                        setTimeout(refresh, 10000);
-                    </script>
-
-
+            setTimeout(refresh, 10000);
+        </script>
 
 
-                }
+
+
+    }

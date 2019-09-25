@@ -151,7 +151,7 @@
                                 item.NoSvaz.RemoveAt(h);
                             }
                         }
-                        item.NoSvaz.Add("Связи не было " + NoSvazMin.ToString() + " минут");
+                        item.NoSvaz.Insert(0, "Связи не было " + NoSvazMin.ToString() + " минут");
                         koef = Convert.ToDecimal(NoSvazMin) / (60 * ViewBag.Nabludenii[counter]);
 
                     }
