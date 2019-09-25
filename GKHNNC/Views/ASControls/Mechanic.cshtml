@@ -1,0 +1,517 @@
+﻿@model IEnumerable<GKHNNC.Models.ASControl>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+<h2>Управление выездами</h2>
+<h3>@ViewBag.Date.Day - @ViewBag.Date.Month - @ViewBag.Date.Year</h3>
+
+
+<h3>
+    Текущие выезды
+</h3>
+@if (Model.Count() == 0)
+{
+    <h3>На текущий момент выездов нет.</h3>
+    <p>  </p>
+
+}
+else
+{
+    <table id="T" class="table table-bordered ">
+        <tr>
+            <th>
+
+            </th>
+            <th style="text-align:center">
+                Тип автомобиля
+            </th>
+            <th style="text-align:center">
+                @Html.DisplayNameFor(model => model.Avto)
+            </th>
+            <!--
+                <th style="text-align:center">
+                    Пробег(GPS)
+                </th>
+                <th style="text-align:center">
+                    Расход(ДУТ)
+                </th>
+    -->
+
+
+
+
+            <th style="text-align:center">
+                Движения
+            </th>
+            <th style="text-align:center">
+                Потери связи
+            </th>
+            <!-- <th style="text-align:center">
+        Проверки
+    </th> -->
+
+            <th style="text-align:center">
+                Связь
+            </th>
+            <th style="text-align:center">
+                Время выезда
+            </th>
+            <th style="text-align:center">
+                Пробег(водитель)
+            </th>
+            <th style="text-align:center">
+                @Html.DisplayNameFor(model => model.Primech)
+            </th>
+            <th style="text-align:center">
+                Закрытие выезда
+            </th>
+        </tr>
+        @{ int counter = 0;
+
+
+        }
+        @foreach (var item in Model)
+        {
+            if (counter < ViewBag.Counter)
+            {
+                int NoSvazMin = 0;
+                decimal koef = 0;
+
+                if (item.NoSvaz.Count > 0 && item.NoSvaz[0].Contains("@"))
+                {
+                    for (int h = 0; h < item.NoSvaz.Count; h++)
+                    {
+                        if (item.NoSvaz[h] != "")
+                        {
+                            string[] SS = item.NoSvaz[h].Split('@');//получаем дату и длительность
+                            string[] SSS = SS[1].Split(':');//бьём длительность на часы минуты секунды
+                            int ind = SS[0].IndexOf(":") - 2;
+                            item.NoSvaz[h] = SS[0].Remove(0, ind);
+                            NoSvazMin += Convert.ToInt32(SSS[1]);//берем минуты так как макс диапазон 10 минут
+                        }
+                        else
+                        {
+                            item.NoSvaz.RemoveAt(h);
+                        }
+                    }
+                    item.NoSvaz.Add("Связи не было " + NoSvazMin.ToString() + " минут");
+                    koef = Convert.ToDecimal(NoSvazMin) / (60 * ViewBag.Nabludenii[counter]);
+
+                }
+
+
+                if (item.Mesta != null && item.Mesta[0].Contains("@"))
+                {
+
+                    for (int h = 0; h < item.Mesta.Count(); h++)
+                    {
+                        if (item.Mesta[h] != "")
+                        {
+                            string[] SS = item.Mesta[h].Split('@');
+                            item.Mesta[h] = SS[1].Replace("Новосибирск", "").Replace(",", "").Replace(" ", "");
+                        }
+                    }
+                    item.Mesta = item.Mesta.Distinct().ToList();
+                }
+                string DvigName = "Не двигается";
+                string DvigClass = "btn btn-danger";
+                if (item.Mesta.Count > 2)
+                {
+                    DvigName = "В движении";
+                    DvigClass = "btn btn-success";
+                }
+                item.Mesta.Insert(0, DvigName);
+                string Atype = item.Avto.Type.Ico.ToString() + ".png";
+                string cl = ""; string check = "S1.png"; string btn = "btn btn-success"; string img = ""; string svyaz = "Связь с автомобилем есть.Данные передаются.";
+                if (item.Avto.Glonass == false) { check = "S4.png"; svyaz = "На автомобиле не установлен датчик."; }
+                else
+                {
+                    //если больше 3 наблюдений а данные все еще нулевые то помечаем машину как потеря связи
+                    if (item.Avto.Glonass == true && koef > 0.25m && koef < 0.5m) { cl = "bg-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W1.png"; svyaz = "Связи не было " + NoSvazMin + " минут"; }
+                    if (item.Avto.Glonass == true && item.DUT == 0 && item.KMAS == 0 && ViewBag.Nabludenii[counter] >= 2 && ViewBag.Nabludenii[counter] < 4) { cl = "bg-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W1.png"; svyaz = "Данные от автомобиля не поступали в течение нескольких часов."; }
+
+                    if (item.Avto.Glonass == true && koef >= 0.5m) { cl = "bg-danger"; check = "S3.png"; btn = "btn btn-danger"; img = "W2.png"; svyaz = "Связи не было " + NoSvazMin + " минут"; }
+                    if (item.Avto.Glonass == true && item.DUT == 0 && item.KMAS == 0 && ViewBag.Nabludenii[counter] >= 4) { cl = "bg-danger"; check = "S3.png"; btn = "btn btn-danger"; img = "W2.png"; svyaz = "Потеря связи! Данные не поступали более 4 часов!"; }
+
+                }
+
+        <tr id="@counter" value="@item.Id">
+            <td class=@cl>
+                <center>
+                    @if (img != "")
+                    {
+                        <img src="~/Content/Images/@img" class="img-responsive">
+                    }
+                </center>
+            </td>
+            <td class="">
+                <img src="~/Content/Images/@Atype" class="img-responsive" height="64" width="128" data-toggle="tooltip" data-placement="top" title="@Html.DisplayFor(modelItem => item.Avto.Type.Type)">
+            </td>
+
+            <th class=@cl>
+                <center>
+                    @Html.DisplayFor(modelItem => item.Avto.Number)
+                    @Html.DisplayFor(modelItem => item.Voditel.Name)
+                </center>
+            </th>
+            <!--
+                    <td class=@cl>
+                        <Center>
+                            @Html.DisplayFor(modelItem => item.KMAS)
+                        </Center>
+                    </td>
+                    <td class=@cl>
+                        <center>
+                            @Html.DisplayFor(modelItem => item.DUT)
+                        </center>
+                    </td>
+    -->
+
+
+            <td style="text-align:center" class=@cl>
+
+                @Html.DropDownList("Mesta", new MultiSelectList(@item.Mesta), new { @class = "form-control" })
+
+            </td>
+            <td style="text-align:center" class=@cl>
+
+                @Html.DropDownList("Svaz", new MultiSelectList(@item.NoSvaz), new { @class = "form-control" })
+
+            </td>
+            <!--
+    <td style="text-align:center" class=@cl>
+        <center>
+            @ViewBag.Nabludenii[counter]
+        </center>
+    </td>
+        -->
+            <td class=@cl>
+                <center>
+                    <img src="~/Content/Images/@check" class="img-responsive" height="32" width="32" data-toggle="tooltip" data-placement="top" title="@svyaz">
+                </center>
+            </td>
+            <th class=@cl style="text-align:center">
+                <center>
+                    @item.Date.Hour : @item.Date.Minute
+                </center>
+
+            </th>
+            <td class=@cl>
+                <input id="KM_@item.Id" value="@item.KM" class="form-control">
+
+            </td>
+            <td class=@cl>
+
+                <input id="Primech_@item.Id" value="@item.Primech" class="form-control">
+            </td>
+            <td class=@cl>
+                @if (item.DateClose < item.Date)
+                {
+                    <button id="@counter" tag="@item.Id" class="@btn" data-toggle="modal" data-target="#MODAL" style="width: 100%">Закрыть</button>
+
+                }
+                else
+                {
+                    <input id="END" tag="@item.Id" type="button" value="Рейс завершён" class="btn" />
+                }
+
+            </td>
+        </tr>
+
+            }
+            else
+            {
+                if (counter == ViewBag.Counter)
+                {
+                    <tr>
+                        <td colspan="4">
+                            <Center>
+                                <h4>Дежурный механик:</h4>
+                                @Html.DropDownList("Mech", new SelectList(ViewBag.Mechanics, "Value", "Text"), new { @class = "form-control" })
+                            </Center>
+
+                        </td>
+                        <td colspan="4">
+                            <Center>
+                                <h4>Данные с программы автоскан автоматически сняты:</h4>
+                                @Html.DropDownList("HS", new SelectList(ViewBag.HourSnyatia, "Value", "Text"), new { @class = "form-control" })
+                            </Center>
+                        </td>
+                        <td colspan="4"></td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="12" style="text-align:center"><h3>Открытые выезды в предыдущие дни </h3></td>
+                    </tr>
+                    <tr>
+                        <th>
+
+                        </th>
+                        <th style="text-align:center">
+                            Тип автомобиля
+                        </th>
+                        <th style="text-align:center">
+                            @Html.DisplayNameFor(model => model.Avto)
+                        </th>
+
+                        <th style="text-align:center">
+                            Пробег(GPS)
+                        </th>
+                        <th style="text-align:center">
+                            Расход(ДУТ)
+                        </th>
+
+                        <th style="text-align:center">
+                            Пробег(водитель)
+                        </th>
+
+                        <th style="text-align:center">
+                            @Html.DisplayNameFor(model => model.Primech)
+                        </th>
+                        <th style="text-align:center">
+                            Дата выезда
+                        </th>
+                        <th style="text-align:center">
+                            Связь
+                        </th>
+                        <th colspan="4"></th>
+                    </tr>
+                }
+                string Atype = item.Avto.Type.Ico.ToString() + ".png";
+                string cl = ""; string check = "S1.png"; string btn = "btn btn-success"; string img = ""; string svyaz = "Связь с автомобилем есть.Данные передаются.";
+                if (item.Avto.Glonass == false) { check = "S4.png"; svyaz = "На автомобиле не установлен датчик."; }
+                else
+                {
+                    //если данных нет
+
+                    if (item.Avto.Glonass == true && item.DUT == 0 && item.KMAS == 0) { cl = "bg-danger"; check = "S3.png"; btn = "btn btn-danger"; img = "W2.png"; svyaz = "Потеря связи! В течение всего дня данных не поступило!"; }
+                }
+                <tr id="@counter" value="@item.Id">
+                    <td class="@cl">
+                        @if (img != "")
+                        {
+                            <img src="~/Content/Images/@img" class="img-responsive">
+                        }
+                    </td>
+                    <td class="">
+                        <img src="~/Content/Images/@Atype" class="img-responsive" height="64" width="128" data-toggle="tooltip" data-placement="top" title="@Html.DisplayFor(modelItem => item.Avto.Type.Type)">
+                    </td>
+                    <th class=@cl>
+                        <center>
+                            @Html.DisplayFor(modelItem => item.Avto.Number)
+                        </center>
+                    </th>
+
+                    <td class=@cl>
+                        <center>
+                            @Html.DisplayFor(modelItem => item.KMAS)
+                        </center>
+                    </td>
+                    <td class=@cl>
+                        <center>
+                            @Html.DisplayFor(modelItem => item.DUT)
+                        </center>
+                    </td>
+
+                    <td class=@cl>
+                        <input id="KM_@item.Id" value="@item.KM" class="form-control">
+
+                    </td>
+                    <td class=@cl>
+
+                        <input id="Primech_@item.Id" value="@item.Primech" class="form-control">
+                    </td>
+                    <td class=@cl>
+                        <center>
+                            @item.Date.Day/@item.Date.Month/@item.Date.Year
+                        </center>
+                    </td>
+                    <td class=@cl>
+                        <Center>
+                            <img src="~/Content/Images/@check" class="img-responsive" height="32" width="32" data-toggle="tooltip" data-placement="top" title="@svyaz">
+                        </Center>
+                    </td>
+                    <td colspan="4" class=@cl style="text-align:center">
+                        @if (item.DateClose < item.Date)
+                        {
+                            <button id="@counter" tag="@item.Id" class="@btn" data-toggle="modal" data-target="#MODAL" style="width: 100%">Закрыть</button>
+
+                        }
+                        else
+                        {
+                            <input id="END" tag="@item.Id" type="button" value="Рейс завершён" class="btn" />
+                        }
+
+                    </td>
+                </tr>
+            }
+            counter++;
+        }
+
+    </table>
+}
+    </div>
+<p><a href="/Home/Index" class="btn btn-success btn-block">В главное меню &raquo;</a> </p>
+
+
+<!-- Modal -->
+<div class="modal fade" id="MODAL" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>ОШИБКА ЗАПОЛНЕНИЯ!</h3>
+                <div class="MTEXT">
+
+                    <button id="X" type="button" class="close hide" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+
+                    <h4>Загрузка данных, пожалуйста подождите...</h4>
+                </div>
+                <div class="">
+
+                    <button id="X" type="button" class="close hide" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+
+                    <h4>Данные наблюдений </h4>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+    @Scripts.Render("~/scripts/jquery-3.3.1.js")
+    @Scripts.Render("~/Scripts/chosen.jquery.min.js")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/scripts/validate.js")
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+    @Scripts.Render("~/scripts/jquery.unobtrusive.min.js")
+
+
+
+
+
+    <script>
+        //скрипт отправки данных в БД
+        $("#ADD").click(function () {
+            var S = $("#ADD");
+            var Avto = $("#AvtoLB").val();
+            var Voditel = $("#VoditelLB").val();
+            var Primech = $("#Primech").val();
+            var Zakazchik = $("#ZakazchikLB").val();
+            var Pricep = $("#Pricep").prop("checked");;
+
+
+            console.log("Добавляем " + Avto);
+            var ss = Avto + ";" + Primech + ";" + Voditel + ";" + Zakazchik + ";" + Pricep + ";";
+                 $.post('@Url.Action("AddAvto", "ASControls")', { selection: ss }, function (data)
+            {
+                     window.location.replace("/ASControls/Mechanic");//редирект
+
+
+            });
+
+
+
+
+        });
+
+    </script>
+    <script>
+        //скрипт отправки данных в БД
+        $("#CLOSE").click(function () {
+            var S = $("#CLOSE").attr("tag");
+            var KM = $("#KM").val();
+            var Primech = $("#Primech2").val();
+
+
+                console.log("Завершаем " + S+" KM="+KM );
+                var ss = S + ";" + KM + ";" + Primech;
+                $.post('@Url.Action("CloseAvto", "ASControls")', { selection: ss }, function (data) {
+                    window.location.replace("/ASControls/Mechanic");//редирект
+
+
+                });
+
+
+
+
+        });
+
+    </script>
+    <script>
+        //скрипт отправки данных в БД
+         $("button").click(function () {
+             var Id = $("#T tr[id^=" + this.id + "]").attr("value");
+             var KM = $("#KM_"+Id).val();
+             var Primech = $("#Primech_"+Id).val();
+              console.log("Завершаем " + Id);
+            var ss = Id + ";" + KM + ";" + Primech;
+                 $.post('@Url.Action("CloseAvto", "ASControls")', { selection: ss }, function (data)
+                 {
+                     if (data == '') {
+                         window.location.replace("/ASControls/Mechanic");//редирект
+                     }
+                     else
+                     {
+                         $("div.MTEXT").text(data);
+                     }
+
+            });
+
+        });
+    </script>
+
+    <script>
+        //скрипт отправки данных в БД
+        $('#Mech').change(function () {
+            var Id = $('#Mech').val();
+           
+              console.log("Завершаем " + Id);
+            var ss = Id;
+                 $.post('@Url.Action("SelectMech", "ASControls")', { selection: ss }, function (data)
+                 {
+                     if (data == '') {
+                         window.location.replace("/ASControls/Mechanic");//редирект
+                     }
+                     else
+                     {
+                         $("div.MTEXT").text(data);
+                     }
+
+            });
+
+        });
+    </script>
+    
+
+
+    <script>
+        var time = new Date().getTime();
+        $(document.body).bind("mousemove keypress", function (e) {
+            time = new Date().getTime();
+        });
+
+        function refresh() {
+            console.log("Обновляем страницу");
+            if (new Date().getTime() - time >= 60000)
+                window.location.replace("/ASControls/Mechanic");
+            else
+                setTimeout(refresh, 10000);
+        }
+
+        setTimeout(refresh, 10000);
+    </script>
+
+
+
+
+}

@@ -90,6 +90,10 @@ namespace GKHNNC.DAL
 
         public System.Data.Entity.DbSet<GKHNNC.Models.Voditel> Voditels { get; set; }
 
+        public System.Data.Entity.DbSet<GKHNNC.Models.Zakazchik> Zakazchiks { get; set; }
+
+        public System.Data.Entity.DbSet<GKHNNC.Models.Mechanic> Mechanics { get; set; }
+
 
         //protected override void OnModelCreating(DbModelBuilder modelBuilder)
 

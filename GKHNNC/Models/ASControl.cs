@@ -28,6 +28,15 @@ namespace GKHNNC.Models
         public Voditel Voditel { get; set; }
 
 
+        [Display(Name = "ЗаказчикИД")]
+        public int? ZakazchikId { get; set; }
+
+        [Display(Name = "Заказчик")]
+        public Zakazchik Zakazchik { get; set; }
+
+        [Display(Name = "Прицеп")]
+        public bool Pricep { get; set; }
+
         [Display(Name = "Дата")]
         public DateTime Date { get; set; }
 

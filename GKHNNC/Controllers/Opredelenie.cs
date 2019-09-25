@@ -115,6 +115,42 @@ namespace Opredelenie
                 case 73: bukva = "BU"; break;
                 case 74: bukva = "BV"; break;
                 case 75: bukva = "BW"; break;
+                case 76: bukva = "BX"; break;
+                case 77: bukva = "BY"; break;
+                case 78: bukva = "BZ"; break;
+                case 79: bukva = "CA"; break;
+                case 80: bukva = "CB"; break;
+                case 81: bukva = "CC"; break;
+                case 82: bukva = "CD"; break;
+                case 83: bukva = "CE"; break;
+                case 84: bukva = "CF"; break;
+                case 85: bukva = "CG"; break;
+                case 86: bukva = "CH"; break;
+                case 87: bukva = "CI"; break;
+                case 88: bukva = "CJ"; break;
+                case 89: bukva = "CK"; break;
+                case 90: bukva = "CL"; break;
+                case 91: bukva = "CM"; break;
+                case 92: bukva = "CN"; break;
+                case 93: bukva = "CO"; break;
+                case 94: bukva = "CP"; break;
+                case 95: bukva = "CQ"; break;
+                case 96: bukva = "CR"; break;
+                case 97: bukva = "CS"; break;
+                case 98: bukva = "CT"; break;
+                case 99: bukva = "CU"; break;
+                case 100: bukva = "CV"; break;
+                case 101: bukva = "CW"; break;
+                case 102: bukva = "CX"; break;
+                case 103: bukva = "CY"; break;
+                case 104: bukva = "CZ"; break;
+                case 105: bukva = "DA"; break;
+                case 106: bukva = "DB"; break;
+                case 107: bukva = "DC"; break;
+                case 108: bukva = "DD"; break;
+                case 109: bukva = "DE"; break;
+                case 110: bukva = "DF"; break;
+
             }
             return bukva;
         }

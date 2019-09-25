@@ -1,0 +1,33 @@
+﻿
+
+@{
+    /**/
+
+    ViewBag.Title = "Файл не загружен! Попробуйте загрузить другой файл!";
+}
+
+<Center>
+    <p> <h3>Файл не загружен! </h3></p>
+    <div class="alert alert-danger" role="alert" id="warning">
+        <p>  Вы выбрали некорректный файл!</p>
+        <p>@ViewBag.Error</p>
+
+    </div>
+    <div class="alert alert-warning" role="alert" id="warning">
+        <p>  Необходимо, чтобы в файле были следующие заголовки:   </p>
+        @for (int i = 0; i < ViewBag.Names.Length; i++)
+        {
+            <p>
+                @ViewBag.Names[i]
+            </p>
+        }
+        <p>  Вкладка с данными должна быть первой. Проверьте файл и повторите загрузку. </p>
+    </div>
+
+    <a id="К загрузке файла СВН" href="/SVNs/Upload" class="btn btn-default" style="width: 365Px">Назад</a>
+
+
+
+</Center>
+
+
