@@ -48,6 +48,10 @@ namespace GKHNNC.Models
         [Display(Name = "Заправлено")]
         public decimal Zapravleno { get; set; }
 
+
+        [Display(Name = "Загружено")]
+        public string Zagrugeno { get; set; }
+
         [Display(Name = "Слито")]
         public decimal Sliv { get; set; }
 

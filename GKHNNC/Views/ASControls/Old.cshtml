@@ -1,0 +1,670 @@
+﻿@model IEnumerable<GKHNNC.Models.ASControlView>
+
+@{
+    ViewBag.Title = "Info";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+<h2>Выезды @ViewBag.Date.Day . @ViewBag.Date.Month . @ViewBag.Date.Year </h2>
+
+
+
+
+<label>Дата выполнения услуг</label>
+@Html.Editor("Date", new { htmlAttributes = new { @class = "form-control", @style = "width:800Px !important; min-width:800px;" } })
+
+
+
+
+<table class="container">
+
+
+    <table id="T" class="table table-bordered ">
+        <tr>
+            <th>
+
+            </th>
+            <th style="text-align:center">
+                Тип автомобиля
+            </th>
+            <th style="text-align:center">
+                @Html.DisplayNameFor(model => model.Avto)
+            </th>
+            <th style="text-align:center">
+                Время начала выезда
+            </th>
+            @if (User.Identity.Name.Contains("НачальникУАТ") || User.IsInRole("Администратор"))
+            {
+                <th style="text-align:center">
+                    Пробег(GPS)
+                </th>
+                <th style="text-align:center">
+                    Расход(ДУТ)
+                </th>
+                <th style="text-align:center">
+                    Сравнение ДУТ
+                </th>
+            }
+
+
+
+            <!--
+            <th style="text-align:center">
+                @Html.DisplayNameFor(model => model.Primech)
+            </th>
+                -->
+            <th style="text-align:center">
+                Потери связи
+            </th>
+            <!-- <th style="text-align:center">
+                Проверки
+            </th> -->
+
+            <th style="text-align:center">
+                Связь
+            </th>
+            @if (User.Identity.Name.Contains("КонтрольУАТ"))
+            {
+                <th style="text-align:center">
+                    Пробег
+                </th>
+            }
+            <th style="text-align:center">
+                Закрытие выезда
+            </th>
+        </tr>
+        @{
+            int counter = 0;
+
+            foreach (var item in Model)
+            {
+
+                int NoSvazMin = 0;
+                decimal koef = 0;
+
+
+                if (item.NoSvaz.Count > 0 && item.NoSvaz[0].Contains("@"))
+                {
+                    for (int h = 0; h < item.NoSvaz.Count; h++)
+                    {
+                        if (item.NoSvaz[h] != "")
+                        {
+                            string[] SS = item.NoSvaz[h].Split('@');//получаем дату и длительность
+                            string[] SSS = SS[1].Split(':');//бьём длительность на часы минуты секунды
+                            int ind = SS[0].IndexOf(":") - 2;
+                            item.NoSvaz[h] = SS[0].Remove(0, ind);
+                            string[] NST = item.NoSvaz[h].Split(':');
+                            item.NoSvaz[h] += " (" + SSS[1] + ":" + SSS[2] + ")";
+                            if (Convert.ToInt16(NST[0]) < item.RealGo)
+                            {
+                                item.NoSvaz[h] += " (Не выехал)";
+                            }
+                            else
+                            {
+                                if (item.DateClose.Day != item.Date.Day)//если смену не закрыли за сутки
+
+                                {
+
+                                    if (item.RealEnd != 0)//если найден момент въезда на территорию
+                                    {
+                                        if ( Convert.ToInt16(NST[0]) > item.RealEnd)
+                                        {
+                                            item.NoSvaz[h] += " (Вернулся)";
+                                        }
+                                        else
+                                        {
+                                            NoSvazMin += Convert.ToInt32(SSS[1]);//берем минуты так как макс диапазон 10 минут
+                                        }
+                                    }
+                                    else
+                                    {
+                                        NoSvazMin += Convert.ToInt32(SSS[1]);//берем минуты так как макс диапазон 10 минут
+                                    }
+
+                                }
+                                else//если смена закрыта вовремя
+                                {
+                                    if (Convert.ToInt16(NST[0]) <= item.DateClose.Hour)
+                                    {
+
+                                        NoSvazMin += Convert.ToInt32(SSS[1]);//берем минуты так как макс диапазон 10 минут
+                                    }
+                                    else
+                                    {
+                                        item.NoSvaz[h] += " (Вернулся)";
+                                    }
+
+                                }
+                            }
+
+                        }
+                        else
+                        {
+                            item.NoSvaz.RemoveAt(h);
+                        }
+                    }
+                    item.NoSvaz.Insert(0, "Связи не было " + NoSvazMin.ToString() + " минут");
+                    if (item.Nabludenii - item.NoNabludenii != 0)
+                    {
+                        koef = Convert.ToDecimal(NoSvazMin) / (60 * (item.Nabludenii - item.NoNabludenii));
+                    }
+
+                }
+
+
+                if (item.Mesta != null && item.Mesta[0].Contains("@"))
+                {
+
+                    for (int h = 0; h < item.Mesta.Count(); h++)
+                    {
+                        if (item.Mesta[h] != "")
+                        {
+                            string[] SS = item.Mesta[h].Split('@');
+                            item.Mesta[h] = SS[1].Replace("Новосибирск", "").Replace(",", "").Replace(" ", "");
+                        }
+                    }
+                    item.Mesta = item.Mesta.Distinct().ToList();
+                }
+                string DvigName = "Не двигается";
+                string DvigClass = "btn btn-danger";
+                if (item.Mesta.Count > 2)
+                {
+                    DvigName = "В движении";
+                    DvigClass = "btn btn-success";
+                }
+                if (item.Mesta.Contains("На стоянке"))
+                {
+                    DvigName = "На стоянке";
+                    DvigClass = "btn btn-success";
+                }
+                if (item.Mesta.Contains("Вернулся на стоянку"))
+                {
+                    DvigName = "Вернулся на стоянку";
+                    DvigClass = "btn btn-success";
+                }
+
+                item.Mesta.Insert(0, DvigName);
+                string Atype = item.Avto.Type.Ico.ToString() + ".png";
+                string cl = ""; string check = "S1.png"; string btn = "btn btn-success"; string img = ""; string svyaz = "Связь с автомобилем есть.Данные передаются.";
+                if (item.Avto.Glonass == false) { check = "S4.png"; svyaz = "На автомобиле не установлен датчик."; }
+                else
+                {
+                    //если больше 3 наблюдений а данные все еще нулевые то помечаем машину как потеря связи
+                    if (item.Avto.Glonass == true && koef > 0.25m && koef < 0.5m) { cl = "bg-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W1.png"; svyaz = "Связи не было " + NoSvazMin + " минут"; }
+                    if (item.Avto.Glonass == true && item.DUT == 0 && item.KMAS == 0 && item.Nabludenii >= 2 && item.Nabludenii < 4) { cl = "bg-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W1.png"; svyaz = "Данные от автомобиля не поступали в течение нескольких часов."; }
+
+                    if (item.Avto.Glonass == true && koef >= 0.5m) { cl = "bg-danger"; check = "S3.png"; btn = "btn btn-danger"; img = "W2.png"; svyaz = "Связи не было " + NoSvazMin + " минут"; }
+                    if (item.Avto.Glonass == true && item.DUT == 0 && item.KMAS == 0 && item.Nabludenii >= 4) { cl = "bg-danger"; check = "S3.png"; btn = "btn btn-danger"; img = "W2.png"; svyaz = "Потеря связи! Данные не поступали более 4 часов!"; }
+
+                }
+
+                if (cl.Equals("bg-danger") == false && (item.DUT == 0 && item.KMAS > 1)) { cl = "bg-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W1.png"; svyaz += "Датчик ДУТ неисправен! Не показывает расход топлива: " + item.DUT + " л."; }
+                if (cl.Equals("bg-danger") == false && (item.KMAS == 0 && item.DUT > 1)) { cl = "bg-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W1.png"; svyaz += "Датчик пробега неисправен! Не показывает пробег: " + item.KM + " км."; }
+                //считаем средний расход
+
+                List<int> TimeDut = item.TimeDut;
+                List<decimal> DUT = item.ALLDut;
+                List<decimal> KM = item.ALLKm;
+
+                decimal[] DUTKMkoef = new decimal[DUT.Count];
+                decimal srednee = 0;
+                int c = 0;
+                decimal max = 0;
+                decimal tenproc = 0;
+                for (int i = 0; i < DUT.Count; i++)
+                {
+                    if (KM[i] > 0)
+                    {
+                        DUTKMkoef[i] = DUT[i] / KM[i];
+                        if (DUT[i] != 0 && KM[i] != 0)
+                        {
+                            if (DUTKMkoef[i] > max)
+                            {
+                                max = DUTKMkoef[i];
+                            }
+                            srednee += DUTKMkoef[i];
+                            c++;
+                        }
+                    }
+                }
+                if (c > 0)
+                {
+                    srednee = srednee / c;
+                }
+                else
+                {
+                    srednee = 1;
+                }
+                decimal rashod = 0;
+                if (item.KMAS > 0)
+                {
+                    rashod = item.DUT / item.KMAS;
+                }
+                tenproc = srednee * 0.1M;
+                if (max == 0)
+                {
+                    max = 1;
+                }
+                string rashodtext = "Расход нулевой";
+                string rashodImage = "kanistra1.png";
+                if (srednee + 0.5m < rashod) { rashodtext = "Расход за час высокий. Выше среднего на " + Math.Round((rashod - srednee), 2).ToString() + " л/км. Перерасход " + Math.Round(item.KMAS * rashod - item.KMAS * srednee, 2) + " л."; rashodImage = "kanistra2.png"; }
+
+                if (srednee > rashod + 0.5m) { rashodtext = "Расход за час низкий ниже среднего на " + Math.Round((srednee - rashod), 2).ToString() + " л/км."; rashodImage = "kanistra1.png"; }
+                if (srednee + 0.5m > rashod && srednee - 0.5m < rashod) { rashodtext = "Расход за час равен среднему за день " + Math.Round(srednee, 2).ToString(); rashodImage = "kanistra3.png"; }
+                string Kont = "";
+                if (item.Kontrol) { Kont = "Выезд открыт контролем"; }
+                <tr id="@counter" value="@item.Id">
+                    <td class=@cl>
+                        <center>
+                            @if (img != "")
+                            {
+                                <img src="~/Content/Images/@img" class="img-responsive" title="@item.Primech @svyaz">
+                            }
+                        </center>
+                    </td>
+                    <td class="">
+                        <img src="~/Content/Images/@Atype" height="64" width="128" data-toggle="tooltip" data-placement="top" title="@Html.DisplayFor(modelItem => item.Avto.Type.Type)">
+                        @if (User.Identity.Name.Contains("НачальникУАТ") || User.IsInRole("Администратор"))
+                        {
+                            <a href='@Url.Action("Info", "ASControls", new { selection=item.Id})'>
+                                <img src="~/Content/Images/Info.png" id="@counter" name="info" tag="info" height="64" width="24" data-toggle="tooltip" data-placement="top" title="Детальная информация" style="vertical-align:bottom">
+                            </a>
+
+                        }
+                    </td>
+
+                    <th class=@cl>
+                        <center>
+                            @Html.DisplayFor(modelItem => item.Avto.Number)
+
+                        </center>
+
+                    </th>
+                    <th style="text-align:center" class=@cl>
+                        <Center>
+                            <p>
+                                @item.Date.ToString("t")
+                                @if (item.Kontrol)
+                                {
+                                    <img src="~/Content/Images/star.png" height="16" width="16" title="@Kont" style="align-content:center">
+                                }
+                            </p>
+
+                            @if (item.DateClose > item.Date)
+                            {
+
+                                <p>
+                                    Завершен: @item.DateClose.ToString("t")
+                                </p>
+                            }
+                            else
+                            {
+                                if (item.RealGo > 0 && item.RealEnd == 0)
+                                {
+                                    if (item.Kontrol)
+                                    {
+                                        <p>
+                                            покинул территорию в @item.Date.ToString("t")
+                                        </p>
+                                    }
+                                    else
+                                    {
+                                        <p>
+                                            покинул территорию с @item.RealGo:00 по @item.RealGo:59
+                                        </p>
+                                    }
+                                }
+                                else
+                                {
+                                    if (item.RealEnd > 0)
+                                    {
+                                        <p>
+                                            вернулся c @item.RealEnd:00 по @item.RealEnd:59
+                                        </p>
+                                    }
+                                }
+                            }
+                        </Center>
+
+                    </th>
+                    @if (User.Identity.Name.Contains("НачальникУАТ") || User.IsInRole("Администратор"))
+                    {
+                        decimal ost = Math.Round(item.Zapravleno - item.DUT, 2);
+                        <td class=@cl>
+                            <Center>
+                                @Html.DisplayFor(modelItem => item.KMAS)
+                            </Center>
+                        </td>
+                        <th class=@cl>
+                            <center>
+                                <img src="~/Content/Images/fire.png" height="14" width="14" title="Расход по ДУТ" style="align-content:center">
+                                @Html.DisplayFor(modelItem => item.DUT) л.
+                                @if (item.Zapravleno > 0)
+                                {
+                                    <br>
+                                    <img src="~/Content/Images/zapravka.png" height="14" width="14" title="Заправлено по ДУТ" style="align-content:center">
+                                    @Html.DisplayFor(modelItem => item.Zapravleno)
+
+
+                                    <br>
+                                    <img src="~/Content/Images/ravno.png" height="14" width="14" title="Заправлено - израсходовано" style="align-content:center">
+
+                                    @ost
+
+
+
+                                }
+                            </center>
+                        </th>
+                        <td class=@cl>
+
+                            @{
+                                int z = 7;
+                                if (DUTKMkoef.Length > 3 && srednee != 0)
+                                {
+                                    <img src="~/Content/Images/@rashodImage" height="32" width="32" title="@rashodtext" style="align-content:center">
+                                    if (DUTKMkoef.Length < z)
+                                    {
+                                        z = DUTKMkoef.Length;
+                                    }
+                                    for (int i = DUTKMkoef.Length - z; i < DUTKMkoef.Length; i++)
+                                    {
+                                        string color = "G.png";
+                                        int height = Convert.ToInt16((((DUTKMkoef[i] / max) * 28) + 4));
+                                        if (height > 32) { height = 32; }
+                                        if (height >= (srednee - tenproc) * 28 + 4 && height <= (srednee + tenproc) * 28 + 4) { color = "Y.png"; }
+
+                                        if (height > (srednee + tenproc) * 28 + 4) { color = "R.png"; }
+
+
+                                        <img src="~/Content/Images/@color" height="@height" width="5" data-toggle="tooltip" data-placement="top" title="@Math.Round(DUTKMkoef[i]*100, 2) л./100км. ( @TimeDut[i]:00 - @TimeDut[i]:59 ) " style="vertical-align:bottom">
+                                    }
+                                }
+                                else
+                                {
+                                    <img src="~/Content/Images/Kanistra4.png" height="32" width="32" title="Мало данных для анализа. Данные появляются через 3 часа после выезда." style="align-content:center">
+                                }
+                            }
+
+                        </td>
+                    }
+
+
+
+                    <td style="text-align:center" class=@cl>
+                        @if (item.Zag != null && item.Zag.Contains("FS"))
+                        {
+                            <center>
+                                <img src="~/Content/Images/DDD6.png" class="img-responsive" height="64" width="256" title="Форт системс не дает данных о потерях связи.">
+                            </center>
+                        }
+                        else
+                        {
+                            if (item.NoSvaz.Count > 0)
+                            {
+                                <center>
+                                    @Html.DropDownList("Svaz", new MultiSelectList(@item.NoSvaz), new { @class = "form-control" })
+                                </center>
+                            }
+                            else
+                            {
+                                if (item.Nabludenii > 0)
+                                {
+                                    <center>
+                                        <img src="~/Content/Images/SS2.png" class="img-responsive" height="64" width="256">
+                                    </center>
+                                }
+                                else
+                                {
+                                    <center>
+                                        <img src="~/Content/Images/DDD6.png" class="img-responsive" height="64" width="256" title="Пока данных не поступало.">
+                                    </center>
+                                }
+                            }
+                        }
+
+                    </td>
+                    <!--
+                    <td style="text-align:center" class=@cl>
+                        <center>
+                            @item.Nabludenii
+                        </center>
+                    </td>
+                        -->
+                    <td class=@cl>
+                        <center>
+                            <img src="~/Content/Images/@check" class="img-responsive" height="32" width="32" data-toggle="tooltip" data-placement="top" title="@svyaz">
+                        </center>
+                    </td>
+                    @if (User.Identity.Name.Contains("КонтрольУАТ"))
+                    {
+                        <td class=@cl>
+                            <input id="KM_@item.Id" value="@item.KM" class="form-control">
+
+                        </td>
+                    }
+                    <td class=@cl>
+                        @if (item.DateClose < item.Date)
+                        {
+                            <button id="@counter" tag="@item.Id" class="@btn" data-toggle="modal" data-target="#MODAL" style="width: 100%">Закрыть</button>
+
+                        }
+                        else
+                        {
+                            <input id="END" tag="@item.Id" type="button" value="Рейс завершён" class="btn" />
+                        }
+
+                    </td>
+                </tr>
+
+
+
+
+            }
+        }
+
+
+
+        <tr>
+            <td colspan="3">
+                <Center>
+                    <h4>Данные с программы автоскан автоматически сняты:</h4>
+                    @Html.DropDownList("HS", new SelectList(ViewBag.HourSnyatia, "Value", "Text"), new { @class = "form-control" })
+                </Center>
+            </td>
+        </tr>
+
+
+
+
+
+
+    </table>
+
+
+
+    <table class="table-bordered table-stripped">
+
+        <tr></tr>
+    </table>
+</table>
+
+
+<p><a href="/ASControls/Index" class="btn btn-success btn-block">В управление выездами &raquo;</a> </p>
+
+
+<!-- Modal -->
+<div class="modal fade" id="MODAL" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>ОШИБКА!</h3>
+                <div class="MTEXT">
+
+                    <button id="X" type="button" class="close hide" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+
+                    <h4>Загрузка данных, пожалуйста подождите...</h4>
+                </div>
+                <div class="">
+
+                    <button id="X" type="button" class="close hide" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+    @Scripts.Render("~/scripts/jquery-3.3.1.js")
+    @Scripts.Render("~/Scripts/chosen.jquery.min.js")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/scripts/validate.js")
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+    @Scripts.Render("~/scripts/jquery.unobtrusive.min.js")
+
+
+
+
+   
+
+    
+    <script>
+        //скрипт отправки данных в БД
+        $("#ADD").click(function () {
+            var S = $("#ADD");
+            var Avto = $("#AvtoLB").val();
+            var Voditel = $("#VoditelLB").val();
+            var Primech = $("#Primech").val();
+            var Zakazchik = $("#ZakazchikLB").val();
+            var Pricep = $("#Pricep").prop("checked");;
+
+
+            console.log("Добавляем " + Avto);
+            var ss = Avto + ";" + Primech + ";" + Voditel + ";" + Zakazchik + ";" + Pricep + ";";
+                 $.post('@Url.Action("AddAvto", "ASControls")', { selection: ss }, function (data)
+                 {
+                     if (data == '') {
+                         window.location.replace("/ASControls/Index");//редирект
+                     }
+                     else {
+                         $("div.MTEXT").text(data);
+                     }
+
+
+
+            });
+
+
+
+
+        });
+
+    </script>
+    <script>
+        //скрипт отправки данных в БД
+        $("#CLOSE").click(function () {
+            var S = $("#CLOSE").attr("tag");
+            var KM = $("#KM").val();
+            var Primech = $("#Primech2").val();
+
+
+                console.log("Завершаем " + S+" KM="+KM );
+                var ss = S + ";" + KM + ";" + Primech;
+                $.post('@Url.Action("CloseAvto", "ASControls")', { selection: ss }, function (data) {
+                    window.location.replace("/ASControls/Index");//редирект
+
+
+                });
+
+
+
+
+        });
+
+    </script>
+    <script>
+        //скрипт отправки данных в БД
+         $("button").click(function () {
+             var Id = $("#T tr[id^=" + this.id + "]").attr("value");
+             var KM = $("#KM_"+Id).val();
+             var Primech = $("#Primech_"+Id).val();
+              console.log("Завершаем " + Id);
+            var ss = Id + ";" + KM + ";" + Primech;
+                 $.post('@Url.Action("CloseAvto", "ASControls")', { selection: ss }, function (data)
+                 {
+                     if (data == '') {
+                         window.location.replace("/ASControls/Index");//редирект
+                     }
+                     else
+                     {
+                         $("div.MTEXT").text(data);
+                     }
+
+            });
+
+
+
+
+
+
+
+
+
+        });
+
+    </script>
+
+
+
+    <script type="text/javascript">
+        $(function () {
+            $('#Date')
+                .datepicker({ dateFormat: 'yy/mm/dd' })
+                .get(0).setAttribute("type", "text");
+            $.datepicker.regional['ru'] = {
+                prevText: 'Пред',
+                nextText: 'След',
+                monthNames: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+                    'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+                monthNamesShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн',
+                    'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
+                dayNames: ['воскресенье', 'понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота'],
+                dayNamesShort: ['вск', 'пнд', 'втр', 'срд', 'чтв', 'птн', 'сбт'],
+                dayNamesMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+                weekHeader: 'Не',
+                dateFormat: 'yy/mm/dd',
+                showOn: "both",
+                background: "gray",
+                buttonText: "Выбрать дату",
+                firstDay: 1,
+                isRTL: false,
+                showMonthAfterYear: true,
+                yearSuffix: ''
+            };
+            $.datepicker.setDefaults($.datepicker.regional['ru']);
+        });
+    </script>
+    <script>
+
+
+        $("#Date").change(function () {
+
+            var Date = $(this).val();
+
+            console.log("Выбрали месяц " + Date);
+            var ss = Date;
+            /**/
+            window.location.replace("/ASControls/Old?selection=" + Date);
+    });
+    </script>
+
+}

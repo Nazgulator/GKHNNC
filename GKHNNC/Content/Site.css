@@ -15,7 +15,12 @@
 .dl-horizontal dt {
     white-space: normal;
 }
-
+.ui-datepicker {
+    /*background: transparent;*/
+    background: white;
+    font-family: Rockwell;
+    font-size:16px;
+}
 .podlogka {
     display: block;
     position: relative;

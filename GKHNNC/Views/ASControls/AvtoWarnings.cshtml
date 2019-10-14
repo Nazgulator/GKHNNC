@@ -57,7 +57,7 @@
                         @Html.DisplayNameFor(model => model.Primech)
                     </th>
                     <th style="text-align:center">
-                        Движения
+                        Движение и пройденные точки за последний час
                     </th>
                     <th style="text-align:center">
                         Потери связи
@@ -140,6 +140,7 @@
                             if (item.Avto.Glonass == true && item.DUT == 0 && item.KMAS == 0 && ViewBag.Nabludenii[counter] >= 4) { cl = "bg-danger"; check = "S3.png"; btn = "btn btn-danger"; img = "W2.png"; svyaz = "Потеря связи! Данные не поступали более 4 часов!"; }
 
                         }
+                        if (item.Date < item.DateClose) { check = "S5.png"; svyaz = "Рейс завершён!"; cl = "bg-success"; }
                         if (cl != "")
                         {
                             <tr id="@counter" value="@item.Id">
@@ -182,9 +183,16 @@
                                     <input id="Primech_@item.Id" value="@item.Primech" class="form-control">
                                 </td>
                                 <td style="text-align:center" class=@cl>
-
-                                    @Html.DropDownList("Mesta", new MultiSelectList(@item.Mesta), new { @class = "form-control" })
-
+                                    @if (item.Mesta.Count > 2)
+                                    {
+                                        @Html.DropDownList("Mesta", new MultiSelectList(@item.Mesta), new { @class = "form-control" })
+                                    }
+                                    else
+                                    {
+                                        <center>
+                                            Не двигается
+                                        </center>
+                                    }
                                 </td>
                                 <td style="text-align:center" class=@cl>
 

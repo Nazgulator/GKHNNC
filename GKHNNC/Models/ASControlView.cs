@@ -9,9 +9,8 @@ using System;
 
 namespace GKHNNC.Models
 {
-    public class ASControl
+    public class ASControlView 
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Display(Name = "Идентификатор")]
         public int Id { get; set; }
 
@@ -85,5 +84,62 @@ namespace GKHNNC.Models
         [Display(Name = "Подтверждено")]
         public bool Podtvergdeno { get; set; }
 
+        //то чего нет в базе а используется только для обозревания
+        [Display(Name = "Количество наблюдений")]
+        public int Nabludenii { get; set; }
+
+        [Display(Name = "Количество не наблюдений")]
+        public int NoNabludenii { get; set; }
+
+        [Display(Name = "Все ДУТ")]
+        public List<decimal> ALLDut { get; set; }
+
+        [Display(Name = "Все пробеги АС")]
+        public List<decimal> ALLKm { get; set; }
+
+        [Display(Name = "Час реального выезда")]
+        public int RealGo { get; set; }
+
+        [Display(Name = "Час реального въезда")]
+        public int RealEnd { get; set; }
+
+        [Display(Name = "Чья машина АС или ФС")]
+        public string Zag { get; set; }
+
+        [Display(Name = "Время ДУТ")]
+        public List<int> TimeDut { get; set; }
+
+        [Display(Name = "Марка авто")]
+        public string MarkaAvto { get; set; }
+
+        [Display(Name = "Тип авто")]
+        public string TypeAvto { get; set; }
+
+        [Display(Name = "Все действия за день")]
+        public List<string> AllActions { get; set; }
+
+        [Display(Name = "100 часов расходов ")]
+        public List<string> AllRashod { get; set; }
+
+        [Display(Name = "Средний расход")]
+        public decimal SredniiRashod { get; set; }
+
+        [Display(Name = "Максимальный расход")]
+        public decimal MaxRashod { get; set; }
+
+        [Display(Name = "Средний расход вчера")]
+        public decimal SredniiRashodVchera { get; set; }
+
+        [Display(Name = "Средний расход за день")]
+        public decimal SredniiRashodDay { get; set; }
+
+        [Display(Name = "Заправлено по документам")]
+        public decimal ZapravlenoFact { get; set; }
+
+        [Display(Name = "Старт АС24")]
+        public decimal StartAS24 { get; set; }
+
+        [Display(Name = "Энд АС24")]
+        public decimal EndAS24 { get; set; }
     }
 }

@@ -41,16 +41,23 @@
                     <div class="form-group">
                         <p>  @Html.ActionLink("Регистрация нового пользователя", "Register", null, new { @class = "btn btn-outline-success", style = "width: 365Px" }) </p>
                     </div>
-                    <Center>
+                    
                         <div class="form-check">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    </div>
+                                    <div class="col-md-1">
+                                        @Html.CheckBoxFor(m => m.RememberMe, new { @class = "form-control", @style = "width:50%  min-width:50px;" })
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="form-check-label" for="RememberMe">
+                                            Запомнить меня
+                                        </label>
+                                    </div>
+                                </div>
 
-                            @Html.CheckBoxFor(m => m.RememberMe, new { @class = "form-check-input", @style = "width:100%  min-width:100px;" })
-                            <label class="form-check-label" for="RememberMe">
-                                Запомнить меня
-                            </label>
-
-                        </div>
-                    </Center>
+                            </div>
+                    
                     @* Включите, когда будет включено подтверждение учетной записи для функции сброса пароля
             <p>
                 @Html.ActionLink("Забыли пароль?", "ForgotPassword")
