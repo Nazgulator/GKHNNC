@@ -3,6 +3,7 @@
 @{
     ViewBag.Title = "Info";
     Layout = "~/Views/Shared/_Layout0.cshtml";
+    @Styles.Render("~/Content/Site.css")
 }
 
 <h2>Выезды @ViewBag.Date.Day . @ViewBag.Date.Month . @ViewBag.Date.Year </h2>
@@ -10,7 +11,7 @@
 
 
 
-<label>Дата выполнения услуг</label>
+<label>Выберите дату</label>
 @Html.Editor("Date", new { htmlAttributes = new { @class = "form-control", @style = "width:800Px !important; min-width:800px;" } })
 
 
@@ -107,7 +108,7 @@
 
                                     if (item.RealEnd != 0)//если найден момент въезда на территорию
                                     {
-                                        if ( Convert.ToInt16(NST[0]) > item.RealEnd)
+                                        if (Convert.ToInt16(NST[0]) > item.RealEnd)
                                         {
                                             item.NoSvaz[h] += " (Вернулся)";
                                         }
@@ -185,7 +186,7 @@
 
                 item.Mesta.Insert(0, DvigName);
                 string Atype = item.Avto.Type.Ico.ToString() + ".png";
-                string cl = ""; string check = "S1.png"; string btn = "btn btn-success"; string img = ""; string svyaz = "Связь с автомобилем есть.Данные передаются.";
+                string cl = ""; string check = "S1.png"; string btn = "btn btn-success"; string img = ""; string svyaz = "";
                 if (item.Avto.Glonass == false) { check = "S4.png"; svyaz = "На автомобиле не установлен датчик."; }
                 else
                 {
@@ -198,8 +199,10 @@
 
                 }
 
-                if (cl.Equals("bg-danger") == false && (item.DUT == 0 && item.KMAS > 1)) { cl = "bg-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W1.png"; svyaz += "Датчик ДУТ неисправен! Не показывает расход топлива: " + item.DUT + " л."; }
-                if (cl.Equals("bg-danger") == false && (item.KMAS == 0 && item.DUT > 1)) { cl = "bg-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W1.png"; svyaz += "Датчик пробега неисправен! Не показывает пробег: " + item.KM + " км."; }
+                if (cl.Equals("bg-danger") == false && (item.DUT == 0 && item.KMAS > 1)) { cl = "bg-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W4.png"; svyaz += "Датчик ДУТ неисправен! Не показывает расход топлива: " + item.DUT + " л."; }
+                if (cl.Equals("bg-danger") == false && (item.KMAS == 0 && item.DUT > 1)) { cl = "bg-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W6.png"; svyaz += "Датчик пробега неисправен! Не показывает пробег: " + item.KM + " км."; }
+                if (cl.Equals("bg-danger") == false && (item.Start - item.End + item.Zapravleno - item.DUT < -5)) { cl = "bg-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W5.png"; svyaz += "Перерасход топлива. У автомобиля не осталось топлива или возможно хищение! " + (item.Start - item.End + item.Zapravleno - item.DUT).ToString() + " л."; }
+
                 //считаем средний расход
 
                 List<int> TimeDut = item.TimeDut;
@@ -534,9 +537,10 @@
 
 
 
-   
 
-    
+
+
+
     <script>
         //скрипт отправки данных в БД
         $("#ADD").click(function () {
@@ -664,7 +668,7 @@
             var ss = Date;
             /**/
             window.location.replace("/ASControls/Old?selection=" + Date);
-    });
+        });
     </script>
 
 }

@@ -1,0 +1,110 @@
+﻿@model GKHNNC.Models.Musor
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+<h2>Редактировать</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+   <div class="container">
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.Id)
+
+        <div class="row col-md-6 col-md-offset-3">
+            <div class="col-md-6">
+            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label" })
+            </div>
+            <div class="col-md-6">
+                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+            </div>
+         </div>
+       
+
+        <div class="row col-md-6 col-md-offset-3">
+            <div class="col-md-6">
+            @Html.LabelFor(model => model.Date, htmlAttributes: new { @class = "control-label" })
+            </div>
+            <div class="col-md-6">
+                @Html.EditorFor(model => model.Date, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Date, "", new { @class = "text-danger" })
+            </div>
+         </div>
+       
+
+        <div class="row col-md-6 col-md-offset-3">
+            <div class="col-md-6">
+            @Html.LabelFor(model => model.AvtoID, htmlAttributes: new { @class = "control-label" })
+            </div>
+            <div class="col-md-6">
+                @Html.EditorFor(model => model.AvtoID, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.AvtoID, "", new { @class = "text-danger" })
+            </div>
+         </div>
+       
+
+        <div class="row col-md-6 col-md-offset-3">
+            <div class="col-md-6">
+            @Html.LabelFor(model => model.Mesta, htmlAttributes: new { @class = "control-label" })
+            </div>
+            <div class="col-md-6">
+                @Html.EditorFor(model => model.Mesta, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Mesta, "", new { @class = "text-danger" })
+            </div>
+         </div>
+       
+
+        <div class="row col-md-6 col-md-offset-3">
+            <div class="col-md-6">
+            @Html.LabelFor(model => model.ObiemIn, htmlAttributes: new { @class = "control-label" })
+            </div>
+            <div class="col-md-6">
+                @Html.EditorFor(model => model.ObiemIn, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ObiemIn, "", new { @class = "text-danger" })
+            </div>
+         </div>
+       
+
+        <div class="row col-md-6 col-md-offset-3">
+            <div class="col-md-6">
+            @Html.LabelFor(model => model.ObiemOut, htmlAttributes: new { @class = "control-label" })
+            </div>
+            <div class="col-md-6">
+                @Html.EditorFor(model => model.ObiemOut, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ObiemOut, "", new { @class = "text-danger" })
+            </div>
+         </div>
+       
+
+        <div class="row col-md-6 col-md-offset-3">
+            <div class="col-md-6">
+            @Html.LabelFor(model => model.KgOut, htmlAttributes: new { @class = "control-label" })
+            </div>
+            <div class="col-md-6">
+                @Html.EditorFor(model => model.KgOut, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.KgOut, "", new { @class = "text-danger" })
+            </div>
+         </div>
+       
+
+        <div class="row col-md-6 col-md-offset-3">
+            <div class=" form-group">
+                <div class=" col-md-6  ">
+                    @Html.ActionLink("Назад", "Index", null, new { @class = "btn btn-success btn-block" })
+                </div>
+                <div class=" col-md-6  ">
+                    <input type="submit" value="Изменить" class="btn btn-success btn-block" />
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+}
+

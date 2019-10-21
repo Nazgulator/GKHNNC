@@ -56,7 +56,7 @@ namespace GKHNNC.Models
         public decimal KMAS { get; set; }
 
         [Display(Name = "Километраж водитель")]
-        public int KM { get; set; }
+        public long KM { get; set; }
 
         [Display(Name = "Потрачено по ДУТ")]
         public decimal DUT { get; set; }

@@ -23,6 +23,9 @@ namespace GKHNNC.Models
         [Display(Name = "Тариф теплота в кубе")]
         public decimal TeplotaVKube { get; set; }
 
+        [Display(Name = "НДС")]
+        public decimal NDS { get; set; }
+
         [Display(Name = "Дата выполнения")]
         public DateTime Date { get; set; }
     }

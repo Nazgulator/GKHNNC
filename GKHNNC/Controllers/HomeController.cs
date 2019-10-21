@@ -468,6 +468,19 @@ namespace GKHNNC.Controllers
                 decimal TarifEnergy = 1102.03M;//тариф на отопление вынести в глобальные
                 decimal TarifCW = 16.73M;
                 decimal TeplotaVKube = 0.062M;//вынести в глобальные переменные
+            try
+            {
+                Tarif T = db.Tarifs.OrderByDescending(x => x.Date).First();
+                NDS = T.NDS;
+                TarifHW = T.HotWater;
+                TarifEnergy = T.OtoplenieEnergy;
+                TarifCW = T.ColdWater;
+                TeplotaVKube = T.TeplotaVKube;
+            }
+            catch
+            {
+
+            }
                 int punktHW = 3;
                 decimal tep = 0.98M;
                 decimal TepVK = TeplotaVKube * tep;//конвертатор в тепло

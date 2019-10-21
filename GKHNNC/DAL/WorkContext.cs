@@ -94,6 +94,10 @@ namespace GKHNNC.DAL
 
         public System.Data.Entity.DbSet<GKHNNC.Models.Mechanic> Mechanics { get; set; }
 
+        public System.Data.Entity.DbSet<GKHNNC.Models.Tarif> Tarifs { get; set; }
+
+        public System.Data.Entity.DbSet<GKHNNC.Models.Musor> Musors { get; set; }
+
 
         //protected override void OnModelCreating(DbModelBuilder modelBuilder)
 

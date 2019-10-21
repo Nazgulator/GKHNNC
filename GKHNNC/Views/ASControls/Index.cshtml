@@ -230,15 +230,17 @@
                         if (ViewBag.Nabludenii[counter] == 0) { cl = ""; check = "S4.png"; svyaz = "Пока данных нет. Обновление происходит каждый час."; }
                         //если больше 3 наблюдений а данные все еще нулевые то помечаем машину как потеря связи
                         if (item.Avto.Glonass == true && koef > 0.25m && koef < 0.5m) { cl = "bg-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W1.png"; svyaz = "Связи не было " + NoSvazMin + " минут"; }
-                        if (item.Avto.Glonass == true && item.DUT == 0 && item.KMAS == 0 && ViewBag.Nabludenii[counter] >= 1 && ViewBag.Nabludenii[counter] < 3) { cl = "bg-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W1.png"; svyaz = "Данные от автомобиля не поступали в течение нескольких часов."; }
+                        if (item.Avto.Glonass == true && item.DUT == 0 && item.KMAS == 0 && ViewBag.Nabludenii[counter] > 1 && ViewBag.Nabludenii[counter] < 3) { cl = "bg-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W1.png"; svyaz = "Данные от автомобиля не поступали в течение нескольких часов."; }
 
                         if (item.Avto.Glonass == true && koef >= 0.5m) { cl = "bg-danger"; check = "S3.png"; btn = "btn btn-danger"; img = "W2.png"; svyaz = "Связи не было " + NoSvazMin + " минут"; }
                         if (item.Avto.Glonass == true && item.DUT == 0 && item.KMAS == 0 && ViewBag.Nabludenii[counter] >= 3) { cl = "bg-danger"; check = "S3.png"; btn = "btn btn-danger"; img = "W2.png"; svyaz = "Потеря связи! Данные не поступали более 4 часов!"; }
 
                     }
                     if (item.Date < item.DateClose) { check = "S5.png"; svyaz = "Рейс завершён!"; cl = "bg-success"; }
-                    if (cl.Equals("bg-danger") == false && (item.DUT == 0 && item.KMAS > 1)) { cl = "bg-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W1.png"; svyaz += "Датчик ДУТ неисправен! Не показывает расход топлива: " + item.DUT + " л."; }
-                    if (cl.Equals("bg-danger") == false && (item.KMAS == 0 && item.DUT > 1)) { cl = "bg-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W1.png"; svyaz += "Датчик пробега неисправен! Не показывает пробег: " + item.KM + " км."; }
+                    if (cl.Equals("bg-danger") == false && (item.DUT == 0 && item.KMAS > 1)) { cl = "bg-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W4.png"; svyaz = "Датчик ДУТ неисправен! Не показывает расход топлива: " + item.DUT + " л."+ svyaz; }
+                    if (cl.Equals("bg-danger") == false && (item.KMAS == 0 && item.DUT > 1)) { cl = "bg-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W6.png"; svyaz = "Датчик пробега неисправен! Не показывает пробег: " + item.KM + " км."+svyaz; }
+                    if (item.Date < item.DateClose) { img = "W7.png"; svyaz = "Рейс завершён!"; }
+
                     //считаем средний расход
 
                     string[] TimeDut = ViewBag.TimeDut[counter].Split(';');
@@ -306,7 +308,7 @@
                             <center>
                                 @if (img != "")
                                 {
-                                    <img src="~/Content/Images/@img" class="img-responsive" title="@item.Primech @svyaz">
+                                    <img src="~/Content/Images/@img" class="img-responsive" title="@svyaz">
                                 }
                             </center>
                         </td>

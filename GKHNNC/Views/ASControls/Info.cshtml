@@ -152,7 +152,7 @@
 
             item.Mesta.Insert(0, DvigName);
             string Atype = item.Avto.Type.Ico.ToString() + ".png";
-            string cl = ""; string check = "S1.png"; string btn = "btn btn-success"; string img = ""; string svyaz = "Связь с автомобилем есть.Данные передаются.";
+            string cl = ""; string check = "S1.png"; string btn = "btn btn-success"; string img = ""; string svyaz = "";
             if (item.Avto.Glonass == false) { check = "S4.png"; svyaz = "На автомобиле не установлен датчик."; }
             else
             {
@@ -165,8 +165,9 @@
 
             }
             if (item.Date < item.DateClose) { check = "S5.png"; svyaz = "Рейс завершён!"; cl = "bg-success"; }
-            if (cl.Equals("bg-danger") == false && (item.DUT == 0 && item.KMAS > 1)) { cl = "bg-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W1.png"; svyaz += "Датчик ДУТ неисправен! Не показывает расход топлива: " + item.DUT + " л."; }
-            if (cl.Equals("bg-danger") == false && (item.KMAS == 0 && item.DUT > 1)) { cl = "bg-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W1.png"; svyaz += "Датчик пробега неисправен! Не показывает пробег: " + item.KM + " км."; }
+            if (cl.Equals("bg-danger") == false && (item.DUT == 0 && item.KMAS > 1)) { cl = "bg-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W4.png"; svyaz += "Датчик ДУТ неисправен! Не показывает расход топлива: " + item.DUT + " л."; }
+            if (cl.Equals("bg-danger") == false && (item.KMAS == 0 && item.DUT > 1)) { cl = "bg-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W6.png"; svyaz += "Датчик пробега неисправен! Не показывает пробег: " + item.KM + " км."; }
+            if (cl.Equals("bg-danger") == false && (item.Start-item.End+item.Zapravleno-item.DUT < -5 )) { cl = "bg-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W5.png"; svyaz += "Перерасход топлива. " + (item.Start - item.End + item.Zapravleno - item.DUT).ToString() + " л."; }
             //считаем средний расход
 
             List<int> TimeDut = item.TimeDut;
@@ -230,7 +231,7 @@
                     </center>
                 </td>
                 <td class="">
-                    <img src="~/Content/Images/@Atype" height="64" width="128" data-toggle="tooltip" data-placement="top" title="@Html.DisplayFor(modelItem => item.Avto.Type.Type)">
+                    <img src="~/Content/Images/@Atype" height="64" width="128" data-toggle="tooltip" data-placement="top" title="@Html.DisplayFor(modelItem => item.Avto.Type.Type) id=@item.AvtoId">
 
                 </td>
 
@@ -501,7 +502,7 @@
                     Расход ДУТ
                 </th>
                 <th style="text-align:center">
-                    Заправка факт
+                    Заправка АЗС
                 </th>
                 <th style="text-align:center">
                     Заправка ДУТ
@@ -571,7 +572,7 @@
                 </td>
 
                 <td>
-                    <img src="~/Content/Images/Zap4.png" height="32" width="32" title="Заправлено топлива на АЗС по документам. (данные с сайта АЗС)" style="vertical-align:bottom">
+                    <img src="~/Content/Images/Zap1.png" height="32" width="32" title="Заправлено топлива на АЗС по документам. (данные с сайта АЗС)" style="vertical-align:bottom">
                     @Math.Round(item.ZapravlenoFact, 2) л.
                 </td>
                 <td>
@@ -599,7 +600,7 @@
                     @Math.Round(item.End, 2) л.
                 </td>
                 <td>
-                    <img src="~/Content/Images/Kanistra4.png" height="32" width="32" title="Перерасход считается как начальный уровень - расход по ДУТ + заправлено - конечный уровень" style="vertical-align:bottom">
+                    <img src="~/Content/Images/Kanistra2.png" height="32" width="32" title="Перерасход считается как начальный уровень - расход по ДУТ + заправлено - конечный уровень" style="vertical-align:bottom">
                     @if (item.Start != 0 && item.End != 0 && item.DUT != 0)
                     {
 
@@ -728,24 +729,27 @@
                 if (s[0] != "" && s[0] != "На стоянке" && s[0] != "Вернулся на стоянку")
 
                 {
+                    string cl2 = "";
                     if (s.Length > 2)
                     {
                         DateTime D = Convert.ToDateTime(s[2]);
                         DateTime DE = Convert.ToDateTime(s[3]);
                         DS = D.ToString("t");
                         dlit = (DE - D).Minutes.ToString();
+
+                        if ((DE - D).Minutes < 1&&s[0].Contains("Остановка")) { cl2 = "bg-danger"; }
                     }
                     <tr>
-                        <td colspan="1">
+                        <td colspan="1" class="@cl2">
                             @DS
                         </td>
-                        <td colspan="1">
+                        <td colspan="1"class="@cl2">
                             @s[0]
                         </td>
-                        <td colspan="1">
+                        <td colspan="1"class="@cl2">
                             @s[1].Replace("Новосибирск", "").Replace(",", "").Replace(" ", "")
                         </td>
-                        <td colspan="1">
+                        <td colspan="1"class="@cl2">
                             @dlit
                         </td>
                     </tr>

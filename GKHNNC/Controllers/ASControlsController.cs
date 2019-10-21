@@ -232,6 +232,8 @@ namespace GKHNNC.Controllers
             AC.Kontrol = AS.Kontrol;
             AC.Pricep = AS.Pricep;
             AC.Primech = AS.Primech;
+            AC.KMAS = AS.KMAS;
+            AC.DUT = AS.DUT;
             AC.ALLKm = new List<decimal>();
             AC.ALLDut = new List<decimal>();
             AC.TimeDut = new List<int>();
@@ -251,7 +253,14 @@ namespace GKHNNC.Controllers
                 try
                 {//берем все записи с данной тачкой
                 DateTime Date = AC.Date.AddDays(1);
-                    A24 = db.AS24.Where(x => x.AvtoId == AC.AvtoId &&x.Date>=AC.Date&&x.Date<=AC.DateClose).OrderBy(y => y.Date).ToList();
+                if (AC.DateClose > AC.Date)
+                {
+                    A24 = db.AS24.Where(x => x.AvtoId == AC.AvtoId && x.Date.Year == AC.Date.Year&&x.Date.Month==AC.Date.Month&&x.Date.Day==AC.Date.Day&&x.Date.Hour>=AC.Date.Hour && x.Date <= AC.DateClose).OrderBy(y => y.Date).ToList();
+                }
+                else
+                {
+                    A24 = db.AS24.Where(x => x.AvtoId == AC.AvtoId && x.Date.Year == AC.Date.Year && x.Date.Month == AC.Date.Month && x.Date.Day == AC.Date.Day && x.Date.Hour >= AC.Date.Hour).OrderBy(y => y.Date).ToList();
+                }
                 }
                 catch { }
                 string SS = "";
@@ -352,11 +361,12 @@ namespace GKHNNC.Controllers
                         AC.NoSvaz.RemoveAt(AC.NoSvaz.Count - 1);
                         nocounter++;
                     }
+                    zap += A.Zapravleno;
                     if (Go)
                     {
                         AC.ALLKm.Add(A.KM);
                         AC.ALLDut.Add(A.DUT);
-                        zap += A.Zapravleno;
+                        
                         KMAS += A.KM;
                         DUT += A.DUT;
                         AC.TimeDut.Add(A.Date.Hour);
@@ -371,8 +381,17 @@ namespace GKHNNC.Controllers
             {
                 AC.SredniiRashodDay = DUT / KMAS * 100;
             }
-                //Заправлено факт это данные с заправки а заправлено зап это данные с ДУТ
-                AC.ZapravlenoFact = AC.Zapravleno;
+            //Заправлено факт это данные с заправки а заправлено зап это данные с ДУТ
+            decimal Z = 0;
+                try
+            {
+                Z = db.Zapravkas.Where(x => x.AvtoNumber.Equals(AC.Avto.Number) && x.Date.Year == AC.Date.Year && x.Date.Month == AC.Date.Month && x.Date.Day == AC.Date.Day).Sum(x => x.Liters) ;
+            }
+            catch
+            {
+
+            }
+                AC.ZapravlenoFact = Z;
             AC.Zapravleno = zap; 
                 //считаем средний расход за 100 наблюдений
             List<AS24> AllRashod = new List<AS24>();
@@ -409,8 +428,24 @@ namespace GKHNNC.Controllers
                 AC.Nabludenii=counter;
                 AC.RealGo = RealViezd;
                 AC.RealEnd = RealEndd;
+            if (AC.KMAS==0)
+            {
                 AC.KMAS = KMAS;
+            }
+            if (AC.DUT == 0)
+            {
                 AC.DUT = DUT;
+            }
+
+            if (AC.KMAS > 0)
+            {
+                AC.SredniiRashodDay = AC.DUT / AC.KMAS * 100;
+            }
+            else
+            {
+                AC.SredniiRashodDay = 0;
+            }
+            AC.DUT = DUT;
             AC.MarkaAvto = AC.Avto.Marka.Name;
             AC.TypeAvto = AC.Avto.Type.Type;
 
@@ -897,7 +932,7 @@ namespace GKHNNC.Controllers
             ASControl A = null;
             try
             {
-                A = db.ASControls.Where(x => x.AvtoId == AvtoId&&x.Date.Year==D.Year&&x.Date.Month==D.Month&&x.Date.Day==D.Day).First();
+                A = db.ASControls.Where(x => x.AvtoId == AvtoId&&x.Date.Year==D.Year&&x.Date.Month==D.Month&&x.Date.Day==D.Day&&x.Go).First();
             }
             catch
             {
@@ -983,10 +1018,10 @@ namespace GKHNNC.Controllers
             string[] S = selection.Split(';');
             int Id = Convert.ToInt32(S[0]);
             //если адекватно написаны километры то сохраняем иначе 0
-            int KM = 0;
+            long KM = 0;
             try
             {
-                KM = Convert.ToInt16(S[1]);
+                KM = Convert.ToInt64(S[1]);
             }
             catch
             {

@@ -425,13 +425,18 @@ namespace GKHNNC.Controllers
             int lastRow = WS.UsedRange.Rows.Count;
             int LastCol = WS.UsedRange.Columns.Count;
             if (LastCol < Names.Length) { LastCol = Names.Length + 2; }//если вдруг количество столбцов криво определилось 
+        
             var EXX = new object[lastRow, LastCol];
             int rr = Convert.ToInt32(Convert.ToDecimal(lastRow) / 100);
+           
             if (lastRow - rr * 100 < 0) { rr = rr - 1; }
+            if (rr == 0) { rr = 1; }
             int rrr = lastRow - rr * 100;
             int lastrr = 0;
+            int end = 100;
+            if (lastRow <= 100) { end = lastRow; }
             
-            for (int i = 1; i <= 100; i++)//грузим из файла кусками объём файла \ 100
+            for (int i = 1; i <= end; i++)//грузим из файла кусками объём файла \ 100
             {
                 lastrr++;
 

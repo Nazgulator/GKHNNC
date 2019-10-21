@@ -19,6 +19,11 @@ using System.Linq;
 //using DocumentFormat.OpenXml.Spreadsheet;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Collections;
+
+using System.IO;
 
 
 namespace Opredelenie
@@ -33,6 +38,29 @@ namespace Opredelenie
                 Month.Add( MonthOpred(i));
             }
             return Month;
+        }
+        
+        public static void RangeMerge (Excel.Application ApExcel,Excel.Range range,bool merge, bool bold,int size =13,int height=50 )
+        {
+            if (merge)
+            {
+                range.Merge(Type.Missing);
+            }
+            if (bold)
+            {
+                range.Font.Bold = true;
+            }
+            
+            range.Font.Size = size;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.RowHeight = 50;
+            range.WrapText = true;
+
+        }
+        public static void EstLiFile (string patch)
+        {
+            if (File.Exists(patch)) { File.Delete(patch); }
         }
 
         public static string OpredelenieBukvi(int i)

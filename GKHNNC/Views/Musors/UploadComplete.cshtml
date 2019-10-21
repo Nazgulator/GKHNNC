@@ -4,29 +4,15 @@
 }
 
 
-
 <div id="MainNadpis">
     <h2>Файл @ViewBag.file за @ViewBag.date успешно загружен!</h2>
 
+    <a id="cancel" href="@ViewBag.dat" class="btn btn-default" style="width: 180Px">Скачать отчет</a>
     <div class="alert alert-success" role="alert">
-        Данные представлены в таблице ниже.
+        Скачайте сформированный отчет
     </div>
 </div>
-
-
-<table id="tabl" class="table table-striped">
-
-    <tbody>
-
-        <tr>
-            <td>
-                @Html.DropDownList("Данные", new SelectList(@ViewBag.Result), new { @class = "form-control col-md-4", @style = "width:100%" })
-            </td>
-        </tr>
-
-    </tbody>
-</table>
-<p><a href="/UEVs/Index" class="btn btn-success btn-default" style="width:100%">Все данные УЭВ >></a></p>
+<p><a href="/Musors/Upload" class="btn btn-success btn-default" style="width:100%">Загрузить мусорные файлы >></a></p>
 <p><a href="/Home/Index" class="btn btn-success btn-default" style="width:100%">В главное меню >></a></p>
 
 

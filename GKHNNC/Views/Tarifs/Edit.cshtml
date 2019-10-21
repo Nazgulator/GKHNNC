@@ -1,0 +1,88 @@
+﻿@model GKHNNC.Models.Tarif
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+<h2>Редактировать</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+   <div class="container">
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.Id)
+
+        <div class="row col-md-6 col-md-offset-3">
+            <div class="col-md-6">
+            @Html.LabelFor(model => model.HotWater, htmlAttributes: new { @class = "control-label" })
+            </div>
+            <div class="col-md-6">
+                @Html.EditorFor(model => model.HotWater, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.HotWater, "", new { @class = "text-danger" })
+            </div>
+         </div>
+       
+
+        <div class="row col-md-6 col-md-offset-3">
+            <div class="col-md-6">
+            @Html.LabelFor(model => model.ColdWater, htmlAttributes: new { @class = "control-label" })
+            </div>
+            <div class="col-md-6">
+                @Html.EditorFor(model => model.ColdWater, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ColdWater, "", new { @class = "text-danger" })
+            </div>
+         </div>
+       
+
+        <div class="row col-md-6 col-md-offset-3">
+            <div class="col-md-6">
+            @Html.LabelFor(model => model.OtoplenieEnergy, htmlAttributes: new { @class = "control-label" })
+            </div>
+            <div class="col-md-6">
+                @Html.EditorFor(model => model.OtoplenieEnergy, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.OtoplenieEnergy, "", new { @class = "text-danger" })
+            </div>
+         </div>
+       
+
+        <div class="row col-md-6 col-md-offset-3">
+            <div class="col-md-6">
+            @Html.LabelFor(model => model.TeplotaVKube, htmlAttributes: new { @class = "control-label" })
+            </div>
+            <div class="col-md-6">
+                @Html.EditorFor(model => model.TeplotaVKube, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.TeplotaVKube, "", new { @class = "text-danger" })
+            </div>
+         </div>
+       
+
+        <div class="row col-md-6 col-md-offset-3">
+            <div class="col-md-6">
+            @Html.LabelFor(model => model.Date, htmlAttributes: new { @class = "control-label" })
+            </div>
+            <div class="col-md-6">
+                @Html.EditorFor(model => model.Date, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Date, "", new { @class = "text-danger" })
+            </div>
+         </div>
+       
+
+        <div class="row col-md-6 col-md-offset-3">
+            <div class=" form-group">
+                <div class=" col-md-6  ">
+                    @Html.ActionLink("Назад", "Index", null, new { @class = "btn btn-success btn-block" })
+                </div>
+                <div class=" col-md-6  ">
+                    <input type="submit" value="Изменить" class="btn btn-success btn-block" />
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+}
+
