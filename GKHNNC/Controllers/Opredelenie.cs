@@ -56,18 +56,19 @@ namespace Opredelenie
             range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
             range.RowHeight = 50;
             range.WrapText = true;
+            range.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft].LineStyle = Excel.XlLineStyle.xlContinuous;
 
         }
         public static void EstLiFile (string patch)
         {
             if (File.Exists(patch)) { File.Delete(patch); }
         }
-
-        public static string OpredelenieBukvi(int i)
+        public static string Opred26(int i)
         {
             string bukva = "A";
             switch (i)
             {
+               
                 case 1: bukva = "A"; break;
                 case 2: bukva = "B"; break;
                 case 3: bukva = "C"; break;
@@ -94,92 +95,109 @@ namespace Opredelenie
                 case 24: bukva = "X"; break;
                 case 25: bukva = "Y"; break;
                 case 26: bukva = "Z"; break;
-                case 27: bukva = "AA"; break;
-                case 28: bukva = "AB"; break;
-                case 29: bukva = "AC"; break;
-                case 30: bukva = "AD"; break;
-                case 31: bukva = "AE"; break;
-                case 32: bukva = "AF"; break;
-                case 33: bukva = "AG"; break;
-                case 34: bukva = "AH"; break;
-                case 35: bukva = "AI"; break;
-                case 36: bukva = "AJ"; break;
-                case 37: bukva = "AK"; break;
-                case 38: bukva = "AL"; break;
-                case 39: bukva = "AM"; break;
-                case 40: bukva = "AN"; break;
-                case 41: bukva = "AO"; break;
-                case 42: bukva = "AP"; break;
-                case 43: bukva = "AQ"; break;
-                case 44: bukva = "AR"; break;
-                case 45: bukva = "AS"; break;
-                case 46: bukva = "AT"; break;
-                case 47: bukva = "AU"; break;
-                case 48: bukva = "AV"; break;
-                case 49: bukva = "AW"; break;
-                case 50: bukva = "AX"; break;
-                case 51: bukva = "AY"; break;
-                case 52: bukva = "AZ"; break;
-                case 53: bukva = "BA"; break;
-                case 54: bukva = "BB"; break;
-                case 55: bukva = "BC"; break;
-                case 56: bukva = "BD"; break;
-                case 57: bukva = "BE"; break;
-                case 58: bukva = "BF"; break;
-                case 59: bukva = "BG"; break;
-                case 60: bukva = "BH"; break;
-                case 61: bukva = "BI"; break;
-                case 62: bukva = "BJ"; break;
-                case 63: bukva = "BK"; break;
-                case 64: bukva = "BL"; break;
-                case 65: bukva = "BM"; break;
-                case 66: bukva = "BN"; break;
-                case 67: bukva = "BO"; break;
-                case 68: bukva = "BP"; break;
-                case 69: bukva = "BQ"; break;
-                case 70: bukva = "BR"; break;
-                case 71: bukva = "BS"; break;
-                case 72: bukva = "BT"; break;
-                case 73: bukva = "BU"; break;
-                case 74: bukva = "BV"; break;
-                case 75: bukva = "BW"; break;
-                case 76: bukva = "BX"; break;
-                case 77: bukva = "BY"; break;
-                case 78: bukva = "BZ"; break;
-                case 79: bukva = "CA"; break;
-                case 80: bukva = "CB"; break;
-                case 81: bukva = "CC"; break;
-                case 82: bukva = "CD"; break;
-                case 83: bukva = "CE"; break;
-                case 84: bukva = "CF"; break;
-                case 85: bukva = "CG"; break;
-                case 86: bukva = "CH"; break;
-                case 87: bukva = "CI"; break;
-                case 88: bukva = "CJ"; break;
-                case 89: bukva = "CK"; break;
-                case 90: bukva = "CL"; break;
-                case 91: bukva = "CM"; break;
-                case 92: bukva = "CN"; break;
-                case 93: bukva = "CO"; break;
-                case 94: bukva = "CP"; break;
-                case 95: bukva = "CQ"; break;
-                case 96: bukva = "CR"; break;
-                case 97: bukva = "CS"; break;
-                case 98: bukva = "CT"; break;
-                case 99: bukva = "CU"; break;
-                case 100: bukva = "CV"; break;
-                case 101: bukva = "CW"; break;
-                case 102: bukva = "CX"; break;
-                case 103: bukva = "CY"; break;
-                case 104: bukva = "CZ"; break;
-                case 105: bukva = "DA"; break;
-                case 106: bukva = "DB"; break;
-                case 107: bukva = "DC"; break;
-                case 108: bukva = "DD"; break;
-                case 109: bukva = "DE"; break;
-                case 110: bukva = "DF"; break;
+                    /*  case 27: bukva = "AA"; break;
+                      case 28: bukva = "AB"; break;
+                      case 29: bukva = "AC"; break;
+                      case 30: bukva = "AD"; break;
+                      case 31: bukva = "AE"; break;
+                      case 32: bukva = "AF"; break;
+                      case 33: bukva = "AG"; break;
+                      case 34: bukva = "AH"; break;
+                      case 35: bukva = "AI"; break;
+                      case 36: bukva = "AJ"; break;
+                      case 37: bukva = "AK"; break;
+                      case 38: bukva = "AL"; break;
+                      case 39: bukva = "AM"; break;
+                      case 40: bukva = "AN"; break;
+                      case 41: bukva = "AO"; break;
+                      case 42: bukva = "AP"; break;
+                      case 43: bukva = "AQ"; break;
+                      case 44: bukva = "AR"; break;
+                      case 45: bukva = "AS"; break;
+                      case 46: bukva = "AT"; break;
+                      case 47: bukva = "AU"; break;
+                      case 48: bukva = "AV"; break;
+                      case 49: bukva = "AW"; break;
+                      case 50: bukva = "AX"; break;
+                      case 51: bukva = "AY"; break;
+                      case 52: bukva = "AZ"; break;
+                      case 53: bukva = "BA"; break;
+                      case 54: bukva = "BB"; break;
+                      case 55: bukva = "BC"; break;
+                      case 56: bukva = "BD"; break;
+                      case 57: bukva = "BE"; break;
+                      case 58: bukva = "BF"; break;
+                      case 59: bukva = "BG"; break;
+                      case 60: bukva = "BH"; break;
+                      case 61: bukva = "BI"; break;
+                      case 62: bukva = "BJ"; break;
+                      case 63: bukva = "BK"; break;
+                      case 64: bukva = "BL"; break;
+                      case 65: bukva = "BM"; break;
+                      case 66: bukva = "BN"; break;
+                      case 67: bukva = "BO"; break;
+                      case 68: bukva = "BP"; break;
+                      case 69: bukva = "BQ"; break;
+                      case 70: bukva = "BR"; break;
+                      case 71: bukva = "BS"; break;
+                      case 72: bukva = "BT"; break;
+                      case 73: bukva = "BU"; break;
+                      case 74: bukva = "BV"; break;
+                      case 75: bukva = "BW"; break;
+                      case 76: bukva = "BX"; break;
+                      case 77: bukva = "BY"; break;
+                      case 78: bukva = "BZ"; break;
+                      case 79: bukva = "CA"; break;
+                      case 80: bukva = "CB"; break;
+                      case 81: bukva = "CC"; break;
+                      case 82: bukva = "CD"; break;
+                      case 83: bukva = "CE"; break;
+                      case 84: bukva = "CF"; break;
+                      case 85: bukva = "CG"; break;
+                      case 86: bukva = "CH"; break;
+                      case 87: bukva = "CI"; break;
+                      case 88: bukva = "CJ"; break;
+                      case 89: bukva = "CK"; break;
+                      case 90: bukva = "CL"; break;
+                      case 91: bukva = "CM"; break;
+                      case 92: bukva = "CN"; break;
+                      case 93: bukva = "CO"; break;
+                      case 94: bukva = "CP"; break;
+                      case 95: bukva = "CQ"; break;
+                      case 96: bukva = "CR"; break;
+                      case 97: bukva = "CS"; break;
+                      case 98: bukva = "CT"; break;
+                      case 99: bukva = "CU"; break;
+                      case 100: bukva = "CV"; break;
+                      case 101: bukva = "CW"; break;
+                      case 102: bukva = "CX"; break;
+                      case 103: bukva = "CY"; break;
+                      case 104: bukva = "CZ"; break;
+                      case 105: bukva = "DA"; break;
+                      case 106: bukva = "DB"; break;
+                      case 107: bukva = "DC"; break;
+                      case 108: bukva = "DD"; break;
+                      case 109: bukva = "DE"; break;
+                      case 110: bukva = "DF"; break;
+                      */
 
             }
+            return bukva;
+        }
+        public static string OpredelenieBukvi(int i)
+        {
+            string bukva = "A";
+            int celaya = 0;
+            if (i > 26)
+            {
+                celaya = Convert.ToInt32(Math.Truncate(Convert.ToDecimal(i) / 26));
+            }
+            int drobnaya = i - celaya * 26;
+            if (celaya > 0)
+            {
+                bukva = Opred26(celaya);
+            }
+            bukva+= Opred26(drobnaya);
             return bukva;
         }
 

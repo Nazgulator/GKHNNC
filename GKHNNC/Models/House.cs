@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System;
+using GKHNNC.Models;
 
 namespace GKHNNC.Models
 {
@@ -78,5 +79,16 @@ namespace GKHNNC.Models
 
         [Display(Name = "Дата")]
         public DateTime Date { get; set; }
+        [Display(Name = "Отопление")]
+        public DOMOtoplenie Otoplenie { get; set; }
+        [Display(Name = "Горячая вода")]
+        public DOMHW HotW { get; set; }
+        [Display(Name = "Холодная вода")]
+        public DOMCW ColdW { get; set; }
+        [Display(Name = "Электросеть")]
+        public DOMElectro Electro { get; set; }
+        [Display(Name = "Электросеть")]
+        public DOMVodootvod Vodootvod { get; set; }
+
     }
 }

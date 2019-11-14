@@ -17,10 +17,12 @@
     
     @using (Html.BeginForm("Upload", "DOMfundaments", FormMethod.Post, new { enctype = "multipart/form-data", @placeholder = "Выберите дату" }))
     {<div class="container" id="main">
-    <div class=" row">
-        <p> <h5>Выберите дату (год и месяц) создания файла.</h5></p>
-        <p> <h5>Имя файла написано без пробелов, длина имени менее 10 символов.</h5></p>
-    </div>
+         <div class=" row">
+             <p> <h5>Выберите дату (год и месяц) создания файла.</h5></p>
+             <p> <h5>В файле необходимо открепить строки и столбцы!</h5></p>
+             <a href="https://support.office.com/ru-ru/article/%D0%97%D0%B0%D0%BA%D1%80%D0%B5%D0%BF%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BE%D0%B1%D0%BB%D0%B0%D1%81%D1%82%D0%B5%D0%B9-%D0%BE%D0%BA%D0%BD%D0%B0-%D0%B4%D0%BB%D1%8F-%D0%B1%D0%BB%D0%BE%D0%BA%D0%B8%D1%80%D0%BE%D0%B2%D0%BA%D0%B8-%D1%81%D1%82%D1%80%D0%BE%D0%BA-%D0%B8-%D1%81%D1%82%D0%BE%D0%BB%D0%B1%D1%86%D0%BE%D0%B2-dab2ffc9-020d-4026-8121-67dd25f2508f" rel="stylesheet">Нажмите здесь, чтобы узнать как открепить области документа.</a>
+             
+         </div>
     <div class=" row">
 
         <label>Дата загрузски файла</label>

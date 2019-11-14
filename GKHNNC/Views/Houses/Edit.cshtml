@@ -14,492 +14,198 @@
         <h2>@Model.Adres</h2>
         <h4>Последние полные данные за @ViewBag.Date</h4>
         <hr />
-        <div class="col-md-4">
-            @if (ViewBag.RoofIco != null)
-            {
-                <img src="~/Content/Images/Roofs/@ViewBag.RoofIco" class="img-responsive" data-toggle="tooltip" data-placement="top" title=@ViewBag.RoofText>
-            }
-            @if (ViewBag.FundamentIco != null)
-            {
-                <img src="~/Content/Images/Fundaments/@ViewBag.FundamentIco" class="img-responsive" data-toggle="tooltip" data-placement="top" title=@ViewBag.FundamentText>
-            }
+        <!-- Картинка дома
+          <div class="col-md-4">
+              @if (ViewBag.RoofIco != null)
+              {
+                  <img src="~/Content/Images/Roofs/@ViewBag.RoofIco" class="img-responsive" data-toggle="tooltip" data-placement="top" title=@ViewBag.RoofText>
+              }
+              <img src="~/Content/Images/Fasads/GN.png" class="img-responsive" data-toggle="tooltip" data-placement="top" title="Стены">
+              @if (ViewBag.FundamentIco != null)
+              {
+                  <img src="~/Content/Images/Fundaments/@ViewBag.FundamentIco" class="img-responsive" data-toggle="tooltip" data-placement="top" title=@ViewBag.FundamentText>
+              }
 
 
 
+          </div>
+    -->
+        @using (Html.BeginForm("Upload", "DOMfundaments", FormMethod.Post, new { enctype = "multipart/form-data", @placeholder = "Выберите дату" }))
+        {<div class="container" id="main">
+                <div class=" row">
+                    <p> <h5>Выберите дату.</h5></p>
+                </div>
+                <div class=" row">
+
+                    <label>Дата загрузски файла</label>
+                    @Html.Editor("Date", new { htmlAttributes = new { @class = "form-control", @style = "width:365Px !important; min-width:365px;" } })
+
+                </div>
         </div>
-        <div class="col-md-8">
+        }
 
-            @using (Html.BeginForm())
-            {
-                @Html.AntiForgeryToken()
-                <div class="container">
-                    <div class="form-horizontal">
+                <div class="col-md-12">
 
-                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                        @Html.HiddenFor(model => model.Id)
+                    @using (Html.BeginForm())
+                    {
+                        @Html.AntiForgeryToken()
+                        <div class="container">
+                            <div class="form-horizontal">
 
-                        <div class="container col-md-8">
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                @Html.HiddenFor(model => model.Id)
 
-                            <div class="row row-bottom-margin">
-                                <div class="col" style="text-align:left">
-
-                                    <div class="container-fluid">
-                                        <div class="row">
-                                            <div class="img-wrap">
-                                                <img src="~/Content/Images/GreenPodlogka.png" class="img-responsive">
-                                                <h2>Общие данные</h2>
-                                                @ViewBag.Primechanie
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-
-                                </div>
-                            </div>
-
-
-                            <div class="row row-bottom-margin" style="top:10px">
-                                <div class="col-md-8" style="text-align:left">
-                                    <div class="container-fluid">
-                                        <div class="row">
-                                            <div class="img-wrap">
-                                                <img src="~/Content/Images/Ploshad.png" class="img-responsive" data-toggle="tooltip" data-placement="top" title="Площадь">
-                                                <H3> @Html.DisplayFor(model => model.Ploshad, new { htmlAttributes = new { @class = "form-control" } })</H3>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-
-                            <div class="row row-bottom-margin" style="top:10px">
-                                <div class="col-md-8" style="text-align:left">
-                                    <div class="container-fluid">
-                                        <div class="row">
-                                            <div class="img-wrap">
-                                                <img src="~/Content/Images/Otoplenie.png" class="img-responsive" data-toggle="tooltip" data-placement="top" title="Отопление">
-                                                <H3> @Html.DisplayFor(model => model.Teplota, new { htmlAttributes = new { @class = "form-control" } })</H3>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-
-                            <div class="row row-bottom-margin" style="top:10px">
-                                <div class="col-md-8" style="text-align:left">
-                                    <div class="container-fluid">
-                                        <div class="row">
-                                            <div class="img-wrap">
-                                                <img src="~/Content/Images/Otoplenie12.png" class="img-responsive" data-toggle="tooltip" data-placement="top" title="Отопление 1/12">
-                                                <H3> @Html.DisplayFor(model => model.Teplota12, new { htmlAttributes = new { @class = "form-control" } })</H3>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                            <div class="row row-bottom-margin" style="top:10px">
-                                <div class="col-md-8" style="text-align:left">
-                                    <div class="container-fluid">
-                                        <div class="row">
-                                            <div class="img-wrap">
-                                                <img src="~/Content/Images/HotWater.png" class="img-responsive" data-toggle="tooltip" data-placement="top" title="Горячая вода ">
-                                                <H3> @Html.DisplayFor(model => model.HotWater, new { htmlAttributes = new { @class = "form-control" } })</H3>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                            <div class="row row-bottom-margin" style="top:10px">
-                                <div class="col-md-8" style="text-align:left">
-                                    <div class="container-fluid">
-                                        <div class="row">
-                                            <div class="img-wrap">
-                                                <img src="~/Content/Images/ColdWater.png" class="img-responsive" data-toggle="tooltip" data-placement="top" title="Холодная вода ">
-                                                <H3> @Html.DisplayFor(model => model.ColdWater, new { htmlAttributes = new { @class = "form-control" } })</H3>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <div class="container col-md-8">
-
-                            <div class="row row-bottom-margin">
-                                <div class="col" style="text-align:left">
-
-                                    <div class="container-fluid">
-                                        <div class="row">
-                                            <div class="img-wrap">
-                                                <img src="~/Content/Images/GreenPodlogka.png" class="img-responsive">
-                                                <h2>Конструктивные элементы</h2>
-
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-
-                                </div>
-                            </div>
-                            @if (Model.FundamentMaterial != null)
-                            {
-                            <div class="row row-bottom-margin">
-                                <div class="col-md-10" style="text-align:left">
-
-                                    <div class="container-fluid">
-                                        <div class="row">
-                                            <div class="img-wrap">
-                                                <img src="~/Content/Images/GrayPodlogka.png" class="img-responsive">
-                                                <H5>Тип фундамента</H5>
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-                                </div>
-                                <div class="col-md-2" style="text-align:left;top:5px">
-                                    <H5>@Html.DisplayFor(model => model.FundamentType, new { htmlAttributes = new { @class = "form-control" } })</H5>
-                                </div>
-                            </div>
-                            <div class="row row-bottom-margin">
-                                <div class="col-md-10" style="text-align:left">
-
-                                    <div class="container-fluid">
-                                        <div class="row">
-                                            <div class="img-wrap">
-                                                <img src="~/Content/Images/GrayPodlogka.png" class="img-responsive">
-                                                <H5>Материал фундамента</H5>
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-                                </div>
-                                <div class="col-md-2" style="text-align:left;top:5px">
-                                    <H5>@Html.DisplayFor(model => model.FundamentMaterial, new { htmlAttributes = new { @class = "form-control" } })</H5>
-                                </div>
-                            </div>
-
-
-
-                            <div class="row row-bottom-margin">
-                                <div class="col-md-10" style="text-align:left">
-
-                                    <div class="container-fluid">
-                                        <div class="row">
-                                            <div class="img-wrap">
-                                                <img src="~/Content/Images/GrayPodlogka.png" class="img-responsive">
-                                                <H5>Площадь отмостки</H5>
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-                                </div>
-                                <div class="col-md-2" style="text-align:left;top:5px">
-                                    <H5>@Html.DisplayFor(model => model.FundamentPloshad, new { htmlAttributes = new { @class = "form-control" } })</H5>
-                                </div>
-                            </div>
-                            }
-                            @if (Model.RoofForm != null)
-                            {
-                            <div class="row row-bottom-margin">
-                                <div class="col-md-10" style="text-align:left">
-
-                                    <div class="container-fluid">
-                                        <div class="row">
-                                            <div class="img-wrap">
-                                                <img src="~/Content/Images/GrayPodlogka.png" class="img-responsive">
-                                                <H5>Форма крыши</H5>
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-                                </div>
-                                <div class="col-md-2" style="text-align:left;top:5px">
-                                    <H5>@Html.DisplayFor(model => model.RoofForm, new { htmlAttributes = new { @class = "form-control" } })</H5>
-                                </div>
-                            </div>
-                            <div class="row row-bottom-margin">
-                                <div class="col-md-10" style="text-align:left">
-
-                                    <div class="container-fluid">
-                                        <div class="row">
-                                            <div class="img-wrap">
-                                                <img src="~/Content/Images/GrayPodlogka.png" class="img-responsive">
-                                                <H5>Тип крыши</H5>
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-                                </div>
-                                <div class="col-md-2" style="text-align:left;top:5px">
-                                    <H5>@Html.DisplayFor(model => model.RoofType, new { htmlAttributes = new { @class = "form-control" } })</H5>
-                                </div>
-                            </div>
-                            <div class="row row-bottom-margin">
-                                <div class="col-md-10" style="text-align:left">
-
-                                    <div class="container-fluid">
-                                        <div class="row">
-                                            <div class="img-wrap">
-                                                <img src="~/Content/Images/GrayPodlogka.png" class="img-responsive">
-                                                <H5>Вид несущей части крыши</H5>
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-                                </div>
-                                <div class="col-md-2" style="text-align:left;top:5px">
-                                    <H5>@Html.DisplayFor(model => model.RoofVid, new { htmlAttributes = new { @class = "form-control" } })</H5>
-                                </div>
-                            </div>
-                            <div class="row row-bottom-margin">
-                                <div class="col-md-10" style="text-align:left">
-
-                                    <div class="container-fluid">
-                                        <div class="row">
-                                            <div class="img-wrap">
-                                                <img src="~/Content/Images/GrayPodlogka.png" class="img-responsive">
-                                                <H5>Утеплитель крыши</H5>
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-                                </div>
-                                <div class="col-md-2" style="text-align:left;top:5px">
-                                    <H5>@Html.DisplayFor(model => model.RoofUteplenie, new { htmlAttributes = new { @class = "form-control" } })</H5>
-                                </div>
-                            </div>
-                            <div class="row row-bottom-margin">
-                                <div class="col-md-10" style="text-align:left">
-
-                                    <div class="container-fluid">
-                                        <div class="row">
-                                            <div class="img-wrap">
-                                                <img src="~/Content/Images/GrayPodlogka.png" class="img-responsive">
-                                                <H5>Год капитального ремонта кровли</H5>
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-                                </div>
-                                <div class="col-md-2" style="text-align:left;top:5px">
-                                    <H5>@Html.DisplayFor(model => model.RoofYearKrovlya, new { htmlAttributes = new { @class = "form-control" } })</H5>
-                                </div>
-                            </div>
-                            <div class="row row-bottom-margin">
-                                <div class="col-md-10" style="text-align:left">
-
-                                    <div class="container-fluid">
-                                        <div class="row">
-                                            <div class="img-wrap">
-                                                <img src="~/Content/Images/GrayPodlogka.png" class="img-responsive">
-                                                <H5>Год капитального ремонта несущей части крыши</H5>
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-                                </div>
-                                <div class="col-md-2" style="text-align:left;top:5px">
-                                    <H5>@Html.DisplayFor(model => model.RoofYear, new { htmlAttributes = new { @class = "form-control" } })</H5>
-                                </div>
-                            </div>
-                            }
-                        </div>
-
-
-
-
-                        @if (ViewBag.Arendators.Count > 0)
-                        {
-                            <div class="container col-md-8">
-                                <div class="row row-bottom-margin">
-                                    <div class="col" style="text-align:left">
-
-                                        <div class="container-fluid">
-                                            <div class="row">
-                                                <div class="img-wrap">
-                                                    <img src="~/Content/Images/GreenPodlogka.png" class="img-responsive">
-                                                    <H2>Арендаторы</H2>
-                                                </div>
-                                            </div>
-                                        </div>
-
-
-                                    </div>
-                                </div>
-
-
-                                <div class="container col-md-3">
-                                    <div class="row row-bottom-margin" style="top:10px">
-                                        <div class="col" style="text-align:left">
-                                            <div class="container-fluid">
-                                                <div class="row">
-                                                    <div class="img-wrap">
-                                                        <img src="~/Content/Images/Ploshad.png" class="img-responsive" data-toggle="tooltip" data-placement="top" title="Площадь арендаторов">
-                                                        <H3> @Html.DisplayFor(model => model.PloshadArendators, new { htmlAttributes = new { @class = "form-control" } })</H3>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                        </div>
-
-
-                                    </div>
-
-                                    <div class="row row-bottom-margin" style="top:10px">
-                                        <div class="col" style="text-align:left">
-                                            <div class="container-fluid">
-                                                <div class="row">
-                                                    <div class="img-wrap">
-                                                        <img src="~/Content/Images/Otoplenie.png" class="img-responsive" data-toggle="tooltip" data-placement="top" title="Отопление арендаторов">
-                                                        <H3> @Html.DisplayFor(model => model.TeplotaArendators, new { htmlAttributes = new { @class = "form-control" } })</H3>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-
-                                    <div class="row row-bottom-margin" style="top:10px">
-                                        <div class="col" style="text-align:left">
-                                            <div class="container-fluid">
-                                                <div class="row">
-                                                    <div class="img-wrap">
-                                                        <img src="~/Content/Images/Otoplenie12.png" class="img-responsive" data-toggle="tooltip" data-placement="top" title="Отопление арендаторов 1/12">
-                                                        <H3> @Html.DisplayFor(model => model.Teplota12Arendators, new { htmlAttributes = new { @class = "form-control" } })</H3>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                    <div class="row row-bottom-margin" style="top:10px">
-                                        <div class="col" style="text-align:left">
-                                            <div class="container-fluid">
-                                                <div class="row">
-                                                    <div class="img-wrap">
-                                                        <img src="~/Content/Images/HotWater.png" class="img-responsive" data-toggle="tooltip" data-placement="top" title="Горячая вода арендаторов">
-                                                        <H3> @Html.DisplayFor(model => model.HotWaterArendators, new { htmlAttributes = new { @class = "form-control" } })</H3>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                    <div class="row row-bottom-margin" style="top:10px">
-                                        <div class="col" style="text-align:left">
-                                            <div class="container-fluid">
-                                                <div class="row">
-                                                    <div class="img-wrap">
-                                                        <img src="~/Content/Images/ColdWater.png" class="img-responsive" data-toggle="tooltip" data-placement="top" title="Холодная вода арендаторов">
-                                                        <H3> @Html.DisplayFor(model => model.ColdWaterArendators, new { htmlAttributes = new { @class = "form-control" } })</H3>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </div>
-
-                                </div>
-                                <div class="container col-md-5">
-                                    @for (int i = 0; i < ViewBag.Arendators.Count; i++)
-                                    {
-                                        <div class="row row-bottom-margin" style="top:10px">
-                                            <div class="col" style="text-align:left">
-                                                @ViewBag.Arendators[i]
-
-                                            </div>
-                                        </div>
-                                    }
-
-
-                                </div>
-                            </div>
-                        }
-                        @if (ViewBag.Works.Count > 0)
-                        {
-
-                            <div class="container col-md-8">
-                                <div class="row row-bottom-margin">
-                                    <div class="col" style="text-align:left">
-
-                                        <div class="container-fluid">
-                                            <div class="row">
-                                                <div class="img-wrap">
-                                                    <img src="~/Content/Images/GreenPodlogka.png" class="img-responsive">
-                                                    <H2>Выполненные работы</H2>
-                                                </div>
-                                            </div>
-                                        </div>
-
-
-                                    </div>
-                                </div>
                                 <div class="container col-md-8">
-                                    @for (int i = 0; i < ViewBag.Works.Count; i++)
-                                    {
 
+                                    <div class="row row-bottom-margin">
+                                        <div class="col" style="text-align:left">
+
+                                            <div class="container-fluid">
+                                                <div class="row">
+                                                    <div class="img-wrap">
+                                                        <img src="~/Content/Images/GreenPodlogka.png" class="img-responsive">
+                                                        <h2>Общие данные</h2>
+                                                        @ViewBag.Primechanie
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+
+                                        </div>
+                                    </div>
+
+
+                                    <div class="row row-bottom-margin" style="top:10px">
+                                        <div class="col-md-8" style="text-align:left">
+                                            <div class="container-fluid">
+                                                <div class="row">
+                                                    <div class="img-wrap">
+                                                        <img src="~/Content/Images/Ploshad.png" class="img-responsive" data-toggle="tooltip" data-placement="top" title="Площадь">
+                                                        <H3> @Html.DisplayFor(model => model.Ploshad, new { htmlAttributes = new { @class = "form-control" } })</H3>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="row row-bottom-margin" style="top:10px">
+                                        <div class="col-md-8" style="text-align:left">
+                                            <div class="container-fluid">
+                                                <div class="row">
+                                                    <div class="img-wrap">
+                                                        <img src="~/Content/Images/Otoplenie.png" class="img-responsive" data-toggle="tooltip" data-placement="top" title="Отопление">
+                                                        <H3> @Html.DisplayFor(model => model.Teplota, new { htmlAttributes = new { @class = "form-control" } })</H3>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="row row-bottom-margin" style="top:10px">
+                                        <div class="col-md-8" style="text-align:left">
+                                            <div class="container-fluid">
+                                                <div class="row">
+                                                    <div class="img-wrap">
+                                                        <img src="~/Content/Images/Otoplenie12.png" class="img-responsive" data-toggle="tooltip" data-placement="top" title="Отопление 1/12">
+                                                        <H3> @Html.DisplayFor(model => model.Teplota12, new { htmlAttributes = new { @class = "form-control" } })</H3>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="row row-bottom-margin" style="top:10px">
+                                        <div class="col-md-8" style="text-align:left">
+                                            <div class="container-fluid">
+                                                <div class="row">
+                                                    <div class="img-wrap">
+                                                        <img src="~/Content/Images/HotWater.png" class="img-responsive" data-toggle="tooltip" data-placement="top" title="Горячая вода ">
+                                                        <H3> @Html.DisplayFor(model => model.HotWater, new { htmlAttributes = new { @class = "form-control" } })</H3>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="row row-bottom-margin" style="top:10px">
+                                        <div class="col-md-8" style="text-align:left">
+                                            <div class="container-fluid">
+                                                <div class="row">
+                                                    <div class="img-wrap">
+                                                        <img src="~/Content/Images/ColdWater.png" class="img-responsive" data-toggle="tooltip" data-placement="top" title="Холодная вода ">
+                                                        <H3> @Html.DisplayFor(model => model.ColdWater, new { htmlAttributes = new { @class = "form-control" } })</H3>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                                <div class="container col-md-8">
+
+                                    <div class="row row-bottom-margin">
+                                        <div class="col" style="text-align:left">
+
+                                            <div class="container-fluid">
+                                                <div class="row">
+                                                    <div class="img-wrap">
+                                                        <img src="~/Content/Images/GreenPodlogka.png" class="img-responsive">
+                                                        <h2>Конструктивные элементы</h2>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+
+                                        </div>
+                                    </div>
+                                    @if (Model.FundamentMaterial != null)
+                                    {
                                         <div class="row row-bottom-margin">
-                                            <div class="col" style="text-align:left">
+                                            <div class="col-md-10" style="text-align:left">
 
                                                 <div class="container-fluid">
                                                     <div class="row">
                                                         <div class="img-wrap">
                                                             <img src="~/Content/Images/GrayPodlogka.png" class="img-responsive">
-                                                            <H5>@ViewBag.Works[i]</H5>
+                                                            <H5>Тип фундамента</H5>
                                                         </div>
                                                     </div>
                                                 </div>
 
 
                                             </div>
+                                            <div class="col-md-2" style="text-align:left;top:5px">
+                                                <H5>@Html.DisplayFor(model => model.FundamentType, new { htmlAttributes = new { @class = "form-control" } })</H5>
+                                            </div>
                                         </div>
+                                        <div class="row row-bottom-margin">
+                                            <div class="col-md-10" style="text-align:left">
 
-
-                                    }
-                                </div>
-                            </div>
-
-
-                        }
-                        @if (ViewBag.Uslugis.Count > 0)
-                        {
-
-                            <div class="container col-md-8">
-                                <div class="row row-bottom-margin">
-                                    <div class="col" style="text-align:left">
-
-                                        <div class="container-fluid">
-                                            <div class="row">
-                                                <div class="img-wrap">
-                                                    <img src="~/Content/Images/GreenPodlogka.png" class="img-responsive">
-                                                    <H2>Выполненные услуги</H2>
+                                                <div class="container-fluid">
+                                                    <div class="row">
+                                                        <div class="img-wrap">
+                                                            <img src="~/Content/Images/GrayPodlogka.png" class="img-responsive">
+                                                            <H5>Материал фундамента</H5>
+                                                        </div>
+                                                    </div>
                                                 </div>
+
+
+                                            </div>
+                                            <div class="col-md-2" style="text-align:left;top:5px">
+                                                <H5>@Html.DisplayFor(model => model.FundamentMaterial, new { htmlAttributes = new { @class = "form-control" } })</H5>
                                             </div>
                                         </div>
 
 
-                                    </div>
-                                </div>
-                                <div class="container col-md-12 " style="left:-15px">
-                                    @for (int i = 0; i < ViewBag.Uslugis.Count; i++)
-                                    {
 
                                         <div class="row row-bottom-margin">
                                             <div class="col-md-10" style="text-align:left">
@@ -508,7 +214,7 @@
                                                     <div class="row">
                                                         <div class="img-wrap">
                                                             <img src="~/Content/Images/GrayPodlogka.png" class="img-responsive">
-                                                            <H5>@ViewBag.Uslugis[i]</H5>
+                                                            <H5>Площадь отмостки</H5>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -516,44 +222,968 @@
 
                                             </div>
                                             <div class="col-md-2" style="text-align:left;top:5px">
+                                                <H5>@Html.DisplayFor(model => model.FundamentPloshad, new { htmlAttributes = new { @class = "form-control" } })</H5>
+                                            </div>
+                                        </div>
+                                    }
+                                    @if (Model.RoofForm != null)
+                                    {
+                                        <div class="row row-bottom-margin">
+                                            <div class="col-md-10" style="text-align:left">
+
+                                                <div class="container-fluid">
+                                                    <div class="row">
+                                                        <div class="img-wrap">
+                                                            <img src="~/Content/Images/GrayPodlogka.png" class="img-responsive">
+                                                            <H5>Форма крыши</H5>
+                                                        </div>
+                                                    </div>
+                                                </div>
 
 
-                                                <H5>@ViewBag.UslugisCost[i]</H5>
+                                            </div>
+                                            <div class="col-md-2" style="text-align:left;top:5px">
+                                                <H5>@Html.DisplayFor(model => model.RoofForm, new { htmlAttributes = new { @class = "form-control" } })</H5>
+                                            </div>
+                                        </div>
+                                        <div class="row row-bottom-margin">
+                                            <div class="col-md-10" style="text-align:left">
 
+                                                <div class="container-fluid">
+                                                    <div class="row">
+                                                        <div class="img-wrap">
+                                                            <img src="~/Content/Images/GrayPodlogka.png" class="img-responsive">
+                                                            <H5>Тип крыши</H5>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                            <div class="col-md-2" style="text-align:left;top:5px">
+                                                <H5>@Html.DisplayFor(model => model.RoofType, new { htmlAttributes = new { @class = "form-control" } })</H5>
+                                            </div>
+                                        </div>
+                                        <div class="row row-bottom-margin">
+                                            <div class="col-md-10" style="text-align:left">
+
+                                                <div class="container-fluid">
+                                                    <div class="row">
+                                                        <div class="img-wrap">
+                                                            <img src="~/Content/Images/GrayPodlogka.png" class="img-responsive">
+                                                            <H5>Вид несущей части крыши</H5>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                            <div class="col-md-2" style="text-align:left;top:5px">
+                                                <H5>@Html.DisplayFor(model => model.RoofVid, new { htmlAttributes = new { @class = "form-control" } })</H5>
+                                            </div>
+                                        </div>
+                                        <div class="row row-bottom-margin">
+                                            <div class="col-md-10" style="text-align:left">
+
+                                                <div class="container-fluid">
+                                                    <div class="row">
+                                                        <div class="img-wrap">
+                                                            <img src="~/Content/Images/GrayPodlogka.png" class="img-responsive">
+                                                            <H5>Утеплитель крыши</H5>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                            <div class="col-md-2" style="text-align:left;top:5px">
+                                                <H5>@Html.DisplayFor(model => model.RoofUteplenie, new { htmlAttributes = new { @class = "form-control" } })</H5>
+                                            </div>
+                                        </div>
+                                        <div class="row row-bottom-margin">
+                                            <div class="col-md-10" style="text-align:left">
+
+                                                <div class="container-fluid">
+                                                    <div class="row">
+                                                        <div class="img-wrap">
+                                                            <img src="~/Content/Images/GrayPodlogka.png" class="img-responsive">
+                                                            <H5>Год капитального ремонта кровли</H5>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                            <div class="col-md-2" style="text-align:left;top:5px">
+                                                <H5>@Html.DisplayFor(model => model.RoofYearKrovlya, new { htmlAttributes = new { @class = "form-control" } })</H5>
+                                            </div>
+                                        </div>
+                                        <div class="row row-bottom-margin">
+                                            <div class="col-md-10" style="text-align:left">
+
+                                                <div class="container-fluid">
+                                                    <div class="row">
+                                                        <div class="img-wrap">
+                                                            <img src="~/Content/Images/GrayPodlogka.png" class="img-responsive">
+                                                            <H5>Год капитального ремонта несущей части крыши</H5>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                            <div class="col-md-2" style="text-align:left;top:5px">
+                                                <H5>@Html.DisplayFor(model => model.RoofYear, new { htmlAttributes = new { @class = "form-control" } })</H5>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+
+
+
+
+                                @if (ViewBag.Arendators.Count > 0)
+                                {
+                                    <div class="container col-md-8">
+                                        <div class="row row-bottom-margin">
+                                            <div class="col" style="text-align:left">
+
+                                                <div class="container-fluid">
+                                                    <div class="row">
+                                                        <div class="img-wrap">
+                                                            <img src="~/Content/Images/GreenPodlogka.png" class="img-responsive">
+                                                            <H2>Арендаторы</H2>
+                                                        </div>
+                                                    </div>
+                                                </div>
 
 
                                             </div>
                                         </div>
 
 
-                                    }
-                                </div>
+                                        <div class="container col-md-3">
+                                            <div class="row row-bottom-margin" style="top:10px">
+                                                <div class="col" style="text-align:left">
+                                                    <div class="container-fluid">
+                                                        <div class="row">
+                                                            <div class="img-wrap">
+                                                                <img src="~/Content/Images/Ploshad.png" class="img-responsive" data-toggle="tooltip" data-placement="top" title="Площадь арендаторов">
+                                                                <H3> @Html.DisplayFor(model => model.PloshadArendators, new { htmlAttributes = new { @class = "form-control" } })</H3>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+
+                                            </div>
+
+                                            <div class="row row-bottom-margin" style="top:10px">
+                                                <div class="col" style="text-align:left">
+                                                    <div class="container-fluid">
+                                                        <div class="row">
+                                                            <div class="img-wrap">
+                                                                <img src="~/Content/Images/Otoplenie.png" class="img-responsive" data-toggle="tooltip" data-placement="top" title="Отопление арендаторов">
+                                                                <H3> @Html.DisplayFor(model => model.TeplotaArendators, new { htmlAttributes = new { @class = "form-control" } })</H3>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+                                            <div class="row row-bottom-margin" style="top:10px">
+                                                <div class="col" style="text-align:left">
+                                                    <div class="container-fluid">
+                                                        <div class="row">
+                                                            <div class="img-wrap">
+                                                                <img src="~/Content/Images/Otoplenie12.png" class="img-responsive" data-toggle="tooltip" data-placement="top" title="Отопление арендаторов 1/12">
+                                                                <H3> @Html.DisplayFor(model => model.Teplota12Arendators, new { htmlAttributes = new { @class = "form-control" } })</H3>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                            <div class="row row-bottom-margin" style="top:10px">
+                                                <div class="col" style="text-align:left">
+                                                    <div class="container-fluid">
+                                                        <div class="row">
+                                                            <div class="img-wrap">
+                                                                <img src="~/Content/Images/HotWater.png" class="img-responsive" data-toggle="tooltip" data-placement="top" title="Горячая вода арендаторов">
+                                                                <H3> @Html.DisplayFor(model => model.HotWaterArendators, new { htmlAttributes = new { @class = "form-control" } })</H3>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                            <div class="row row-bottom-margin" style="top:10px">
+                                                <div class="col" style="text-align:left">
+                                                    <div class="container-fluid">
+                                                        <div class="row">
+                                                            <div class="img-wrap">
+                                                                <img src="~/Content/Images/ColdWater.png" class="img-responsive" data-toggle="tooltip" data-placement="top" title="Холодная вода арендаторов">
+                                                                <H3> @Html.DisplayFor(model => model.ColdWaterArendators, new { htmlAttributes = new { @class = "form-control" } })</H3>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="container col-md-5">
+                                            @for (int i = 0; i < ViewBag.Arendators.Count; i++)
+                                            {
+                                                <div class="row row-bottom-margin" style="top:10px">
+                                                    <div class="col" style="text-align:left">
+                                                        @ViewBag.Arendators[i]
+
+                                                    </div>
+                                                </div>
+                                            }
+
+
+                                        </div>
+                                    </div>
+                                }
+
+
+                                @if (Model.Otoplenie != null)
+                                {
+
+                                    <div class="container col-md-8">
+                                        <div class="row row-bottom-margin">
+                                            <div class="col" style="text-align:left">
+
+                                                <div class="container-fluid">
+                                                    <div class="row">
+                                                        <div class="img-wrap">
+                                                            <img src="~/Content/Images/GreenPodlogka.png" class="img-responsive">
+                                                            <H2>Отопление</H2>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                        </div>
+                                        <div class="container col-md-12 " style="left:-15px">
+
+
+                                            <div class="row row-bottom-margin">
+                                                <div class="col-md-6" style="text-align:left">
+
+                                                    <div class="container-fluid">
+                                                        <div class="row">
+                                                            <div class="img-wrap">
+                                                                <img src="~/Content/Images/GrayPodlogka.png" class="img" style="height:30px">
+                                                                <H5>Износ системы отопления</H5>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+                                                </div>
+                                                <div class="col-md-6" style="text-align:left;top:5px">
+
+
+                                                    <H5>@Model.Otoplenie.IznosOtop %</H5>
+
+
+
+                                                </div>
+                                            </div>
+
+                                            <div class="row row-bottom-margin">
+                                                <div class="col-md-6" style="text-align:left">
+
+                                                    <div class="container-fluid">
+                                                        <div class="row">
+                                                            <div class="img-wrap">
+                                                                <img src="~/Content/Images/GrayPodlogka.png" class="img" style="height:30px">
+                                                                <H5>Материал внешней теплоизоляции</H5>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+                                                </div>
+                                                <div class="col-md-6" style="text-align:left;top:5px">
+
+
+                                                    <H5>@Model.Otoplenie.MaterialOtop1.Name</H5>
+
+
+
+                                                </div>
+                                            </div>
+                                            <div class="row row-bottom-margin">
+                                                <div class="col-md-6" style="text-align:left">
+
+                                                    <div class="container-fluid">
+                                                        <div class="row">
+                                                            <div class="img-wrap">
+                                                                <img src="~/Content/Images/GrayPodlogka.png" class="img" style="height:30px">
+                                                                <H5>Материал внутренней теплоизоляции</H5>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+                                                </div>
+                                                <div class="col-md-6" style="text-align:left;top:5px">
+
+
+                                                    <H5>@Model.Otoplenie.MaterialOtop2.Name</H5>
+
+
+
+                                                </div>
+                                            </div>
+                                            <div class="row row-bottom-margin">
+                                                <div class="col-md-6" style="text-align:left">
+
+                                                    <div class="container-fluid">
+                                                        <div class="row">
+                                                            <div class="img-wrap">
+                                                                <img src="~/Content/Images/GrayPodlogka.png" class="img" style="height:30px">
+                                                                <H5>Материал труб</H5>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+                                                </div>
+                                                <div class="col-md-6" style="text-align:left;top:5px">
+
+
+                                                    <H5>@Model.Otoplenie.MaterialOtopTrub.Name</H5>
+
+
+
+                                                </div>
+                                            </div>
+                                            <div class="row row-bottom-margin">
+                                                <div class="col-md-6" style="text-align:left">
+
+                                                    <div class="container-fluid">
+                                                        <div class="row">
+                                                            <div class="img-wrap">
+                                                                <img src="~/Content/Images/GrayPodlogka.png" class="img" style="height:30px">
+                                                                <H5>Материал стояков</H5>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+                                                </div>
+                                                <div class="col-md-6" style="text-align:left;top:5px">
+
+
+                                                    <H5>@Model.Otoplenie.MaterialTeplo.Name</H5>
+
+
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+
+                                }
+
+                                @if (Model.ColdW != null)
+                                {
+
+                                    <div class="container col-md-8">
+                                        <div class="row row-bottom-margin">
+                                            <div class="col" style="text-align:left">
+
+                                                <div class="container-fluid">
+                                                    <div class="row">
+                                                        <div class="img-wrap">
+                                                            <img src="~/Content/Images/GreenPodlogka.png" class="img-responsive">
+                                                            <H2>Холодная вода</H2>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                        </div>
+                                        <div class="container col-md-12 " style="left:-15px">
+
+
+                                            <div class="row row-bottom-margin">
+                                                <div class="col-md-6" style="text-align:left">
+
+                                                    <div class="container-fluid">
+                                                        <div class="row">
+                                                            <div class="img-wrap">
+                                                                <img src="~/Content/Images/GrayPodlogka.png" class="img" style="height:30px">
+                                                                <H5>Износ водопровода</H5>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+                                                </div>
+                                                <div class="col-md-6" style="text-align:left;top:5px">
+
+
+                                                    <H5>@Model.ColdW.IznosCW %</H5>
+
+
+
+                                                </div>
+                                            </div>
+
+                                            <div class="row row-bottom-margin">
+                                                <div class="col-md-6" style="text-align:left">
+
+                                                    <div class="container-fluid">
+                                                        <div class="row">
+                                                            <div class="img-wrap">
+                                                                <img src="~/Content/Images/GrayPodlogka.png" class="img" style="height:30px">
+                                                                <H5>Год капитального ремонта</H5>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+                                                </div>
+                                                <div class="col-md-6" style="text-align:left;top:5px">
+
+
+                                                    <H5>@Model.ColdW.RemontCW</H5>
+
+
+
+                                                </div>
+                                            </div>
+                                            <div class="row row-bottom-margin">
+                                                <div class="col-md-6" style="text-align:left">
+
+                                                    <div class="container-fluid">
+                                                        <div class="row">
+                                                            <div class="img-wrap">
+                                                                <img src="~/Content/Images/GrayPodlogka.png" class="img" style="height:30px">
+                                                                <H5>Материал труб</H5>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+                                                </div>
+                                                <div class="col-md-6" style="text-align:left;top:5px">
+
+
+                                                    <H5>@Model.ColdW.MaterialCW.Name</H5>
+
+
+
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+
+
+                                }
+                                @if (Model.HotW != null)
+                                {
+
+                                    <div class="container col-md-8">
+                                        <div class="row row-bottom-margin">
+                                            <div class="col" style="text-align:left">
+
+                                                <div class="container-fluid">
+                                                    <div class="row">
+                                                        <div class="img-wrap">
+                                                            <img src="~/Content/Images/GreenPodlogka.png" class="img-responsive">
+                                                            <H2>Горячая вода</H2>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                        </div>
+                                        <div class="container col-md-12 " style="left:-15px">
+
+
+                                            <div class="row row-bottom-margin">
+                                                <div class="col-md-6" style="text-align:left">
+
+                                                    <div class="container-fluid">
+                                                        <div class="row">
+                                                            <div class="img-wrap">
+                                                                <img src="~/Content/Images/GrayPodlogka.png" class="img" style="height:30px">
+                                                                <H5>Износ водопровода</H5>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+                                                </div>
+                                                <div class="col-md-6" style="text-align:left;top:5px">
+
+
+                                                    <H5>@Model.HotW.IznosHW %</H5>
+
+
+
+                                                </div>
+                                            </div>
+
+                                            <div class="row row-bottom-margin">
+                                                <div class="col-md-6" style="text-align:left">
+
+                                                    <div class="container-fluid">
+                                                        <div class="row">
+                                                            <div class="img-wrap">
+                                                                <img src="~/Content/Images/GrayPodlogka.png" class="img" style="height:30px">
+                                                                <H5>Год капитального ремонта</H5>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+                                                </div>
+                                                <div class="col-md-6" style="text-align:left;top:5px">
+
+
+                                                    <H5>@Model.HotW.RemontHW</H5>
+
+
+
+                                                </div>
+                                            </div>
+                                            <div class="row row-bottom-margin">
+                                                <div class="col-md-6" style="text-align:left">
+
+                                                    <div class="container-fluid">
+                                                        <div class="row">
+                                                            <div class="img-wrap">
+                                                                <img src="~/Content/Images/GrayPodlogka.png" class="img" style="height:30px">
+                                                                <H5>Материал труб</H5>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+                                                </div>
+                                                <div class="col-md-6" style="text-align:left;top:5px">
+
+
+                                                    <H5>@Model.HotW.MaterialHW.Name</H5>
+
+
+
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+
+
+                                }
+                                @if (Model.Electro != null)
+                                {
+
+                                    <div class="container col-md-8">
+                                        <div class="row row-bottom-margin">
+                                            <div class="col" style="text-align:left">
+
+                                                <div class="container-fluid">
+                                                    <div class="row">
+                                                        <div class="img-wrap">
+                                                            <img src="~/Content/Images/GreenPodlogka.png" class="img-responsive">
+                                                            <H2>Энергосеть</H2>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                        </div>
+                                        <div class="container col-md-12 " style="left:-15px">
+
+
+                                            <div class="row row-bottom-margin">
+                                                <div class="col-md-6" style="text-align:left">
+
+                                                    <div class="container-fluid">
+                                                        <div class="row">
+                                                            <div class="img-wrap">
+                                                                <img src="~/Content/Images/GrayPodlogka.png" class="img" style="height:30px">
+                                                                <H5>Износ энергосети</H5>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+                                                </div>
+                                                <div class="col-md-6" style="text-align:left;top:5px">
+
+
+                                                    <H5>@Model.Electro.IznosElectro %</H5>
+
+
+
+                                                </div>
+                                            </div>
+
+                                            <div class="row row-bottom-margin">
+                                                <div class="col-md-6" style="text-align:left">
+
+                                                    <div class="container-fluid">
+                                                        <div class="row">
+                                                            <div class="img-wrap">
+                                                                <img src="~/Content/Images/GrayPodlogka.png" class="img" style="height:30px">
+                                                                <H5>Год капитального ремонта</H5>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+                                                </div>
+                                                <div class="col-md-6" style="text-align:left;top:5px">
+
+
+                                                    <H5>@Model.Electro.RemontElectro</H5>
+
+
+
+                                                </div>
+                                            </div>
+                                            <div class="row row-bottom-margin">
+                                                <div class="col-md-6" style="text-align:left">
+
+                                                    <div class="container-fluid">
+                                                        <div class="row">
+                                                            <div class="img-wrap">
+                                                                <img src="~/Content/Images/GrayPodlogka.png" class="img" style="height:30px">
+                                                                <H5>Количество электровводов</H5>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+                                                </div>
+                                                <div class="col-md-6" style="text-align:left;top:5px">
+
+
+                                                    <H5>@Model.Electro.Electrovvods</H5>
+
+
+
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+
+
+                                }
+
+                                @if (Model.Vodootvod != null)
+                                {
+
+                                    <div class="container col-md-8">
+                                        <div class="row row-bottom-margin">
+                                            <div class="col" style="text-align:left">
+
+                                                <div class="container-fluid">
+                                                    <div class="row">
+                                                        <div class="img-wrap">
+                                                            <img src="~/Content/Images/GreenPodlogka.png" class="img-responsive">
+                                                            <H2>Система водоотведения</H2>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                        </div>
+                                        <div class="container col-md-12 " style="left:-15px">
+
+
+                                            <div class="row row-bottom-margin">
+                                                <div class="col-md-6" style="text-align:left">
+
+                                                    <div class="container-fluid">
+                                                        <div class="row">
+                                                            <div class="img-wrap">
+                                                                <img src="~/Content/Images/GrayPodlogka.png" class="img" style="height:30px">
+                                                                <H5>Износ системы водоотведения</H5>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+                                                </div>
+                                                <div class="col-md-6" style="text-align:left;top:5px">
+
+
+                                                    <H5>@Model.Vodootvod.Iznos %</H5>
+
+
+
+                                                </div>
+                                            </div>
+
+                                            <div class="row row-bottom-margin">
+                                                <div class="col-md-6" style="text-align:left">
+
+                                                    <div class="container-fluid">
+                                                        <div class="row">
+                                                            <div class="img-wrap">
+                                                                <img src="~/Content/Images/GrayPodlogka.png" class="img" style="height:30px">
+                                                                <H5>Год капитального ремонта</H5>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+                                                </div>
+                                                <div class="col-md-6" style="text-align:left;top:5px">
+
+
+                                                    <H5>@Model.Vodootvod.Remont</H5>
+
+
+
+                                                </div>
+                                            </div>
+                                            <div class="row row-bottom-margin">
+                                                <div class="col-md-6" style="text-align:left">
+
+                                                    <div class="container-fluid">
+                                                        <div class="row">
+                                                            <div class="img-wrap">
+                                                                <img src="~/Content/Images/GrayPodlogka.png" class="img" style="height:30px">
+                                                                <H5>Материал системы водоотведения</H5>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+                                                </div>
+                                                <div class="col-md-6" style="text-align:left;top:5px">
+
+
+                                                    <H5>@Model.Vodootvod.Material.Name</H5>
+
+
+
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+
+
+                                }
+
+                                @if (ViewBag.Works.Count > 0)
+                                {
+
+                                    <div class="container col-md-8">
+                                        <div class="row row-bottom-margin">
+                                            <div class="col" style="text-align:left">
+
+                                                <div class="container-fluid">
+                                                    <div class="row">
+                                                        <div class="img-wrap">
+                                                            <img src="~/Content/Images/GreenPodlogka.png" class="img-responsive">
+                                                            <H2>Выполненные работы</H2>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                        </div>
+                                        <div class="container col-md-8">
+                                            @for (int i = 0; i < ViewBag.Works.Count; i++)
+                                            {
+
+                                                <div class="row row-bottom-margin">
+                                                    <div class="col" style="text-align:left">
+
+                                                        <div class="container-fluid">
+                                                            <div class="row">
+                                                                <div class="img-wrap">
+                                                                    <img src="~/Content/Images/GrayPodlogka.png" class="img-responsive">
+                                                                    <H5>@ViewBag.Works[i]</H5>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+
+                                                    </div>
+                                                </div>
+
+
+                                            }
+                                        </div>
+                                    </div>
+
+
+                                }
+                                @if (ViewBag.Uslugis.Count > 0)
+                                {
+
+                                    <div class="container col-md-8">
+                                        <div class="row row-bottom-margin">
+                                            <div class="col" style="text-align:left">
+
+                                                <div class="container-fluid">
+                                                    <div class="row">
+                                                        <div class="img-wrap">
+                                                            <img src="~/Content/Images/GreenPodlogka.png" class="img-responsive">
+                                                            <H2>Выполненные услуги</H2>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                        </div>
+                                        <div class="container col-md-12 " style="left:-15px">
+                                            @for (int i = 0; i < ViewBag.Uslugis.Count; i++)
+                                            {
+
+                                                <div class="row row-bottom-margin">
+                                                    <div class="col-md-10" style="text-align:left">
+
+                                                        <div class="container-fluid">
+                                                            <div class="row">
+                                                                <div class="img-wrap">
+                                                                    <img src="~/Content/Images/GrayPodlogka.png" class="img-responsive">
+                                                                    <H5>@ViewBag.Uslugis[i]</H5>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+
+                                                    </div>
+                                                    <div class="col-md-2" style="text-align:left;top:5px">
+
+
+                                                        <H5>@ViewBag.UslugisCost[i]</H5>
+
+
+
+                                                    </div>
+                                                </div>
+
+
+                                            }
+                                        </div>
+                                    </div>
+
+
+                                }
+
+
                             </div>
+                        </div>
 
 
-                        }
+                    }
+                </div>
+
+            </div>
+
+            <div class="container ">
+                <div class="row row-bottom-margin">
+
+                    <div class="col-md-12" style="text-align:left">
+                        @Html.ActionLink("Назад", "Index", null, new { @class = "btn btn-success btn-block" })
 
 
                     </div>
-                    </div>
-
-
-            }
-        </div>
-
-    </div>
-
-    <div class="container ">
-        <div class="row row-bottom-margin">
-            
-                <div class="col-md-12" style="text-align:left">
-                    @Html.ActionLink("Назад", "Index", null, new { @class = "btn btn-success btn-block" })
 
 
                 </div>
-
-         
-        </div>
-    </div>
+            </div>
 </body>
 </html>
+
+
+@section Scripts{
+    @Scripts.Render("~/scripts/jquery-3.3.1.min.js")
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+    @Scripts.Render("~/scripts/nprogress.min.js")
+    @Scripts.Render("~/scripts/jquery.signalR-2.4.0.min.js")
+    @Scripts.Render("~/signalr/hubs")
+
+
+    <!--SignalR script to update the chat page and send messages.-->
+    <script>
+        //при открытии страницы
+        $("#progress").hide();
+        $("#warning").hide();
+
+    </script>
+    <script>
+        $("#download").click(function () {
+            $("#progress").fadeIn("slow");
+            $("#main").fadeOut("slow");
+        }
+        );
+    </script>
+    <script>
+        $(function () {
+            var PB = $.connection.progressHub;
+            console.log("Тест");
+            PB.client.sendMessage = function (message, count) {
+                // update progress
+                console.log(count);
+                UpdateProgress(message, count);
+                //alert(message);
+            };
+
+            $.connection.hub.start().done(function () {
+                console.log("Приконнектились");
+                // call the method CallLongOperation defined in the Hub
+                PB.server.getCountAndMessage();
+                $("#progressBar").hide();
+
+
+
+            });
+
+
+            // Update the progress bar
+            function UpdateProgress(message, count) {
+                $("#progressBar").fadeIn("slow");
+                var result = $("#result");
+                result.html(message);
+
+                //$("#progressBar").data("progressbar").value(count);
+
+                $("#progressBar").attr("aria-valuenow", count);
+                $("#progressBar").width(count + '%');
+                $("#progressBar").text(count + '%');
+                $("#nadpis").text(message);
+                // $("#progressBar").css("width", count);
+            }
+        });
+    </script>
+
+  
+
+   
+}

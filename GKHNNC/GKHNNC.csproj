@@ -243,10 +243,16 @@
     <Compile Include="Controllers\AvtoScansController.cs" />
     <Compile Include="Controllers\ChatMessagesController.cs" />
     <Compile Include="Controllers\CompleteWorksController.cs" />
+    <Compile Include="Controllers\DefectController.cs" />
+    <Compile Include="Controllers\DOMCWsController.cs" />
+    <Compile Include="Controllers\DOMElectroesController.cs" />
     <Compile Include="Controllers\DOMFasadsController.cs" />
     <Compile Include="Controllers\DOMFundamentsController.cs" />
+    <Compile Include="Controllers\DOMHWsController.cs" />
+    <Compile Include="Controllers\DOMOtopleniesController.cs" />
     <Compile Include="Controllers\DOMRoofsController.cs" />
     <Compile Include="Controllers\DOMRoomsController.cs" />
+    <Compile Include="Controllers\DOMVodootvodsController.cs" />
     <Compile Include="Controllers\ExcelExportMonth.cs" />
     <Compile Include="Controllers\EzdkasController.cs" />
     <Compile Include="Controllers\FasadMaterialsController.cs" />
@@ -261,6 +267,7 @@
     <Compile Include="Controllers\LogsController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\MarkaAvtomobilsController.cs" />
+    <Compile Include="Controllers\MaterialsController.cs" />
     <Compile Include="Controllers\MechanicsController.cs" />
     <Compile Include="Controllers\MusorsController.cs" />
     <Compile Include="Controllers\NegilayasController.cs" />
@@ -276,6 +283,7 @@
     <Compile Include="Controllers\RoomOverlapsController.cs" />
     <Compile Include="Controllers\RoomTypesController.cs" />
     <Compile Include="Controllers\RoomWindowsController.cs" />
+    <Compile Include="Controllers\SaveDB.cs" />
     <Compile Include="Controllers\SVNsController.cs" />
     <Compile Include="Controllers\TableServicesController.cs" />
     <Compile Include="Controllers\TarifsController.cs" />
@@ -306,12 +314,23 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\DOMCW.cs" />
+    <Compile Include="Models\DOMElectro.cs" />
+    <Compile Include="Models\DOMOtoplenie.cs" />
+    <Compile Include="Models\DOMVodootvod.cs" />
+    <Compile Include="Models\DOMHW.cs" />
+    <Compile Include="Models\DefDescription.cs" />
+    <Compile Include="Models\DefectEdit.cs" />
+    <Compile Include="Models\DefWork.cs" />
+    <Compile Include="Models\Element.cs" />
+    <Compile Include="Models\Defect.cs" />
     <Compile Include="Models\Adres.cs" />
     <Compile Include="Models\AdresView.cs" />
     <Compile Include="Models\Agent.cs" />
     <Compile Include="Models\ASControlView.cs" />
     <Compile Include="Models\DOM.cs" />
     <Compile Include="Models\Mechanic.cs" />
+    <Compile Include="Models\Material.cs" />
     <Compile Include="Models\Musor.cs" />
     <Compile Include="Models\Zakazchik.cs" />
     <Compile Include="Models\Voditel.cs" />
@@ -458,6 +477,7 @@
     <Content Include="Content\Images\DDD4.png" />
     <Content Include="Content\Images\DDD5.png" />
     <Content Include="Content\Images\DDD6.png" />
+    <Content Include="Content\Images\Fasads\GN.png" />
     <Content Include="Content\Images\fire.png" />
     <Content Include="Content\Images\fireBig.png" />
     <Content Include="Content\Images\Fundaments\1.png" />
@@ -1286,6 +1306,41 @@
     <Content Include="Views\Musors\NotUpload.cshtml" />
     <Content Include="Views\Musors\Upload.cshtml" />
     <Content Include="Views\Musors\UploadComplete.cshtml" />
+    <Content Include="Views\Defect\NotUpload.cshtml" />
+    <Content Include="Views\Defect\Upload.cshtml" />
+    <Content Include="Views\Defect\UploadComplete.cshtml" />
+    <Content Include="Views\Defect\ElementSelect.cshtml" />
+    <Content Include="Views\Defect\DefectEdit.cshtml" />
+    <Content Include="Views\Materials\Create.cshtml" />
+    <Content Include="Views\Materials\Delete.cshtml" />
+    <Content Include="Views\Materials\Details.cshtml" />
+    <Content Include="Views\Materials\Edit.cshtml" />
+    <Content Include="Views\Materials\Index.cshtml" />
+    <Content Include="Views\DOMCWs\Create.cshtml" />
+    <Content Include="Views\DOMCWs\Delete.cshtml" />
+    <Content Include="Views\DOMCWs\Details.cshtml" />
+    <Content Include="Views\DOMCWs\Edit.cshtml" />
+    <Content Include="Views\DOMCWs\Index.cshtml" />
+    <Content Include="Views\DOMHWs\Create.cshtml" />
+    <Content Include="Views\DOMHWs\Delete.cshtml" />
+    <Content Include="Views\DOMHWs\Details.cshtml" />
+    <Content Include="Views\DOMHWs\Edit.cshtml" />
+    <Content Include="Views\DOMHWs\Index.cshtml" />
+    <Content Include="Views\DOMElectroes\Create.cshtml" />
+    <Content Include="Views\DOMElectroes\Delete.cshtml" />
+    <Content Include="Views\DOMElectroes\Details.cshtml" />
+    <Content Include="Views\DOMElectroes\Edit.cshtml" />
+    <Content Include="Views\DOMElectroes\Index.cshtml" />
+    <Content Include="Views\DOMVodootvods\Create.cshtml" />
+    <Content Include="Views\DOMVodootvods\Delete.cshtml" />
+    <Content Include="Views\DOMVodootvods\Details.cshtml" />
+    <Content Include="Views\DOMVodootvods\Edit.cshtml" />
+    <Content Include="Views\DOMVodootvods\Index.cshtml" />
+    <Content Include="Views\DOMOtoplenies\Create.cshtml" />
+    <Content Include="Views\DOMOtoplenies\Delete.cshtml" />
+    <Content Include="Views\DOMOtoplenies\Details.cshtml" />
+    <Content Include="Views\DOMOtoplenies\Edit.cshtml" />
+    <Content Include="Views\DOMOtoplenies\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1339,6 +1394,7 @@
           <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>
+      <UserProperties Scripts_4jquery-3_13_11_1min_1map__JSONSchema="" />
     </VisualStudio>
   </ProjectExtensions>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

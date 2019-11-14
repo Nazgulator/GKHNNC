@@ -97,6 +97,22 @@ namespace GKHNNC.DAL
         public System.Data.Entity.DbSet<GKHNNC.Models.Tarif> Tarifs { get; set; }
 
         public System.Data.Entity.DbSet<GKHNNC.Models.Musor> Musors { get; set; }
+        public System.Data.Entity.DbSet<GKHNNC.Models.Defect> Defects { get; set; }
+        public System.Data.Entity.DbSet<GKHNNC.Models.Element> Elements { get; set; }
+        public System.Data.Entity.DbSet<GKHNNC.Models.DefDescription> DefDescriptions { get; set; }
+        public System.Data.Entity.DbSet<GKHNNC.Models.DefWork> DefWorks { get; set; }
+
+        public System.Data.Entity.DbSet<GKHNNC.Models.Material> Materials { get; set; }
+
+        public System.Data.Entity.DbSet<GKHNNC.Models.DOMCW> DOMCWs { get; set; }
+
+        public System.Data.Entity.DbSet<GKHNNC.Models.DOMHW> DOMHWs { get; set; }
+
+        public System.Data.Entity.DbSet<GKHNNC.Models.DOMElectro> DOMElectroes { get; set; }
+
+        public System.Data.Entity.DbSet<GKHNNC.Models.DOMVodootvod> DOMVodootvods { get; set; }
+
+        public System.Data.Entity.DbSet<GKHNNC.Models.DOMOtoplenie> DOMOtoplenies { get; set; }
 
 
         //protected override void OnModelCreating(DbModelBuilder modelBuilder)

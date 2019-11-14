@@ -109,12 +109,57 @@ namespace GKHNNC.Controllers
             if (tek > max) { tek = Convert.ToInt32(max); }
             ProgressHub.SendMessage(message, progress);
         }
+        public string zachistkaAdresa (string s)
+        {
+            //ищем первые три запятые и вырезаем строку ищем улицу
+            int zap = 0;
+            for (int i = s.Length - 1; i > 0; i--)
+            {
+                if (s[i].Equals(','))
+                {
+                    zap++;
+                    if (zap == 2)
+                    {
+                        s = s.Remove(0, i).Replace("пр-кт", "").Replace("Бульвар", "").Replace("проезд", "").Replace("ул", "").Replace("д.", "").Replace("б-р", "").Replace(",", "").Replace(" ", "").ToUpper();
+                        break;
+                    }
+                }
+            }
+            return s;
+        }
+        public int poiskAdresa(string s)
+        {
+            int ind = 0;
+            //ищем первые три запятые и вырезаем строку ищем улицу
+          
+            return ind;
+        }
+
+        public int PoiskMateriala (string s)
+        {
+            string SS = s.ToLower().Replace(" ", "").Replace("-","").Replace(".","");
+            Material Mat = new Material();
+            int id = 1;
+        
+            try
+            {
+                Mat = db.Materials.Where(x => x.Name.ToLower().Replace(" ", "").Equals(SS)).First();
+                id = Mat.Id;
+            } catch
+            {
+
+            }
+           
+            return id;
+        }
+      
         [HttpPost]
         public ActionResult Upload(HttpPostedFileBase upload, DateTime Date)
         {
             int progress = 0;
             double pro100 = 0;
             int procount = 0;
+            Date = new DateTime(Date.Year, Date.Month, 1);
             if (upload != null)
             {
                 HttpCookie cookie = new HttpCookie("My localhost cookie");
@@ -152,6 +197,36 @@ namespace GKHNNC.Controllers
                         Console.WriteLine(e.Message);
                     }
                 }
+                List<DOMFasad> dbFasads = db.DOMFasads.Where(x => x.Date.Year == Date.Year && x.Date.Month == Date.Month).ToList();
+                tek = 0;
+                foreach (DOMFasad S in dbFasads)
+                {
+                    try
+                    {
+                        db.DOMFasads.Remove(S);
+                        db.SaveChanges();
+                        otklik(dbRoofs.Count, ref tek, "удаляем старые данные фасадов...");
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                }
+                List<DOMRoom> dbRooms = db.DOMRooms.Where(x => x.Date.Year == Date.Year && x.Date.Month == Date.Month).ToList();
+                tek = 0;
+                foreach (DOMRoom S in dbRooms)
+                {
+                    try
+                    {
+                        db.DOMRooms.Remove(S);
+                        db.SaveChanges();
+                        otklik(dbRoofs.Count, ref tek, "удаляем старые данные внутридомовых элементов...");
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                }
 
 
                 // Установить значения в нем
@@ -173,17 +248,15 @@ namespace GKHNNC.Controllers
                     Directory.CreateDirectory(Server.MapPath("~/Files/"));
 
                 }
+                
                 upload.SaveAs(Server.MapPath("~/Files/" + fileName));
                 //обрабатываем файл после загрузки
 
 
-                                                 //0адрес        1площадь_отмостки     2материал_фундамента    3тип_фундамента        4Кап_Ремонт_кровли        5Утеплитель          6ФормаКрыши      7КапРемонтНесущейЧасти    8ВидНесущейЧасти         9 ТипКровли
-                string[] Names = new string[] { "HOME_ADDRESS", "MKDSPECIFIED_14581", "MKDSPECIFIED_15016_1", "MKDSPECIFIED_13516_1","MKDSPECIFIED_20083","MKDSPECIFIED_15246_1","MKDSPECIFIED_12179_1","MKDSPECIFIED_20078","MKDSPECIFIED_20152_1","MKDSPECIFIED_12185_1"
-
-
- };
+                                                  //0адрес        1площадь_отмостки     2материал_фундамента    3тип_фундамента        4Кап_Ремонт_кровли        5Утеплитель          6ФормаКрыши      7КапРемонтНесущейЧасти    8ВидНесущейЧасти         9 ТипКровли       10 Износ фасада     11 Год ремонта фасада  12 Материал отделки фасада  13 Тип фасада      14 Утепление фасада  15 Балконы, лоджии 16 Количество балконов 17 Количество лоджий 18Тип внутренних стен 19Перекрытия                 20 Окна               21 Двери
+                string[] Names = new string[] { "HOME_ADDRESS", "MKDSPECIFIED_14581", "MKDSPECIFIED_15016_1", "MKDSPECIFIED_13516_1","MKDSPECIFIED_20083","MKDSPECIFIED_15246_1","MKDSPECIFIED_12179_1","MKDSPECIFIED_20078","MKDSPECIFIED_20152_1","MKDSPECIFIED_12185_1","MKDSPECIFIED_20072","MKDSPECIFIED_20073", "MKDSPECIFIED_13049_1","MKDSPECIFIED_14549_1","MKDSPECIFIED_14011_1","MKDSPECIFIED_20120","MKDSPECIFIED_11556","MKDSPECIFIED_13056","MKDSPECIFIED_16590_1","MKDSPECIFIED_15087_1","MKDSPECIFIED_13059_1","MKDSPECIFIED_12139_1"};
                 string Error = "";
-                List<List<string>> excel = ExcelSVNUpload.IMPORT(Server.MapPath("~/Files/" + fileName), Names, out Error);
+                List<List<string>> excel = ExcelSVNUpload.IMPORT(Server.MapPath("~/Files/" + fileName), Names, out Error, "КонстЭлемОЖФ");
                 if (excel.Count < 1)
                 {
                     //если нифига не загрузилось то 
@@ -197,6 +270,8 @@ namespace GKHNNC.Controllers
                     pro100 = excel.Count;
                     DOMFundament Fundament = new DOMFundament();
                     DOMRoof Roof = new DOMRoof();
+                    DOMFasad Fasad = new DOMFasad();
+                    DOMRoom Room = new DOMRoom();
                     List<Adres> Adresa = db.Adres.ToList();// грузим все адреса из БД
                     List<FundamentMaterial> FundamentMat = db.FundamentMaterials.ToList();
                     List<FundamentType> FundamentType = db.FundamentTypes.ToList();
@@ -208,35 +283,28 @@ namespace GKHNNC.Controllers
                     List<string> errors = new List<string>();
                     List<string> saveR = new List<string>();
                     List<string> errorsR = new List<string>();
+                    List<string> saveRoom = new List<string>();
+                    List<string> errorsRoom = new List<string>();
+                    List<string> saveF = new List<string>();
+                    List<string> errorsF = new List<string>();
 
 
                     //для каждой строки в экселе
                     foreach (List<string> L in excel)
                     {
-                       
-                        //ищем первые три запятые и вырезаем строку ищем улицу
-                        int zap = 0;
-                        for (int i= (L[0].Length-1); i>0;i--)
-                        {
-                            if(L[0][i].Equals(','))
-                            {
-                                zap++;
-                                if (zap==2)
-                                {
-                                    L[0] = L[0].Remove(0, i).Replace("пр-кт", "").Replace("Бульвар", "").Replace("проезд", "").Replace("ул","").Replace("д.","").Replace("б-р","").Replace(",", "").Replace(" ","").ToUpper();
-                                    break;
-                                }
-                            }
-                        }
+
+                        string adr = zachistkaAdresa(L[0]);
                         //сверяем улицу 
                         bool go = false;
                         foreach (Adres A in Adresa)
                         {
-                            if (A.Adress.Equals(L[0]))
+                            if (A.Adress.Equals(adr))
                             {
                                 //если улица совпала то сохраняем айдишник
                                 Fundament.AdresId = A.Id;
                                 Roof.AdresId = A.Id;
+                                Fasad.AdresId = A.Id;
+                                Room.AdresId = A.Id;
                                 go = true;
                                 break;
                             }
@@ -358,7 +426,142 @@ namespace GKHNNC.Controllers
                             {
                                 errorsR.Add(L[0] + "(нулевые данные)");
                             }
+                            // Теперь ищем фасады 10 Износ фасада     11 Год ремонта фасада  12 Материал отделки фасада  13 Тип фасада      14 Утепление фасада
+                            Fasad.Date = Date;
+                            Fasad.Iznos = Convert.ToInt16(L[10]);
+                            Fasad.Year = Convert.ToInt16(L[11]);
+                            Fasad.MaterialId =1;
+                            try
+                            {
+                                foreach (FasadMaterial F in db.FasadMaterials)
+                                {
+                                    if (F.Material.Replace(" ", "").ToUpper().Equals(L[12].Replace(" ", "").ToUpper()))
+                                    {
+                                        Fasad.MaterialId = F.Id;
+                                        break;
+                                    }
+                                }
+                            }
+                            catch { }
+                            Fasad.UteplenieId = 1;
+                            try
+                            {
+                                foreach (FasadUteplenie F in db.FasadUteplenies)
+                                {
+                                    if (F.Uteplenie.Replace(" ", "").ToUpper().Equals(L[14].Replace(" ", "").ToUpper()))
+                                    {
+                                        Fasad.UteplenieId = F.Id;
+                                        break;
+                                    }
+                                }
+                            }
+                            catch { }
+                            Fasad.TypeId = 1;
+                            try
+                            {
+                                foreach (FasadType F in db.FasadTypes)
+                                {
+                                    if (F.Type.Replace(" ", "").ToUpper().Equals(L[13].Replace(" ", "").ToUpper()))
+                                    {
+                                        Fasad.TypeId = F.Id;
+                                        break;
+                                    }
+                                }
+                            }
+                            catch { }
+                            if (Fasad.UteplenieId + Fasad.TypeId + Fasad.MaterialId > 3)
+                            {
+                                try
+                                {
+                                    db.DOMFasads.Add(Fasad);
+                                    db.SaveChanges();
+                                    saveF.Add(L[0]);
+                                }
+                                catch (Exception e)
+                                {
+                                    db.DOMFasads.Remove(Fasad);
+                                    errorsF.Add(L[0] + "(ошибка сохранения)");
+                                }
+                            }
+                            else
+                            {
+                                errorsF.Add(L[0] + "(нулевые данные)");
+                            }
 
+                            //Теперь внутренности помещений 16 Количество балконов 17 Количество лоджий 18Тип внутренних стен 19Перекрытия 20 Окна 21 Двери
+                            Room.Date = Date;
+                            Room.Lodgi = Convert.ToInt16(L[17]);
+                            Room.Balkon = Convert.ToInt16(L[16]);
+                            Room.TypeId = 1;
+                            try
+                            {
+                                foreach (RoomType F in db.RoomTypes)
+                                {
+                                    if (F.Type.Replace(" ", "").ToUpper().Equals(L[18].Replace(" ", "").ToUpper()))
+                                    {
+                                        Room.TypeId = F.Id;
+                                        break;
+                                    }
+                                }
+                            }
+                            catch { }
+                            Room.WindowId = 1;
+                            try
+                            {
+                                foreach (RoomWindow F in db.RoomWindows)
+                                {
+                                    if (F.Window.Replace(" ", "").ToUpper().Equals(L[20].Replace(" ", "").ToUpper()))
+                                    {
+                                        Room.WindowId = F.Id;
+                                        break;
+                                    }
+                                }
+                            }
+                            catch { }
+                            Room.OverlapId = 1;
+                            try
+                            {
+                                foreach (RoomOverlap F in db.RoomOverlaps)
+                                {
+                                    if (F.Overlap.Replace(" ", "").ToUpper().Equals(L[19].Replace(" ", "").ToUpper()))
+                                    {
+                                        Room.TypeId = F.Id;
+                                        break;
+                                    }
+                                }
+                            }
+                            catch { }
+                            Room.DoorId = 1;
+                            try
+                            {
+                                foreach (RoomDoor F in db.RoomDoors)
+                                {
+                                    if (F.Door.Replace(" ", "").ToUpper().Equals(L[21].Replace(" ", "").ToUpper()))
+                                    {
+                                        Room.DoorId = F.Id;
+                                        break;
+                                    }
+                                }
+                            }
+                            catch { }
+                            if (Room.DoorId + Room.TypeId + Room.OverlapId+Room.WindowId > 4)
+                            {
+                                try
+                                {
+                                    db.DOMRooms.Add(Room);
+                                    db.SaveChanges();
+                                    saveRoom.Add(L[0]);
+                                }
+                                catch (Exception e)
+                                {
+                                    db.DOMRooms.Remove(Room);
+                                    errorsRoom.Add(L[0] + "(ошибка сохранения)");
+                                }
+                            }
+                            else
+                            {
+                                errorsRoom.Add(L[0] + "(нулевые данные)");
+                            }
 
 
                         }
@@ -366,15 +569,7 @@ namespace GKHNNC.Controllers
                         {
                             errors.Add(L[0]);
                         }
-                        //теперь сохраняем крыши если конечно нашли адрес
-                     
-                        
-                           
-                       
-                      
 
-
-                        
                         procount++;
                         progress = Convert.ToInt16(50 + procount / pro100 * 50);
                         ProgressHub.SendMessage("Обрабатываем файл ГИС ЖКХ...", progress);
@@ -386,15 +581,194 @@ namespace GKHNNC.Controllers
                     ViewBag.Errors = errors;
                     ViewBag.SaveR = saveR;
                     ViewBag.ErrorsR = errorsR;
-
+                    ViewBag.SaveRoom = saveRoom;
+                    ViewBag.ErrorsRoom = errorsRoom;
+                    ViewBag.SaveF = saveF;
+                    ViewBag.ErrorsF = errorsF;
 
 
                     ViewBag.date = Date;
                     ViewBag.file = fileName;
+                    
+                    //Грузим 2 часть файла!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+                    upload.SaveAs(Server.MapPath("~/Files/" + fileName));
+                    //обрабатываем файл после загрузки
 
 
+                                             //0адрес          1Износ ГВ         2материал ХВ              3Износ ХВ            4Материал ГВ             5Материал стояков    6КоличествоЭлектровводов  7МатериалВодоотведения  8Год кап. рем. водоотвед.  9Кап. рем. электро.  10Кап. рем. ХВ.   11Кап.рем.ГВ    12Износ отопл. 13Количество вводов отопления. 14.Материал отопления1 15.Материал отопления2  16.Материал труб отопления 17.Износ электро 18.Износ водоотвод
+                    Names = new string[] { "HOME_ADDRESS", "MKDSPECIFIED_20114", "MKDSPECIFIED_14778_1", "MKDSPECIFIED_20107", "MKDSPECIFIED_12023_1", "MKDSPECIFIED_12060_1", "MKDSPECIFIED_12545", "MKDSPECIFIED_13412_1", "MKDSPECIFIED_20143", "MKDSPECIFIED_20122", "MKDSPECIFIED_20105", "MKDSPECIFIED_20112", "MKDSPECIFIED_20096", "MKDSPECIFIED_12035", "MKDSPECIFIED_14721_1", "MKDSPECIFIED_14721_2", "MKDSPECIFIED_15055_1", "MKDSPECIFIED_21834", "MKDSPECIFIED_21833" };
+                    Error = "";
+                    excel = ExcelSVNUpload.IMPORT(Server.MapPath("~/Files/" + fileName), Names, out Error, "ВнутрСистемыОЖФ");
+                    if (excel.Count < 1)
+                    {
+                        //если нифига не загрузилось то 
+                        ViewBag.Error = Error;
+                        ViewBag.Names = Names;
+                        Console.WriteLine("Пустой массив значит файл не загрузился!(он уже удалился)");
+                        return View("NotUpload");
+                    }
+                    else
+                    {
+                        DOMOtoplenie Otoplenie = new DOMOtoplenie();
+                        DOMVodootvod Vodootvod = new DOMVodootvod();
+                        DOMHW HW = new DOMHW();
+                        DOMCW CW = new DOMCW();
+                        DOMElectro Electro = new DOMElectro();
 
-                    return View("UploadComplete");
+                        pro100 = excel.Count;
+                        Material Material = new Material();
+
+                        Adresa = db.Adres.ToList();// грузим все адреса из БД
+                                                   // List<Material> Materials = db.Materials.ToList();
+
+                        //для каждой строки в экселе
+                        foreach (List<string> L in excel)
+                        {
+
+                            string adr = zachistkaAdresa(L[0]);
+                            //сверяем улицу 
+                         
+                            foreach (Adres A in Adresa)
+                            {
+                                if (A.Adress.Equals(adr))
+                                {
+                                  
+                                    //если улица совпала то сохраняем айдишник
+                                    bool s = false;
+                                    try
+                                    {
+                                        Otoplenie = db.DOMOtoplenies.Where(x => x.AdresId == A.Id&& x.Date.Year == Date.Year && x.Date.Month == Date.Month).First();
+                                        s = true;
+                                    
+
+                                    }
+                                    catch { }
+                                    Otoplenie.AdresId = A.Id;
+                                    Otoplenie.IznosOtop = Convert.ToInt32(L[12]);
+                                    Otoplenie.VvodsOtop = Convert.ToInt32(L[13]);
+                                    Otoplenie.MaterialOtop1Id = PoiskMateriala(L[14].ToString());
+                                    Otoplenie.MaterialOtop2Id = PoiskMateriala(L[15].ToString());
+                                    Otoplenie.MaterialOtopTrubId = PoiskMateriala(L[16].ToString());
+                                    Otoplenie.MaterialTeploId = PoiskMateriala(L[5].ToString());
+                                    Otoplenie.Date = Date;
+                                    if (s)
+                                    {
+                                        db.Entry(Otoplenie).State = EntityState.Modified;
+                                        db.SaveChanges();
+                                    } else
+                                    {
+                                        db.DOMOtoplenies.Add(Otoplenie);
+                                        db.SaveChanges();
+                                    }
+                                   
+
+                                    s = false;
+                                    try
+                                    {
+                                        Vodootvod = db.DOMVodootvods.Where(x => x.AdresId == A.Id && x.Date.Year == Date.Year && x.Date.Month == Date.Month).First();
+                                        s = true;
+                                    }
+                                    catch { }
+
+                                    Vodootvod.AdresId = A.Id;
+                                    Vodootvod.Iznos = Convert.ToInt32(L[18]);
+                                    Vodootvod.MaterialId = PoiskMateriala(L[7].ToString());
+                                    Vodootvod.Remont = Convert.ToInt32(L[8]);
+                                    Vodootvod.Date = Date;
+                                    if (s)
+                                    {
+                                        db.Entry(Vodootvod).State = EntityState.Modified;
+                                        db.SaveChanges();
+                                    }
+                                    else
+                                    {
+                                        db.DOMVodootvods.Add(Vodootvod);
+                                        db.SaveChanges();
+                                    }
+
+                                    s = false;
+                                    try
+                                    {
+                                        HW = db.DOMHWs.Where(x => x.AdresId == A.Id && x.Date.Year == Date.Year && x.Date.Month == Date.Month).First();
+                                        s = true;
+                                    }
+                                    catch { }
+
+
+                                    HW.AdresId = A.Id;
+                                    HW.IznosHW = Convert.ToInt32(L[1]);
+                                    HW.MaterialHWId = PoiskMateriala(L[4].ToString());
+                                    HW.RemontHW = Convert.ToInt32(L[11]);
+                                    HW.Date = Date;
+                                    if (s)
+                                    {
+                                        db.Entry(HW).State = EntityState.Modified;
+                                        db.SaveChanges();
+                                    }
+                                    else
+                                    {
+                                        db.DOMHWs.Add(HW);
+                                        db.SaveChanges();
+                                    }
+
+                                    s = false;
+                                    try
+                                    {
+                                        CW = db.DOMCWs.Where(x => x.AdresId == A.Id && x.Date.Year == Date.Year && x.Date.Month == Date.Month).First();
+                                        s = true;
+                                    }
+                                    catch { }
+
+                                    CW.AdresId = A.Id;
+                                    CW.IznosCW = Convert.ToInt32(L[3]);
+                                    CW.MaterialCWId = PoiskMateriala(L[2].ToString());
+                                    CW.RemontCW = Convert.ToInt32(L[10]);
+                                    CW.Date = Date;
+                                    if (s)
+                                    {
+                                        db.Entry(CW).State = EntityState.Modified;
+                                        db.SaveChanges();
+                                    }
+                                    else
+                                    {
+                                        db.DOMCWs.Add(CW);
+                                        db.SaveChanges();
+                                    }
+
+
+                                    s = false;
+                                    try
+                                    {
+                                        Electro = db.DOMElectroes.Where(x => x.AdresId == A.Id && x.Date.Year == Date.Year && x.Date.Month == Date.Month).First();
+                                        s = true;
+                                    }
+                                    catch { }
+                                    Electro.AdresId = A.Id;
+                                    Electro.Electrovvods = Convert.ToInt32(L[6]);
+                                    Electro.IznosElectro = Convert.ToInt32(L[17]);
+                                    Electro.RemontElectro = Convert.ToInt32(L[9]);
+                                    Electro.Date = Date;
+                                    
+
+                                    if (s)
+                                    {
+                                        db.Entry(Electro).State = EntityState.Modified;
+                                        db.SaveChanges();
+                                    }
+                                    else
+                                    {
+                                        db.DOMElectroes.Add(Electro);
+                                        db.SaveChanges();
+                                    }
+                                    break;
+                                }
+                            }
+                            //если нашли адрес то сохраняем все остальные данные
+
+                        }
+                        return View("UploadComplete");
+                    }
                 }
             }
             return RedirectToAction("Index");

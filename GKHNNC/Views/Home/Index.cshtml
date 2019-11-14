@@ -68,7 +68,7 @@
                     </button>
                 </p>
             }
-            if (User.IsInRole("Администратор") || User.Identity.Name.Contains("ИнженерОЭЖФ"))
+            if (User.IsInRole("Администратор") || User.Identity.Name.Contains("ИнженерОЭЖФ") || User.Identity.Name.Contains("Эксплуатация"))
             {
 
 
@@ -101,7 +101,16 @@
                                     <i class="glyphicon glyphicon-inbox"></i> Тех. паспорт дома &raquo;
                                 </button>
                             </p>
-
+                            <p>
+                                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("DefectEdit", "Defect")'">
+                                    <i class="glyphicon glyphicon-star"></i> Редактор дефектов &raquo;
+                                </button>
+                            </p>
+                            <p>
+                                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Materials")'">
+                                    <i class="glyphicon glyphicon-tint"></i> Редактор материалов &raquo;
+                                </button>
+                            </p>
                         </div>
                     </div>
 
@@ -150,6 +159,11 @@
                             <p>
                                 <button class="btn btn-success btn-lg" style="width:500Px" onclick="location.href='@Url.Action("VODAMain", "Home")'">
                                     <i class="glyphicon glyphicon-list-alt"></i> Программа "VODA" &raquo;
+                                </button>
+                            </p>
+                            <p>
+                                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Upload", "Defect")'">
+                                    <i class="glyphicon glyphicon-warning-sign"></i> Дефектные файлы &raquo;
                                 </button>
                             </p>
 

@@ -370,12 +370,12 @@ namespace GKHNNC.Controllers
             catch {
                 //если вкладку не нашли
                 // Закрытие книги.
-                WbExcel.Close(false, "", Type.Missing);
+               // WbExcel.Close(false, "", Type.Missing);
                 // Закрытие приложения Excel.
 
                 ApExcel.Quit();
 
-                Marshal.FinalReleaseComObject(WbExcel);
+                //Marshal.FinalReleaseComObject(WbExcel);
                 Marshal.FinalReleaseComObject(WB);
                 Marshal.FinalReleaseComObject(ApExcel);
                 GC.Collect();
@@ -424,6 +424,8 @@ namespace GKHNNC.Controllers
 
             int lastRow = WS.UsedRange.Rows.Count;
             int LastCol = WS.UsedRange.Columns.Count;
+            //range = WS.get_Range("A1", Opr.OpredelenieBukvi(lastRow)+"10");
+           
             if (LastCol < Names.Length) { LastCol = Names.Length + 2; }//если вдруг количество столбцов криво определилось 
         
             var EXX = new object[lastRow, LastCol];
@@ -432,6 +434,7 @@ namespace GKHNNC.Controllers
             if (lastRow - rr * 100 < 0) { rr = rr - 1; }
             if (rr == 0) { rr = 1; }
             int rrr = lastRow - rr * 100;
+            if (rrr < 0) { rrr = 0; }
             int lastrr = 0;
             int end = 100;
             if (lastRow <= 100) { end = lastRow; }
@@ -558,9 +561,11 @@ namespace GKHNNC.Controllers
 
                 int Konec = 0;
                 int Schetchik = 0;
-                while (Konec<2&& Schetchik<lastRow-1) 
+               
+                while (Konec<=5&& Schetchik<lastRow-1) 
                 {
                     Schetchik++;
+                    if (startStroka >= lastRow-1) { break; }
                     if (EXX[startStroka, NamesI[0]] != null)
                     {
                         Konec = 0;

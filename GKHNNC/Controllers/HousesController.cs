@@ -80,6 +80,36 @@ namespace GKHNNC.Controllers
             List<Arendator> Arendators = db.Arendators.Where(c => c.Date.Year == Date.Year&&c.Date.Month == Date.Month&& c.AdresId==id).ToList();//Берем выбранный дом и ищем в нем арендаторов
             List<UEV> Uevs = db.UEVs.Where(c => c.AdresId == id&& c.Date.Year == Date.Year && c.Date.Month == Date.Month).ToList();
             List<OPU> Opus = db.OPUs.Where(c => c.Date.Year == Date.Year && c.Date.Month == Date.Month && c.AdresId == id).ToList();
+            DOMOtoplenie Otoplenie = null;
+            try
+            {
+                Otoplenie = db.DOMOtoplenies.Where(c => c.AdresId == id).OrderByDescending(c => c.Date).Include(x=>x.MaterialOtop1).Include(x=>x.MaterialOtop2).Include(x=>x.MaterialOtopTrub).Include(x=>x.MaterialTeplo).First();
+            }
+            catch (Exception e) { }
+            DOMCW ColdW = null;
+            try
+            {
+                ColdW = db.DOMCWs.Where(c => c.AdresId == id).OrderByDescending(c => c.Date).Include(x => x.MaterialCW).First();
+            }
+            catch (Exception e) { }
+            DOMHW HotW = null;
+            try
+            {
+                HotW = db.DOMHWs.Where(c => c.AdresId == id).OrderByDescending(c => c.Date).Include(x => x.MaterialHW).First();
+            }
+            catch (Exception e) { }
+            DOMElectro Electro = null;
+            try
+            {
+               Electro = db.DOMElectroes.Where(c => c.AdresId == id).OrderByDescending(c => c.Date).First();
+            }
+            catch (Exception e) { }
+            DOMVodootvod Vodootvod = null;
+            try
+            {
+                Vodootvod = db.DOMVodootvods.Where(c => c.AdresId == id).OrderByDescending(c => c.Date).Include(x => x.Material).First();
+            }
+            catch (Exception e) { }
             DOMFundament Fundament = new DOMFundament();
             try
             {
@@ -135,7 +165,11 @@ namespace GKHNNC.Controllers
                 ho.ColdWaterArendators = Arendators.Sum(e => e.ColdWater);//Сумма Холодной воды арендаторов
                 ho.HotWaterArendators = Arendators.Sum(e => e.HotWater);//Сумма Горячей воды арендаторов
                 ho.Date =  Date;//берем макс дату (Она единственная для всех)
-
+            ho.Otoplenie = Otoplenie;
+            ho.HotW = HotW;
+            ho.ColdW = ColdW;
+            ho.Electro = Electro;
+            ho.Vodootvod = Vodootvod;
             //пишем все данные по конструктивным элементам
 
             if (Fundament.Type != null)
@@ -240,6 +274,7 @@ namespace GKHNNC.Controllers
             ViewBag.Works = Works;
             ViewBag.Uslugis = Uslugis;
             ViewBag.UslugisCost = UslugisCost;
+            
             string prim = "";
             try
             {

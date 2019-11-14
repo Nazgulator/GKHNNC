@@ -1,0 +1,47 @@
+﻿@model IEnumerable<GKHNNC.Models.DefectEdit>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+<h3>  @Html.DisplayNameFor(model => model.Element.Name) </h3>
+
+<table>
+@foreach (var item in Model)
+{
+    <tr>
+        <td>
+            Список дефектов:
+        </td>
+    </tr>
+    for (int i = 0; i < item.Defect.Count; i++)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Defect[i].Def);
+                @Html.ActionLink(" E ", "Edit", new { id = item.Defect[i].Id }) |
+                @Html.ActionLink("X", "Delete", new { id = item.Defect[i].Id })
+            </td>
+        </tr>
+    }
+    <tr>
+        <td>
+            Список работ:
+
+        </td>
+    </tr>
+    for (int i = 0; i < item.DefWork.Count; i++)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.DefWork[i].Work);
+                @Html.ActionLink(" E ", "Edit", new { id = item.DefWork[i].Id }) |
+                @Html.ActionLink("X", "Delete", new { id = item.DefWork[i].Id })
+            </td>
+        </tr>
+    }
+}
+
+</table>
+<p><a href="/Home/Index" class="btn btn-success btn-block">В главное меню &raquo;</a> </p>

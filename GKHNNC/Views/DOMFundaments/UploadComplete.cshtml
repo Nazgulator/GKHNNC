@@ -56,8 +56,32 @@
                 @Html.DropDownList("Ошибки", new SelectList(@ViewBag.ErrorsR), new { @class = "form-control col-md-4", @style = "width:100%" })
             </td>
         </tr>
+    <th colspan="2">
+        Фасады
+    </th>
 
+    </tr>
+    <tr>
+        <td>
+            @Html.DropDownList("Сохранено", new SelectList(@ViewBag.SaveF), new { @class = "form-control col-md-4", @style = "width:100%" })
+        </td>
+        <td>
+            @Html.DropDownList("Ошибки", new SelectList(@ViewBag.ErrorsF), new { @class = "form-control col-md-4", @style = "width:100%" })
+        </td>
+    </tr>
+    <th colspan="2">
+        Помещения
+    </th>
 
+    </tr>
+    <tr>
+        <td>
+            @Html.DropDownList("Сохранено", new SelectList(@ViewBag.SaveRoom), new { @class = "form-control col-md-4", @style = "width:100%" })
+        </td>
+        <td>
+            @Html.DropDownList("Ошибки", new SelectList(@ViewBag.ErrorsRoom), new { @class = "form-control col-md-4", @style = "width:100%" })
+        </td>
+    </tr>
 
     </tbody>
 </table>

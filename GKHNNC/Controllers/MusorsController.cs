@@ -414,6 +414,7 @@ namespace GKHNNC.Controllers
                         range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
                         range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
                         range.WrapText = true;
+                        range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
                         stroka++;
                     }

@@ -1,0 +1,51 @@
+﻿@model GKHNNC.Models.DOMElectro
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>DOMElectro</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Adres.Adress)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Adres.Adress)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Electrovvods)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Electrovvods)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.RemontElectro)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.RemontElectro)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IznosElectro)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IznosElectro)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

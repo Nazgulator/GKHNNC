@@ -1,0 +1,83 @@
+﻿@model GKHNNC.Models.DOMOtoplenie
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>DOMOtoplenie</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Adress.Adress)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Adress.Adress)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.MaterialOtop1.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MaterialOtop1.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.MaterialOtop2.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MaterialOtop2.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.MaterialOtopTrub.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MaterialOtopTrub.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.MaterialTeplo.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MaterialTeplo.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IznosOtop)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IznosOtop)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.VvodsOtop)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.VvodsOtop)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Date)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Date)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
