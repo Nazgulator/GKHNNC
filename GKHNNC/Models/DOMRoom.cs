@@ -39,5 +39,7 @@ namespace GKHNNC.Models
 
         [Display(Name = "Дата последнего изменения")]
         public DateTime Date { get; set; }
+        [Display(Name = "Состояние")]
+        public int Sostoyanie { get; set; }
     }
 }

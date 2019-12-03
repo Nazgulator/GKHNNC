@@ -1,0 +1,180 @@
+﻿@model GKHNNC.Models.Osmotr
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+<h2>Создание осмотра #@Model.Id</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="container">
+        <div class="form-horizontal">
+
+            <div class="row justify-content-center">
+                <div class="col-md-12">
+                    <h4> @Model.Adres.Adress</h4>
+                </div>
+            </div>
+            <div class="row col-md-6 col-md-offset-3">
+                <div class="col-md-6">
+                    <h6>Дата осмотра</h6>
+                </div>
+                <div class="col-md-6">
+                    @Html.EditorFor(model => model.Date, new { htmlAttributes = new { @class = "form-control" } })
+
+                </div>
+            </div>
+
+            <div class="row col-md-6 col-md-offset-3">
+                <div class="col-md-12">
+                    <h4> Фундамент</h4>
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Площадь</h6>
+                            </div>
+                            <div class="col-md-6">
+                                @Html.EditorFor(model => model.DOMFundament.Ploshad, new { htmlAttributes = new { @class = "form-control" } })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Материал</h6>
+                            </div>
+                            <div class="col-md-6">
+                                @Html.DropDownList("FundamentMaterial", new SelectList(@ViewBag.FundamentMaterials, "value", "text", Model.DOMFundament.MaterialId), htmlAttributes: new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Тип</h6>
+                            </div>
+                            <div class="col-md-6">
+                                @Html.DropDownList("FundamentType", new SelectList(@ViewBag.FundamentTypes, "value", "text", Model.DOMFundament.TypeId), htmlAttributes: new { @class = "form-control" })
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Состояние</h6>
+                            </div>
+                            <div class="col-md-6">
+                                @Html.EditorFor(model => model.DOMFundament.Sostoyanie, new { htmlAttributes = new { @class = "form-control" } })
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h4>Элементы</h4>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <table class="table-bordered table-striped">
+                                    <tr>
+                                        <th>
+                                            Наименование
+                                        </th>
+                                        <th>
+                                            Описание
+                                        </th>
+                                        <th>
+                                            Состояние
+                                        </th>
+
+                                        <th>
+                                            Добавить дефект
+                                        </th>
+
+                                    </tr>
+
+                                    @for (int i = 0; i < Model.Elements.Count; i++)
+                                    {
+                                        if (Model.Elements[i].Element.ElementTypeId == 1)
+                                        {
+                                            <tr>
+                                                <td colspan="4">
+                                                    @Html.Action("ViewActiveDefect", "Osmotrs", new { AdresId = Model.AdresId, ElementId = Model.Elements[i].ElementId, Date = Model.Date, OsmotrId = Model.Elements[i].OsmotrId })
+
+                                                </td>
+                                            </tr>
+
+
+
+                                        }
+                                    }
+                                </table>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="row col-md-12">
+                <p> </p>
+            </div>
+
+            <div class="row col-md-6 col-md-offset-3">
+
+                <div class=" col-md-6  ">
+                    @Html.ActionLink("Назад", "Index", null, new { @class = "btn btn-success btn-block" })
+                </div>
+                <div class=" col-md-6  ">
+                    <input type="submit" value="Готово" class="btn btn-success btn-block" />
+                </div>
+
+
+            </div>
+
+
+            <!--
+               
+            <div class="modal fade" id="DefectModal" tabindex="-1" role="dialog" aria-labelledby="DefectModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="DefectModalLabel">Добавить активный дефект</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            @Html.Action("SelectActiveDefect", "Osmotrs", new { AdresId = Model.AdresId, ElementType = 1, Date = Model.Date })
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                            <button type="button" class="btn btn-primary">Добавить активный дефект</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            -->
+
+        </div>
+    </div>
+}
+@section Scripts{
+    @Scripts.Render("~/scripts/jquery-3.3.1.min.js")
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+    @Scripts.Render("~/scripts/nprogress.min.js")
+    @Scripts.Render("~/scripts/jquery.signalR-2.4.0.min.js")
+    @Scripts.Render("~/signalr/hubs")
+
+    
+       
+   
+
+
+}

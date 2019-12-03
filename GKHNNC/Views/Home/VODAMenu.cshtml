@@ -2,9 +2,12 @@
 
     Layout = "~/Views/Shared/_Layout0.cshtml";
 }
-
-<div class="row form-group">
-    @Html.DropDownList("Year", new SelectList(ViewBag.Years), new { @class = "form-control" })
+<div class="container">
+    <div class="row ">
+        <div class="col col-12">
+            @Html.DropDownList("Year", new SelectList(ViewBag.Years), new { @class = "form-control" })
+        </div>
+    </div>
 </div>
 @section Scripts {
     @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")

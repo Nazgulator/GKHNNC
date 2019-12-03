@@ -17,6 +17,9 @@
             <p>Количество услуг</p>
         </th>
         <th>
+            <p>Сумма</p>
+        </th>
+        <th>
             <p>Формирование акта</p>
         </th>
         <th>
@@ -50,11 +53,11 @@
             string sborka = item.Adres.Adress + ";" + item.Date.Year + ";" + item.Date.Month;
             if (item.ForPrint)
             {
-                clas = "bg-success";
+                clas = "table-success";
                 FP = true;
             }
 
-        <tr id="@counter" value="@sborka" class="@clas">
+<tr id="@counter" value="@sborka" class="@clas">
             <td>
                 @counter
             </td>
@@ -79,11 +82,14 @@
                 @Html.DropDownList("Услуги", new MultiSelectList(@ViewBag.Mass[c-1]), new { @class = "form-control col-md-4", @style = "width:100%" })
 
             </td>
+    <td>
+        @ViewBag.Summ[c-1]
+    </td>
             <td>
                 <button id="@counter" value="@FP" class="btn btn-success" style="width: 100%">Акт</button>
             </td>
             <td>
-                <input id="@counter" name="C_@counter" type="checkbox" checked="@FP" value="@FP" class="form-control col-md-1" />
+                <input id="@counter" name="C_@counter" type="checkbox" checked="@FP" value="@FP" class="form-control" />
             </td>
             <td>
                 @{ int I = item.Date.Month;
@@ -151,8 +157,8 @@
 
 
     @section Scripts {
-        @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
-        @Scripts.Render("~/scripts/jquery-3.3.1.js")
+        @Scripts.Render("~/Scripts/jquery-ui-1.12.1.min.js")
+        @Scripts.Render("~/Scripts/jquery-3.3.1.js")
         @Scripts.Render("~/Scripts/chosen.jquery.min.js")
 
         <script>
@@ -215,10 +221,15 @@
             $("button").click(function () {
                
                 
-               
+                var _this = $(this);
                         var S = $("#T tr[id^=" + this.id + "]").attr("value");
                 $.post('@Url.Action("SformirovatAkt", "CompleteWorks")', { Selection: S }, function (data) {
+                    _this.removeClass("btn-success");
+                    _this.addClass("btn-outline-sucess");
+                    _this.text("Акт сформирован");
+                   
                     window.location.href = data;
+                    
 
                 });
 

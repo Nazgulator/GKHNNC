@@ -29,6 +29,8 @@ namespace GKHNNC.Models
         public string WorkName { get; set; }
         [Display(Name = "Индекс работы")]
         public int? WorkWorkId { get; set; }
+        [Display(Name = "Работа")]
+        public Work WorkWork { get; set; }
         [Display(Name = "Агент")]
         public string Agent { get; set; }
         [Display(Name = "Сохранил данные")]
@@ -39,7 +41,6 @@ namespace GKHNNC.Models
         [DisplayFormat(DataFormatString = "{0:yyyy'/'MM'/'dd}")]
         [Display(Name = "Дата выполнения работы")]
         public DateTime WorkDate { get; set; }
-
 
         //  public virtual ICollection<Sopostavlenie> Sopostavlenies { get; set; }
 

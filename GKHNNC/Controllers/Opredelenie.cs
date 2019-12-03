@@ -24,7 +24,7 @@ using System.Runtime.InteropServices;
 using System.Collections;
 
 using System.IO;
-
+using System.Web.Mvc;
 
 namespace Opredelenie
 {
@@ -39,7 +39,30 @@ namespace Opredelenie
             }
             return Month;
         }
-        
+        public static List<SelectListItem> IMonthZabit()
+        {
+            List<SelectListItem> Month = new List<SelectListItem>();
+            for (int i = 1; i < 13; i++)
+            {
+                SelectListItem X = new SelectListItem();
+             
+                X.Text = MonthOpred(i);
+                X.Value = i.ToString();
+                Month.Add(X);
+            }
+            return Month;
+        }
+        public static List<string> YearZabit()
+        {
+            DateTime D = DateTime.Now;
+            List<string> Year = new List<string>();
+            for (int i = D.Year; i >= 2010; i--)
+            {
+                Year.Add(i.ToString());
+            }
+            return Year;
+        }
+
         public static void RangeMerge (Excel.Application ApExcel,Excel.Range range,bool merge, bool bold,int size =13,int height=50 )
         {
             if (merge)

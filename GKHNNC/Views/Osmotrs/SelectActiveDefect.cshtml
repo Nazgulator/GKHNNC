@@ -1,0 +1,174 @@
+﻿@model GKHNNC.Models.ActiveDefect
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+<h2>Создать</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="container">
+        <div class="form-horizontal">
+            <div class="row col-md-6 col-md-offset-3">
+                <div class="col-md-12">
+                    @Html.LabelFor(model => model.Date, htmlAttributes: new { @class = "control-label" })
+
+                </div>
+                <div class="col-md-12">
+                    @Html.EditorFor(model => model.Date, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Date, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="row col-md-6 col-md-offset-3">
+                <div class="col-md-12">
+                    @Html.LabelFor(model => model.AdresId, "AdresId", htmlAttributes: new { @class = "control-label" })
+
+                </div>
+                <div class="col-md-12">
+                    @Html.DropDownList("AdresId", null, htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.AdresId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="row col-md-6 col-md-offset-3">
+                <div class="col-md-12">
+                    @Html.LabelFor(model => model.ElementId, "ElementId", htmlAttributes: new { @class = "control-label" })
+
+                </div>
+                <div class="col-md-12">
+                    @Html.DropDownList("ElementId", null, htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.ElementId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+
+
+
+
+
+
+
+            <div class="row col-md-6 col-md-offset-3">
+                <div class="col-md-12">
+                    @Html.LabelFor(model => model.Sostoyanie, htmlAttributes: new { @class = "control-label" })
+
+                </div>
+                <div class="col-md-12">
+                    @Html.EditorFor(model => model.Sostoyanie, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Sostoyanie, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+
+            <div class="row col-md-6 col-md-offset-3">
+                <div class="col-md-12">
+                    @Html.LabelFor(model => model.Opisanie, htmlAttributes: new { @class = "control-label" })
+
+                </div>
+                <div class="col-md-12">
+                    @Html.EditorFor(model => model.Opisanie, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Opisanie, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            @Html.Action("SelectActiveElement", "Osmotrs")
+
+
+
+            <div class="row col-md-12">
+                <p> </p>
+            </div>
+
+            <div class="row col-md-6 col-md-offset-3">
+
+                <div class=" col-md-6  ">
+                    @Html.ActionLink("Назад", "Index", null, new { @class = "btn btn-success btn-block" })
+                </div>
+                <div class=" col-md-6  ">
+                    <input type="submit" value="Готово" class="btn btn-success btn-block" />
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+}
+@section Scripts{
+    @Scripts.Render("~/scripts/jquery-3.3.1.min.js")
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+    @Scripts.Render("~/scripts/nprogress.min.js")
+    @Scripts.Render("~/scripts/jquery.signalR-2.4.0.min.js")
+    @Scripts.Render("~/signalr/hubs")
+
+
+    <!--SignalR script to update the chat page and send messages.-->
+    <script>
+        //при открытии страницы
+        $("#progress").hide();
+        $("#warning").hide();
+
+    </script>
+    <script>
+        $("#download").click(function () {
+            $("#progress").fadeIn("slow");
+            $("#main").fadeOut("slow");
+        }
+        );
+    </script>
+    <script>
+        $(function () {
+            var PB = $.connection.progressHub;
+            console.log("Тест");
+            PB.client.sendMessage = function (message, count) {
+                // update progress
+                console.log(count);
+                UpdateProgress(message, count);
+                //alert(message);
+            };
+
+            $.connection.hub.start().done(function () {
+                console.log("Приконнектились");
+                // call the method CallLongOperation defined in the Hub
+                PB.server.getCountAndMessage();
+                $("#progressBar").hide();
+
+
+
+            });
+
+
+            // Update the progress bar
+            function UpdateProgress(message, count) {
+                $("#progressBar").fadeIn("slow");
+                var result = $("#result");
+                result.html(message);
+
+                //$("#progressBar").data("progressbar").value(count);
+
+                $("#progressBar").attr("aria-valuenow", count);
+                $("#progressBar").width(count + '%');
+                $("#progressBar").text(count + '%');
+                $("#nadpis").text(message);
+                // $("#progressBar").css("width", count);
+            }
+        });
+    </script>
+    <script>
+        //Нажатие на кнопку "input[type='submit']"
+        $("#ElementId").change(function () {
+                var _this = $(this);
+            var Element = _this.val();
+               window.location.replace("/Osmotrs/SelectActiveElement?ElementId=" + Element);
+
+            });
+    </script>
+
+
+
+}

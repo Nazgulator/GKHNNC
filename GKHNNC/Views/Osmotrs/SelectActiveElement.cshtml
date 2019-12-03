@@ -1,0 +1,8 @@
+﻿@{
+    
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+<div class="col-md-6">
+    @Html.DropDownList("Elements", new SelectList(@ViewBag.Elements, "value", "text"), htmlAttributes: new { @class = "form-control" })
+
+</div>

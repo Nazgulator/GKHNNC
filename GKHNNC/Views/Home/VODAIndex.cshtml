@@ -1,4 +1,7 @@
-﻿
+﻿@{
+
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
 <Center>
     <h3>
         Программа VODA
@@ -48,7 +51,44 @@
 
 
     </div>
-    <h3> Отопление </h3>
+    <h3>
+       Отопление (месяц)
+    </h3>
+    <div class="container">
+        <div class="row form-group">
+            @for (int i = 0; i < ViewBag.Month.Count / 2; i++)
+            {
+                string cl1 = "btn btn-secondary";
+                if (ViewBag.Go[i] < 4 && ViewBag.Go[i] > 0) { cl1 = "btn btn-warning"; }
+                if (ViewBag.Go[i] == 4) { cl1 = "btn btn-success"; }
+                <div class="col-md-2">
+
+                    <button class="@cl1" onclick="location.href='@Url.Action("OtopMonth", "Home", new { Month = i+1 } )'">
+                        @ViewBag.Month[i]
+                    </button>
+
+                </div>
+            }
+        </div>
+        <div class="row  form-group">
+            @for (int i = ViewBag.Month.Count / 2; i < ViewBag.Month.Count; i++)
+            {
+                string cl1 = "btn btn-secondary";
+                if (ViewBag.Go[i] < 4 && ViewBag.Go[i] > 0) { cl1 = "btn btn-warning"; }
+                if (ViewBag.Go[i] == 4) { cl1 = "btn btn-success"; }
+
+                <div class="col-md-2">
+
+                    <button class="@cl1" onclick="location.href='@Url.Action("OtopMonth", "Home", new { Month = i+1 } )'">
+                        @ViewBag.Month[i]
+                    </button>
+
+                </div>
+            }
+        </div>
+    </div>
+
+    <h3> Отопление (накопительный итог) </h3>
     <div class="container">
 
         <div class="row form-group">
@@ -93,7 +133,7 @@
             {
                 string cl1 = "btn btn-secondary";
                 if (ViewBag.Go[i] < 4 && ViewBag.Go[i] > 0) { cl1 = "btn btn-warning"; }
-                if (ViewBag.Go[i] == 4&& ViewBag.Arenda[i]==true) { cl1 = "btn btn-success"; }
+                if (ViewBag.Go[i] == 4 && ViewBag.Arenda[i] == true) { cl1 = "btn btn-success"; }
                 <div class="col-md-2">
 
                     <button class="@cl1" onclick="location.href='@Url.Action("OtchetMonth", "Home", new { Month = i+1, Year = DateTime.Now.Year } )'">
@@ -153,6 +193,16 @@
             <i class="glyphicon glyphicon-list-alt"></i> Все ОПУ записи &raquo;
         </button>
     </p>
+    <p>
+        <button class="btn btn-success btn-lg" style="width:500Px" onclick="location.href='@Url.Action("Index", "Tarifs")'">
+            <i class="glyphicon glyphicon-list-alt"></i> Тарифы &raquo;
+        </button>
+    </p>
+    <p>
+        <button class="btn btn-success btn-lg" style="width:500Px" onclick="location.href='@Url.Action("Index", "Arendators")'">
+            <i class="glyphicon glyphicon-list-alt"></i> Арендаторы &raquo;
+        </button>
+    </p>
 
 </Center>
 @section Scripts {
@@ -199,5 +249,5 @@
             }
         });
     </script>
-    
+
 }

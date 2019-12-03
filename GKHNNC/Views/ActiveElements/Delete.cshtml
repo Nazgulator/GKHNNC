@@ -1,0 +1,77 @@
+﻿@model GKHNNC.Models.ActiveElement
+
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+<h2><Удалить></h2>
+
+<h3>Удаление элемента?</h3>
+<div>
+    <h4>ActiveElement</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Adres.Adress)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Adres.Adress)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Element.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Element.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Osmotr.Id)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Osmotr.Id)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Sostoyanie)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Sostoyanie)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Date)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Date)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+       
+           
+            
+       
+		<div class="row col-md-6 col-md-offset-3">
+            <div class=" form-group">
+                <div class=" col-md-6  ">
+                    @Html.ActionLink("Отмена", "Index", null, new { @class = "btn btn-success btn-block" })
+                </div>
+                <div class=" col-md-6  ">
+                    <input type="submit" value="Delete" class="btn btn-success" /> 
+                </div>
+
+            </div>
+        </div>
+
+    }
+</div>

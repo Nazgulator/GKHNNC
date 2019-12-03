@@ -162,7 +162,15 @@ namespace GKHNNC.Controllers
                             OPUKA.OtopRub = OtopRub;
                             string prim = "";
                             if (Primech.Length > Primech2.Length) { prim = Primech; }
-                            else { prim = Primech2; }
+                            else {
+                                //если в примечании сохранено число -25323563.... что означает не считанные данные, то сохраняем как ремонт (обычно это значит ремонт)
+                                if (Primech2.Contains("-2"))
+                                {
+                                    Primech2 = "*";
+                                }
+
+                                prim = Primech2;
+                            }
                             OPUKA.Primech = prim;
                             OPUKA.Date = Date;
 

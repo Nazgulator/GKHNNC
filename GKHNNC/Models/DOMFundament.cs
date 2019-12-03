@@ -23,5 +23,7 @@ namespace GKHNNC.Models
         public Adres Adres { get; set; }
         [Display(Name = "Дата последнего изменения")]
         public DateTime Date { get; set; }
+        [Display(Name = "Состояние")]
+        public int Sostoyanie { get; set; }
     }
 }

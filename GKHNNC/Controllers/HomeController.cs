@@ -142,17 +142,241 @@ namespace GKHNNC.Controllers
 
             return Json(Data);
         }
-        public ActionResult VodaMonth(int Month)
+
+        public ActionResult OtopMonth(int Month=0, int Year=0)
         {
-            
-           int Year = DateTime.Now.Year;
+            if (Month == 0) { Month = DateTime.Now.Month-1;  }
+            if (Year == 0) { Year = DateTime.Now.Year; }
             List<Adres> dbAdresa = db.Adres.ToList();//список всех адресов
             //Сервис айди 1 = отопление, 2 = ГВ, 3 = ГВ на общее имущество берем только гв и гв на общее и смотрим складывать ли их
-            List<SVN> dbSVNs = db.SVNs.Where(a => a.Date.Year == DateTime.Now.Year && a.Date.Month == Month&&(a.ServiceId == 2||a.ServiceId==3)).Include(b=>b.Service).ToList();
+            List<SVN> dbSVNs = db.SVNs.Where(a => a.Date.Year == Year && a.Date.Month == Month && (a.ServiceId == 1)).Include(b => b.Service).ToList();
             List<UEV> dbUEV = db.UEVs.Where(c => c.Date.Year == Year && c.Date.Month == Month).ToList();
             List<OPU> dbOPU = db.OPUs.Where(c => c.Date.Year == Year && c.Date.Month == Month).ToList();
             List<IPU> dbIPU = db.IPUs.Where(c => c.Date.Year == Year && c.Date.Month == Month).ToList();
             ViewBag.SVN = false;
+            if (dbSVNs.Count > 0)
+            {
+                ViewBag.SVN = true;
+            }
+            ViewBag.UEV = false;
+            if (dbUEV.Count > 0)
+            {
+                ViewBag.UEV = true;
+            }
+            ViewBag.OPU = false;
+            if (dbOPU.Count > 0)
+            {
+                ViewBag.OPU = true;
+            }
+            ViewBag.IPU = false;
+            if (dbIPU.Count > 0)
+            {
+                ViewBag.IPU = true;
+            }
+            List<ViewVoda> Result = new List<ViewVoda>();//пишем сюда результат
+            List<ViewVoda> RedResult = new List<ViewVoda>();//пишем сюда результат
+            List<ViewVoda> NullResult = new List<ViewVoda>();//пишем сюда результат
+
+            //для каждого адреса ищем данные уэв и сумму данных SVN
+            int progress = 0;
+            double pro100 = dbAdresa.Count;
+            int procount = 0;
+            foreach (Adres A in dbAdresa)
+            {
+                ViewVoda V = new ViewVoda();
+                decimal Plan = 0;
+                decimal Fact = 0;
+                SVN GVSVN = new SVN();
+                
+                try
+                {
+                    GVSVN = dbSVNs.Where(d => d.AdresId == A.Id && d.ServiceId == 1).First();//горячая вода
+                }
+                catch { }
+                
+              
+               
+                    Plan = GVSVN.Plan;//если не складывать то берем данные только из свн
+                    Fact = GVSVN.Fact;
+                //средняя за прошлый год по дому
+                decimal OtopYear = 0;
+                decimal LastYear = 0;
+                decimal LastYearRub = 0;
+                decimal OtopYearRub = 0;
+                try
+                {//берем прошлый год и ищем среднюю
+                    int[] Mo = { 1, 2, 3, 4, 5, 9, 10, 11, 12 };
+                    foreach (int M in Mo)
+                    {
+                        try
+                        {
+                            List<UEV> U = new List<UEV>();
+                            decimal Gkal = 0;
+                            decimal Rub = 0;
+                            U = db.UEVs.Where(e => e.AdresId == A.Id && e.Date.Year == Year - 1 && e.Date.Month == M).ToList();
+                            Gkal = U.Sum(f => f.OtEnergyGkal);//ищем выставленную сумму в рублях по горячей воде в данном доме УЭВ
+                            OtopYear += Gkal;
+                            Rub = U.Sum(f => f.OtEnergyRub);
+                            OtopYearRub += Rub;
+                            if (M == Month) { LastYear = Gkal; LastYearRub = Rub; }
+                        }
+                        catch { }
+
+                    }
+                    OtopYear = OtopYear / Mo.Length;
+                    OtopYearRub = OtopYearRub / Mo.Length;
+                }
+                catch
+                { }
+                V.SrednyayaRub = OtopYearRub;
+                V.LastYearRub = LastYearRub;
+                V.Srednyaya = OtopYear; //средняя за прошлый год
+                V.LastYear = LastYear;//выставленные за аналогичный месяц прошлого года.
+                //Выставленные показания в рублях
+                decimal GVUEV = 0;
+                try
+                {
+                    GVUEV = dbUEV.Where(e => e.AdresId == A.Id).Sum(f => f.OtEnergyRub);//ищем выставленную сумму в рублях по горячей воде в данном доме УЭВ
+
+                }
+
+                catch
+                { }
+               
+                //ищем прибор учета и если он есть то выводим галку
+                bool pu = false;
+                try
+                {
+                    int Pribor = dbUEV.Where(e => e.AdresId == A.Id).Select(f => f.Pribor).First();
+                    if (Pribor > 0) { pu = true; }
+                }
+                catch { }
+                decimal GVUEVM3 = 0;
+                try
+                {
+                    GVUEVM3 = dbUEV.Where(e => e.AdresId == A.Id).Sum(f => f.OtEnergyGkal);//ищем выставленную сумму в рублях по горячей воде в данном доме УЭВ
+                }
+                catch { }
+
+                decimal RaznPlan = GVUEV - Plan;//Показания УЭВ - ИПУ - план
+                decimal RaznFact = GVUEV - Fact;//Показания УЭВ - ИПУ - Факт
+
+                //ищем в базе все опушки
+                string Primech = "";
+                decimal VFact = 0;
+                try
+                {
+                    VFact = dbOPU.Where(h => h.AdresId == A.Id).Select(k => k.OtopGkal).First();
+                    if (VFact <= -2146826273) { VFact = 0; Primech = "*"; }
+                    else
+                    {
+
+                        Primech = dbOPU.Where(h => h.AdresId == A.Id).Select(k => k.Primech).First();
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+
+
+                //сохраняем данные для вывода
+                V.Primech = Primech;
+                V.VFact = VFact;
+                V.Fact = Fact;
+                V.Plan = Plan;
+                V.RaznFact = RaznFact;
+                V.RaznPlan = RaznPlan;
+                V.Uev = GVUEV;
+                V.Adres = A.Adress;
+                V.PU = pu;//прибор учета галкой
+               
+                V.GVUEVM3 = GVUEVM3;
+                if (Plan + Fact + GVUEV == 0)
+                {
+                    NullResult.Add(V);
+                }
+                else
+                {
+                    if (GVUEVM3 > VFact + 5 && Primech == "" && VFact != 0)//если разница в показаниях более 5 то пишем в красный список
+                    {
+                        V.Primech = Convert.ToString(Convert.ToInt32(VFact - GVUEVM3));
+                        RedResult.Add(V);
+                    }
+                    else
+                    {
+                        if (pu && Primech == "") { V.Primech = Convert.ToString(Convert.ToInt32(VFact - GVUEVM3)); };
+                        Result.Add(V);// иначе в желтый список
+                    }
+
+
+                }
+                procount++;
+                progress = Convert.ToInt16(procount / pro100*100 );
+                ProgressHub.SendMessage("Создаем отчет... ", progress);
+                if (procount > pro100) { procount = Convert.ToInt32(pro100); }
+            }
+
+
+
+            Excel.Application ApExcel = new Excel.Application();
+            Excel.Workbooks WB = null;
+            WB = ApExcel.Workbooks;
+            Excel.Workbook WbExcel = ApExcel.Workbooks.Add(System.Reflection.Missing.Value);
+            Excel.Worksheet WS = WbExcel.Sheets[1];
+            WS.Name = "Отопление" + Opr.MonthOpred(Month);
+            Excel.Range range;//рэндж
+            ApExcel.Visible = false;//невидимо
+            ApExcel.ScreenUpdating = false;//и не обновляемо
+
+
+
+            // Сохранение файла Excel.
+
+            WbExcel.SaveCopyAs("C:\\inetpub\\Otchets\\" + "OtopMonth.xlsx");//сохраняем в папку
+
+            ApExcel.Visible = true;//невидимо
+            ApExcel.ScreenUpdating = true;//и не обновляемо
+                                          // Закрытие книги.
+            WbExcel.Close(false, "", Type.Missing);
+            // Закрытие приложения Excel.
+
+            ApExcel.Quit();
+
+            Marshal.FinalReleaseComObject(WbExcel);
+            Marshal.FinalReleaseComObject(WB);
+            Marshal.FinalReleaseComObject(ApExcel);
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+
+
+
+            List<ViewVoda> MainResult = new List<ViewVoda>();//пишем сюда результат
+            MainResult.AddRange(RedResult);
+            MainResult.AddRange(Result);
+            MainResult.AddRange(NullResult);
+            ViewBag.Year = Year;
+            ViewBag.Month = Opr.MonthOpred(Month);
+            return View(MainResult);
+        }
+
+
+
+        public ActionResult VodaMonth(int Month=0,int Year=0)
+        {
+
+            if (Month == 0) { Month = DateTime.Now.Month - 1; }
+            if (Year == 0) { Year = DateTime.Now.Year; }
+            List<Adres> dbAdresa = db.Adres.ToList();//список всех адресов
+            //Сервис айди 1 = отопление, 2 = ГВ, 3 = ГВ на общее имущество берем только гв и гв на общее и смотрим складывать ли их
+            List<SVN> dbSVNs = db.SVNs.Where(a => a.Date.Year == Year && a.Date.Month == Month&&(a.ServiceId == 2||a.ServiceId==3)).Include(b=>b.Service).ToList();
+            List<UEV> dbUEV = db.UEVs.Where(c => c.Date.Year == Year && c.Date.Month == Month).ToList();
+            List<OPU> dbOPU = db.OPUs.Where(c => c.Date.Year == Year && c.Date.Month == Month).ToList();
+            List<IPU> dbIPU = db.IPUs.Where(c => c.Date.Year == Year && c.Date.Month == Month).ToList();
+            ViewBag.SVN = false;
+            int progress = 0;
+            double pro100 = dbAdresa.Count;
+            int procount = 0;
             if (dbSVNs.Count > 0)
             {
                 ViewBag.SVN = true;
@@ -189,12 +413,12 @@ namespace GKHNNC.Controllers
                 SVN GVOSVN = new SVN();
                 try
                 {
-                    GVSVN = dbSVNs.Where(d => d.AdresId == A.Id && d.ServiceId == 2).Single();//горячая вода
+                    GVSVN = dbSVNs.Where(d => d.AdresId == A.Id && d.ServiceId == 2).First();//горячая вода
                 }
                 catch { }
                 try
                 {
-                     GVOSVN = dbSVNs.Where(d => d.AdresId == A.Id && d.ServiceId == 3).Single();//горячая вода на общее имущество
+                     GVOSVN = dbSVNs.Where(d => d.AdresId == A.Id && d.ServiceId == 3).First();//горячая вода на общее имущество
                 }
                 catch { }
                     if (skladivat)//Если суммы равны то значит складываем ГВ общее и ГВ 
@@ -241,7 +465,50 @@ namespace GKHNNC.Controllers
 
                 decimal RaznPlan = GVUEV -GVIPU - Plan;//Показания УЭВ - ИПУ - план
                 decimal RaznFact = GVUEV -GVIPU - Fact;//Показания УЭВ - ИПУ - Факт
+                decimal OtopYearRub= 0;
+                decimal OtopYear = 0;
+                decimal LastYear = 0;
+                decimal LastYearRub = 0;
+               
+                try
+                {//берем прошлый год и ищем среднюю за прошлые 6 месяцев
+                    
+                    for (int M=1;M<7;M++)
+                    {
+                        int MonthEnd = Month - M; if (MonthEnd <= 0) { MonthEnd = 12 + (Month - 6); }
+                        try
+                        {
+                            List<UEV> U = new List<UEV>();
+                            decimal Gkal = 0;
+                            decimal Rub = 0;
+                            U = db.UEVs.Where(e => e.AdresId == A.Id && e.Date.Year == Year && e.Date.Month == MonthEnd).ToList();
+                            Gkal = U.Sum(f => f.HwVodaM3);//ищем выставленную сумму в рублях по горячей воде в данном доме УЭВ
+                            OtopYear += Gkal;
+                            Rub = U.Sum(f => f.HwVodaRub+f.HwEnergyRub);
+                            OtopYearRub += Rub;
+                            
+                        }
+                        catch { }
 
+                    }
+
+                    OtopYear = OtopYear / 6;//делим на 6 предыдущих месяцев 
+                    OtopYearRub = OtopYearRub / 6;
+
+                    //ищем аналогичный показатель прошлого года 
+                    List<UEV> Us = db.UEVs.Where(e => e.AdresId == A.Id && e.Date.Year == Year - 1 && e.Date.Month == Month).ToList();
+                    LastYear = Us.Sum(f => f.HwVodaM3);//ищем выставленную сумму в рублях по горячей воде в данном доме УЭВ
+                    LastYearRub = Us.Sum(f => f.HwVodaRub + f.HwEnergyRub);
+
+                  
+
+                }
+                catch
+                { }
+                V.SrednyayaRub = OtopYearRub;
+                V.LastYearRub = LastYearRub;
+                V.Srednyaya = OtopYear; //средняя за прошлый год
+                V.LastYear = LastYear;//выставленные за аналогичный месяц прошлого года.
                 //ищем в базе все опушки
                 string Primech = "";
                 decimal VFact = 0;
@@ -274,7 +541,7 @@ namespace GKHNNC.Controllers
                 }
                 else
                 {
-                    if (GVUEVM3 > VFact+5 && pu&&Primech=="")//если разница в показаниях более 5 то пишем в красный список
+                    if (GVUEVM3 > VFact+5 &&Primech==""&&VFact!=0)//если разница в показаниях более 5 то пишем в красный список
                     {
                         V.Primech = Convert.ToString(Convert.ToInt32(VFact-GVUEVM3));
                         RedResult.Add(V);
@@ -287,7 +554,10 @@ namespace GKHNNC.Controllers
                     
 
                 }
-
+                procount++;
+                progress = Convert.ToInt16(procount / pro100 * 100);
+                ProgressHub.SendMessage("Создаем отчет... ", progress);
+                if (procount > pro100) { procount = Convert.ToInt32(pro100); }
             }
 
 
@@ -332,6 +602,7 @@ namespace GKHNNC.Controllers
             ViewBag.Month = Opr.MonthOpred(Month);
             return View(MainResult);
         }
+
         public decimal RubliVObiem(decimal number, decimal tarif, decimal NDS) //преобразует рубли в объём 
         {
             //(10-10/1.18*0.18)/тариф       (сумма - ндс)/тариф
@@ -1168,7 +1439,7 @@ namespace GKHNNC.Controllers
         public ActionResult VODAMenu ()
         {
             List<int> Years = new List<int>();
-            for (int i = 2018; i <= DateTime.Now.Year; i++)
+            for (int i = DateTime.Now.Year; i >= 2018; i--)
             {
                 Years.Add(i);
             }

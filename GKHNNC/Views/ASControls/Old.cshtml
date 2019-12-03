@@ -22,10 +22,10 @@
 
     <table id="T" class="table table-bordered ">
         <tr>
-            <th>
+            <th width="50px">
 
             </th>
-            <th style="text-align:center">
+            <th style="text-align:center" width="190px">
                 Тип автомобиля
             </th>
             <th style="text-align:center">
@@ -42,7 +42,7 @@
                 <th style="text-align:center">
                     Расход(ДУТ)
                 </th>
-                <th style="text-align:center">
+                <th style="text-align:center" width="120px">
                     Сравнение ДУТ
                 </th>
             }
@@ -167,21 +167,21 @@
                     item.Mesta = item.Mesta.Distinct().ToList();
                 }
                 string DvigName = "Не двигается";
-                string DvigClass = "btn btn-danger";
+                string DvigClass = "btn table-danger";
                 if (item.Mesta.Count > 2)
                 {
                     DvigName = "В движении";
-                    DvigClass = "btn btn-success";
+                    DvigClass = "btn table-success";
                 }
                 if (item.Mesta.Contains("На стоянке"))
                 {
                     DvigName = "На стоянке";
-                    DvigClass = "btn btn-success";
+                    DvigClass = "btn table-success";
                 }
                 if (item.Mesta.Contains("Вернулся на стоянку"))
                 {
                     DvigName = "Вернулся на стоянку";
-                    DvigClass = "btn btn-success";
+                    DvigClass = "btn table-success";
                 }
 
                 item.Mesta.Insert(0, DvigName);
@@ -191,17 +191,17 @@
                 else
                 {
                     //если больше 3 наблюдений а данные все еще нулевые то помечаем машину как потеря связи
-                    if (item.Avto.Glonass == true && koef > 0.25m && koef < 0.5m) { cl = "bg-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W1.png"; svyaz = "Связи не было " + NoSvazMin + " минут"; }
-                    if (item.Avto.Glonass == true && item.DUT == 0 && item.KMAS == 0 && item.Nabludenii >= 2 && item.Nabludenii < 4) { cl = "bg-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W1.png"; svyaz = "Данные от автомобиля не поступали в течение нескольких часов."; }
+                    if (item.Avto.Glonass == true && koef > 0.25m && koef < 0.5m) { cl = "table-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W1.png"; svyaz = "Связи не было " + NoSvazMin + " минут"; }
+                    if (item.Avto.Glonass == true && item.DUT == 0 && item.KMAS == 0 && item.Nabludenii >= 2 && item.Nabludenii < 4) { cl = "table-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W1.png"; svyaz = "Данные от автомобиля не поступали в течение нескольких часов."; }
 
-                    if (item.Avto.Glonass == true && koef >= 0.5m) { cl = "bg-danger"; check = "S3.png"; btn = "btn btn-danger"; img = "W2.png"; svyaz = "Связи не было " + NoSvazMin + " минут"; }
-                    if (item.Avto.Glonass == true && item.DUT == 0 && item.KMAS == 0 && item.Nabludenii >= 4) { cl = "bg-danger"; check = "S3.png"; btn = "btn btn-danger"; img = "W2.png"; svyaz = "Потеря связи! Данные не поступали более 4 часов!"; }
+                    if (item.Avto.Glonass == true && koef >= 0.5m) { cl = "table-danger"; check = "S3.png"; btn = "btn btn-danger"; img = "W2.png"; svyaz = "Связи не было " + NoSvazMin + " минут"; }
+                    if (item.Avto.Glonass == true && item.DUT == 0 && item.KMAS == 0 && item.Nabludenii >= 4) { cl = "table-danger"; check = "S3.png"; btn = "btn btn-danger"; img = "W2.png"; svyaz = "Потеря связи! Данные не поступали более 4 часов!"; }
 
                 }
 
-                if (cl.Equals("bg-danger") == false && (item.DUT == 0 && item.KMAS > 1)) { cl = "bg-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W4.png"; svyaz += "Датчик ДУТ неисправен! Не показывает расход топлива: " + item.DUT + " л."; }
-                if (cl.Equals("bg-danger") == false && (item.KMAS == 0 && item.DUT > 1)) { cl = "bg-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W6.png"; svyaz += "Датчик пробега неисправен! Не показывает пробег: " + item.KM + " км."; }
-                if (cl.Equals("bg-danger") == false && (item.Start - item.End + item.Zapravleno - item.DUT < -5)) { cl = "bg-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W5.png"; svyaz += "Перерасход топлива. У автомобиля не осталось топлива или возможно хищение! " + (item.Start - item.End + item.Zapravleno - item.DUT).ToString() + " л."; }
+                if (cl.Equals("bg-danger") == false && (item.DUT == 0 && item.KMAS > 1)) { cl = "table-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W4.png"; svyaz += "Датчик ДУТ неисправен! Не показывает расход топлива: " + item.DUT + " л."; }
+                if (cl.Equals("bg-danger") == false && (item.KMAS == 0 && item.DUT > 1)) { cl = "table-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W6.png"; svyaz += "Датчик пробега неисправен! Не показывает пробег: " + item.KM + " км."; }
+                if (cl.Equals("bg-danger") == false && (item.Start - item.End + item.Zapravleno - item.DUT < -5)) { cl = "table-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W5.png"; svyaz += "Перерасход топлива. У автомобиля не осталось топлива или возможно хищение! " + (item.Start - item.End + item.Zapravleno - item.DUT).ToString() + " л."; }
 
                 //считаем средний расход
 
@@ -289,7 +289,7 @@
                                 @item.Date.ToString("t")
                                 @if (item.Kontrol)
                                 {
-                                    <img src="~/Content/Images/star.png" height="16" width="16" title="@Kont" style="align-content:center">
+                                    <img src="~/Content/Images/star.png" height="14" width="14" title="@Kont" style="align-content:center">
                                 }
                             </p>
 
@@ -398,7 +398,7 @@
                         @if (item.Zag != null && item.Zag.Contains("FS"))
                         {
                             <center>
-                                <img src="~/Content/Images/DDD6.png" class="img-responsive" height="64" width="256" title="Форт системс не дает данных о потерях связи.">
+                                <img src="~/Content/Images/DDD6.png" class="img" height="40" width="256" title="Форт системс не дает данных о потерях связи.">
                             </center>
                         }
                         else
@@ -414,13 +414,13 @@
                                 if (item.Nabludenii > 0)
                                 {
                                     <center>
-                                        <img src="~/Content/Images/SS2.png" class="img-responsive" height="64" width="256">
+                                        <img src="~/Content/Images/SS2.png" class="img" height="40" width="256">
                                     </center>
                                 }
                                 else
                                 {
                                     <center>
-                                        <img src="~/Content/Images/DDD6.png" class="img-responsive" height="64" width="256" title="Пока данных не поступало.">
+                                        <img src="~/Content/Images/DDD6.png" class="img" height="40" width="256" title="Пока данных не поступало.">
                                     </center>
                                 }
                             }

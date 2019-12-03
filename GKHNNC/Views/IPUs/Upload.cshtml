@@ -7,7 +7,7 @@
 }
 <div class="progress">
 
-    <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-success progress-bar-animated" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+    <div id="progressBar" class="progress-bar progress-bar-striped bg-success progress-bar-animated" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
     <center>
         <label id="nadpis">Выберите файл для загрузки</label>
     </center>
@@ -18,37 +18,39 @@
     @using (Html.BeginForm("Upload", "IPUs", FormMethod.Post, new { enctype = "multipart/form-data", @placeholder = "Выберите дату" }))
     {<div class="container" id="main">
          <div class=" row">
-             <p> <h5>Загружайте файл ИПУ предыдущего месяца. Пример: выберите месяц Июнь и грузите файл ИПУ за Май</h5></p>
-             <p> <h5>Выберите дату (год и месяц) создания файла.</h5></p>
-             <p> <h5>Файл должен содержать вкладку "для УЭВ по ГВС без ОПУ" (с большой буквы).</h5></p>
-             <p> <h5>В файле должны быть колонки: "адрес", "начислениепонормативу(руб.)", "начислениепосчетчику(руб.)","Номер счетчика"</h5></p>
+             <div class="col-12">
+                 <p> <h5>Загружайте файл ИПУ предыдущего месяца. Пример: выберите месяц Июнь и грузите файл ИПУ за Май</h5></p>
+                 <p> <h5>Выберите дату (год и месяц) создания файла.</h5></p>
+                 <p> <h5>Файл должен содержать вкладку "для УЭВ по ГВС без ОПУ" (с большой буквы).</h5></p>
+                 <p> <h5>В файле должны быть колонки: "адрес", "начислениепонормативу(руб.)", "начислениепосчетчику(руб.)","Номер счетчика"</h5></p>
+             </div>
          </div>
-    <div class=" row">
+         <div class=" row justify-content-center">
+             <div class="col-4">
+                 <label>Дата файла</label>
+                 @Html.Editor("Date", new { htmlAttributes = new { @class = "form-control", @style = "width:365Px !important; min-width:365px;" } })
+                 </div>
+             </div>
+         <div class=" row justify-content-center">
+             <div class="col-4">
+                 <label>Выберите файл для загрузки</label>
+                 <input type="file" name="upload" class="form-control" style="width: 365Px;" /><br>
+                 </div>
+             </div>
+         <div class=" row">
+             <div class="col-12">
+                 <a id="cancel" href="/IPUs/Index" class="btn btn-outline-success" >Назад</a>
+                 <input id="download" type="submit" value="Загрузить" class="btn btn-success" />
+                 </div>
+             </div>
+             <div class=" row">
+                 <p>  </p>
+                 <div class="alert alert-danger" role="alert" id="warning">
+                     <p> IPU  файл за этот месяц уже загружен! Хотите перезаписать данные? </p>
 
-        <label>Дата файла</label>
-        @Html.Editor("Date", new { htmlAttributes = new { @class = "form-control", @style = "width:365Px !important; min-width:365px;" } })
-
-    </div>
-    <div class=" row">
-
-        <label>Выберите файл для загрузки</label>
-        <input type="file" name="upload" class="form-control" style="width: 365Px;" /><br>
-
-    </div>
-    <div class=" row">
-
-        <a id="cancel" href="/IPUs/Index" class="btn btn-default" style="width: 180Px">Назад</a>
-        <input id="download" type="submit" value="Загрузить" class="btn btn-success" style="width: 180Px" />
-
-    </div>
-    <div class=" row">
-        <p>  </p>
-        <div class="alert alert-danger" role="alert" id="warning">
-            <p> IPU  файл за этот месяц уже загружен! Хотите перезаписать данные? </p>
-
-        </div>
-    </div>
-</div>
+                 </div>
+             </div>
+         </div>
 
     }
 

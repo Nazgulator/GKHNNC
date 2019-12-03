@@ -1,0 +1,307 @@
+﻿@model IEnumerable<GKHNNC.Models.ViewVoda>
+@{
+
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+
+<!DOCTYPE html>
+
+<html>
+
+
+
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Расчет отопления за @ViewBag.Year @ViewBag.Month</title>
+</head>
+<body>
+    <h5>Загруженные данные:</h5>
+    <div class="container" >
+        <div class="row">
+            <div class="col-md-4">
+                @if (ViewBag.SVN)
+                {
+                    <img src="~/Content/Images/SVNOn.png" class="img-responsive" style="height:50px;width:auto" />
+                }
+                else
+                {
+                    <img src="~/Content/Images/SVNOff.png" href="/SVN/Upload" class="img-responsive" style="height:50px;width:auto" />
+                }
+            </div>
+            <div class="col-md-4">
+                @if (ViewBag.UEV)
+                {
+                    <img src="~/Content/Images/UEVOn.png" class="img-responsive" style="height:50px;width:auto" />
+                }
+                else
+                {
+                    <img src="~/Content/Images/UEVOff.png" href="/UEV/Upload" class="img-responsive" style="height:50px;width:auto" />
+                }
+            </div>
+            <div class="col-md-4">
+                @if (ViewBag.OPU)
+                {
+                    <img src="~/Content/Images/OPUOn.png" class="img-responsive" style="height:50px;width:auto" />
+                }
+                else
+                {
+                    <img src="~/Content/Images/OPUOff.png" href="/OPU/Upload" class="img-responsive" style="height:50px;width:auto" />
+                }
+            </div>
+        </div>
+    </div>
+    <h3>Расчет отопления за @ViewBag.Year @ViewBag.Month</h3>
+    <div class="table-responsive" style="top:0px;position:sticky">
+        <table class="table table-bordered table-striped ">
+            <tr>
+                <th style="background:#ebebeb" colspan="8" title="Данные загружается из сводной ведомости начислений(ФГУПЖКХ) и ведомости УЭВ">
+                    Начисления в рублях
+                </th>
+                <th style="background:#ebebeb" title="Прибор учета определяется на основании ведомости УЭВ. Если галочки нет, а прибор учета реально зарегистрирован, значит УЭВ не засчитывает показания прибора учета.">
+                    ПУ
+                </th>
+                <th style="background:#ebebeb" colspan="5" title="Объёмы определяются на основании сводной ведомости начислений (ФГУПЖКХ) и ведомости УЭВ">
+                    Объём в гигакалориях
+                </th>
+
+
+
+            </tr>
+            <tr>
+                <th style="background:#ebebeb" title="Адрес дома" width="18%">
+                    Адрес
+                </th>
+                <th style="background:#fff200" title="Средние показания УЭВ за прошлый отопительный сезон в рублях" width="6%">
+                    УЭВ средняя
+                </th>
+                <th style="background:#fff200" title="Показания УЭВ за аналогичный  период прошлого года в рублях" width="6%">
+                    УЭВ прошлый год
+                </th>
+                <th style="background:#fff200" title="Выставленные нам показания УЭВ в рублях" width="6%">
+                    УЭВ
+                </th>
+                <th style="background:#ebebeb" title="Наши данные с учетом корректировок на основании сводной ведомости начислений (ЖКХННЦ)" width="6%">
+                    Начисления План
+                </th>
+                <th style="background:#ebebeb" title="Наши данные без учета корректировок на основании сводной ведомости начислений (ЖКХННЦ)" width="6%">
+                    Начисления Факт
+                </th>
+                <th style="background:#fff200" width="10%" title="От показаний УЭВ мы отнимаем наши данные с учетом корректировок и показания индивидуальных приборов учета за прошлый месяц.">
+                    УЭВ-План
+                </th>
+                <th style="background:#fff200" width="10%" title="От показаний УЭВ мы отнимаем наши данные без учета корректировок и показания индивидуальных приборов учета за прошлый месяц.">
+                    УЭВ-Факт
+                </th>
+                <th style="background:#fff200" width="4%" title="Наличие в доме прибора учета и занных ведомости УЭВ">
+                    ПУ
+                </th>
+                <th style="background:#fff200" width="6%" title="Разница в объёмах УЭВ и поданных нами (Файл OPU_Андрей_исх.xls) измеряется в гигакалориях.">
+                    Факт-УЭВ
+                </th>
+                <th style="background:#ebebeb" width="6%" title="Объём, выставленный нами (Файл OPU_Андрей_исх.xls) измеряется в гигакалориях.">
+                    Объём Факт
+                </th>
+                <th style="background:#fff200" width="6%" title="Объём, выставленный УЭВ в гигакалориях.">
+                    Объём УЭВ
+                </th>
+
+                <th style="background:#fff200" width="5%" title="Объём, выставленный нам УЭВ за аналогичный месяц прошлого года. Измеряется в гигакалориях.">
+                    Прошлый год УЭВ
+                </th>
+                <th style="background:#fff200" width="5%" title="Средний объём, выставленный УЭВ за отопительный сезон прошлого года. Измеряется в гигакалориях.">
+                    Средняя УЭВ
+                </th>
+
+            </tr>
+        </table>
+       
+    </div>
+        <div class="table-responsive">
+            <table id="Table" class="table table-bordered table-striped ">
+               
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        string cl1 = "table-warning"; string cl2 = "table-warning"; string cl3 = ""; string cl4 = ""; string cl5 = ""; string cl6 = ""; string cl7 = ""; string cl8 = "";
+                        string prim = "";string op1 = "";string op2 = ""; string op3 = ""; string op4 = "";
+                        if (item.RaznFact < 0)
+                        {
+                            cl1 = "table-success";
+                        }
+                        if (item.RaznFact == 0)
+                        {
+                            cl1 = "";
+                        }
+                        if (item.RaznFact > 1000)
+                        {
+                            cl1 = "table-danger";
+                        }
+                        if (item.RaznPlan < 0)
+                        {
+                            cl2 = "table-success";
+                        }
+                        if (item.RaznPlan == 0)
+                        {
+                            cl2 = "";
+                        }
+                        if (item.RaznPlan > 1000)
+                        {
+                            cl2 = "table-danger";
+                        }
+                        if (item.Uev == 0 && (item.Plan + item.Fact != 0))
+                        {
+                            cl3 = "table-warning";
+                        }
+                        if (item.VFact < item.GVUEVM3 - 1)
+                        {
+                            cl4 = "table-warning";
+                        }
+                        if (item.VFact < item.GVUEVM3 - 5)
+                        {
+                            cl4 = "table-danger";
+                        }
+
+                        if (item.VFact == 0 && item.PU == false && item.GVUEVM3 != 0)
+                        {
+                            cl4 = "table-info"; prim = "Нет ПУ";
+                        }
+                        if (item.VFact - 3 > item.GVUEVM3)
+                        {
+                            cl5 = "table-success";
+                        }
+                        if (item.Primech.Contains("*") || item.Primech.Contains("о"))
+                        {
+                            cl5 = "table-info"; prim = "Ремонт"; cl4 = "table-info";
+                        }
+                        else { cl5 = cl4; }
+                        if (item.Srednyaya < item.GVUEVM3 - 5)
+                        {
+                            cl7 = "table-success";
+                            op1 = "Средняя за отопительный сезон прошлого года меньше, чем в этом месяце на " + Math.Round(item.GVUEVM3 - item.Srednyaya,0).ToString() + " Гкал";
+                            op2 = "Выставленная сумма УЭВ за отопительный сезон прошлого года меньше, чем в этом месяце на " + Math.Round(item.Uev - item.SrednyayaRub,0).ToString() + " Руб";
+                        }
+                        if (item.Srednyaya > item.GVUEVM3 + 5)
+                        {
+                            cl7 = "table-danger";
+                            op1 = "Средняя за отопительный сезон прошлого года больше, чем в этом месяце на " + Math.Round(item.Srednyaya- item.GVUEVM3,0).ToString() + " Гкал";
+                            op2 = "Выставленная сумма УЭВ за отопительный сезон прошлого года больше, чем в этом месяце на " + Math.Round(item.SrednyayaRub- item.Uev,0).ToString() + " Руб";
+                        }
+                        if (item.LastYear < item.GVUEVM3 - 5)
+                        {
+                            cl8 = "table-success";
+                            op3 = "Объём за аналогичный период прошлого года меньше, чем в этом месяце на " + Math.Round(item.GVUEVM3 - item.LastYear,0).ToString() + " Гкал";
+                            op4 = "Выставленная сумма УЭВ за за аналогичный период прошлого года меньше, чем в этом месяце на " + Math.Round(item.Uev - item.LastYearRub,0).ToString() + " Руб";
+                        }
+                        if (item.LastYear > item.GVUEVM3 + 5)
+                        {
+                            cl8 = "table-danger";
+                            op3 = "Объём за аналогичный период прошлого года больше, чем в этом месяце на " + Math.Round(item.LastYear - item.GVUEVM3,0).ToString() + " Гкал";
+                            op4 = "Выставленная сумма УЭВ за за аналогичный период прошлого года больше, чем в этом месяце на " + Math.Round(item.LastYearRub - item.Uev,0).ToString() + " Руб";
+                        }
+                        string tit = Convert.ToString(item.VFact - item.GVUEVM3);
+
+
+
+                    <tr>
+                        <td width="18%">
+                            @Html.DisplayFor(modelItem => item.Adres)
+                        </td>
+                        <td class=@cl7 width="6%" title="@op2">
+                            @Html.DisplayFor(modelItem => item.SrednyayaRub)
+                        </td>
+                        <td class=@cl8 width="6%" title="@op4">
+                            @Html.DisplayFor(modelItem => item.LastYearRub)
+                        </td>
+                        <td class=@cl3 width="6%">
+                            @Html.DisplayFor(modelItem => item.Uev)
+                        </td>
+                        <td width="6%">
+                            @Html.DisplayFor(modelItem => item.Plan)
+                        </td>
+                        <td width="6%">
+                            @Html.DisplayFor(modelItem => item.Fact)
+                        </td>
+                        <td class=@cl2 width="10%">
+                            @Html.DisplayFor(modelItem => item.RaznPlan)
+                        </td>
+                        <td class=@cl1 width="10%">
+                            @Html.DisplayFor(modelItem => item.RaznFact)
+                        </td>
+                        <td class=@cl4 + @cl5 width="4%">
+
+                            <input type="checkbox" class="form-control" id="SelectAll" style="width:15px;height:15px" checked=@item.PU>
+                        </td>
+                        <td class=@cl5 width="6%">
+                            @Html.DisplayFor(modelItem => item.Primech) @prim
+                        </td>
+                        <td class=@cl6 width="6%">
+                            @Html.DisplayFor(modelItem => item.VFact)
+                        </td>
+                        <td class=@cl4 + @cl5 title=@tit width="6%">
+                            @Html.DisplayFor(modelItem => item.GVUEVM3)
+                        </td>
+
+                        <td class=@cl8 width="5%" title="@op3">
+                            @Html.DisplayFor(modelItem => item.LastYear)
+                        </td>
+                        <td class=@cl7 width="5%" title="@op1">
+                            @Html.DisplayFor(modelItem => item.Srednyaya)
+                        </td>
+                    </tr>
+
+
+                    }
+                </tbody>
+            </table>
+        </div>
+        <p><a href="/Home/VODAIndex" class="btn btn-success btn-block"> Назад </a> </p>
+        <p><button tag="ToExcel" class="btn btn-success btn-block">Экспорт в эксель &raquo;</button> </p>
+</body>
+</html>
+@section Scripts {
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+    @Scripts.Render("~/scripts/jquery-3.3.1.js")
+    @Scripts.Render("~/scripts/bootstrap.min.js")
+    @Scripts.Render("~/scripts/bootstrap.bundle.min.js")
+    <script>
+        //Нажатие на кнопку "input[type='submit']"
+        $("button[tag='ToExcel']").click(function () {
+
+
+
+
+
+
+
+                var S = "";
+                var array = [];
+                var table = $("#Table");
+                var rows = table.children();
+                for (var i = 0; i < rows.length; i++) {
+                    var fields = rows.eq(i).children();
+                    var rowArray = [];
+                    for (var j = 0; j < fields.length; j++) {
+                        rowArray.push(fields[j].innerHTML);
+                        S += fields[j].innerHTML + ";";
+                    }
+
+                    array.push(rowArray);
+                    S += ";";
+                }
+                var T = table.html().replace("</tr>", "|").replace("<tr>", "").replace("<td>", "").replace("</td>", ";").replace(" ", "");
+
+                console.log(array);
+
+                $.post('@Url.Action("ExportToExcelJquery", "Home")', { selection: array }, function (data) {
+
+                    window.location.href = data;
+                });
+
+            });
+    </script>
+
+   
+
+
+}

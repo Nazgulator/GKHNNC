@@ -26,7 +26,8 @@ namespace GKHNNC.Models
         public Material Material { get; set; }
         [Display(Name = "Дата")]
         public DateTime Date { get; set; }
-
+        [Display(Name = "Состояние")]
+        public int Sostoyanie { get; set; }
 
         // public System.Data.Entity.DbSet<DOMOtoplenie> DB { get; set; }
     }

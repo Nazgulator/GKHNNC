@@ -1,0 +1,1020 @@
+﻿@model GKHNNC.Models.House
+<link href='@Url.Content("~/Content/themes/base/all.css")' rel="stylesheet" type="text/css" />
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Информация о доме</title>
+</head>
+
+<body>
+
+
+
+    <div class="container">
+        <h2>@Model.Adres</h2>
+        <h4>Последние полные данные за @ViewBag.Date</h4>
+        <hr />
+
+        @using (Html.BeginForm("Info", "Houses", FormMethod.Post, new { enctype = "multipart/form-data", @placeholder = "Выберите дату" }))
+        {
+            <div id="Main" AdresId="@Model.AdresId" class="container">
+                <div class=" row">
+                    <div class="col-6">
+                        <p> <h5>Год</h5></p>
+                    </div>
+                    <div class="col-6">
+                        <p> <h5>Месяц</h5></p>
+                    </div>
+                </div>
+                <div class=" row">
+                    <div class="col-6">
+
+                        @Html.DropDownList("Year", new SelectList(ViewBag.Years), new { @class = "form-control" })
+
+                    </div>
+                    <div class="col-6">
+
+                        @Html.DropDownList("Month", new SelectList(ViewBag.Months, "Value", "Text"), new { @class = "form-control" })
+
+                    </div>
+
+                </div>
+            </div>
+        }
+
+    </div>
+
+
+
+
+    <h5>
+        Основные данные
+    </h5>
+    <table class="table-bordered table-striped col-12">
+        <tr>
+            <td>
+                Общая площадь дома
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.Ploshad, new { htmlAttributes = new { @class = "form-control" } })
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Общая площадь, занимаемая арендаторами
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.PloshadArendators, new { htmlAttributes = new { @class = "form-control" } })
+            </td>
+        </tr>
+        @if (Model.Room.Balkon > 0)
+        {
+            <tr>
+                <td>
+                    Количество балконов
+                </td>
+                <td>
+                    @Html.DisplayFor(model => model.Room.Balkon, new { htmlAttributes = new { @class = "form-control" } })
+                </td>
+            </tr>
+        }
+        @if (Model.Room.Lodgi > 0)
+        {
+            <tr>
+                <td>
+                    Количество лоджий
+                </td>
+                <td>
+                    @Html.DisplayFor(model => model.Room.Lodgi, new { htmlAttributes = new { @class = "form-control" } })
+                </td>
+            </tr>
+        }
+        <tr>
+            <td>
+                Чердачные перекрытия
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.Roof.Vid.Vid, new { htmlAttributes = new { @class = "form-control" } })
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Форма крыши
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.Roof.Form.Form, new { htmlAttributes = new { @class = "form-control" } })
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Внутренние перекрытия
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.Room.Overlap.Overlap, new { htmlAttributes = new { @class = "form-control" } })
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Тип фундамента
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.Fundament.Type.Type, new { htmlAttributes = new { @class = "form-control" } })
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Площадь отмостки
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.Fundament.Ploshad, new { htmlAttributes = new { @class = "form-control" } })
+            </td>
+        </tr>
+    </table>
+
+
+
+    <p>
+
+    </p>
+
+
+
+
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-success btn-block" data-toggle="modal" data-target="#KonstructiveModal">
+        Конструктивные элементы
+    </button>
+    @if (ViewBag.Arendators.Count > 0)
+    {
+        <button type="button" class="btn btn-success btn-block" data-toggle="modal" data-target="#ArendatorsModal">
+            Арендаторы
+        </button>
+    }
+    else
+    {
+        <button type="button" class="btn btn-secondary btn-block">
+            Арендаторов нет
+        </button>
+    }
+    @if (ViewBag.Works.Count > 0)
+    {
+        <button type="button" class="btn btn-success btn-block" data-toggle="modal" data-target="#WorksModal">
+            Выполненные работы
+        </button>
+    }
+    else
+    {
+        <button type="button" class="btn btn-secondary btn-block">
+            Выполненных работ нет
+        </button>
+    }
+    @if (ViewBag.Uslugis.Count > 0)
+    {
+        <button type="button" class="btn btn-success btn-block" data-toggle="modal" data-target="#UslugsModal">
+            Выполненные услуги
+        </button>
+    }
+    else
+    {
+        <button type="button" class="btn btn-secondary btn-block">
+            Выполненных услуг нет
+        </button>
+    }
+   
+
+
+    <button class="btn btn-success btn-block" onclick="location.href='@Url.Action("Index", "Home")'">Назад</button>
+
+
+
+
+
+
+
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="KonstructiveModal" tabindex="-1" role="dialog" aria-labelledby="KonstructiveModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content col-12">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="KonstructiveModalLabel">Конструктивные элементы дома</h3>
+
+                </div>
+                <div class="modal-body">
+
+                    <div class="accordion" id="accordionExample">
+                        <div class="card">
+                            <div class="card-header" id="headingTwo">
+                                <h5 class="mb-0">
+                                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="color:green">
+                                        Фундамент
+                                    </button>
+                                </h5>
+                            </div>
+                            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                                <div class="card-body">
+                                    <table class="table-striped col-12">
+                                        <tr>
+                                            <td>
+                                                Материал фундамента
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => model.Fundament.Material.Material, new { htmlAttributes = new { @class = "form-control" } })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Тип фундамента
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => model.Fundament.Type.Type, new { htmlAttributes = new { @class = "form-control" } })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Площадь отмостки
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => model.Fundament.Ploshad, new { htmlAttributes = new { @class = "form-control" } })
+                                            </td>
+                                        </tr>
+
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header" id="headingThree">
+                                <h5 class="mb-0">
+                                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree" style="color:green">
+                                        Фасад
+                                    </button>
+                                </h5>
+                            </div>
+                            <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+                                <div class="card-body">
+                                    <table class="table-striped col-12">
+                                        <tr>
+                                            <td>
+                                                Тип фасада
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => model.Fasad.Type.Type, new { htmlAttributes = new { @class = "form-control" } })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Материал фасада
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => model.Fasad.Material.Material, new { htmlAttributes = new { @class = "form-control" } })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Утепление фасада
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => model.Fasad.Uteplenie.Uteplenie, new { htmlAttributes = new { @class = "form-control" } })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Год капитального ремонта фасада
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => model.Fasad.Year, new { htmlAttributes = new { @class = "form-control" } })
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                </div>
+
+                            </div>
+
+
+                        </div>
+                        <div class="card">
+                            <div class="card-header" id="heading4">
+                                <h5 class="mb-0">
+                                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapse4" aria-expanded="false" aria-controls="collapse4" style="color:green">
+                                        Внутренние помещения
+                                    </button>
+                                </h5>
+                            </div>
+                            <div id="collapse4" class="collapse" aria-labelledby="heading4" data-parent="#accordionExample">
+                                <div class="card-body">
+                                    <table class="table-striped col-12">
+                                        <tr>
+                                            <td>
+                                                Тип внутренних стен
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => model.Room.Type.Type, new { htmlAttributes = new { @class = "form-control" } })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Внутренние перекрытия
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => model.Room.Overlap.Overlap, new { htmlAttributes = new { @class = "form-control" } })
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>
+                                                Окна
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => model.Room.Window.Window, new { htmlAttributes = new { @class = "form-control" } })
+                                            </td>
+                                        </tr>
+
+                                    </table>
+
+                                </div>
+
+                            </div>
+
+
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header" id="heading5">
+                                <h5 class="mb-0">
+                                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapse5" aria-expanded="false" aria-controls="collapse5" style="color:green">
+                                        Крыша
+                                    </button>
+                                </h5>
+                            </div>
+                            <div id="collapse5" class="collapse" aria-labelledby="heading5" data-parent="#accordionExample">
+                                <div class="card-body">
+                                    <table class="table-striped col-12">
+                                        <tr>
+                                            <td>
+                                                Форма крыши
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => model.Roof.Form.Form, new { htmlAttributes = new { @class = "form-control" } })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Тип крыши
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => model.Roof.Type.Type, new { htmlAttributes = new { @class = "form-control" } })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Чердачные перекрытия
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => model.Roof.Vid.Vid, new { htmlAttributes = new { @class = "form-control" } })
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>
+                                                Утепление крыши
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => model.Roof.Uteplenie.Uteplenie, new { htmlAttributes = new { @class = "form-control" } })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Год капитального ремонта несущей части крыши
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => model.Roof.Year, new { htmlAttributes = new { @class = "form-control" } })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Год капитального ремонта кровли
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => model.Roof.YearKrovlya, new { htmlAttributes = new { @class = "form-control" } })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Площадь крыши
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => model.Roof.Ploshad, new { htmlAttributes = new { @class = "form-control" } })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Износ несущей части крыши
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => model.Roof.Iznos, new { htmlAttributes = new { @class = "form-control" } })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Износ кровли
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => model.Roof.IznosKrovlya, new { htmlAttributes = new { @class = "form-control" } })
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                </div>
+
+                            </div>
+
+
+                        </div>
+
+
+                        <div class="card">
+                            <div class="card-header" id="heading6">
+                                <h5 class="mb-0">
+                                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapse6" aria-expanded="false" aria-controls="collapse6" style="color:green">
+                                        Отопление
+                                    </button>
+                                </h5>
+                            </div>
+                            <div id="collapse6" class="collapse" aria-labelledby="heading6" data-parent="#accordionExample">
+                                <div class="card-body">
+                                    <table class="table-striped col-12">
+                                        <tr>
+                                            <td>
+                                                Материал труб системы отопления
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => model.Otoplenie.MaterialOtopTrub.Name, new { htmlAttributes = new { @class = "form-control" } })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Внешний утеплитель
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => model.Otoplenie.MaterialOtop1.Name, new { htmlAttributes = new { @class = "form-control" } })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Внутренний утеплитель
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => model.Otoplenie.MaterialOtop2.Name, new { htmlAttributes = new { @class = "form-control" } })
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>
+                                                Материал стояков
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => model.Otoplenie.MaterialTeplo.Name, new { htmlAttributes = new { @class = "form-control" } })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Износ системы отопления
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => model.Otoplenie.IznosOtop, new { htmlAttributes = new { @class = "form-control" } })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Количество вводов отопления
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => model.Otoplenie.VvodsOtop, new { htmlAttributes = new { @class = "form-control" } })
+                                            </td>
+                                        </tr>
+
+                                    </table>
+
+                                </div>
+
+                            </div>
+
+
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header" id="heading7">
+                                <h5 class="mb-0">
+                                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapse7" aria-expanded="false" aria-controls="collapse7" style="color:green">
+                                        Система горячего водоснабжения
+                                    </button>
+                                </h5>
+                            </div>
+                            <div id="collapse7" class="collapse" aria-labelledby="heading7" data-parent="#accordionExample">
+                                <div class="card-body">
+                                    <table class="table-striped col-12">
+                                        <tr>
+                                            <td>
+                                                Материал труб системы горячего водоснабжения
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => model.HotW.MaterialHW.Name, new { htmlAttributes = new { @class = "form-control" } })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Износ системы горячего водоснабжения
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => model.HotW.IznosHW, new { htmlAttributes = new { @class = "form-control" } })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Год капитального ремонта системы горячего водоснабжения
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => model.HotW.RemontHW, new { htmlAttributes = new { @class = "form-control" } })
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                </div>
+
+                            </div>
+
+
+                        </div>
+                        <div class="card">
+                            <div class="card-header" id="heading8">
+                                <h5 class="mb-0">
+                                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapse8" aria-expanded="false" aria-controls="collapse8" style="color:green">
+                                        Система холодного водоснабжения
+                                    </button>
+                                </h5>
+                            </div>
+                            <div id="collapse8" class="collapse" aria-labelledby="heading8" data-parent="#accordionExample">
+                                <div class="card-body">
+                                    <table class="table-striped col-12">
+                                        <tr>
+                                            <td>
+                                                Материал труб системы холодного водоснабжения
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => model.ColdW.MaterialCW.Name, new { htmlAttributes = new { @class = "form-control" } })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Износ системы холодного водоснабжения
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => model.ColdW.IznosCW, new { htmlAttributes = new { @class = "form-control" } })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Год капитального ремонта системы холодного водоснабжения
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => model.ColdW.RemontCW, new { htmlAttributes = new { @class = "form-control" } })
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                </div>
+
+                            </div>
+
+
+                        </div>
+                        <div class="card">
+                            <div class="card-header" id="heading9">
+                                <h5 class="mb-0">
+                                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapse9" aria-expanded="false" aria-controls="collapse9" style="color:green">
+                                        Система водоотведения
+                                    </button>
+                                </h5>
+                            </div>
+                            <div id="collapse9" class="collapse" aria-labelledby="heading9" data-parent="#accordionExample">
+                                <div class="card-body">
+                                    <table class="table-striped col-12">
+                                        <tr>
+                                            <td>
+                                                Материал системы водоотведения
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => model.Vodootvod.Material.Name, new { htmlAttributes = new { @class = "form-control" } })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Износ системы водоотведения
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => model.Vodootvod.Iznos, new { htmlAttributes = new { @class = "form-control" } })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Год капитального ремонта системы водоотведения
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => model.Vodootvod.Remont, new { htmlAttributes = new { @class = "form-control" } })
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header" id="heading10">
+                                <h5 class="mb-0">
+                                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapse10" aria-expanded="false" aria-controls="collapse10" style="color:green">
+                                        Энергосеть
+                                    </button>
+                                </h5>
+                            </div>
+                            <div id="collapse10" class="collapse" aria-labelledby="heading10" data-parent="#accordionExample">
+                                <div class="card-body">
+                                    <table class="table-striped col-12">
+                                        <tr>
+                                            <td>
+                                                Количество вводов
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => model.Electro.Electrovvods, new { htmlAttributes = new { @class = "form-control" } })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Износ энергосети
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => model.Electro.IznosElectro, new { htmlAttributes = new { @class = "form-control" } })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Год капитального ремонта энергосети
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => model.Electro.RemontElectro, new { htmlAttributes = new { @class = "form-control" } })
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                </div>
+
+                            </div>
+
+
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success btn-block" data-dismiss="modal">Закрыть</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="ArendatorsModal" tabindex="-1" role="dialog" aria-labelledby="ArendatorsModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content col-12">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="ArendatorsModalLabel">Арендаторы дома</h3>
+
+                </div>
+                <div class="modal-body">
+                    @if (ViewBag.Arendators.Count > 0)
+                    {
+                        <div class="container col-md-12">
+
+
+                            <div class="row row-bottom-margin" style="top:10px">
+                                <div class="col" style="text-align:left">
+                                    <H5> Данные за @ViewBag.Date</H5>
+                                </div>
+                            </div>
+                            <div class="row row-bottom-margin" style="top:10px">
+                                <div class="col" style="text-align:left">
+                                    <div class="container-fluid">
+                                        <div class="row">
+                                            <div class="img-wrap">
+                                                <H6> Площадь @Html.DisplayFor(model => model.PloshadArendators, new { htmlAttributes = new { @class = "form-control" } })</H6>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="row row-bottom-margin" style="top:10px">
+                                <div class="col" style="text-align:left">
+                                    <div class="container-fluid">
+                                        <div class="row">
+                                            <div class="img-wrap">
+                                                <H6> Теплота @Html.DisplayFor(model => model.TeplotaArendators, new { htmlAttributes = new { @class = "form-control" } })</H6>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="row row-bottom-margin" style="top:10px">
+                                <div class="col" style="text-align:left">
+                                    <div class="container-fluid">
+                                        <div class="row">
+                                            <div class="img-wrap">
+
+                                                <H6> 1/12 Теплота  @Html.DisplayFor(model => model.Teplota12Arendators, new { htmlAttributes = new { @class = "form-control" } })</H6>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="row row-bottom-margin" style="top:10px">
+                                <div class="col" style="text-align:left">
+                                    <div class="container-fluid">
+                                        <div class="row">
+                                            <div class="img-wrap">
+
+                                                <H6> Горячая вода @Html.DisplayFor(model => model.HotWaterArendators, new { htmlAttributes = new { @class = "form-control" } })</H6>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="row row-bottom-margin" style="top:10px">
+                                <div class="col" style="text-align:left">
+                                    <div class="container-fluid">
+                                        <div class="row">
+                                            <div class="img-wrap">
+
+                                                <H6 style="left:30px"> Холодная вода @Html.DisplayFor(model => model.ColdWaterArendators, new { htmlAttributes = new { @class = "form-control" } })</H6>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col">
+                                    <h3> Список арендаторов</h3>
+                                </div>
+                            </div>
+
+                            @for (int i = 0; i < ViewBag.Arendators.Count; i++)
+                            {
+                                <div class="row row-bottom-margin" style="top:10px">
+                                    <div class="col" style="text-align:left">
+                                        <H6>@ViewBag.Arendators[i]</H6>
+
+                                    </div>
+                                </div>
+                            }
+
+
+
+                        </div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success btn-block" data-dismiss="modal">Закрыть</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade " id="WorksModal" tabindex="-1" role="dialog" aria-labelledby="WorksModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content col-12">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="WorksModalLabel">Выполненные работы по дому</h3>
+                </div>
+                <div class="modal-body">
+                    @if (ViewBag.Works.Count > 0)
+                    {
+                        <div class="container col-12">
+                            <div class="row row-bottom-margin">
+                                <div class="col">
+                                    <H5>Данные за @ViewBag.Date</H5>
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12" style="text-align:left">
+                                    <table class="table-bordered table-striped col-12">
+                                        <tr>
+                                            <th>
+                                                Работа
+                                            </th>
+                                            <th>
+                                                Объём
+                                            </th>
+                                            <th>
+                                                Измерение
+                                            </th>
+                                        </tr>
+
+                                        @for (int i = 0; i < ViewBag.Works.Count; i++)
+                                        {
+                                            string[] s = ViewBag.Works[i].Split(';');
+                                            <tr>
+                                                <td>
+                                                    @s[0]
+                                                </td>
+
+                                                <td>
+                                                    @s[1]
+                                                </td>
+                                                <td>
+                                                    @s[2]
+                                                </td>
+                                            </tr>
+
+
+                                        }
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success btn-block" data-dismiss="modal">Закрыть</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade " id="UslugsModal" tabindex="-1" role="dialog" aria-labelledby="UslugsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content col-12">
+                <div class="modal-header col-12">
+                    <h3 class="modal-title" id="UslugsModalLabel">Выполненные услуги по дому</h3>
+                </div>
+                <div class="modal-body col-12">
+                    @if (ViewBag.Uslugis.Count > 0)
+                    {
+                        <div class="container col-12">
+                            <div class="row row-bottom-margin">
+                                <div class="col">
+                                    <H5>Данные за @ViewBag.Date</H5>
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12" style="text-align:left">
+                                    <table class="table-bordered table-striped col-12">
+                                        <tr>
+                                            <th>
+                                                Работа
+                                            </th>
+                                            <th>
+                                                Cумма
+                                            </th>
+
+                                        </tr>
+
+                                        @for (int i = 0; i < ViewBag.Uslugis.Count; i++)
+                                        {
+
+                                            <tr>
+                                                <td>
+                                                    @ViewBag.Uslugis[i]
+                                                </td>
+
+                                                <td>
+                                                    @ViewBag.UslugisCost[i]
+                                                </td>
+
+                                            </tr>
+
+
+                                        }
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success btn-block" data-dismiss="modal">Закрыть</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+</body>
+</html>
+
+
+@section Scripts{
+    @Scripts.Render("~/scripts/jquery-3.3.1.min.js")
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+    @Scripts.Render("~/scripts/nprogress.min.js")
+    @Scripts.Render("~/scripts/jquery.signalR-2.4.0.min.js")
+    @Scripts.Render("~/signalr/hubs")
+
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/scripts/jquery.unobtrusive.min.js")
+
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/scripts/bootstrap.bundle.js")
+
+    <!--SignalR script to update the chat page and send messages.-->
+    <script>
+        //при открытии страницы
+        $("#progress").hide();
+        $("#warning").hide();
+
+    </script>
+    <script>
+        $("#download").click(function () {
+            $("#progress").fadeIn("slow");
+            $("#main").fadeOut("slow");
+        }
+        );
+    </script>
+    <script>
+        $(function () {
+            var PB = $.connection.progressHub;
+            console.log("Тест");
+            PB.client.sendMessage = function (message, count) {
+                // update progress
+                console.log(count);
+                UpdateProgress(message, count);
+                //alert(message);
+            };
+
+            $.connection.hub.start().done(function () {
+                console.log("Приконнектились");
+                // call the method CallLongOperation defined in the Hub
+                PB.server.getCountAndMessage();
+                $("#progressBar").hide();
+
+
+
+            });
+
+
+            // Update the progress bar
+            function UpdateProgress(message, count) {
+                $("#progressBar").fadeIn("slow");
+                var result = $("#result");
+                result.html(message);
+
+                //$("#progressBar").data("progressbar").value(count);
+
+                $("#progressBar").attr("aria-valuenow", count);
+                $("#progressBar").width(count + '%');
+                $("#progressBar").text(count + '%');
+                $("#nadpis").text(message);
+                // $("#progressBar").css("width", count);
+            }
+        });
+    </script>
+    <script>
+        $("#Year").change(function () {
+            var Y = $("#Year").val();
+            var M = $("#Month").val();
+            var Id = $("#Main").attr('AdresId');
+            var Date = "1." + M + "." + Y;
+            window.location.replace("/Houses/Info?id=" + Id + "&DateZapros=" + Date);
+        });
+    </script>
+    <script>
+        $("#Month").change(function () {
+            var Y = $("#Year").val();
+            var M = $("#Month").val();
+            var Id = $("#Main").attr('AdresId');
+            var Date = "1." + M + "." + Y;
+            window.location.replace("/Houses/Info?id=" + Id + "&DateZapros=" + Date);
+        });
+    </script>
+
+
+}

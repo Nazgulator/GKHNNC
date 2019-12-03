@@ -49,6 +49,20 @@ namespace GKHNNC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,HotWater,ColdWater,OtoplenieEnergy,TeplotaVKube,Date")] Tarif tarif)
         {
+            DateTime D = DateTime.Now;
+            if (tarif.Date != null)
+            {
+                try
+                {
+                    D = Convert.ToDateTime(tarif.Date);
+                }
+                catch
+                {
+
+                }
+
+            }
+          
             if (ModelState.IsValid)
             {
                 db.Tarifs.Add(tarif);

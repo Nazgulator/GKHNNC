@@ -23,6 +23,7 @@ namespace GKHNNC.Models
         public int IznosElectro { get; set; }
         [Display(Name = "Дата")]
         public DateTime Date { get; set; }
-
+        [Display(Name = "Состояние")]
+        public int Sostoyanie { get; set; }
     }
 }

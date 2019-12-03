@@ -19,21 +19,36 @@
                 @Html.DisplayNameFor(model => model.Adres)
             </th>
 
-
-            <th></th>
+            <th>
+                Инфо
+            </th>
+            <th>
+                Осмотр
+            </th>
+            <th>
+                Информация
+            </th>
         </tr>
 
         @foreach (var item in Model)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Adres)
-                </td>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Adres)
+            </td>
 
-                <td>
-                    @Html.ActionLink("Информация", "Edit", new { id = item.AdresId })
-                </td>
-            </tr>
+
+            <td>
+                @Html.ActionLink("Инфо", "Info", new { id = item.AdresId }, new { @type = "button", @class = "btn btn-success" })
+            </td>
+            <td>
+                
+                @Html.ActionLink("Добавить осмотр", "Create", "Osmotrs", new { id = item.AdresId, date=DateTime.Now }, new { @type = "button", @class = "btn btn-success" })
+            </td>
+            <td>
+                @Html.ActionLink("Информация", "Edit", new { id = item.AdresId }, new { @type = "button", @class = "form-control" })
+            </td>
+        </tr>
         }
 
     </table>

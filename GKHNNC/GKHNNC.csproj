@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props')" />
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.0\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.0\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -25,6 +26,7 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <TypeScriptToolsVersion>3.1</TypeScriptToolsVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -236,6 +238,8 @@
       <DependentUpon>WorkCenterContext.tt</DependentUpon>
     </Compile>
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\ActiveDefectsController.cs" />
+    <Compile Include="Controllers\ActiveElementsController.cs" />
     <Compile Include="Controllers\AdresController.cs" />
     <Compile Include="Controllers\ArendatorsController.cs" />
     <Compile Include="Controllers\ASControlsController.cs" />
@@ -274,6 +278,7 @@
     <Compile Include="Controllers\OBSDsController.cs" />
     <Compile Include="Controllers\Opredelenie.cs" />
     <Compile Include="Controllers\OPUsController.cs" />
+    <Compile Include="Controllers\OsmotrsController.cs" />
     <Compile Include="Controllers\PeriodichnostsController.cs" />
     <Compile Include="Controllers\RoofFormsController.cs" />
     <Compile Include="Controllers\RoofTypesController.cs" />
@@ -314,6 +319,10 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\ActiveElement.cs" />
+    <Compile Include="Models\Osmotr.cs" />
+    <Compile Include="Models\ActiveDefect.cs" />
+    <Compile Include="Models\Unit.cs" />
     <Compile Include="Models\DOMCW.cs" />
     <Compile Include="Models\DOMElectro.cs" />
     <Compile Include="Models\DOMOtoplenie.cs" />
@@ -419,8 +428,11 @@
     <Content Include="CodeTemplates\PackageVersions5.2.2.xml" />
     <Content Include="CodeTemplates\PackageVersions5.2.3.xml" />
     <Content Include="CodeTemplates\PackageVersions5.2.4.xml" />
+    <Content Include="Content\bootstrap-grid.css" />
+    <Content Include="Content\bootstrap-grid.min.css" />
+    <Content Include="Content\bootstrap-reboot.css" />
+    <Content Include="Content\bootstrap-reboot.min.css" />
     <Content Include="Content\bootstrap-theme.css" />
-    <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\chosen-sprite%402x.png" />
@@ -640,7 +652,6 @@
     <Content Include="Content\themes\base\tooltip.css" />
     <Content Include="Driver\chromedriver.exe" />
     <Content Include="favicon.ico" />
-    <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="Ico\icons8-rfid-датчик-50.png" />
@@ -671,8 +682,6 @@
     <Content Include="Ico\icons8-шестерни-50.png" />
     <Content Include="Ico\icons8-экологичные-технологии-50.png" />
     <Content Include="Ico\icons8-электроника-50.png" />
-    <Content Include="Scripts\bootstrap.js" />
-    <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
@@ -751,6 +760,27 @@
     <Content Include="CodeTemplates\ODataControllerWithContext\Controller.vb.t4" />
     <Content Include="App_Readme\NProgressjs_README.md" />
     <Content Include="App_Readme\NProgressjs_LICENSE" />
+    <Content Include="Scripts\bootstrap.bundle.js" />
+    <Content Include="Scripts\bootstrap.bundle.min.js" />
+    <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Scripts\esm\popper-utils.js" />
+    <Content Include="Scripts\esm\popper-utils.min.js" />
+    <Content Include="Scripts\esm\popper.js" />
+    <Content Include="Scripts\esm\popper.min.js" />
+    <None Include="Scripts\jquery-3.4.1.intellisense.js" />
+    <Content Include="Scripts\jquery-3.4.1.js" />
+    <Content Include="Scripts\jquery-3.4.1.min.js" />
+    <Content Include="Scripts\jquery-3.4.1.slim.js" />
+    <Content Include="Scripts\jquery-3.4.1.slim.min.js" />
+    <Content Include="Scripts\popper-utils.js" />
+    <Content Include="Scripts\popper-utils.min.js" />
+    <Content Include="Scripts\popper.js" />
+    <Content Include="Scripts\popper.min.js" />
+    <Content Include="Scripts\umd\popper-utils.js" />
+    <Content Include="Scripts\umd\popper-utils.min.js" />
+    <Content Include="Scripts\umd\popper.js" />
+    <Content Include="Scripts\umd\popper.min.js" />
     <Content Include="WorkCenterContext.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>WorkCenterContext.edmx</DependentUpon>
@@ -761,6 +791,12 @@
       <DependentUpon>WorkCenterContext.edmx</DependentUpon>
       <LastGenOutput>WorkCenterContext.cs</LastGenOutput>
     </Content>
+    <Content Include="Content\bootstrap.min.css.map" />
+    <Content Include="Content\bootstrap.css.map" />
+    <Content Include="Content\bootstrap-reboot.min.css.map" />
+    <Content Include="Content\bootstrap-reboot.css.map" />
+    <Content Include="Content\bootstrap-grid.min.css.map" />
+    <Content Include="Content\bootstrap-grid.css.map" />
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <Content Include="Scripts\Export-Html-Table-To-Excel-Spreadsheet-using-jQuery-table2excel\.editorconfig" />
     <Content Include="Scripts\Export-Html-Table-To-Excel-Spreadsheet-using-jQuery-table2excel\.gitignore" />
@@ -776,7 +812,14 @@
     <Content Include="Scripts\Export-Html-Table-To-Excel-Spreadsheet-using-jQuery-table2excel\serve.json" />
     <Content Include="Scripts\Export-Html-Table-To-Excel-Spreadsheet-using-jQuery-table2excel\table2excel.jquery.json" />
     <Content Include="Scripts\Export-Html-Table-To-Excel-Spreadsheet-using-jQuery-table2excel\yarn.lock" />
-    <None Include="Scripts\jquery-3.3.1.intellisense.js" />
+    <Content Include="Scripts\esm\popper.min.js.map" />
+    <Content Include="Scripts\esm\popper.js.map" />
+    <Content Include="Scripts\esm\popper-utils.min.js.map" />
+    <Content Include="Scripts\esm\popper-utils.js.map" />
+    <Content Include="Scripts\bootstrap.min.js.map" />
+    <Content Include="Scripts\bootstrap.js.map" />
+    <Content Include="Scripts\bootstrap.bundle.min.js.map" />
+    <Content Include="Scripts\bootstrap.bundle.js.map" />
     <Content Include="Scripts\chosen.jquery.js" />
     <Content Include="Scripts\chosen.jquery.min.js" />
     <Content Include="Scripts\Export-Html-Table-To-Excel-Spreadsheet-using-jQuery-table2excel\demo\index.html" />
@@ -784,10 +827,8 @@
     <Content Include="Scripts\Export-Html-Table-To-Excel-Spreadsheet-using-jQuery-table2excel\dist\jquery.table2excel.min.js" />
     <Content Include="Scripts\Export-Html-Table-To-Excel-Spreadsheet-using-jQuery-table2excel\Gruntfile.js" />
     <Content Include="Scripts\Export-Html-Table-To-Excel-Spreadsheet-using-jQuery-table2excel\src\jquery.table2excel.js" />
-    <Content Include="Scripts\jquery-3.3.1.js" />
-    <Content Include="Scripts\jquery-3.3.1.min.js" />
-    <Content Include="Scripts\jquery-3.3.1.slim.js" />
-    <Content Include="Scripts\jquery-3.3.1.slim.min.js" />
+    <Content Include="Scripts\jquery-3.4.1.slim.min.map" />
+    <Content Include="Scripts\jquery-3.4.1.min.map" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery-ui-1.12.1.js" />
     <Content Include="Scripts\jquery-ui-1.12.1.min.js" />
@@ -1341,6 +1382,35 @@
     <Content Include="Views\DOMOtoplenies\Details.cshtml" />
     <Content Include="Views\DOMOtoplenies\Edit.cshtml" />
     <Content Include="Views\DOMOtoplenies\Index.cshtml" />
+    <Content Include="Scripts\umd\popper.min.js.map" />
+    <Content Include="Scripts\umd\popper.js.map" />
+    <Content Include="Scripts\umd\popper-utils.min.js.map" />
+    <Content Include="Scripts\umd\popper-utils.js.map" />
+    <Content Include="Scripts\README.md" />
+    <Content Include="Scripts\popper.min.js.map" />
+    <Content Include="Scripts\popper.js.map" />
+    <Content Include="Scripts\popper-utils.min.js.map" />
+    <Content Include="Scripts\popper-utils.js.map" />
+    <Content Include="Views\Houses\Info.cshtml" />
+    <Content Include="Views\Home\OtopMonth.cshtml" />
+    <Content Include="Views\ActiveDefects\Create.cshtml" />
+    <Content Include="Views\ActiveDefects\Delete.cshtml" />
+    <Content Include="Views\ActiveDefects\Details.cshtml" />
+    <Content Include="Views\ActiveDefects\Edit.cshtml" />
+    <Content Include="Views\ActiveDefects\Index.cshtml" />
+    <Content Include="Views\Osmotrs\Create.cshtml" />
+    <Content Include="Views\Osmotrs\Delete.cshtml" />
+    <Content Include="Views\Osmotrs\Details.cshtml" />
+    <Content Include="Views\Osmotrs\Edit.cshtml" />
+    <Content Include="Views\Osmotrs\Index.cshtml" />
+    <Content Include="Views\Osmotrs\SelectActiveDefect.cshtml" />
+    <Content Include="Views\Osmotrs\SelectActiveElement.cshtml" />
+    <Content Include="Views\ActiveElements\Create.cshtml" />
+    <Content Include="Views\ActiveElements\Delete.cshtml" />
+    <Content Include="Views\ActiveElements\Details.cshtml" />
+    <Content Include="Views\ActiveElements\Edit.cshtml" />
+    <Content Include="Views\ActiveElements\Index.cshtml" />
+    <Content Include="Views\Osmotrs\ViewActiveDefect.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1348,17 +1418,7 @@
     <Folder Include="MyScripts\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="fonts\glyphicons-halflings-regular.woff2" />
-    <Content Include="fonts\glyphicons-halflings-regular.woff" />
-    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
-    <Content Include="fonts\glyphicons-halflings-regular.eot" />
-    <Content Include="Content\bootstrap.min.css.map" />
-    <Content Include="Content\bootstrap.css.map" />
-    <Content Include="Content\bootstrap-theme.min.css.map" />
-    <Content Include="Content\bootstrap-theme.css.map" />
     <None Include="packages.config" />
-    <Content Include="Scripts\jquery-3.3.1.slim.min.map" />
-    <Content Include="Scripts\jquery-3.3.1.min.map" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\NormMigration.resx">
@@ -1366,13 +1426,18 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <TypeScriptCompile Include="Scripts\index.d.ts" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets')" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
   <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
@@ -1394,7 +1459,6 @@
           <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>
-      <UserProperties Scripts_4jquery-3_13_11_1min_1map__JSONSchema="" />
     </VisualStudio>
   </ProjectExtensions>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

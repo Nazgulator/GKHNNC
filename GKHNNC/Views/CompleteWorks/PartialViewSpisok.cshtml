@@ -47,13 +47,13 @@
                 //если все ок и услуги загружены
                 if (item.ForPrint)
                 {
-                    clas = "bg-success";
+                    clas = "table-success";
                 }
             }
             else
             {
                 //если пришла пустая по услугам строка
-                clas = "bg-warning";
+                clas = "table-warning";
             }
             string sborka = item.Adres.Adress + ";" + item.Date.Year + ";" + item.Date.Month + ";" + ViewBag.GEU;
         <tr id="@counter" value="@sborka" class="@clas">
@@ -79,7 +79,7 @@
                     MultiSelectList MSL = new MultiSelectList(MSS);
                 }
 
-                @Html.DropDownList("Работы", MSL, new { @class = "form-control col-md-4" })
+                @Html.DropDownList("Работы", MSL, new { @class = "form-control" })
 
             </td>
             <td>
@@ -103,7 +103,7 @@
                     MultiSelectList MSL2 = new MultiSelectList(MSS2);
                 }
 
-                @Html.DropDownList("Услуги", MSL2, new { @class = "form-control col-md-4" })
+                @Html.DropDownList("Услуги", MSL2, new { @class = "form-control" })
 
             </td>
             <td>
@@ -192,7 +192,7 @@
 
     <p>
         <a href="/Home/Index" class="btn btn-success" style="width: 100%">В главное меню</a>
-    <p><a href="/CompleteWorks/IndexMain" class="btn btn-success btn-block" ">К выполненным работам &raquo;</a> </p>
+    <p><a href="/CompleteWorks/IndexMain" class="btn btn-success btn-block">К выполненным работам &raquo;</a> </p>
     </p>
 
 
@@ -219,7 +219,7 @@
                         _this.addClass("btn-info");
                         _this.parent().parent().removeClass("bg-success");
                         _this.parent().parent().addClass("bg-info");
-
+                        
 
 
 

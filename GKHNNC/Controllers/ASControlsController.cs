@@ -971,7 +971,7 @@ namespace GKHNNC.Controllers
             }
             else
             {
-
+                A = new ASControl();
 
 
 
@@ -992,6 +992,7 @@ namespace GKHNNC.Controllers
                 if (User.Identity.Name.Contains("КонтрольУАТ"))
                 {
                     A.Kontrol = true;
+                    ASC.Kontrol = true;
                 }
 
 
@@ -1035,7 +1036,7 @@ namespace GKHNNC.Controllers
             ASC.DateClose = DateTime.Now;
             string Data = "";
             int HourClose = ASC.DateClose.Hour;
-            if (ASC.DateClose.Day > ASC.Date.Day||ASC.DateClose.Month>=ASC.Date.Month) { HourClose=23; }//если закрывают на следующий день то ставим время 23:00 считаем как закрыто с опозданием
+            if (ASC.DateClose.Day > ASC.Date.Day||ASC.DateClose.Month>ASC.Date.Month) { HourClose=23; }//если закрывают на следующий день то ставим время 23:00 считаем как закрыто с опозданием
 
             //Ищем потери связи за весь период на AS24
             List<AS24> db24 = new List<AS24>(); 
@@ -1090,12 +1091,12 @@ namespace GKHNNC.Controllers
 
                     db.Entry(ASC).State = EntityState.Modified;
                     db.SaveChanges();
-                    Data = "";
+                    Data = "Рейс успешно завершен!";
 
             }
             catch (Exception e)
             {
-                Data = "Неудача";
+                Data = "Неудачное сохранение в базу данных";
             }
 
             return Json(Data);

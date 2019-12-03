@@ -112,15 +112,17 @@ namespace GKHNNC.Controllers
 
             List<List<string>> Mass = new List<List<string>>();
             List<Adres> MasAdr = vipolnennieUslugis.Select(r => r.Adres).Distinct().ToList();
+            List<string> Summ = new List<string>();
             foreach(Adres A in MasAdr)
             {
-                List<string> s = vipolnennieUslugis.Where(u=>u.Adres.Adress==A.Adress).Select(t => t.Usluga.Name).ToList();
+                List<string> s = vipolnennieUslugis.Where(u=>u.Adres.Adress==A.Adress).Select(t => t.Usluga.Name+"= "+t.StoimostNaMonth.ToString()).ToList();
+                Summ.Add(vipolnennieUslugis.Where(u => u.Adres.Adress == A.Adress).Sum(x=>x.StoimostNaMonth).ToString());
                 int col = vipolnennieUslugis.Where(u => u.Adres.Adress == A.Adress).Count();
                 s.Insert(0, col.ToString());
                 Mass.Add(s);
             }
-            ViewBag.Mass = Mass;    
-
+            ViewBag.Mass = Mass;
+            ViewBag.Summ = Summ;
             foreach (VipolnennieUslugi v in vipolnennieUslugis)
             {
                 if (v.Adres.Adress.Equals(adr) == false)

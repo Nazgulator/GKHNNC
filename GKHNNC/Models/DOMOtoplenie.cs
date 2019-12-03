@@ -37,7 +37,8 @@ namespace GKHNNC.Models
         public Material MaterialTeplo { get; set; }
         [Display(Name = "Дата")]
         public DateTime Date { get; set; }
-
+        [Display(Name = "Состояние")]
+        public int Sostoyanie { get; set; }
 
 
 

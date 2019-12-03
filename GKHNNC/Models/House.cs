@@ -66,6 +66,8 @@ namespace GKHNNC.Models
         [Display(Name = "Дата последнего изменения")]
         public DateTime RoofDate { get; set; }
 
+       
+
         [Display(Name = "Площадь отмостки")]
         public decimal FundamentPloshad { get; set; }
         [Display(Name = "Материал фундамента")]
@@ -79,6 +81,14 @@ namespace GKHNNC.Models
 
         [Display(Name = "Дата")]
         public DateTime Date { get; set; }
+        [Display(Name = "Фундамент")]
+        public DOMFundament Fundament { get; set; }
+        [Display(Name = "Крыша")]
+        public DOMRoof Roof { get; set; }
+        [Display(Name = "Фасад")]
+        public DOMFasad Fasad { get; set; }
+        [Display(Name = "Внутренние помещения")]
+        public DOMRoom Room { get; set; }
         [Display(Name = "Отопление")]
         public DOMOtoplenie Otoplenie { get; set; }
         [Display(Name = "Горячая вода")]
@@ -89,6 +99,8 @@ namespace GKHNNC.Models
         public DOMElectro Electro { get; set; }
         [Display(Name = "Электросеть")]
         public DOMVodootvod Vodootvod { get; set; }
+
+
 
     }
 }

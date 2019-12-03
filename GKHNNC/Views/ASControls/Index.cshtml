@@ -76,7 +76,7 @@
 <h3>
     Текущие выезды
 </h3>
-<table class="container">
+<table class="container" style="font-size:10px">
     @if (Model.Count() == 0)
     {
         <h3>На текущий момент выездов нет.</h3>
@@ -87,10 +87,10 @@
     {
         <table id="T" class="table table-bordered ">
             <tr>
-                <th style="text-align:center">
-                    Проблемы
+                <th style="text-align:center" width="50px">
+                    Инфо
                 </th>
-                <th style="text-align:center">
+                <th style="text-align:center" width="190px">
                     Тип автомобиля
                 </th>
                 <th style="text-align:center">
@@ -107,7 +107,7 @@
                     <th style="text-align:center">
                         Датчик ДУТ
                     </th>
-                    <th style="text-align:center">
+                    <th style="text-align:center" width="120px">
                         Сравнение ДУТ
                     </th>
                 }
@@ -119,7 +119,7 @@
                     @Html.DisplayNameFor(model => model.Primech)
                 </th>
                     -->
-                <th style="text-align:center">
+                <th style="text-align:center" width="256px">
                     @if (ViewBag.HourSnyatia.Count > 0)
                     {
                         <p>
@@ -127,7 +127,7 @@
                         </p>
                     }
                 </th>
-                <th style="text-align:center">
+                <th style="text-align:center" width="256px">
                     Потери связи
                 </th>
                 <!-- <th style="text-align:center">
@@ -143,7 +143,7 @@
                         Пробег
                     </th>
                 }
-                <th style="text-align:center">
+                <th style="text-align:center" width="190px">
                     Закрытие выезда
                 </th>
             </tr>
@@ -204,21 +204,21 @@
                         item.Mesta = item.Mesta.Distinct().ToList();
                     }
                     string DvigName = "Не двигается";
-                    string DvigClass = "btn btn-danger";
+                    string DvigClass = "btn table-danger";
                     if (item.Mesta.Count > 2)
                     {
                         DvigName = "В движении";
-                        DvigClass = "btn btn-success";
+                        DvigClass = "btn table-success";
                     }
                     if (item.Mesta.Contains("На стоянке"))
                     {
                         DvigName = "На стоянке";
-                        DvigClass = "btn btn-success";
+                        DvigClass = "btn table-success";
                     }
                     if (item.Mesta.Contains("Вернулся на стоянку"))
                     {
                         DvigName = "Вернулся на стоянку";
-                        DvigClass = "btn btn-success";
+                        DvigClass = "btn table-success";
                     }
 
                     item.Mesta.Insert(0, DvigName);
@@ -229,16 +229,16 @@
                     {
                         if (ViewBag.Nabludenii[counter] == 0) { cl = ""; check = "S4.png"; svyaz = "Пока данных нет. Обновление происходит каждый час."; }
                         //если больше 3 наблюдений а данные все еще нулевые то помечаем машину как потеря связи
-                        if (item.Avto.Glonass == true && koef > 0.25m && koef < 0.5m) { cl = "bg-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W1.png"; svyaz = "Связи не было " + NoSvazMin + " минут"; }
-                        if (item.Avto.Glonass == true && item.DUT == 0 && item.KMAS == 0 && ViewBag.Nabludenii[counter] > 1 && ViewBag.Nabludenii[counter] < 3) { cl = "bg-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W1.png"; svyaz = "Данные от автомобиля не поступали в течение нескольких часов."; }
+                        if (item.Avto.Glonass == true && koef > 0.25m && koef < 0.5m) { cl = "table-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W1.png"; svyaz = "Связи не было " + NoSvazMin + " минут"; }
+                        if (item.Avto.Glonass == true && item.DUT == 0 && item.KMAS == 0 && ViewBag.Nabludenii[counter] > 1 && ViewBag.Nabludenii[counter] < 3) { cl = "table-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W1.png"; svyaz = "Данные от автомобиля не поступали в течение нескольких часов."; }
 
-                        if (item.Avto.Glonass == true && koef >= 0.5m) { cl = "bg-danger"; check = "S3.png"; btn = "btn btn-danger"; img = "W2.png"; svyaz = "Связи не было " + NoSvazMin + " минут"; }
-                        if (item.Avto.Glonass == true && item.DUT == 0 && item.KMAS == 0 && ViewBag.Nabludenii[counter] >= 3) { cl = "bg-danger"; check = "S3.png"; btn = "btn btn-danger"; img = "W2.png"; svyaz = "Потеря связи! Данные не поступали более 4 часов!"; }
+                        if (item.Avto.Glonass == true && koef >= 0.5m) { cl = "table-danger"; check = "S3.png"; btn = "btn btn-danger"; img = "W2.png"; svyaz = "Связи не было " + NoSvazMin + " минут"; }
+                        if (item.Avto.Glonass == true && item.DUT == 0 && item.KMAS == 0 && ViewBag.Nabludenii[counter] >= 3) { cl = "table-danger"; check = "S3.png"; btn = "btn btn-danger"; img = "W2.png"; svyaz = "Потеря связи! Данные не поступали более 4 часов!"; }
 
                     }
-                    if (item.Date < item.DateClose) { check = "S5.png"; svyaz = "Рейс завершён!"; cl = "bg-success"; }
-                    if (cl.Equals("bg-danger") == false && (item.DUT == 0 && item.KMAS > 1)) { cl = "bg-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W4.png"; svyaz = "Датчик ДУТ неисправен! Не показывает расход топлива: " + item.DUT + " л."+ svyaz; }
-                    if (cl.Equals("bg-danger") == false && (item.KMAS == 0 && item.DUT > 1)) { cl = "bg-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W6.png"; svyaz = "Датчик пробега неисправен! Не показывает пробег: " + item.KM + " км."+svyaz; }
+                    if (item.Date < item.DateClose) { check = "S5.png"; svyaz = "Рейс завершён!"; cl = "table-success"; }
+                    if (cl.Equals("table-danger") == false && (item.DUT == 0 && item.KMAS > 1)) { cl = "table-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W4.png"; svyaz = "Датчик ДУТ неисправен! Не показывает расход топлива: " + item.DUT + " л."+ svyaz; }
+                    if (cl.Equals("table-danger") == false && (item.KMAS == 0 && item.DUT > 1)) { cl = "table-warning"; btn = "btn btn-warning"; check = "S2.png"; img = "W6.png"; svyaz = "Датчик пробега неисправен! Не показывает пробег: " + item.KM + " км."+svyaz; }
                     if (item.Date < item.DateClose) { img = "W7.png"; svyaz = "Рейс завершён!"; }
 
                     //считаем средний расход
@@ -308,7 +308,7 @@
                             <center>
                                 @if (img != "")
                                 {
-                                    <img src="~/Content/Images/@img" class="img-responsive" title="@svyaz">
+                                    <img src="~/Content/Images/@img" height="40" width="40" title="@svyaz">
                                 }
                             </center>
                         </td>
@@ -333,10 +333,10 @@
                         <th style="text-align:center" class=@cl>
                             <Center>
                                 <p>
-                                    @item.Date.ToString("t");
+                                    @item.Date.ToString("HH:mm");
                                     @if (item.Kontrol)
                                     {
-                                        <img src="~/Content/Images/star.png" height="16" width="16" title="@Kont" style="align-content:center">
+                                        <img src="~/Content/Images/star.png" height="12" width="12" title="@Kont" >
                                     }
                                 </p>
 
@@ -344,7 +344,7 @@
                                 {
 
                                     <p>
-                                        Завершен: @item.DateClose.ToString("t")
+                                        Завершен: @item.DateClose.ToString("HH:mm")
                                     </p>
                                 }
                                 else
@@ -354,13 +354,13 @@
                                         if (item.Kontrol)
                                         {
                                             <p>
-                                                покинул территорию в @item.Date.ToString("t")
+                                                выехал-> @item.Date.ToString("HH:mm")
                                             </p>
                                         }
                                         else
                                         {
                                             <p>
-                                                покинул территорию с @ViewBag.RealGo[counter]:00 по @ViewBag.RealGo[counter]:59
+                                                выехал-> @ViewBag.RealGo[counter]:00 по @ViewBag.RealGo[counter]:59
                                             </p>
                                         }
                                     }
@@ -369,7 +369,7 @@
                                         if (ViewBag.RealEnd[counter] > 0)
                                         {
                                             <p>
-                                                вернулся c @ViewBag.RealEnd[counter]:00 по @ViewBag.RealEnd[counter]:59
+                                                вернулся<- @ViewBag.RealEnd[counter]:00 по @ViewBag.RealEnd[counter]:59
                                             </p>
                                         }
                                     }
@@ -450,7 +450,7 @@
                             @if (ViewBag.Zagrugeno[counter].Contains("FS"))
                             {
                                 <center>
-                                    <img src="~/Content/Images/DDD5.png" class="img-responsive" height="64" width="256" title="Форт системс не дает данные о движении ТС.">
+                                    <img src="~/Content/Images/DDD5.png" class="img" height="40" width="256" title="Форт системс не дает данные о движении ТС.">
                                 </center>
                             }
                             else
@@ -465,7 +465,7 @@
                                     {
 
                                         <center>
-                                            <img src="~/Content/Images/DDD3.png" class="img-responsive" height="64" width="256">
+                                            <img src="~/Content/Images/DDD3.png" class="img" height="40" width="256">
                                         </center>
 
                                     }
@@ -474,7 +474,7 @@
                                         if (item.Mesta.Contains("Вернулся на стоянку"))
                                         {
                                             <center>
-                                                <img src="~/Content/Images/DDD4.png" class="img-responsive" height="64" width="256">
+                                                <img src="~/Content/Images/DDD4.png" class="img" height="40" width="256">
 
                                             </center>
                                         }
@@ -483,13 +483,13 @@
                                             if (ViewBag.Nabludenii[counter] > 0)
                                             {
                                                 <center>
-                                                    <img src="~/Content/Images/DDD2.png" class="img-responsive" height="64" width="256">
+                                                    <img src="~/Content/Images/DDD2.png" class="img" height="40" width="256">
                                                 </center>
                                             }
                                             else
                                             {
                                                 <center>
-                                                    <img src="~/Content/Images/DDD6.png" class="img-responsive" height="64" width="256">
+                                                    <img src="~/Content/Images/DDD6.png" class="img" height="40" width="256">
 
                                                 </center>
                                             }
@@ -503,7 +503,7 @@
                             @if (ViewBag.Zagrugeno[counter].Contains("FS"))
                             {
                                 <center>
-                                    <img src="~/Content/Images/DDD6.png" class="img-responsive" height="64" width="256" title="Форт системс не дает данных о потерях связи.">
+                                    <img src="~/Content/Images/DDD6.png" class="img" height="40" width="256" title="Форт системс не дает данных о потерях связи.">
                                 </center>
                             }
                             else
@@ -519,13 +519,13 @@
                                     if (ViewBag.Nabludenii[counter] > 0)
                                     {
                                         <center>
-                                            <img src="~/Content/Images/SS2.png" class="img-responsive" height="64" width="256">
+                                            <img src="~/Content/Images/SS2.png" class="img" height="40" width="256">
                                         </center>
                                     }
                                     else
                                     {
                                         <center>
-                                            <img src="~/Content/Images/DDD6.png" class="img-responsive" height="64" width="256" title="Пока данных не поступало.">
+                                            <img src="~/Content/Images/DDD6.png" class="img" height="40" width="256" title="Пока данных не поступало.">
                                         </center>
                                     }
                                 }
@@ -715,20 +715,19 @@
         <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3>ОШИБКА!</h3>
+                    <h3>Завершаем выезд!</h3>
                     <div class="MTEXT">
 
+
+
+                        
                         <button id="X" type="button" class="close hide" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
-
-                        <h4>Загрузка данных, пожалуйста подождите...</h4>
                     </div>
                     <div class="">
 
-                        <button id="X" type="button" class="close hide" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+                        <h5>Обновление данных, пожалуйста подождите...</h5>
 
 
                     </div>
@@ -824,8 +823,11 @@
 
                 console.log("Завершаем " + S+" KM="+KM );
                 var ss = S + ";" + KM + ";" + Primech;
-                $.post('@Url.Action("CloseAvto", "ASControls")', { selection: ss }, function (data) {
+            $.post('@Url.Action("CloseAvto", "ASControls")', { selection: ss }, function (data) {
+                if (data != null)
+                {
                     window.location.replace("/ASControls/Index");//редирект
+                }
 
 
                 });
@@ -852,6 +854,7 @@
                      else
                      {
                          $("div.MTEXT").text(data);
+                         window.location.replace("/ASControls/Index");//редирект
                      }
 
             });

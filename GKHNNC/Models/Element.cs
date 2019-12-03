@@ -16,7 +16,8 @@ namespace GKHNNC.Models
         public int ElementId { get; set; }
         [Display(Name = "Тип")]
         public string ElementType { get; set; }
-
+        [Display(Name = "Тип элемента ИД")]
+        public int ElementTypeId { get; set; }
 
 
     }

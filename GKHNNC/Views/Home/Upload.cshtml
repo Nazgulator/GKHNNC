@@ -7,7 +7,7 @@
 }
 <div class="progress" >
 
-    <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-success progress-bar-animated" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+    <div id="progressBar" class="progress-bar progress-bar-striped bg-success progress-bar-animated" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
     <center>
         <label id="nadpis">Выберите файл для загрузки</label>
     </center>
@@ -16,23 +16,23 @@
     <h3>Загрузка файла выполненных услуг</h3>
     @using (Html.BeginForm("Upload", "Home", FormMethod.Post, new { enctype = "multipart/form-data", @placeholder = "Выберите дату" }))
     {<div class="container" id="main">
-            <div class=" row">
-
-                <label>Дата выполнения услуг</label>
-                @Html.Editor("Date", new { htmlAttributes = new { @class = "form-control", @style = "width:365Px !important; min-width:365px;" } })
-
+            <div class=" row justify-content-center">
+                <div class="col-4">
+                    <label>Дата выполнения услуг</label>
+                    @Html.Editor("Date", new { htmlAttributes = new { @class = "form-control", autocomplete = "off" } })
+                </div>
             </div>
-            <div class=" row">
-
+            <div class=" row justify-content-center">
+                <div class="col-4">
                 <label>Выберите файл для загрузки</label>
-                <input type="file" name="upload" class="form-control" style="width: 365Px;" /><br>
-
+                <input type="file" name="upload" class="form-control"  /><br>
+            </div>
             </div>
             <div class=" row">
-
-                <a id="cancel" href="/Home/Index" class="btn btn-default" style="width: 180Px">Назад</a>
-                <input id="download" type="submit" value="Загрузить" class="btn btn-success" style="width: 180Px" />
-
+                <div class="col-12">
+                    <a id="cancel" href="/Home/Index" class="btn btn-outline-success" style="width: 180Px">Назад</a>
+                    <input id="download" type="submit" value="Загрузить" class="btn btn-success" style="width: 180Px" />
+                </div>
             </div>
         </div>
 
@@ -126,9 +126,11 @@
                 firstDay: 1,
                 isRTL: false,
                 showMonthAfterYear: true,
-                yearSuffix: ''
+                yearSuffix: '',
+                gotoCurrent: false
             };
             $.datepicker.setDefaults($.datepicker.regional['ru']);
+            
         });
     </script>
 }

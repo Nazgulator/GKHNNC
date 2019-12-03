@@ -1,0 +1,133 @@
+﻿@model GKHNNC.Models.Osmotr
+
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+<h2><Удалить></h2>
+
+<h3>Удаление элемента?</h3>
+<div>
+    <h4>Osmotr</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Adres.Adress)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Adres.Adress)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DOMCW.Id)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DOMCW.Id)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DOMElectro.Id)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DOMElectro.Id)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DOMFasad.Id)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DOMFasad.Id)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DOMFundament.Id)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DOMFundament.Id)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DOMHW.Id)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DOMHW.Id)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DOMOtoplenie.Id)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DOMOtoplenie.Id)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DOMRoof.Id)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DOMRoof.Id)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DOMRoom.Id)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DOMRoom.Id)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DOMVodootvod.Id)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DOMVodootvod.Id)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Sostoyanie)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Sostoyanie)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Date)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Date)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+       
+           
+            
+       
+		<div class="row col-md-6 col-md-offset-3">
+            
+                <div class=" col-md-6  ">
+                    @Html.ActionLink("Отмена", "Index", null, new { @class = "btn btn-success btn-block" })
+                </div>
+                <div class=" col-md-6  ">
+                    <input type="submit" value="Delete" class="btn btn-success" /> 
+                </div>
+
+            
+        </div>
+
+    }
+</div>

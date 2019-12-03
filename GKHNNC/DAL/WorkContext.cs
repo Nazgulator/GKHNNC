@@ -114,6 +114,12 @@ namespace GKHNNC.DAL
 
         public System.Data.Entity.DbSet<GKHNNC.Models.DOMOtoplenie> DOMOtoplenies { get; set; }
 
+        public System.Data.Entity.DbSet<GKHNNC.Models.ActiveDefect> ActiveDefects { get; set; }
+
+        public System.Data.Entity.DbSet<GKHNNC.Models.Osmotr> Osmotrs { get; set; }
+
+        public System.Data.Entity.DbSet<GKHNNC.Models.ActiveElement> ActiveElements { get; set; }
+
 
         //protected override void OnModelCreating(DbModelBuilder modelBuilder)
 

@@ -1,0 +1,59 @@
+﻿@model GKHNNC.Models.ActiveElement
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>ActiveElement</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Adres.Adress)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Adres.Adress)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Element.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Element.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Osmotr.Id)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Osmotr.Id)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Sostoyanie)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Sostoyanie)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Date)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Date)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

@@ -1,0 +1,115 @@
+﻿@model GKHNNC.Models.Osmotr
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Osmotr</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Adres.Adress)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Adres.Adress)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DOMCW.Id)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DOMCW.Id)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DOMElectro.Id)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DOMElectro.Id)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DOMFasad.Id)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DOMFasad.Id)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DOMFundament.Id)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DOMFundament.Id)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DOMHW.Id)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DOMHW.Id)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DOMOtoplenie.Id)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DOMOtoplenie.Id)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DOMRoof.Id)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DOMRoof.Id)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DOMRoom.Id)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DOMRoom.Id)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DOMVodootvod.Id)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DOMVodootvod.Id)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Sostoyanie)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Sostoyanie)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Date)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Date)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

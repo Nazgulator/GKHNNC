@@ -1,0 +1,100 @@
+﻿@model IEnumerable<GKHNNC.Models.Osmotr>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+<h2>Главная</h2>
+
+<p>
+    @Html.ActionLink("Создать", "Create", null, new {@class = "btn btn-success btn-block"})
+</p>
+<table id="T" class="table table-bordered table-striped">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Adres.Adress)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DOMCW.Id)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DOMElectro.Id)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DOMFasad.Id)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DOMFundament.Id)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DOMHW.Id)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DOMOtoplenie.Id)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DOMRoof.Id)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DOMRoom.Id)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DOMVodootvod.Id)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Sostoyanie)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Date)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Adres.Adress)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DOMCW.Id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DOMElectro.Id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DOMFasad.Id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DOMFundament.Id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DOMHW.Id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DOMOtoplenie.Id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DOMRoof.Id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DOMRoom.Id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DOMVodootvod.Id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Sostoyanie)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Date)
+        </td>
+        <td>
+            @Html.ActionLink("Редактировать", "Edit", new { id=item.Id }) |
+            @Html.ActionLink("Удалить", "Delete", new { id=item.Id })
+        </td>
+    </tr>
+}
+
+</table>
+<p><a href="/Home/Index" class="btn btn-success btn-block">В главное меню &raquo;</a> </p>

@@ -19,7 +19,7 @@
     <center>
         @Html.AntiForgeryToken()
         <div class="container">
-            <div class="form-horizontal">
+            
                 <h2>Массовое добавление выполненной работы</h2>
 
                 <hr />
@@ -69,9 +69,9 @@
                         <small id="AdressHelp" class="form-text text-muted">Выберите дату выполнения работы из календаря.</small>
 
                     </div>
-                    <div id="ADDADRESS" class="row col-md-8 col-md-offset-2">
+                    <div id="ADDADRESS" class="container col-md-8 col-md-offset-2">
 
-                        <div id="ANI" class="form-group">
+                        <div id="ANI" class="row">
 
 
                             <div id="WA" class="col-md-5">
@@ -105,8 +105,8 @@
 
                     </div>
 
-                    <div id="PLUS" class="row col-md-8 col-md-offset-2">
-                        <div class=" form-group">
+                    <div id="PLUS" class="container col-md-8 col-md-offset-2">
+                        <div class="row">
                             <div class=" col-md-12  ">
                                 <input id="ADD" type="button" value="+" class="btn btn-success btn-block" />
                             </div>
@@ -114,28 +114,21 @@
 
                     </div>
 
-                    <div class="row col-md-8 col-md-offset-2">
-                        <div class=" form-group">
-                            <div class=" col-md-6  ">
+                    <div class="container  col-md-6 col-md-offset-3">
+                        <div class="row">
+
+                            <div class="col col-md-6">
                                 @Html.ActionLink("Назад", "IndexMain", null, new { @class = "btn btn-success btn-block" })
                             </div>
-                            <div class=" col-md-6  ">
+                            <div class="col col-md-6">
                                 <input id="NEXT" type="button" value="Добавить" class="btn btn-success btn-block" />
                             </div>
 
-                        </div>
-                    </div>
-                    <div class="row col-md-8 col-md-offset-2">
-                        <div class=" form-group">
-                            <div class=" col-md-12  ">
-                                <p>
-                                    <a href="/Home/Index" class="btn btn-success btn-block">В главное меню</a>
-                                </p>
-                            </div>
-
 
                         </div>
+
                     </div>
+
 
 
                 </div>
@@ -144,7 +137,7 @@
             <div id="ALERT" class="row col-md-8 col-md-offset-2">
 
             </div>
-        </div>
+        
     </center>
 }
 

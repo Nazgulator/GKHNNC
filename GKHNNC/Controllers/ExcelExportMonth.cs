@@ -389,18 +389,29 @@ namespace GKHNNC.Controllers
             }
                 int vk = 1;
             string vks = "";
+            bool Vkl = false;
             Excel.Worksheet WS = null;
             try
             {//если указана цифра вкладки то открываем ее
                 vk = Convert.ToInt16(Vkladka);
                 WS = WbExcel.Sheets[vk];
+                Vkl = true;
             }
             catch
             {//если цифры нет то имя вкладки открываем
-                vks = Vkladka;
-                WS = (Excel.Worksheet)WbExcel.Worksheets[vks];
+                try
+                {
+                    vks = Vkladka;
+                    WS = (Excel.Worksheet)WbExcel.Worksheets[vks];
+                    Vkl = true;
+                }
+                catch
+                {
+                    Error = "Нет такой вкладки в файле!" +Vkladka;
+                    return SVNKI;
+                }
             }
-           
+            if (Vkl == false) { Error = "Не найдена вкладка "+Vkladka; }
             Excel.Range range;//рэндж
             ApExcel.Visible = false;//невидимо
             ApExcel.ScreenUpdating = false;//и не обновляемо
@@ -446,10 +457,12 @@ namespace GKHNNC.Controllers
                 var EX = (object[,])WS.Range["A" + lastrr.ToString() + ":"+Opr.OpredelenieBukvi(LastCol) + (rr * i).ToString()].Value;
                 for (int j = 0; j < rr; j++)
                 {
-                    for (int k = 0; k < EX.GetLength(1); k++)
+                    for (int k = 0; k < LastCol; k++)
                     {
-                        //сохраняем все строки экселя как объекты так намного быстрее затем обработаем
-                        EXX[lastrr - 1 + j, k] = EX[j + 1, k + 1];
+                       
+                            //сохраняем все строки экселя как объекты так намного быстрее затем обработаем
+                            EXX[lastrr - 1 + j, k] = EX[j + 1, k + 1];
+                        
                     }
                 }
 
@@ -461,7 +474,7 @@ namespace GKHNNC.Controllers
             var EX2 = (object[,])WS.Range["A" + (lastrr + 1).ToString() + ":" + Opr.OpredelenieBukvi(LastCol) + (lastrr + rrr).ToString()].Value;//догружаем остатки
             for (int j = 0; j < rrr; j++)
             {
-                for (int k = 0; k < EX2.GetLength(1); k++)
+                for (int k = 0; k < LastCol; k++)
                 {
                     EXX[lastrr - 1 + j, k] = EX2[j + 1, k + 1];
                 }
@@ -1476,7 +1489,7 @@ namespace GKHNNC.Controllers
             range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
             range.RowHeight = 15;//высота строки
             range.WrapText = true;
-            WS.Cells[from, 3] = "22 "+month+" "+Year ;//подписываем дату
+            WS.Cells[from, 3] = "20 "+month+" "+Year ;//подписываем дату
             range = WS.get_Range("C" + from, "E" + from);
             range.Merge(Type.Missing);
             range.Font.Bold = true;
@@ -2571,10 +2584,14 @@ namespace GKHNNC.Controllers
             List = Process.GetProcessesByName("EXCEL");
             foreach (Process proc in List)
             {
-                if (DateTime.Now.Hour - proc.StartTime.Hour > 0 || DateTime.Now.Minute - proc.StartTime.Minute > 2)
+                try
                 {
-                    proc.Kill();
+                    if (DateTime.Now.Hour - proc.StartTime.Hour > 0 || DateTime.Now.Minute - proc.StartTime.Minute > 2)
+                    {
+                        proc.Kill();
+                    }
                 }
+                catch { }
             }
         }
     }

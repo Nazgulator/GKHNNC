@@ -32,5 +32,19 @@ namespace GKHNNC.Models
         [Display(Name = "Объём УЭВ")]
         public decimal GVUEVM3 { get; set; }
 
+        [Display(Name = "Средняя за отопительный сезон (объём)")]
+        public decimal Srednyaya { get; set; }
+        [Display(Name = "Объём за прошлый аналогичный период")]
+        public decimal LastYear { get; set; }
+
+        [Display(Name = "Средняя за отопительный сезон (рубли)")]
+        public decimal SrednyayaRub { get; set; }
+        [Display(Name = "Рубли за прошлый аналогичный период")]
+        public decimal LastYearRub { get; set; }
+
+        [Display(Name = "Рубли за прошлый аналогичный период")]
+        public decimal GVObshee { get; set; }
+
+
     }
 }

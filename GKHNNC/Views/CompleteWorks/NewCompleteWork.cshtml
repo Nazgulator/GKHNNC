@@ -33,7 +33,7 @@
                             @Html.DropDownList("GEU", new MultiSelectList(ViewBag.GEU), new { @class = "form-control" })
 
 
-                            <small id="AdressHelp" class="form-text text-muted">Выберите ЖЭУ из списка</small>
+                            <small id="AdressHelp" class="form-text text-muted" style="text-align:right">Выберите ЖЭУ из списка</small>
 
 
                         </div>
@@ -44,7 +44,7 @@
 
                         <label>Адрес</label>
                         @Html.DropDownList("WorkAdress", new MultiSelectList(ViewBag.Adresa), new { @class = "form-control" })
-                        <small class="form-text text-muted">Выберите адрес из списка</small>
+                        <small class="form-text text-muted" style="text-align:right">Выберите адрес из списка</small>
 
                     </div>
 
@@ -60,7 +60,7 @@
                         }
 
                         @Html.DropDownListFor(model => model.WorkGroup, MSL2, new { @class = "form-control" })
-                        <small class="form-text text-muted">Выберите группу работ из списка.</small>
+                        <small class="form-text text-muted" style="text-align:right">Выберите группу работ из списка.</small>
                     </div>
 
                     <div id="WId" class="row col-md-6 col-md-offset-3">
@@ -69,62 +69,57 @@
                         <label>Наименование</label>
                         <select name="WorkWorkId" id="WorkWorkId" class="form-control"></select>
 
-                        <small class="form-text text-muted">Выберите вид работы из списка.</small>
+                        <small class="form-text text-muted" style="text-align:right">Выберите вид работы из списка.</small>
 
                     </div>
 
                     <div id="WN" class="row col-md-6 col-md-offset-3">
-                        <div class="form-group">
-                            <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-12">
                                 <label>Количество</label>
                             </div>
-                            <div class="col-md-9">
+                        </div>
+                        <div class="row">
+                            <div class="col-8">
                                 @Html.EditorFor(model => model.WorkNumber, new { htmlAttributes = new { @class = "form-control" } })
                                 @Html.ValidationMessageFor(model => model.WorkNumber, "", new { @class = "text-danger" })
-                                <small id="AdressHelp" class="form-text text-muted">Введите количество: целое число или дробное. Пример: 7.32</small>
+                                <small id="AdressHelp" class="form-text text-muted" style="text-align:right">Введите количество: целое число или дробное. Пример: 7.32</small>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-4">
                                 <input name="Izmerenie" id="Izmerenie" class="form-control"></input>
                             </div>
-                        </div>
-                    </div>
-
-                    <div id="WD" class="row col-md-6 col-md-offset-3">
-
-
-                        <label>Дата выполнения</label>
-
-                        @Html.EditorFor(model => model.WorkDate, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.WorkDate, "", new { @class = "text-danger" })
-                        <small id="AdressHelp" class="form-text text-muted">Выберите дату выполнения работы из календаря.</small>
-
-                    </div>
-
-                    <div class="row col-md-6 col-md-offset-3">
-                        <div class=" form-group">
-                            <div class=" col-md-6  ">
-                                @Html.ActionLink("Назад", "IndexMain", null, new { @class = "btn btn-success btn-block" })
-                            </div>
-                            <div class=" col-md-6  ">
-                                <input id="NEXT" type="button" value="Добавить" class="btn btn-success btn-block" />
-                            </div>
 
                         </div>
+                        
                     </div>
-                    <div class="row col-md-6 col-md-offset-3">
-                        <div class=" form-group">
-                            <div class=" col-md-12  ">
-                                <p>
-                                    <a href="/Home/Index" class="btn btn-success btn-block">В главное меню</a>
-                                </p>
-                            </div>
-                           
+
+                        <div id="WD" class="row col-md-6 col-md-offset-3">
+
+
+                            <label>Дата выполнения</label>
+
+                            @Html.EditorFor(model => model.WorkDate, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.WorkDate, "", new { @class = "text-danger" })
+                            <small id="AdressHelp" class="form-text text-muted" >Выберите дату выполнения работы из календаря.</small>
 
                         </div>
+                        <div class="container  col-md-6 col-md-offset-3">
+                            <div class="row">
+
+                                <div class="col col-md-6">
+                                    @Html.ActionLink("Назад", "IndexMain", null, new { @class = "btn btn-success btn-block" })
+                                </div>
+                                <div class="col col-md-6">
+                                    <input id="NEXT" type="button" value="Добавить" class="btn btn-success btn-block" />
+                                </div>
+
+
+                            </div>
+
+                        </div>
+
+
                     </div>
-
-
-                </div>
 
             </div>
             <div id="ALERT" class="row col-md-6 col-md-offset-3">

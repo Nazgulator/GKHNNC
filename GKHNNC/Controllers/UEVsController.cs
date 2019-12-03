@@ -182,6 +182,7 @@ namespace GKHNNC.Controllers
                 string[] Names = new string[] { "Kp", "№прибора", "Тариф", "Общийотпуск", "ИтогосуммасНДСруб.", "Тариф", "Общийотпуск", "ИтогосуммасНДСруб.", "Тариф", "Общийотпуск", "ИтогосуммасНДСруб." };
                 string Error = "";
                 List<List<string>> excel = ExcelSVNUpload.IMPORT(Server.MapPath("~/Files/" + fileName), Names,out Error);
+                List<string> Errors = new List<string>();
                 if (excel.Count < 1)
                 {
                     //если нифига не загрузилось то 
@@ -310,6 +311,16 @@ namespace GKHNNC.Controllers
                                     Console.WriteLine("Ошибка записи в базу данных " + e.Message);
                                 }
                             }
+                            else
+                            {//если имени нет в списке, значит нужно вывести предупреждение чтобы часами не искать
+                                if (CodUEV != 0 )
+                                {
+                                    if (Errors.Count == 0) { Errors.Add("Найдены коды, отсутствующие в БД!"); }
+                                    Errors.Add("Код=" + CodUEV.ToString() + " не найден в БД.");
+                                }
+                                
+
+                            }
                         }
                         procount++;
                         progress = Convert.ToInt16(50 + procount / pro100 * 50);
@@ -324,15 +335,16 @@ namespace GKHNNC.Controllers
                         Adr[a] = Adr[a].Replace(" ", "").ToUpper();
                     }
 
-
-                    ViewBag.VsegoUEV = db.UEVs.Where(x => x.Date == Date).Count();
+                    if (Errors.Count == 0) { Errors.Add("Ошибок загрузки нет!"); }
+                    ViewBag.VsegoUEV = db.UEVs.Where(x => x.Date.Year == Date.Year&&x.Date.Month==Date.Month).Count();
                     //ViewBag.Services = Services;
                     ViewBag.UEV = db.UEVs.Where(x => x.Date == Date).Include(z=>z.Adres.Adress).Select(y => y.Adres.Adress + "ОТ(энергия руб.)=" + y.OtEnergyRub + " ГВ(энергия руб.)=" + y.HwEnergyRub + "ГВ(теплоноситель руб.)=" + y.HwVodaRub).ToList();
                     ViewBag.date = Date;
                     ViewBag.file = fileName;
-
-
-
+                    ViewBag.Gkal = db.UEVs.Where(x => x.Date.Year == Date.Year && x.Date.Month == Date.Month).Sum(y => y.OtEnergyGkal);
+                    ViewBag.M3Water = db.UEVs.Where(x => x.Date.Year == Date.Year && x.Date.Month == Date.Month).Sum(y => y.HwVodaM3);
+                    ViewBag.GkalWater = db.UEVs.Where(x => x.Date.Year == Date.Year && x.Date.Month == Date.Month).Sum(y => y.HwEnergyGkal);
+                    ViewBag.Errors = Errors;
                     return View("UploadComplete");
                 }
             }
