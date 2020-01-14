@@ -9,11 +9,11 @@
 
 
 
+
+                <h4>Загрузка данных, пожалуйста подождите...</h4>
                 <button id="X" type="button" class="close hide" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
-                <h4>Загрузка данных, пожалуйста подождите...</h4>
-
             </div>
             <div class="modal-body">
                 <div class="progress">
@@ -98,6 +98,11 @@
                                 </button>
                             </p>
                             <p>
+                                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Houses")'">
+                                    <i class="glyphicon glyphicon-map-marker"></i> Детализация по домам и осмотры &raquo;
+                                </button>
+                            </p>
+                            <p>
                                 <button class="btn btn-success btn-lg" style="width:500Px" onclick="location.href='@Url.Action("TechPasport", "Home")'">
                                     <i class="glyphicon glyphicon-inbox"></i> Тех. паспорт дома &raquo;
                                 </button>
@@ -157,11 +162,7 @@
                                     <i class="glyphicon glyphicon-home"></i> Адреса &raquo;
                                 </button>
                             </p>
-                            <p>
-                                <button class="btn btn-success btn-lg" style="width:500Px" onclick="location.href='@Url.Action("Index", "Houses")'">
-                                    <i class="glyphicon glyphicon-map-marker"></i> Детализация по домам &raquo;
-                                </button>
-                            </p>
+                           
                             <p>
                                 <button class="btn btn-success btn-lg" style="width:500Px" onclick="location.href='@Url.Action("Index", "Arendators")'">
                                     <i class="glyphicon glyphicon-lock"></i> Арендаторы &raquo;

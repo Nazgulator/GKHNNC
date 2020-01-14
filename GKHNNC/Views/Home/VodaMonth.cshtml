@@ -17,7 +17,7 @@
 </head>
 <body>
     <h5>Загруженные данные:</h5>
-    <div class="container" >
+    <div class="container">
         <div class="row">
             <div class="col-md-3">
                 @if (ViewBag.SVN)
@@ -62,48 +62,70 @@
         </div>
     </div>
     <h3>Расчет горячей воды за @ViewBag.Year @ViewBag.Month</h3>
-    <div class="table-responsive" style="top:0px;position:sticky">
+    <table class="table table-bordered table-striped">
+        <tr>
+            <td width="58%" style="background:#909090">Адреса в таблице @Html.DropDownList("Adresa", new SelectList(ViewBag.Adresa, "Id", "Adress"))</td>
+
+            <td width="10%" style="background:#909090">
+                <button id="add" class="btn-success" month="@ViewBag.MonthInt" year="@ViewBag.Year" data-toggle="modal" data-target="#Download">В исключения-></button>
+
+            </td>
+            <td width="4%" style="background:#909090">
+
+            </td>
+            <td width="18%" style="background:#909090">Исключения @Html.DropDownList("Iskluchit", new SelectList(ViewBag.Iskluchit, "Id", "Adress"))</td>
+            <td  width="10%" style="background:#909090">
+                <button id="remove" class="btn-danger" month="@ViewBag.MonthInt" year="@ViewBag.Year" data-toggle="modal" data-target="#Download">Из исключений X</button>
+            </td>
+
+        </tr>
+
+    </table>
+    <div class="table" style="top:0px;position:sticky">
+
         <table class="table table-bordered table-striped ">
+
             <tr>
-                <th style="background:#909090" colspan="9" title="Данные загружается из сводной ведомости начислений(ФГУПЖКХ) и ведомости УЭВ">
+                <th colspan="9" style="background:#909090" title="Данные загружается из сводной ведомости начислений(ФГУПЖКХ) и ведомости УЭВ">
                     Начисления в рублях
                 </th>
                 <th style="background:#909090" title="Прибор учета определяется на основании ведомости УЭВ. Если галочки нет, а прибор учета реально зарегистрирован, значит УЭВ не засчитывает показания прибора учета.">
                     ПУ
                 </th>
-                <th style="background:#909090" colspan="5" title="Объёмы определяются на основании сводной ведомости начислений (ФГУПЖКХ) и ведомости УЭВ">
+                <th colspan="5" style="background:#909090" title="Объёмы определяются на основании сводной ведомости начислений (ФГУПЖКХ) и ведомости УЭВ">
                     Объём в метрах кубических
                 </th>
 
 
 
+
             </tr>
             <tr>
-                <th style="background:#C0C0C0" title="Адрес дома" width="12%">
+                <th style="background:#C0C0C0" width="12%" title="Адрес дома">
                     Адрес
                 </th>
-                <th style="background:#fff200" title="Средние показания УЭВ за прошлые 6 месяцев в рублях" width="6%">
+                <th style="background:#fff200" width="7%" title="Средние показания УЭВ за прошлые 6 месяцев в рублях">
                     УЭВ средняя 6 мес.
                 </th>
-                <th style="background:#fff200" title="Показания УЭВ за аналогичный период прошлого года в рублях" width="6%">
+                <th style="background:#fff200" width="7%" title="Показания УЭВ за аналогичный период прошлого года в рублях">
                     УЭВ прошлый год
                 </th>
-                <th style="background:#fff200" title="Выставленные нам показания УЭВ в рублях" width="6%">
+                <th style="background:#fff200" width="7%" title="Выставленные нам показания УЭВ в рублях">
                     УЭВ
                 </th>
-                <th style="background:#C0C0C0" title="Наши данные с учетом корректировок на основании сводной ведомости начислений (ЖКХННЦ) считаются как сумма начислений по ГВ + ГВ на общее имущество" width="6%">
+                <th style="background:#C0C0C0" width="7%" title="Наши данные с учетом корректировок на основании сводной ведомости начислений (ЖКХННЦ) считаются как сумма начислений по ГВ + ГВ на общее имущество">
                     Начисления План
                 </th>
-                <th style="background:#C0C0C0" title="Наши данные без учета корректировок на основании сводной ведомости начислений (ЖКХННЦ) считаются как сумма начислений по ГВ + ГВ на общее имущество" width="6%">
+                <th style="background:#C0C0C0" width="7%" title="Наши данные без учета корректировок на основании сводной ведомости начислений (ЖКХННЦ) считаются как сумма начислений по ГВ + ГВ на общее имущество">
                     Начисления Факт
                 </th>
-                <th style="background:#C0C0C0" title="Показания индивидуальных приборов учета за предыдущий месяц по данным ЖКХННЦ. Если стоит 0, значит нет ПУ в доме или показания реально нулевые." width="6%">
+                <th style="background:#C0C0C0" width="7%" title="Показания индивидуальных приборов учета за предыдущий месяц по данным ЖКХННЦ. Если стоит 0, значит нет ПУ в доме или показания реально нулевые.">
                     ИПУ
                 </th>
-                <th style="background:#fff200" width="10%" title="От показаний УЭВ мы отнимаем наши данные с учетом корректировок и показания индивидуальных приборов учета за прошлый месяц.">
+                <th style="background:#fff200" width="7%" title="От показаний УЭВ мы отнимаем наши данные с учетом корректировок и показания индивидуальных приборов учета за прошлый месяц.">
                     УЭВ-ИПУ-План
                 </th>
-                <th style="background:#fff200" width="10%" title="От показаний УЭВ мы отнимаем наши данные без учета корректировок и показания индивидуальных приборов учета за прошлый месяц.">
+                <th style="background:#fff200" width="7%" title="От показаний УЭВ мы отнимаем наши данные без учета корректировок и показания индивидуальных приборов учета за прошлый месяц.">
                     УЭВ-ИПУ-Факт
                 </th>
                 <th style="background:#fff200" width="4%" title="Наличие в доме прибора учета и занных ведомости УЭВ">
@@ -127,123 +149,171 @@
 
 
             </tr>
+
         </table>
-       
+
     </div>
-        <div class="table-responsive">
-            <table id="Table" class="table table-bordered table-striped ">
-               
-                <tbody>
-                    @foreach (var item in Model)
+    <div class="table-responsive">
+        <table id="Table" class="table table-bordered table-striped ">
+
+            <tbody>
+                <tr style="font-size:12px">
+                    <th>
+                        Итого
+                    </th>
+                    <th>
+                        @Math.Round(ViewBag.Summa.SrednyayaRub, 2)
+                    </th>
+                    <th>
+                        @Math.Round(ViewBag.Summa.LastYearRub, 2)
+                    </th>
+                    <th>
+                        @Math.Round(ViewBag.Summa.Uev, 2)
+                    </th>
+                    <th>
+                        @Math.Round(ViewBag.Summa.Plan, 2)
+                    </th>
+                    <th>
+                        @Math.Round(ViewBag.Summa.Fact, 2)
+                    </th>
+                    <th>
+                        @Math.Round(ViewBag.Summa.IPU, 2)
+                    </th>
+                    <th>
+                        @Math.Round(ViewBag.Summa.RaznPlan, 2)
+                    </th>
+                    <th>
+                        @Math.Round(ViewBag.Summa.RaznFact, 2)
+                    </th>
+                    <th>
+
+                    </th>
+                    <th>
+
+                    </th>
+                    <th>
+                        @Math.Round(ViewBag.Summa.VFact, 2)
+                    </th>
+                    <th>
+                        @Math.Round(ViewBag.Summa.GVUEVM3, 2)
+                    </th>
+                    <th>
+                        @Math.Round(ViewBag.Summa.LastYear, 2)
+                    </th>
+                    <th>
+                        @Math.Round(ViewBag.Summa.Srednyaya, 2)
+                    </th>
+                </tr>
+                @foreach (var item in Model)
+                {
+                    string cl1 = "table-warning"; string cl2 = "table-warning"; string cl3 = ""; string cl4 = ""; string cl5 = ""; string cl6 = ""; string cl7 = ""; string cl8 = ""; string cl9 = ""; string cl10 = ""; string cl11 = "";
+                    string prim = ""; string op1 = ""; string op2 = ""; string op3 = ""; string op4 = ""; string op5 = "";
+                    if (item.RaznFact < 0)
                     {
-                        string cl1 = "table-warning"; string cl2 = "table-warning"; string cl3 = ""; string cl4 = ""; string cl5 = ""; string cl6 = ""; string cl7 = ""; string cl8 = ""; string cl9 = ""; string cl10 = ""; string cl11 = "";
-                        string prim = ""; string op1 = ""; string op2 = ""; string op3 = ""; string op4 = "";string op5 = "";
-                        if (item.RaznFact < 0)
-                        {
-                            cl1 = "table-success";
-                        }
-                        if (item.RaznFact == 0)
-                        {
-                            cl1 = "";
-                        }
-                        if (item.RaznFact > 1000)
-                        {
-                            cl1 = "table-danger";
-                        }
-                        if (item.RaznPlan < 0)
-                        {
-                            cl2 = "table-success";
-                        }
-                        if (item.RaznPlan == 0)
-                        {
-                            cl2 = "";
-                        }
-                        if (item.RaznPlan > 1000)
-                        {
-                            cl2 = "table-danger";
-                        }
-                        if (item.Uev == 0 && (item.Plan + item.Fact != 0))
-                        {
-                            cl3 = "table-warning";
-                        }
-                        if (item.VFact < item.GVUEVM3 - 1)
-                        {
-                            cl4 = "table-warning";
-                        }
-                        if (item.VFact < item.GVUEVM3 - 5)
-                        {
-                            cl4 = "table-danger";
-                        }
-                        if (item.VFact == 0 && item.PU == false && item.GVUEVM3 != 0)
-                        {
-                            cl4 = "table-info"; prim = "Нет ПУ";
-                        }
-                        if (item.VFact - 3 > item.GVUEVM3)
-                        {
-                            cl5 = "table-success";
-                        }
-                        if (item.Primech.Contains("*") || item.Primech.Contains("о"))
-                        {
-                            cl5 = "table-info"; prim = "Ремонт"; cl4 = "table-info";
-                        }
-                        else { cl5 = cl4; }
-                        if (item.Srednyaya < item.GVUEVM3 - 5)
-                        {
-                            cl7 = "table-success";
-                            op1 = "Средняя за прошлые 6 месяцев меньше, чем в этом месяце на " + Math.Round(item.GVUEVM3 - item.Srednyaya, 0).ToString() + " Гкал";
+                        cl1 = "table-success";
+                    }
+                    if (item.RaznFact == 0)
+                    {
+                        cl1 = "";
+                    }
+                    if (item.RaznFact > 1000)
+                    {
+                        cl1 = "table-danger";
+                    }
+                    if (item.RaznPlan < 0)
+                    {
+                        cl2 = "table-success";
+                    }
+                    if (item.RaznPlan == 0)
+                    {
+                        cl2 = "";
+                    }
+                    if (item.RaznPlan > 1000)
+                    {
+                        cl2 = "table-danger";
+                    }
+                    if (item.Uev == 0 && (item.Plan + item.Fact != 0))
+                    {
+                        cl3 = "table-warning";
+                    }
+                    if (item.VFact < item.GVUEVM3 - 1)
+                    {
+                        cl4 = "table-warning";
+                    }
+                    if (item.VFact < item.GVUEVM3 - 5)
+                    {
+                        cl4 = "table-danger";
+                    }
+                    if (item.VFact == 0 && item.PU == false && item.GVUEVM3 != 0)
+                    {
+                        cl4 = "table-info"; prim = "Нет ПУ";
+                    }
+                    if (item.VFact - 3 > item.GVUEVM3)
+                    {
+                        cl5 = "table-success";
+                    }
+                    if (item.Primech.Contains("*") || item.Primech.Contains("о"))
+                    {
+                        cl5 = "table-info"; prim = "Ремонт"; cl4 = "table-info";
+                    }
+                    else { cl5 = cl4; }
+                    if (item.Srednyaya < item.GVUEVM3 - 5)
+                    {
+                        cl7 = "table-success";
+                        op1 = "Средняя за прошлые 6 месяцев меньше, чем в этом месяце на " + Math.Round(item.GVUEVM3 - item.Srednyaya, 0).ToString() + " Гкал";
 
-                        }
-                        if (item.Srednyaya > item.GVUEVM3 + 5)
-                        {
-                            cl7 = "table-danger";
-                            op1 = "Средняя за прошлые 6 месяцев больше, чем в этом месяце на " + Math.Round(item.Srednyaya - item.GVUEVM3, 0).ToString() + " Гкал";
+                    }
+                    if (item.Srednyaya > item.GVUEVM3 + 5)
+                    {
+                        cl7 = "table-danger";
+                        op1 = "Средняя за прошлые 6 месяцев больше, чем в этом месяце на " + Math.Round(item.Srednyaya - item.GVUEVM3, 0).ToString() + " Гкал";
 
-                        }
-                        if (item.SrednyayaRub < item.Uev - 2000)
-                        {
-                            cl9 = "table-success";
-                            op2 = "Выставленная сумма УЭВ за прошлые 6 месяцев меньше, чем в этом месяце на " + Math.Round(item.Uev - item.SrednyayaRub, 0).ToString() + " Руб";
-                        }
-                        if (item.SrednyayaRub > item.Uev + 2000)
-                        {
-                            cl9 = "table-danger";
-                            op2 = "Выставленная сумма УЭВ за прошлые 6 месяцев больше, чем в этом месяце на " + Math.Round(item.Uev - item.SrednyayaRub, 0).ToString() + " Руб";
-                        }
+                    }
+                    if (item.SrednyayaRub < item.Uev - 2000)
+                    {
+                        cl9 = "table-success";
+                        op2 = "Выставленная сумма УЭВ за прошлые 6 месяцев меньше, чем в этом месяце на " + Math.Round(item.Uev - item.SrednyayaRub, 0).ToString() + " Руб";
+                    }
+                    if (item.SrednyayaRub > item.Uev + 2000)
+                    {
+                        cl9 = "table-danger";
+                        op2 = "Выставленная сумма УЭВ за прошлые 6 месяцев больше, чем в этом месяце на " + Math.Round(item.Uev - item.SrednyayaRub, 0).ToString() + " Руб";
+                    }
 
-                        if (item.LastYear < item.GVUEVM3 - 5)
-                        {
-                            cl8 = "table-success";
-                            op3 = "Объём за аналогичный период прошлого года меньше, чем в этом месяце на " + Math.Round(item.GVUEVM3 - item.LastYear, 0).ToString() + " Гкал";
-                            op4 = "Выставленная сумма УЭВ за за аналогичный период прошлого года меньше, чем в этом месяце на " + Math.Round(item.Uev - item.LastYearRub, 0).ToString() + " Руб";
-                        }
-                        if (item.LastYear > item.GVUEVM3 + 5)
-                        {
-                            cl8 = "table-danger";
-                            op3 = "Объём за аналогичный период прошлого года больше, чем в этом месяце на " + Math.Round(item.LastYear - item.GVUEVM3, 0).ToString() + " Гкал";
+                    if (item.LastYear < item.GVUEVM3 - 5)
+                    {
+                        cl8 = "table-success";
+                        op3 = "Объём за аналогичный период прошлого года меньше, чем в этом месяце на " + Math.Round(item.GVUEVM3 - item.LastYear, 0).ToString() + " Гкал";
+                        op4 = "Выставленная сумма УЭВ за за аналогичный период прошлого года меньше, чем в этом месяце на " + Math.Round(item.Uev - item.LastYearRub, 0).ToString() + " Руб";
+                    }
+                    if (item.LastYear > item.GVUEVM3 + 5)
+                    {
+                        cl8 = "table-danger";
+                        op3 = "Объём за аналогичный период прошлого года больше, чем в этом месяце на " + Math.Round(item.LastYear - item.GVUEVM3, 0).ToString() + " Гкал";
 
-                        }
-                        if (item.LastYearRub > item.Uev + 2000)
-                        {
-                            cl10 = "table-danger";
-                            op4 = "Выставленная сумма УЭВ за за аналогичный период прошлого года больше, чем в этом месяце на " + Math.Round(item.LastYearRub - item.Uev, 0).ToString() + " Руб";
-                        }
-                        if (item.LastYearRub < item.Uev - 2000)
-                        {
-                            cl10 = "table-success";
-                            op4 = "Выставленная сумма УЭВ за за аналогичный период прошлого года меньше, чем в этом месяце на " + Math.Round(item.LastYearRub - item.Uev, 0).ToString() + " Руб";
-                        }
-                        string tit = Convert.ToString(item.VFact - item.GVUEVM3);
-                        if (Math.Abs(item.LastYearRub - item.Uev) > item.Uev * 0.25M && Math.Abs(item.SrednyayaRub - item.Uev) > item.Uev * 0.25M&&(prim.Contains("Нет ПУ")|| prim.Contains("Ремонт")))
-                        {
-                            cl11 = "table-danger";
-                            op5 = "Разница в показаниях между средней 6 мес, аналогичным месяцем прошлого года и данными этого месяца >25%! Возможно показания неадекватные.";
+                    }
+                    if (item.LastYearRub > item.Uev + 2000)
+                    {
+                        cl10 = "table-danger";
+                        op4 = "Выставленная сумма УЭВ за за аналогичный период прошлого года больше, чем в этом месяце на " + Math.Round(item.LastYearRub - item.Uev, 0).ToString() + " Руб";
+                    }
+                    if (item.LastYearRub < item.Uev - 2000)
+                    {
+                        cl10 = "table-success";
+                        op4 = "Выставленная сумма УЭВ за за аналогичный период прошлого года меньше, чем в этом месяце на " + Math.Round(item.LastYearRub - item.Uev, 0).ToString() + " Руб";
+                    }
+                    string tit = Convert.ToString(item.VFact - item.GVUEVM3);
+                    if (Math.Abs(item.LastYearRub - item.Uev) > item.Uev * 0.25M && Math.Abs(item.SrednyayaRub - item.Uev) > item.Uev * 0.25M && (prim.Contains("Нет ПУ") || prim.Contains("Ремонт")))
+                    {
+                        cl11 = "table-danger";
+                        op5 = "Разница в показаниях между средней 6 мес, аналогичным месяцем прошлого года и данными этого месяца >25%! Возможно показания неадекватные.";
 
-                        }
-                        else
-                        {
-                            cl11 = "";
-                            op5 = "";
-                        }
+                    }
+                    else
+                    {
+                        cl11 = "";
+                        op5 = "";
+                    }
 
 
                     <tr>
@@ -251,28 +321,28 @@
                             @Html.DisplayFor(modelItem => item.Adres)
                         </td>
 
-                        <td class=@cl9 width="6%" title="@op2">
+                        <td class=@cl9 width="7%" title="@op2">
                             @Html.DisplayFor(modelItem => item.SrednyayaRub)
                         </td>
-                        <td class=@cl10 width="6%" title="@op4">
+                        <td class=@cl10 width="7%" title="@op4">
                             @Html.DisplayFor(modelItem => item.LastYearRub)
                         </td>
-                        <td class=@cl11 width="6%" title="@op5">
+                        <td class=@cl11 width="7%" title="@op5">
                             @Html.DisplayFor(modelItem => item.Uev)
                         </td>
-                        <td width="6%">
+                        <td width="7%">
                             @Html.DisplayFor(modelItem => item.Plan)
                         </td>
-                        <td width="6%">
+                        <td width="7%">
                             @Html.DisplayFor(modelItem => item.Fact)
                         </td>
-                        <td width="6%">
+                        <td width="7%">
                             @Html.DisplayFor(modelItem => item.IPU)
                         </td>
-                        <td class=@cl2 width="10%">
+                        <td class=@cl2 width="7%">
                             @Html.DisplayFor(modelItem => item.RaznPlan)
                         </td>
-                        <td class=@cl1 width="10%">
+                        <td class=@cl1 width="7%">
                             @Html.DisplayFor(modelItem => item.RaznFact)
                         </td>
                         <td class=@cl4 + @cl5 width="4%">
@@ -299,12 +369,39 @@
                     </tr>
 
 
-                    }
-                </tbody>
-            </table>
+                }
+            </tbody>
+        </table>
+    </div>
+    <p><a href="/Home/VODAIndex" class="btn btn-success btn-block"> Назад </a> </p>
+    <p><button tag="ToExcel" class="btn btn-success btn-block">Экспорт в эксель &raquo;</button> </p>
+
+    <!-- Modal -->
+    <div class="modal fade" id="Download" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+
+
+
+
+                    <h4>Загрузка данных, пожалуйста подождите...</h4>
+                    <button id="X" type="button" class="close hide" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="progress">
+
+                        <div id="progressBar" class="progress-bar progress-bar-striped bg-success progress-bar-animated" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                        <center>
+                            <label id="nadpis">Загрузка данных...</label>
+                        </center>
+                    </div>
+                </div>
+            </div>
         </div>
-        <p><a href="/Home/VODAIndex" class="btn btn-success btn-block"> Назад </a> </p>
-        <p><button tag="ToExcel" class="btn btn-success btn-block">Экспорт в эксель &raquo;</button> </p>
+    </div>
 </body>
 </html>
 @section Scripts {
@@ -312,18 +409,55 @@
     @Scripts.Render("~/scripts/jquery-3.3.1.js")
     @Scripts.Render("~/scripts/bootstrap.min.js")
     @Scripts.Render("~/scripts/bootstrap.bundle.min.js")
+    @Scripts.Render("~/scripts/jquery-3.3.1.min.js")
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+    @Scripts.Render("~/scripts/nprogress.min.js")
+    @Scripts.Render("~/scripts/jquery.signalR-2.4.0.min.js")
+    @Scripts.Render("~/signalr/hubs")
+    <script>
+        $(function () {
+            var PB = $.connection.progressHub;
+            console.log("Loading...");
+            PB.client.sendMessage = function (message, count) {
+                // update progress
+                console.log(count);
+                UpdateProgress(message, count);
+                //alert(message);
+            };
+
+            $.connection.hub.start().done(function () {
+                console.log("Приконнектились");
+                // call the method CallLongOperation defined in the Hub
+                PB.server.getCountAndMessage();
+                //$("#progressBar").hide();
+
+
+
+            });
+
+
+            // Update the progress bar
+            function UpdateProgress(message, count) {
+                // $("#progressBar").fadeIn("slow");
+                var result = $("#result");
+                if (count >= 100) { $("#X").click(); }
+                result.html(message);
+
+                //$("#progressBar").data("progressbar").value(count);
+
+                $("#progressBar").attr("aria-valuenow", count);
+                $("#progressBar").width(count + '%');
+                $("#progressBar").text(count + '%');
+                $("#nadpis").text(message);
+                // $("#progressBar").css("width", count);
+            }
+        });
+    </script>
     <script>
         //Нажатие на кнопку "input[type='submit']"
         $("button[tag='ToExcel']").click(function () {
-
-
-
-
-
-
-
-                var S = "";
-                var array = [];
+               var S = "";
+              var array = [];
                 var table = $("#Table");
                 var rows = table.children();
                 for (var i = 0; i < rows.length; i++) {
@@ -348,8 +482,32 @@
 
             });
     </script>
+    <script>
+        //Нажатие на кнопку "input[type='submit']"
+        $("#add").click(function () {
+            var _this = $(this);
+            var AdresId = $('#Adresa').val();
+            var Month = _this.attr('month');
+            var Year = _this.attr('year');
+           // alert(AdresId + ";" + Month + ";" + Year)
+            window.location.replace("/Home/AddAdres?AdresId=" + AdresId + "&Month=" + Month + "&Year=" + Year);
 
-   
+        });
 
+    </script>
+    <script>
+        //Нажатие на кнопку "input[type='submit']"
+        $("#remove").click(function () {
+            var _this = $(this);
+            var AdresId = $('#Iskluchit').val();
+            var Month = _this.attr('month');
+            var Year = _this.attr('year');
+           // alert(AdresId + ";" + Month + ";" + Year)
+            window.location.replace("/Home/RemoveAdres?AdresId=" + AdresId + "&Month=" + Month + "&Year=" + Year);
 
+        });
+
+    </script>
 }
+/**/
+/**/

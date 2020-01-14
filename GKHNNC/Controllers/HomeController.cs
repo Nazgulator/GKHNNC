@@ -143,10 +143,22 @@ namespace GKHNNC.Controllers
             return Json(Data);
         }
 
-        public ActionResult OtopMonth(int Month=0, int Year=0)
+        public ActionResult OtopMonth(int Month=0)
         {
             if (Month == 0) { Month = DateTime.Now.Month-1;  }
+            int Year = 0;
+            HttpCookie cookieReq = Request.Cookies["VODAYear"];
+            // Проверить, удалось ли обнаружить cookie-набор с таким именем.
+            // Это хорошая мера предосторожности, потому что         
+            // пользователь мог отключить поддержку cookie-наборов,         
+            // в случае чего cookie-набор не существует        
+            if (cookieReq != null)
+            {
+                Year = Convert.ToInt32(cookieReq["Year"]);
+            }
+            if (Month == 0) { Month = DateTime.Now.Month - 1; }
             if (Year == 0) { Year = DateTime.Now.Year; }
+ 
             List<Adres> dbAdresa = db.Adres.ToList();//список всех адресов
             //Сервис айди 1 = отопление, 2 = ГВ, 3 = ГВ на общее имущество берем только гв и гв на общее и смотрим складывать ли их
             List<SVN> dbSVNs = db.SVNs.Where(a => a.Date.Year == Year && a.Date.Month == Month && (a.ServiceId == 1)).Include(b => b.Service).ToList();
@@ -359,20 +371,77 @@ namespace GKHNNC.Controllers
             ViewBag.Month = Opr.MonthOpred(Month);
             return View(MainResult);
         }
-
-
-
-        public ActionResult VodaMonth(int Month=0,int Year=0)
+        //[HttpPost]
+        //добавляем адрес в исключения
+        public ActionResult AddAdres(int AdresId, int Month, int Year)
         {
+            Iskluchit I = new Iskluchit();
+            I.AdresId = AdresId;
+            try
+            {
+                db.Iskluchits.Add(I);
+                db.SaveChanges();
+            }
+            catch { }
+            
+            return RedirectToAction("VodaMonth", new { Month, Year });
+        }
+        //удаляем адрес из исключений
+        public ActionResult RemoveAdres(int AdresId, int Month, int Year)
+        {
+            Iskluchit I = new Iskluchit();
+            try
+            {
+                I = db.Iskluchits.Where(x => x.AdresId == AdresId).First();
+                db.Iskluchits.Remove(I);
+                db.SaveChanges();
+            }
+            catch { }
 
+            return RedirectToAction("VodaMonth", new { Month, Year });
+        }
+
+        public ActionResult VodaMonth(int Month=0)
+        {
+            int Year = 0;
+            HttpCookie cookieReq = Request.Cookies["VODAYear"];
+            // Проверить, удалось ли обнаружить cookie-набор с таким именем.
+            // Это хорошая мера предосторожности, потому что         
+            // пользователь мог отключить поддержку cookie-наборов,         
+            // в случае чего cookie-набор не существует        
+            if (cookieReq != null)
+            {
+                Year = Convert.ToInt32(cookieReq["Year"]);
+            }
             if (Month == 0) { Month = DateTime.Now.Month - 1; }
             if (Year == 0) { Year = DateTime.Now.Year; }
-            List<Adres> dbAdresa = db.Adres.ToList();//список всех адресов
+            
             //Сервис айди 1 = отопление, 2 = ГВ, 3 = ГВ на общее имущество берем только гв и гв на общее и смотрим складывать ли их
             List<SVN> dbSVNs = db.SVNs.Where(a => a.Date.Year == Year && a.Date.Month == Month&&(a.ServiceId == 2||a.ServiceId==3)).Include(b=>b.Service).ToList();
             List<UEV> dbUEV = db.UEVs.Where(c => c.Date.Year == Year && c.Date.Month == Month).ToList();
             List<OPU> dbOPU = db.OPUs.Where(c => c.Date.Year == Year && c.Date.Month == Month).ToList();
             List<IPU> dbIPU = db.IPUs.Where(c => c.Date.Year == Year && c.Date.Month == Month).ToList();
+            List<Adres> dbIskluchit = new List<Adres>();
+            List<Adres> dbAdresa = db.Adres.ToList();//список всех адресов
+            try
+            {
+                dbIskluchit = db.Iskluchits.Include(x=>x.Adress).Select(y=>y.Adress).ToList();
+                foreach (Adres A in dbIskluchit)
+                {
+                    try
+                    {
+                        dbAdresa.Remove(A);
+                    }
+                    catch { }
+                    
+                }
+            }
+            catch { }
+           
+           
+           
+            ViewBag.Adresa = dbAdresa.OrderBy(x=>x.Adress);
+            ViewBag.Iskluchit = dbIskluchit;
             ViewBag.SVN = false;
             int progress = 0;
             double pro100 = dbAdresa.Count;
@@ -399,6 +468,7 @@ namespace GKHNNC.Controllers
             List<ViewVoda> Result = new List<ViewVoda>();//пишем сюда результат
             List<ViewVoda> RedResult = new List<ViewVoda>();//пишем сюда результат
             List<ViewVoda> NullResult = new List<ViewVoda>();//пишем сюда результат
+            ViewVoda Summa = new ViewVoda();//пишем сюда результат
 
             //для каждого адреса ищем данные уэв и сумму данных SVN
             bool skladivat = false;
@@ -509,6 +579,8 @@ namespace GKHNNC.Controllers
                 V.LastYearRub = LastYearRub;
                 V.Srednyaya = OtopYear; //средняя за прошлый год
                 V.LastYear = LastYear;//выставленные за аналогичный месяц прошлого года.
+               
+          
                 //ищем в базе все опушки
                 string Primech = "";
                 decimal VFact = 0;
@@ -535,6 +607,20 @@ namespace GKHNNC.Controllers
                 V.PU = pu;//прибор учета галкой
                 V.IPU = GVIPU;
                 V.GVUEVM3 = GVUEVM3;
+                //суммируем данные 
+                Summa.SrednyayaRub += V.SrednyayaRub;
+                Summa.LastYearRub += V.LastYearRub;
+                Summa.Srednyaya += V.Srednyaya;
+                Summa.LastYear += V.LastYear;
+                Summa.VFact += V.VFact;
+                Summa.Fact += V.Fact;
+                Summa.Plan += V.Plan;
+                Summa.RaznFact += V.RaznFact;
+                Summa.RaznPlan += V.RaznPlan;
+                Summa.Uev += V.Uev;
+                Summa.IPU += V.IPU;
+                Summa.GVUEVM3 += V.GVUEVM3;
+                ViewBag.Summa = Summa;
                 if (Plan + Fact + GVUEV == 0)
                 {
                     NullResult.Add(V);
@@ -554,6 +640,7 @@ namespace GKHNNC.Controllers
                     
 
                 }
+                
                 procount++;
                 progress = Convert.ToInt16(procount / pro100 * 100);
                 ProgressHub.SendMessage("Создаем отчет... ", progress);
@@ -562,7 +649,7 @@ namespace GKHNNC.Controllers
 
 
             
-            Excel.Application ApExcel = new Excel.Application();
+        /*    Excel.Application ApExcel = new Excel.Application();
             Excel.Workbooks WB = null;
             WB = ApExcel.Workbooks;
             Excel.Workbook WbExcel = ApExcel.Workbooks.Add(System.Reflection.Missing.Value);
@@ -591,7 +678,7 @@ namespace GKHNNC.Controllers
             Marshal.FinalReleaseComObject(ApExcel);
             GC.Collect();
             GC.WaitForPendingFinalizers();
-            
+          */  
 
 
             List<ViewVoda> MainResult = new List<ViewVoda>();//пишем сюда результат
@@ -600,6 +687,7 @@ namespace GKHNNC.Controllers
             MainResult.AddRange(NullResult);
             ViewBag.Year = Year;
             ViewBag.Month = Opr.MonthOpred(Month);
+            ViewBag.MonthInt = Month;
             return View(MainResult);
         }
 
@@ -610,8 +698,20 @@ namespace GKHNNC.Controllers
             return itog;
 
         }
-        public ActionResult OtchetMonth(int Month, int Year)
+        public ActionResult OtchetMonth(int Month)
         {
+            int Year = 0;
+            HttpCookie cookieReq = Request.Cookies["VODAYear"];
+            // Проверить, удалось ли обнаружить cookie-набор с таким именем.
+            // Это хорошая мера предосторожности, потому что         
+            // пользователь мог отключить поддержку cookie-наборов,         
+            // в случае чего cookie-набор не существует        
+            if (cookieReq != null)
+            {
+                Year = Convert.ToInt32(cookieReq["Year"]);
+            }
+            if (Month == 0) { Month = DateTime.Now.Month - 1; }
+            if (Year == 0) { Year = DateTime.Now.Year; }
             //грузим данные по аренде за месяц
             string OH = "";//Ошибка сохраняется сюда
             List<Arendator> Arendators = new List<Arendator>();
@@ -1271,12 +1371,21 @@ namespace GKHNNC.Controllers
         {
             return View();
         }
-            public ActionResult OtoplenieMonth(int Month,int Year)
+            public ActionResult OtoplenieMonth(int Month)
         {
-            if (Year == null)//если год не указан
+
+            int Year = 0;
+            HttpCookie cookieReq = Request.Cookies["VODAYear"];
+            // Проверить, удалось ли обнаружить cookie-набор с таким именем.
+            // Это хорошая мера предосторожности, потому что         
+            // пользователь мог отключить поддержку cookie-наборов,         
+            // в случае чего cookie-набор не существует        
+            if (cookieReq != null)
             {
-                Year = DateTime.Now.Year;
+                Year = Convert.ToInt32(cookieReq["Year"]);
             }
+            if (Month == 0) { Month = DateTime.Now.Month - 1; }
+            if (Year == 0) { Year = DateTime.Now.Year; }
             ProgressHub.SendMessage("Инициализация и подготовка...", 0);
             int progress = 0;
 
@@ -1446,10 +1555,33 @@ namespace GKHNNC.Controllers
             ViewBag.Years = Years;
             return View();
         }
-        public ActionResult VODAIndex(int year = 0)
+        public ActionResult VODAIndex(int year=0)
         {
-            if (year == 0) { year = DateTime.Now.Year; }
+            if (year != 0)
+            {
+                HttpCookie cookie = new HttpCookie("VODAYear");
+                // Установить значения в нем
+                cookie["Year"] = year.ToString();
+                // Добавить куки в ответ
+                Response.Cookies.Add(cookie);
+            }
+            else
+            {
+                HttpCookie cookieReq = Request.Cookies["VODAYear"];
+                // Проверить, удалось ли обнаружить cookie-набор с таким именем.
+                // Это хорошая мера предосторожности, потому что         
+                // пользователь мог отключить поддержку cookie-наборов,         
+                // в случае чего cookie-набор не существует        
+                if (cookieReq != null)
+                {
+                    year = Convert.ToInt32(cookieReq["Year"]);
+                }
+
+                if (year == 0) { year = DateTime.Now.Year; }
+
+            }
            
+
             ViewBag.Month = Opr.MonthZabit();
             int[] Go =new int[12];
             bool[] Arenda = new bool[12];

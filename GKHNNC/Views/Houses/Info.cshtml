@@ -56,7 +56,7 @@
     </h5>
     <table class="table-bordered table-striped col-12">
         <tr>
-            <td>
+            <td title="Данные взяты из файла OPU_Аренда из бухгалтерии.">
                 Общая площадь дома
             </td>
             <td>
@@ -64,14 +64,14 @@
             </td>
         </tr>
         <tr>
-            <td>
+            <td title="Данные взяты из файла OPU_Аренда из бухгалтерии.">
                 Общая площадь, занимаемая арендаторами
             </td>
             <td>
                 @Html.DisplayFor(model => model.PloshadArendators, new { htmlAttributes = new { @class = "form-control" } })
             </td>
         </tr>
-        @if (Model.Room.Balkon > 0)
+        @if (Model.Room != null && Model.Room.Balkon > 0)
         {
             <tr>
                 <td>
@@ -82,7 +82,7 @@
                 </td>
             </tr>
         }
-        @if (Model.Room.Lodgi > 0)
+        @if (Model.Room != null && Model.Room.Lodgi > 0)
         {
             <tr>
                 <td>
@@ -184,16 +184,10 @@
             Выполненных услуг нет
         </button>
     }
-   
-
-
-    <button class="btn btn-success btn-block" onclick="location.href='@Url.Action("Index", "Home")'">Назад</button>
 
 
 
-
-
-
+    <button class="btn btn-success btn-block" onclick="location.href='@Url.Action("Index", "Houses")'">Назад</button>
 
 
 

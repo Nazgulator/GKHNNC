@@ -52,6 +52,23 @@ namespace Opredelenie
             }
             return Month;
         }
+        //Отнять от данного месяца определенное число месяцев
+        public static DateTime MonthMinus(int MinusMonth, DateTime Date)
+        {
+            int Year = Date.Year;
+            int Month = Date.Month;
+            //проверяем сколько лет откатить
+            int YearMinus = Convert.ToInt16(Math.Truncate(Convert.ToDecimal(MinusMonth)/12));
+            
+            if (Month - MinusMonth<=0)
+            {
+                Year--;
+                Month = (YearMinus+1)*12+Month - MinusMonth;
+
+            }
+            DateTime NewDate = new DateTime(Year, Month, 1);
+            return NewDate;
+        }
         public static List<string> YearZabit()
         {
             DateTime D = DateTime.Now;

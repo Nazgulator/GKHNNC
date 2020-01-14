@@ -65,7 +65,7 @@ namespace GKHNNC.Controllers
             int procount = 0;
             pro100 = excel.Count;
             IPU IPUKA = new IPU();
-
+            List<string> NoAdress = new List<string>();
             //для каждой строки в экселе
             int lastadres = 0;
             foreach (List<string> L in excel)
@@ -169,10 +169,14 @@ namespace GKHNNC.Controllers
                             }
                         }
                     }
+                    if (!nashli)
+                    {
+                        NoAdress.Add(adr + "Не найден");
+                    }
                 }
                 procount++;
                 progress = Convert.ToInt16(50 + procount / pro100 * 50);
-                ProgressHub.SendMessage("Обрабатываем файл ОБСД...", progress);
+                ProgressHub.SendMessage("Обрабатываем файл ИПУ...", progress);
                 if (procount > pro100) { procount = Convert.ToInt32(pro100); }
 
             }

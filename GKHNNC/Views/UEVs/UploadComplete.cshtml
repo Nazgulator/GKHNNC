@@ -20,7 +20,7 @@
 
         <tr>
             <td colspan="3">
-                @Html.DropDownList("Данные", new SelectList(@ViewBag.UEV), new { @class = "form-control" })
+                @Html.DropDownList("Данные", new SelectList(ViewBag.UEV), new { @class = "form-control" })
             </td>
         </tr>
         <tr>
@@ -30,7 +30,17 @@
         </tr>
         <tr>
             <td colspan="3">
-                @Html.DropDownList("Ошибки", new SelectList(@ViewBag.Errors), new { @class = "form-control" })
+                @Html.DropDownList("Ошибки", new SelectList(ViewBag.Errors), new { @class = "form-control" })
+            </td>
+        </tr>
+        <tr>
+            <th colspan="3">
+                Мелкие ошибки загрузки:
+            </th>
+        </tr>
+        <tr>
+            <td colspan="3">
+                @Html.DropDownList("Ошибки2", new SelectList(ViewBag.SmallErrors), new { @class = "form-control" })
             </td>
         </tr>
         <tr>
@@ -43,7 +53,7 @@
             <th>
                 Вода М3
             </th>
-           
+
         </tr>
         <tr>
             <td>
@@ -59,10 +69,35 @@
                 @ViewBag.M3Water
             </td>
         </tr>
+        <tr>
+            <td>
+                <p><a href="/UEVs/Index" class="btn btn-success btn-default" style="width:100%">Все данные УЭВ >></a></p>
+            </td>
+            <td>
+                <p><a href="/IPUs/Upload" class="btn btn-success btn-default" style="width:100%">Загрузка ИПУ >></a></p>
+            </td>
+            <td>
+                <p><a href="/Home/Index" class="btn btn-success btn-default" style="width:100%">В главное меню >></a></p>
+            </td>
+        </tr>
+        <tr>
+            <td>Код УЭВ</td>
+            <td>Тепло руб</td>
+            <td>ГВ руб(одна часть)</td>
+        </tr>
+        @for (int i = 0; i < ViewBag.Codes.Count; i++)
+        {
+            <tr>
+                <td>@ViewBag.Codes[i]</td>
+                <td>@ViewBag.Teplos[i]</td>
+                <td>@ViewBag.HWs[i]</td>
+            </tr>
+        }
+
     </tbody>
 </table>
-<p><a href="/UEVs/Index" class="btn btn-success btn-default" style="width:100%">Все данные УЭВ >></a></p>
-<p><a href="/Home/Index" class="btn btn-success btn-default" style="width:100%">В главное меню >></a></p>
+
+
 
 
 @section Scripts{

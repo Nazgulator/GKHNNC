@@ -144,6 +144,7 @@ namespace GKHNNC.Controllers
 
                 //найдем старые данные за этот месяц и заменим их не щадя
                 List<UEV> dbUEV = db.UEVs.Where(x => x.Date.Year == Date.Year && x.Date.Month == Date.Month).ToList();
+               
                 pro100 = dbUEV.Count;
                 foreach (UEV S in dbUEV)
                 {
@@ -183,6 +184,10 @@ namespace GKHNNC.Controllers
                 string Error = "";
                 List<List<string>> excel = ExcelSVNUpload.IMPORT(Server.MapPath("~/Files/" + fileName), Names,out Error);
                 List<string> Errors = new List<string>();
+                List<string> SmallErrors = new List<string>();
+                List<string> Codes = new List<string>();//коды УЭВ все построчно для сверки с таблицей
+                List<string> Teplos = new List<string>();//рубли тепло
+                List<string> HWs = new List<string>();//рубли гв
                 if (excel.Count < 1)
                 {
                     //если нифига не загрузилось то 
@@ -203,12 +208,17 @@ namespace GKHNNC.Controllers
                         
                             bool EstName = false;
                         int CodUEV = 0;
+                        Codes.Add(L[0]);
+                        Teplos.Add(L[4]);
+                        HWs.Add(L[7]);
                         try
                         {
                             CodUEV= Convert.ToInt32(L[0]);
                         }
                         catch
-                        { }
+                        {
+                            SmallErrors.Add(L[0] + ";" + L[1] + ";" + L[2] + " Ошибка конвертации кода");
+                        }
                         if (CodUEV != 0)
                         { 
                             foreach (Adres A in Adresa)
@@ -243,6 +253,7 @@ namespace GKHNNC.Controllers
                                 catch (Exception e)
                                 {
                                     Console.WriteLine("Не преобразуется в инт " + UEVKA.AdresId + " " + e.Message);
+                                    SmallErrors.Add(L[0] + ";" + L[1] + ";" + L[2] + " Не преобразуется ПУ");
                                 }
                                 try
                                 {
@@ -251,6 +262,7 @@ namespace GKHNNC.Controllers
                                 catch (Exception e)
                                 {
                                     Console.WriteLine("Не преобразуется в децимал " + UEVKA.AdresId + " " + e.Message);
+                                    SmallErrors.Add(L[0] + ";" + L[1] + ";" + L[2] + " Не преобразуется отопление энергия объём");
                                 }
                                 try
                                 {
@@ -259,6 +271,7 @@ namespace GKHNNC.Controllers
                                 catch (Exception e)
                                 {
                                     Console.WriteLine("Не преобразуется в децимал " + UEVKA.AdresId + " " + e.Message);
+                                    SmallErrors.Add(L[0] + ";" + L[1] + ";" + L[2] + " Не преобразуется отопление энергия руб.");
                                 }
                                 try
                                 {
@@ -267,6 +280,7 @@ namespace GKHNNC.Controllers
                                 catch (Exception e)
                                 {
                                     Console.WriteLine("Не преобразуется в децимал " + UEVKA.AdresId + " " + e.Message);
+                                    SmallErrors.Add(L[0] + ";" + L[1] + ";" + L[2] + " Не преобразуется ГВ энергия");
                                 }
                                 try
                                 {
@@ -275,6 +289,7 @@ namespace GKHNNC.Controllers
                                 catch (Exception e)
                                 {
                                     Console.WriteLine("Не преобразуется в децимал " + UEVKA.AdresId + " " + e.Message);
+                                    SmallErrors.Add(L[0] + ";" + L[1] + ";" + L[2] + " Не преобразуется ГВ энергия руб");
                                 }
                                 try
                                 {
@@ -283,6 +298,7 @@ namespace GKHNNC.Controllers
                                 catch (Exception e)
                                 {
                                     Console.WriteLine("Не преобразуется в децимал " + UEVKA.AdresId + " " + e.Message);
+                                    SmallErrors.Add(L[0] + ";" + L[1] + ";" + L[2] + " Не преобразуется ГВ объём");
                                 }
                                 try
                                 {
@@ -291,6 +307,7 @@ namespace GKHNNC.Controllers
                                 catch (Exception e)
                                 {
                                     Console.WriteLine("Не преобразуется в децимал " + UEVKA.AdresId + " " + e.Message);
+                                    SmallErrors.Add(L[0] + ";" + L[1] + ";" + L[2] + " Не преобразуется ГВ руб");
                                 }
                                 UEVKA.Pribor = Pribor;
                                 UEVKA.OtEnergyGkal = OtEnergyGkal;
@@ -309,6 +326,7 @@ namespace GKHNNC.Controllers
                                 catch (Exception e)
                                 {
                                     Console.WriteLine("Ошибка записи в базу данных " + e.Message);
+                                    SmallErrors.Add(L[0] + ";" + L[1] + ";" + L[2] + " Не смогли сохранить в БД адрес ИД="+ UEVKA.AdresId);
                                 }
                             }
                             else
@@ -345,6 +363,10 @@ namespace GKHNNC.Controllers
                     ViewBag.M3Water = db.UEVs.Where(x => x.Date.Year == Date.Year && x.Date.Month == Date.Month).Sum(y => y.HwVodaM3);
                     ViewBag.GkalWater = db.UEVs.Where(x => x.Date.Year == Date.Year && x.Date.Month == Date.Month).Sum(y => y.HwEnergyGkal);
                     ViewBag.Errors = Errors;
+                    ViewBag.Codes = Codes;
+                    ViewBag.HWs = HWs;
+                    ViewBag.Teplos = Teplos;
+                    ViewBag.SmallErrors = SmallErrors;
                     return View("UploadComplete");
                 }
             }

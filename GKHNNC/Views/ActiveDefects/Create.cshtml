@@ -21,7 +21,7 @@
 
                 </div>
                 <div class="col-md-12">
-                    @Html.EditorFor(model => model.Date, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.EditorFor(model => model.Date, new { htmlAttributes = new { @class = "form-control", autocomplete = "off" } })
                     @Html.ValidationMessageFor(model => model.Date, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -171,13 +171,14 @@
     <script>
         //Нажатие на кнопку "input[type='submit']"
         $("#ElementId").change(function () {
-                var _this = $(this);
+            var _this = $(this);
             var Element = _this.val();
             var Adres = $("#AdresId").val();
-               window.location.replace("/ActiveDefects/Create?ElementId=" + Element+"&AdresId="+Adres);
+            window.location.replace("/ActiveDefects/Create?ElementId=" + Element + "&AdresId=" + Adres);
 
-            });
+        });
     </script>
+    
 
 
 

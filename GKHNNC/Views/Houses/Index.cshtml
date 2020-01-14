@@ -7,7 +7,7 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>Index</title>
+    <title>Детальные данные по домам</title>
 </head>
 <body>
     <h2>Детальные данные по домам</h2>
@@ -29,29 +29,88 @@
                 Информация
             </th>
         </tr>
-
+        @{bool Y = false; }
         @foreach (var item in Model)
         {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Adres)
-            </td>
+            string GISGKH = "";
+            if (item.GISGKH == false)
+            {
+                GISGKH = "table-warning";
+
+                if (!Y)
+                {
+                    <tr>
+                        <td colspan="4" style="text-align:center">
+                            <h5>Данные ГИСЖКХ отсутствуют по следующим домам:</h5>
+                        </td>
+
+                    </tr>
+                }
+                Y = true;
+            }
+            <tr class="@GISGKH">
+                <td>
+                    @Html.DisplayFor(modelItem => item.Adres)
+                </td>
 
 
-            <td>
-                @Html.ActionLink("Инфо", "Info", new { id = item.AdresId }, new { @type = "button", @class = "btn btn-success" })
-            </td>
-            <td>
-                
-                @Html.ActionLink("Добавить осмотр", "Create", "Osmotrs", new { id = item.AdresId, date=DateTime.Now }, new { @type = "button", @class = "btn btn-success" })
-            </td>
-            <td>
-                @Html.ActionLink("Информация", "Edit", new { id = item.AdresId }, new { @type = "button", @class = "form-control" })
-            </td>
-        </tr>
+                <td>
+                    @Html.ActionLink("Инфо", "Info", new { id = item.AdresId }, new { @type = "button", @class = "btn btn-success" })
+                </td>
+                <td>
+                    @if (item.OsmotrEst == false)
+                    {
+                        if (item.GISGKH)
+                        {
+
+                            @Html.ActionLink("Добавить осмотр", "Create", "Osmotrs", new { id = item.AdresId, date = DateTime.Now }, new { @type = "button", @class = "btn btn-success" });
+
+                        }
+                        else
+                        {
+                            @Html.ActionLink("Создать осмотр с нуля", "Create", "Osmotrs", new { id = item.AdresId, date = DateTime.Now }, new { @type = "button", @class = "btn btn-warning" });
+                        };
+                    }
+                    @if (item.OsmotrEst == true)
+                    {
+                        @Html.ActionLink("Изменить осмотр", "Create", "Osmotrs", new { id = item.AdresId, date = DateTime.Now }, new { @type = "button", @class = "btn btn-primary" });
+                    }
+
+                </td>
+                <td>
+                    @Html.ActionLink("Информация", "Edit", new { id = item.AdresId }, new { @type = "button", @class = "form-control" })
+                </td>
+            </tr>
         }
 
     </table>
     <p><a href="/Home/Index" class="btn btn-success btn-block"><< В главное меню </a> </p>
+    <!-- Modal -->
+    <div class="modal fade" id="Download" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+
+
+
+
+                    <h4>Загрузка данных, пожалуйста подождите...</h4>
+                    <button id="X" type="button" class="close hide" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="progress">
+
+                        <div id="progressBar" class="progress-bar progress-bar-striped bg-success progress-bar-animated" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                        <center>
+                            <label id="nadpis">Загрузка данных...</label>
+                        </center>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
+
 </html>

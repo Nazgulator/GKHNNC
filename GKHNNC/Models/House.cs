@@ -40,6 +40,11 @@ namespace GKHNNC.Models
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:MMMM/yyyy}", ApplyFormatInEditMode = true)]
 
+        [Display(Name = "Загружен из гисжкх")]
+        public bool GISGKH { get; set; }
+
+        [Display(Name = "Осмотр создан")]
+        public bool OsmotrEst { get; set; }
         //теперь типы крыши и фундамента
 
         [Display(Name = "Вид крыши")]

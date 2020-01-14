@@ -471,7 +471,7 @@ namespace GKHNNC.Controllers
 
                
             }
-            var EX2 = (object[,])WS.Range["A" + (lastrr + 1).ToString() + ":" + Opr.OpredelenieBukvi(LastCol) + (lastrr + rrr).ToString()].Value;//догружаем остатки
+            var EX2 = (object[,])WS.Range["A" + (lastrr ).ToString() + ":" + Opr.OpredelenieBukvi(LastCol) + (lastrr + rrr).ToString()].Value;//догружаем остатки
             for (int j = 0; j < rrr; j++)
             {
                 for (int k = 0; k < LastCol; k++)

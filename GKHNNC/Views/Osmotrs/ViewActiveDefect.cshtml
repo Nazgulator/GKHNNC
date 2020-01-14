@@ -2,98 +2,269 @@
 
 @{
     ViewBag.Title = "Create";
-    Layout = "~/Views/Shared/_Layout0.cshtml";
+    Layout = "~/Views/Shared/_LayoutNULL.cshtml";
 }
 
 
-<table class="table-bordered table-striped">
-    <tr>
-        <td colspan="2">
+<table id="@Model.ElementId" class="table-bordered table-striped">
+    @{string Part2 = Model.Id.ToString() + Model.OsmotrId.ToString();
+        string Part = Model.ElementId.ToString();
+        string PhotoElement1 = "PhotoElement1" + Part;
+        string PhotoElement2 = "PhotoElement2" + Part;
+        string SostoyanieElement = "SostoyanieElement" + Part;
+        string DivSost = "DivSost" + Part;
+        string PED1 = "PED1" + Part;
+        string PED2 = "PED2" + Part;
+        string PE1 = Model.Photo1;
+        if (PE1 == null || PE1.Equals(""))
+        {
+            PE1 = "/Content/Images/NoDownload.png";
+        }
+        else
+        {
+            if (File.Exists(Server.MapPath("~/Files/" + Model.OsmotrId.ToString() + "/" + Model.Photo1)) == false)
+            { PE1 = "/Content/Images/NoDownload.png"; }
+            else
+            {
 
-            @Model.Element.Name
-        </td>
-        <td colspan="2">
-            @Model.Sostoyanie
-        </td>
+                PE1 = "/Files/" + Model.OsmotrId.ToString() + "/" + Model.Photo1;
+            }
+
+        }
+        string PE2 = Model.Photo2;
+        if (PE2 == null || PE2.Equals(""))
+        {
+            PE2 = "/Content/Images/NoDownload.png";
+        }
+        else
+        {
+            if (File.Exists(Server.MapPath("~/Files/" + Model.OsmotrId.ToString() + "/" + Model.Photo2)) == false)
+            { PE2 = "/Content/Images/NoDownload.png"; }
+            else
+            {
+
+                PE2 = "/Files/" + Model.OsmotrId.ToString() + "/" + Model.Photo2;
+            }
+
+        }
 
 
 
-    </tr>
+        string Sostoyanie = "Sostoyanie" + Model.Id;
+        string Opisanie = "Opisanie" + Model.Id;
 
-    <tr>
-        <td>
-            @Html.DropDownList("DefectId", new SelectList(Model.Defects, "id", "def"), htmlAttributes: new { @class = "form-control" })
-        </td>
-        <td>
-            <input class="form-control" id="DefectOpisanie" />
-        </td>
-        <td>
-            <input class="form-control" type="number" id="DefectSostoyanie" />
-        </td>
-        <td>
-            <button type="button" id="AddDefect" MId="@Model.Id" MDate="@Model.Date" MAdres="@Model.AdresId" MElement="@Model.ElementId" MOsmotr="@Model.OsmotrId" class="btn btn-success" >
-                Добавить дефект
-            </button>
-        </td>
-    </tr>
+        string DefectId = "Defect" + Model.Id;
+    }
+    <tr style="background-color:lightgray">
+        <th colspan="1" style="text-align:center">
 
-    @if (Model.ActiveDefects != null)
-    {
-        for (int j = 0; j < Model.ActiveDefects.Count; j++)
+            <h5> @Model.Element.Name</h5>
+        </th>
+        @if (Model.Photo1 == null && Model.Photo2 == null)
         {
 
 
-            <tr>
-                <td>
-                    @Model.ActiveDefects[j].Defect.Def
-                </td>
-                <td>
-                    @Model.ActiveDefects[j].Sostoyanie
-                </td>
-                <td>
-                    @Model.ActiveDefects[j].Opisanie
-                </td>
-                <td>
-                    <button type="button" id="AddDefect" value="@Model.Id" class="btn btn-success" >
-                        Изменить дефект
-                    </button>
-                </td>
-            </tr>
+            <td width="100px" style="text-align:center">
+                <input type="file" name="Photo" id="@PhotoElement1" onchange="InputChange(this)" class="form-control-file" />
+            </td>
+            <td width="100px" style="text-align:center">
+                <input type="file" name="Photo" id="@PhotoElement2" onchange="InputChange(this)" class="form-control-file" />
+            </td>
+            <th style="text-align:center">
+                Состояние Элемента:
+            </th>
+            <th>
+                <div class="ratingElement" id ="@DivSost">
+                    <input id="@SostoyanieElement" type="number" name="val" value="@Model.Sostoyanie" />
 
+                    <input type="hidden" name="vote-id" value="@SostoyanieElement" />
+
+                </div>
+            </th>
+
+            <td colspan="1" style="text-align:center">
+                <button type="button" id="SaveElement" MId="@Model.Id" MDate="@Model.Date" MAdres="@Model.AdresId" MElement="@Model.ElementId" MOsmotr="@Model.OsmotrId" class="btn btn-success go" style="text-align:center">
+                    Сохранить элемент
+                </button>
+
+            </td>
         }
+        else
+        {
+
+            <td width="100px">
+                <a data-fancybox="gallery" id="@PED1" href="@PE1">
+                    <img src="@PE1" id="@PhotoElement1" to="@PE1" class="img-responsive" height="32" width="32" onerror="this.style.display = 'none'">
+                </a>
+            </td>
+            <td width="100px">
+                <a data-fancybox="gallery" id="@PED2" href="@PE2">
+                    <img src="@PE2" id="@PhotoElement2" to="@PE2" class="img-responsive" height="32" width="32" onerror="this.style.display = 'none'">
+                </a>
+            </td>
+            <th style="text-align:center">
+                Состояние Элемента:
+            </th>
+            <th>
+                <div class="rating" id ="@DivSost">
+                    <input id="@SostoyanieElement" type="hidden" name="val" value="@Model.Sostoyanie" />
+                </div>
+
+            </th>
+            <td style="text-align:center">
+                <button type="button" id="EditElement" MId="@Model.Id" MElement="@Model.ElementId" MOsmotr="@Model.OsmotrId" class="btn btn-danger go" style="text-align:center">
+                    Изменить элемент
+                </button>
+            </td>
+        }
+    </tr>
+    <tr>
+        <td width="30%" style="text-align:center">
+            Дефект
+        </td>
+
+
+
+        <td width="100px" style="text-align:center">
+            Фото1
+        </td>
+        <td width="100px" style="text-align:center">
+            Фото2
+        </td>
+        <td width="10%" style="text-align:center">
+            Процент разрушения
+        </td>
+        <td width="250px" style="text-align:center">
+            Описание дефекта
+        </td>
+
+        <td width="20%" style="text-align:center">Опции</td>
+
+    </tr>
+
+
+    @{
+        string Def = "D" + Part;
+        string Op = "O" + Part;
+        string Sost = "S" + Part;
+        string Num = "N" + Part;
+        string P1 = "P1" + Part;
+        string P2 = "P2" + Part;
+        string D1 = "D1" + Part;
+        string D2 = "D2" + Part;
     }
+    <tr>
+        <td width="30%" style="text-align:center">
+            @Html.DropDownList(Def, new SelectList(Model.Defects, "id", "def"), htmlAttributes: new { @class = "form-control" })
+        </td>
+
+
+
+        <td width="100px" style="text-align:center">
+
+            <input type="file" name="Photo" onchange="InputChange(this)" id="@P1" class="form-control-file" />
+
+
+        </td>
+        <td width="100px" style="text-align:center">
+            <input type="file" name="Photo" onchange="InputChange(this)" id="@P2" class="form-control-file" />
+
+        </td>
+        <td width="10%" style="text-align:center">
+            <div class="ratingElementRed">
+                <input id="@Sost" type="hidden" name="val" value="@Model.Sostoyanie" />
+                <input type="hidden" name="vote-id" value="@Sost" />
+            </div>
+        </td>
+        <td width="250px" style="text-align:center">
+            <input id="@Op" placeholder="Введите описание дефекта" class="form-control" style="width:230px"/>
+
+        </td>
+
+        <td width="20%" style="text-align:center">
+            <button type="button" id="AddDefect" MId="@Model.Id" MDate="@Model.Date" MAdres="@Model.AdresId" MElement="@Model.ElementId" MOsmotr="@Model.OsmotrId" class="btn btn-success go">
+                Сохранить дефект
+            </button>
+
+
+        </td>
+    </tr>
+     
+        @for (int i = 0; i < Model.ActiveDefects.Count; i++)
+        {
+            string Ph1 = Model.ActiveDefects[i].Photo1;
+            if (Ph1 == null || Ph1.Equals(""))
+            {
+                Ph1 = "/Content/Images/NoDownload.png";
+            }
+            else {
+                if (File.Exists(Server.MapPath("~/Files/" + Model.OsmotrId.ToString() + "/" + Model.ActiveDefects[i].Photo1)) == false)
+                { Ph1 = "/Content/Images/NoDownload.png"; }
+                else
+                {
+
+                    Ph1 = "/Files/" + Model.OsmotrId.ToString() + "/" + Model.ActiveDefects[i].Photo1;
+                }
+
+            }
+            string Ph2 = Model.ActiveDefects[i].Photo2;
+            if (Ph2==null||Ph2.Equals(""))
+            { Ph2 = "/Content/Images/NoDownload.png"; }
+            else
+            {
+                if (File.Exists(Server.MapPath("~/Files/" + Model.OsmotrId.ToString() + "/" + Model.ActiveDefects[i].Photo2)) == false)
+                { Ph2 = "/Content/Images/NoDownload.png"; }
+                else
+                {
+                    Ph2 = "/Files/" + Model.OsmotrId.ToString() + "/" + Model.ActiveDefects[i].Photo2;
+                }
+
+            }
+
+
+
+    <tr id="@Model.ActiveDefects[i].Id">
+        <td style="text-align:center">
+            @Model.ActiveDefects[i].Defect.Def
+        </td>
+
+
+        <td style="text-align:center">
+            <a data-fancybox="gallery" href="@Ph1">
+                <img src="@Ph1" id="Photo" to="@P2" class="img-responsive" height="32" width="32" onerror="this.style.display = 'none'">
+            </a>
+        </td>
+        <td style="text-align:center">
+            <a data-fancybox="gallery" href="@Ph2">
+                <img src="@Ph2" id="Photo" to="@P2" class="img-responsive" height="32" width="32" onerror="this.style.display = '/Content/Images/NoDownload.png'">
+            </a>
+        </td>
+        <td style="text-align:center">
+            <div class="ratingRed">
+                <input type="hidden" name="val" value="@Model.ActiveDefects[i].Sostoyanie" />
+
+            </div>
+
+        </td>
+        <td style="text-align:center">
+            @Model.ActiveDefects[i].Opisanie
+        </td>
+        <td style="text-align:center">
+            <button type="button" id="RemoveDefect" ADId="@Model.ActiveDefects[i].Id" class="btn btn-danger rem">Удалить дефект</button>
+        </td>
+    </tr>
+    
+    }
+
+
+
+
+
 
 </table>
 
 
 
 
-@section Scripts{
-    @Scripts.Render("~/scripts/jquery-3.3.1.min.js")
-    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
-
-<script>
-            //Нажатие на кнопку "input[type='submit']"
-            $("#AddDefect").change(function () {
-                var _this = $(this);
-                var Element = _this.attr("MElement");
-                var Id = _this.attr("MId");
-                var Date = _this.attr("MDate");
-                var Adres = _this.attr("MAdres");
-                var Osmotr = _this.attr("MOsmotr");
-                
-                 
-                $.post('@Url.Action("AddActiveDefect", "Osmotrs")', { Date: Date, AdresId: Adres, ElementId: Element, DefectId:Id }, function (data)
-                {
-                    window.location.replace("/Osmotrs/ViewActiveDefect?Date=" + Date + "&AdresId=" + AdresId + "&ElementId=" + ElementId+"&OsmotrId="+Osmotr);//редирект
 
 
-                });
-
-                });
-</script>
-
-
-
-
-}

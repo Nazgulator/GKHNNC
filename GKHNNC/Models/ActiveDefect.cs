@@ -26,11 +26,24 @@ namespace GKHNNC.Models
         [Display(Name = "Адрес ИД")]
         public int? AdresId { get; set; }
 
+        [Display(Name = "Осмотр")]
+        public Osmotr Osmotr { get; set; }
+        [Display(Name = "Осмотр ИД")]
+        public int? OsmotrId { get; set; }
+
         [Display(Name = "Состояние")]
         public int Sostoyanie { get; set; }
 
+        [Display(Name = "Количество")]
+        public int Number { get; set; }
+
         [Display(Name = "Описание")]
         public string Opisanie { get; set; }
+
+        [Display(Name = "Фото 1")]
+        public string Photo1 { get; set; }
+        [Display(Name = "Фото 2")]
+        public string Photo2 { get; set; }
 
         [Display(Name = "Дата")]
         public DateTime Date { get; set; }

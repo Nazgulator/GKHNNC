@@ -5,176 +5,441 @@
     Layout = "~/Views/Shared/_Layout0.cshtml";
 }
 
-<h2>Создание осмотра #@Model.Id</h2>
 
-@using (Html.BeginForm())
-{
-    @Html.AntiForgeryToken()
+
+<html>
+
+
+<body>
+
+    <script type='text/javascript' src='http://code.jquery.com/jquery-1.10.1.min.js'></script>
+    <script type='text/javascript'>
+        $(window).on('load', function () {
+            $('#wrap_preloader').delay(500).fadeToggle(500);
+        });
+    </script>
+
+    <div id='wrap_preloader' style=" width: 100%;height: 100%;position: fixed;margin: 0px auto;background: #282828;z-index: 9999;text-align: center;color: #fff;letter-spacing: 5px;font-family: arial;font-size: 50px;padding-top: 260px;">
+        Идет быстрая загрузка...
+
+
+
+    </div>
+
+
+
+
+
+
+    <div id="MENU" style="background:#28a745;z-index:98;position:fixed;top:0px">
+        @for (int i = 0; i < ViewBag.DOMParts.Count; i++)
+        {
+            <a href="#@i" style="color:white;font-size:20px">@ViewBag.DOMParts[i] |</a>
+        }
+    </div>
+
+    <h2>Создание осмотра #@Model.Id</h2>
+
+    @if (ViewBag.Error != "")
+    {
+        <H5>При загрузке возникла ошибка!!!</H5>
+        <p>@ViewBag.Error</p>
+    }
+
+
+
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
 
     <hr />
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
     <div class="container">
         <div class="form-horizontal">
 
-            <div class="row justify-content-center">
-                <div class="col-md-12">
-                    <h4> @Model.Adres.Adress</h4>
-                </div>
-            </div>
-            <div class="row col-md-6 col-md-offset-3">
-                <div class="col-md-6">
-                    <h6>Дата осмотра</h6>
-                </div>
-                <div class="col-md-6">
-                    @Html.EditorFor(model => model.Date, new { htmlAttributes = new { @class = "form-control" } })
+            @{ int progress = 0;
+                double pro100 = ViewBag.DOMParts.Count;
+                int procount = 0;
+            }
+            @for (int j = 0; j < ViewBag.DOMParts.Count; j++)
+            {
+
+
+
+                <div id="@j" class="row col-md-6 col-md-offset-3">
+                    <div class="col-md-12">
+                        <h3> @ViewBag.DOMParts[j] </h3>
+
+
+                    </div>
 
                 </div>
-            </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <h5>Элементы</h5>
+                    </div>
 
-            <div class="row col-md-6 col-md-offset-3">
-                <div class="col-md-12">
-                    <h4> Фундамент</h4>
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h6>Площадь</h6>
-                            </div>
-                            <div class="col-md-6">
-                                @Html.EditorFor(model => model.DOMFundament.Ploshad, new { htmlAttributes = new { @class = "form-control" } })
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h6>Материал</h6>
-                            </div>
-                            <div class="col-md-6">
-                                @Html.DropDownList("FundamentMaterial", new SelectList(@ViewBag.FundamentMaterials, "value", "text", Model.DOMFundament.MaterialId), htmlAttributes: new { @class = "form-control" })
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h6>Тип</h6>
-                            </div>
-                            <div class="col-md-6">
-                                @Html.DropDownList("FundamentType", new SelectList(@ViewBag.FundamentTypes, "value", "text", Model.DOMFundament.TypeId), htmlAttributes: new { @class = "form-control" })
-
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h6>Состояние</h6>
-                            </div>
-                            <div class="col-md-6">
-                                @Html.EditorFor(model => model.DOMFundament.Sostoyanie, new { htmlAttributes = new { @class = "form-control" } })
-
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <h4>Элементы</h4>
-                            </div>
-
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <table class="table-bordered table-striped">
-                                    <tr>
-                                        <th>
-                                            Наименование
-                                        </th>
-                                        <th>
-                                            Описание
-                                        </th>
-                                        <th>
-                                            Состояние
-                                        </th>
-
-                                        <th>
-                                            Добавить дефект
-                                        </th>
-
-                                    </tr>
-
-                                    @for (int i = 0; i < Model.Elements.Count; i++)
-                                    {
-                                        if (Model.Elements[i].Element.ElementTypeId == 1)
-                                        {
-                                            <tr>
-                                                <td colspan="4">
-                                                    @Html.Action("ViewActiveDefect", "Osmotrs", new { AdresId = Model.AdresId, ElementId = Model.Elements[i].ElementId, Date = Model.Date, OsmotrId = Model.Elements[i].OsmotrId })
-
-                                                </td>
-                                            </tr>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
 
 
 
-                                        }
-                                    }
-                                </table>
-                            </div>
-                        </div>
+                        @for (int i = 0; i < Model.Elements.Count; i++)
+                        {
+                            if (Model.Elements[i].Element.ElementTypeId == (j + 1))
+                            {
+                                string Part = "Partial" + Model.Elements[i].Id.ToString();
 
+                                @Html.Action("ViewActiveDefect", "Osmotrs", new { ElementId = Model.Elements[i].ElementId })
+                            }
+                        }
 
                     </div>
                 </div>
 
-            </div>
 
-
-            <div class="row col-md-12">
-                <p> </p>
-            </div>
-
-            <div class="row col-md-6 col-md-offset-3">
-
-                <div class=" col-md-6  ">
-                    @Html.ActionLink("Назад", "Index", null, new { @class = "btn btn-success btn-block" })
-                </div>
-                <div class=" col-md-6  ">
-                    <input type="submit" value="Готово" class="btn btn-success btn-block" />
+                <div class="row col-md-12">
+                    <p> </p>
                 </div>
 
-
-            </div>
-
-
-            <!--
-               
-            <div class="modal fade" id="DefectModal" tabindex="-1" role="dialog" aria-labelledby="DefectModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="DefectModalLabel">Добавить активный дефект</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            @Html.Action("SelectActiveDefect", "Osmotrs", new { AdresId = Model.AdresId, ElementType = 1, Date = Model.Date })
-
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
-                            <button type="button" class="btn btn-primary">Добавить активный дефект</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            -->
-
+                procount++;
+                progress = Convert.ToInt16(procount / pro100 * 100);
+                ProgressHub.SendMessage("Загружаем данные элементов...", progress);
+                if (procount > pro100) { procount = Convert.ToInt32(pro100); }
+            }
         </div>
     </div>
-}
+    <div class=" col-md-6  ">
+        @Html.ActionLink("Назад", "Index", "Houses", null, new { @class = "btn btn-success btn-block" })
+    </div>
+</body>
+
+
+</html>
+
+
+
+
 @section Scripts{
     @Scripts.Render("~/scripts/jquery-3.3.1.min.js")
     @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
     @Scripts.Render("~/scripts/nprogress.min.js")
-    @Scripts.Render("~/scripts/jquery.signalR-2.4.0.min.js")
+    @Scripts.Render("~/scripts/jquery.signalR-2.4.0.js")
     @Scripts.Render("~/signalr/hubs")
+    @Scripts.Render("~/scripts/jquery-1.7.1.js")
+    @Scripts.Render("~/scripts/jquery.unobtrusive-ajax.js")
+    @Scripts.Render("~/scripts/bootstrap.js")
+    @Scripts.Render("~/scripts/bootstrap.bundle.js")
+    @Scripts.Render("https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js")
+    @Scripts.Render("~/scripts/jquery.rating/js/jquery.rating-2.0.js")
+    @Scripts.Render("~/scripts/jquery.rating/js/jquery.rating-2.0Red.js")
 
+
+    <link href="/scripts/jquery.rating/styles/jquery.rating.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+
+    <script>
+        $(function () {
+            var PB = $.connection.progressHub;
+            console.log("Loading...");
+            PB.client.sendMessage = function (message, count) {
+                // update progress
+                console.log(count);
+                UpdateProgress(message, count);
+                //alert(message);
+            };
+
+            $.connection.hub.start().done(function () {
+                console.log("Приконнектились");
+                // call the method CallLongOperation defined in the Hub
+                PB.server.getCountAndMessage();
+                //$("#progressBar").hide();
+
+
+
+            });
+
+
+            // Update the progress bar
+            function UpdateProgress(message, count) {
+                // $("#progressBar").fadeIn("slow");
+                var result = $("#result");
+                if (count >= 100) { $("#X").click(); }
+                result.html(message);
+
+                //$("#progressBar").data("progressbar").value(count);
+
+                $("#progressBar").attr("aria-valuenow", count);
+                $("#progressBar").width(count + '%');
+                $("#progressBar").text(count + '%');
+                $("#nadpis").text(message);
+                // $("#progressBar").css("width", count);
+            }
+        });
+    </script>
     
-       
-   
+    <script>
+        //изменение размеров текстового поля при фокусе
+        $(function ()
+        {
+            $("input").focus(function () {
+                if ($(this).attr("name") != "Photo") {
+                    $(this).animate({ width: "500px" }, 500);
+                } else
+                {
+                    $(this).animate({ width: "250px" }, 500);
+                }
+            }).blur(function ()
+            {
+                if ($(this).attr("name") != "Photo") {
+                    $(this).animate({ width: "230px" }, 500);
+                }
+                else
+                {
+                    $(this).animate({ width: "50px" }, 500);
+                }
+
+            });
 
 
+
+        });
+    </script>
+    <script>
+
+
+
+        $('button').on('click', function ()
+        {
+            var _this = $(this);
+            var Id = _this.attr('id');
+            var Element = _this.attr("MElement");
+            var Defect = $("#D" + Element).val();
+            var Opisanie = $("#O" + Element).val();
+            var Sostoyanie = $("#S" + Element).val();
+            var Photo1 = $("#P1" + Element).val();
+            var Photo2 = $("#P2" + Element).val();
+
+            //var Number = $("#N" + Element).val();
+            if (Id=='AddDefect')
+            {
+                console.log('Была нажата кнопка' + Element);
+                console.log('Нашли вот такие данные Defect=' + Defect + 'Opisanie=' + Opisanie + 'Sostoyanie=' + Sostoyanie);
+                var AddDiv = $('table#' + Element);
+                $.post('@Url.Action("AddAD", "Osmotrs")', { DefectId: Defect, Opisanie: Opisanie, Sostoyanie: Sostoyanie, ElementId: Element, Photo1:Photo1,Photo2:Photo2 },
+                    function (data) {
+                        var S = data.split(';');
+                        if (S[0] != 'Ошибка') {
+                            AddDiv.append('<tr id=' + S[4] + ' style="text-align:center">' + '<td>' + S[0] + '</td>' + '<td><a data-fancybox="gallery" href="/Files/' + S[7] + '/' + S[5] + '"><img src = "/Files/' + S[7] + '/' + S[5] + '" class= "img-responsive " width="32Px" height="32Px"></a></td ><td><a data-fancybox="gallery" href="/Files/' + S[7] + '/' + S[6] + '"><img src = "/Files/' + S[7] + '/' + S[6] + '" class= "img-responsive"  width="32Px" height="32Px"></a></td><td><div class="ratingnew"><input type="hidden" name="val"  value="' + S[1] + '" /></div></td>' +'<td>' + S[2] + '</td>'+
+                                '<td><button type="button" id="RemoveDefect" ADId="' + S[4] + '" class="btn btn-danger rem">Удалить дефект</button></td>' + '</tr>'
+                            );
+                            $('div.ratingnew').red({
+                                fx: 'full',
+                                readOnly: 'true'
+                            });
+                            $('#' + S[4]).hide().fadeIn("slow");//появляем медленно строку
+                            console.log('Добавили в таблицу строку' + Element);
+                        }
+                        else
+                        {
+                            Alert('Ошибка сохранения файла. Попробуйте выбрать другой файл. Принимаются только картинки .jpg или .png');
+                        }
+                        // $('body').append('<ul><li>Java</li><li>JavaScript</li></ul>');
+
+
+
+                    });
+            }
+
+        });
+
+
+
+
+    </script>
+    <script>
+        $(document).on('click', '#SaveElement', function (e)
+        {
+            console.log("Нажата кнопка сохранить элемент");
+            var _this = $(this);
+            var Id = _this.attr('MId');
+            var OsmotrId = _this.attr('MOsmotr');
+            console.log('Нажата кнопка сохранить активный элемент. Начинаем сохранение.' + Id);
+            var MElementId = _this.attr('MElement');
+            var Photo1 = $('#PhotoElement1' + MElementId).val();
+            var Photo2 = $('#PhotoElement2' + MElementId).val();
+            var Sostoyanie = $('#SostoyanieElement' + MElementId).val();
+            console.log('Начинаем действие.' + Id + ' Photo1=' + Photo1 + ' Photo2=' + Photo2 );
+                $.post('@Url.Action("SaveElement", "Osmotrs")', { Id: Id, Photo1: Photo1, Photo2: Photo2, Sostoyanie:Sostoyanie},
+                    function (data)
+                    {
+                        var S = data.split(';');
+                        if (S[0] != 'Ошибка'&&S[0]!='') {
+
+
+                                console.log('Данные сохранены' + MElementId);
+                            $('#PhotoElement1' + MElementId).replaceWith(' <a data-fancybox="gallery" href="/Files/' + OsmotrId + '/' + S[0] + '" id= "PED1' + MElementId+'"><img src=" /Files/' + OsmotrId + '/' + S[0] + '" id = "PhotoElement1' + MElementId +'" class= "img - responsive" height = "32" width = "32" onerror = "this.style.display = "none"" ></a> ');
+                            $('#PhotoElement2' + MElementId).replaceWith(' <a data-fancybox="gallery" href="/Files/' + OsmotrId + '/' + S[1] + '" id= "PED2' + MElementId+'"><img src="/Files/' + OsmotrId + '/' + S[1] + '" id = "PhotoElement2' + MElementId +'" class= "img-responsive" height = "32" width = "32" onerror = "this.style.display = "none"" ></a> ');
+                            $('#DivSost' + MElementId).replaceWith('<div class="rating" id="DivSost' + MElementId+'"> <input id=SostoyanieElement"' + MElementId + '" type="hidden" name="val" value="' + S[2] + '" /> </div> ');
+                            $('div.rating').rating({
+                                fx: 'full',
+                                readOnly: 'true'
+                            });
+
+
+                            _this.replaceWith('<button type="button" id="EditElement" MId="' + Id + '" MElement="' + MElementId + '" MOsmotr="' + OsmotrId + '" class="btn btn-warning go">Изменить элемент </button>');
+
+                        }
+                        else
+                        {
+                            console.log(data);
+                        }
+
+                    });
+        });
+    </script>
+
+    <script>
+        $(document).on('click', '#EditElement', function (e) {
+            console.log("Нажата кнопка изменить элемент");
+            var _this = $(this);
+            var Id = _this.attr('MId');
+            var OsmotrId = _this.attr('MOsmotr');
+            console.log('Нажата кнопка изменить активный элемент. Начинаем сохранение.' + Id);
+            var MElementId = _this.attr('MElement');
+            var Photo1 = $('#PhotoElement1' + MElementId).val();
+            var Photo2 = $('#PhotoElement2' + MElementId).val();
+            var Sostoyanie = $('#SostoyanieElement' + MElementId).val();
+            console.log('Возвращаем строку для редактирования.' + Id + ' Photo1=' + Photo1 + ' Photo2=' + Photo2);
+            $('#PED1' + MElementId).replaceWith(' <input type="file" name="Photo" onchange="InputChange(this)" id="PhotoElement1' + MElementId + '" class="form-control-file" /> ');//заменяем блоки галереи инпутом
+            $('#PED2' + MElementId).replaceWith(' <input type="file" name="Photo" onchange="InputChange(this)" id="PhotoElement2' + MElementId + '" class="form-control-file" /> ');
+            $('#PhotoElement1' + MElementId).replaceWith(' <input type="file" name="Photo" onchange="InputChange(this)" id="PhotoElement1' + MElementId + '" class="form-control-file" /> ');//если нет блоков галереи то просто заменяем инпут инпутом
+            $('#PhotoElement2' + MElementId).replaceWith(' <input type="file" name="Photo" onchange="InputChange(this)" id="PhotoElement2' + MElementId + '" class="form-control-file" /> ');
+            $('#DivSost' + MElementId).replaceWith('<div class="ratingElement" id="DivSost' + MElementId +'> <input id="SostoyanieElement' + MElementId + '" type="number" name="val" value="10" /> <input type="hidden" name="vote-id" value="SostoyanieElement' + MElementId + '" /> </div>');
+             $('div.ratingElement').rating({
+                 fx: 'full',
+            url:'@Url.Action("Zvezda", "Osmotrs")'
+            });
+
+            _this.replaceWith('<button type="button" id="SaveElement" MId="' + Id + '" MElement="' + MElementId + '" MOsmotr="' + OsmotrId + '" class="btn btn-success go">Сохранить элемент </button>');
+
+
+
+
+        });
+    </script>
+
+
+    <script>
+        $(document).on('click', '#RemoveDefect', function (e)
+        {
+            console.log("Нажата кнопка удалить!");
+            var _this = $(this);
+            var Id = _this.attr('id');
+            console.log('Нажата кнопка удалить активный дефект. Начинаем удаление.' + Id);
+                var ADId = _this.attr('ADId');
+                var TR = $('#' + ADId);
+                $.post('@Url.Action("RemoveAD", "Osmotrs")', { ADId: ADId },
+                    function (data)
+                    {
+                        if (data == '') {
+                            TR.fadeOut('slow', function () { TR.remove(); });
+                           // TR.fadeOut('slow').remove();
+                            console.log('Данные удалены, строка почищена' + ADId);
+                        }
+                        else
+                        {
+                            console.log(data);
+                        }
+
+                    });
+        });
+    </script>
+    <script>
+         function InputChange(e)
+        {
+             console.log("Нажата кнопка фото!");
+             console.log("Объект "+e);
+            var _this = $(e);
+            var Id = _this.attr('id');
+            var Name = _this.attr('name');
+            if (Name == 'Photo') {
+                console.log('Нажата кнопка добавить фото.' + Id);
+               // e.preventDefault();
+                var files = $(e)[0].files;
+                console.log('Файлы.' + files);
+                if (files.length > 0) {
+                    if (window.FormData !== undefined) {
+                        var data = new FormData();
+
+                        for (var x = 0; x < files.length; x++) {
+                            data.append("file" + x, files[x]);
+                        }
+
+
+                        $.ajax({
+                            type: "POST",
+                            url: '@Url.Action("Upload", "Osmotrs")',
+                            contentType: false,
+                            processData: false,
+                            data: data,
+                            success: function (result) {
+                                $('.toast').toast('show');
+
+
+                            },
+                            error: function (xhr, status, p3) {
+
+                                alert(xhr.responseText);
+                            }
+                        });
+                    } else {
+                        alert("Браузер не поддерживает загрузку файлов HTML5!");
+                    }
+                }
+
+
+            }
+
+        }
+    </script>
+    <script>
+        //Загрузка файлов (клик на картинке)
+        $('input').on('change', InputChange());
+    </script>
+    <script>
+        //рейтинг в звездах
+        $('div.rating').rating({
+            fx: 'full',
+            readOnly: 'true'
+        });
+
+    </script>
+    <script>
+        //рейтинг в звездах
+        $('div.ratingElement').rating({
+
+            fx: 'full',
+            url:'@Url.Action("Zvezda", "Osmotrs")'
+        });
+
+    </script>
+    <script>
+        //рейтинг в звездах
+        $('div.ratingElementRed').red({
+
+            fx: 'full',
+            url:'@Url.Action("ZvezdaRed", "Osmotrs")'
+        });
+
+    </script>
+    <script>
+        //рейтинг в звездах
+        $('div.ratingRed').red({
+            fx: 'full',
+            readOnly: 'true'
+        });
+
+    </script>
 }

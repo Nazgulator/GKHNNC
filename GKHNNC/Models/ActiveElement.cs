@@ -24,6 +24,10 @@ namespace GKHNNC.Models
         public Osmotr Osmotr { get; set; }
         [Display(Name = "Состояние")]
         public int Sostoyanie { get; set; }
+        [Display(Name = "Фото1")]
+        public string Photo1 { get; set; }
+        [Display(Name = "Фото2")]
+        public string Photo2 { get; set; }
         [Display(Name = "Дата")]
         public DateTime Date { get; set; }
 
