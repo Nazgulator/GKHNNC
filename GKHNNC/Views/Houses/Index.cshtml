@@ -20,14 +20,12 @@
             </th>
 
             <th>
-                Инфо
+                Технический паспорт дома
             </th>
             <th>
-                Осмотр
+                Осмотр дома
             </th>
-            <th>
-                Информация
-            </th>
+           
         </tr>
         @{bool Y = false; }
         @foreach (var item in Model)
@@ -48,39 +46,57 @@
                 }
                 Y = true;
             }
-            <tr class="@GISGKH">
-                <td>
-                    @Html.DisplayFor(modelItem => item.Adres)
-                </td>
+                    <tr class="@GISGKH">
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Adres)
+                        </td>
 
 
-                <td>
-                    @Html.ActionLink("Инфо", "Info", new { id = item.AdresId }, new { @type = "button", @class = "btn btn-success" })
-                </td>
-                <td>
-                    @if (item.OsmotrEst == false)
-                    {
-                        if (item.GISGKH)
-                        {
+                        <td>
+                            @Html.ActionLink("Технический паспорт дома", "Info", new { id = item.AdresId }, new { @type = "button", @class = "btn btn-success" })
+                        </td>
+                        <td>
+                            @if (User.IsInRole("Администратор") || User.Identity.Name.Contains("ИнженерОЭЖФ") || User.Identity.Name.Contains("Эксплуатация"))
+                            {
+                                if (item.OsmotrEst == false)
+                                {
+                                    if (item.GISGKH)
+                                    {
 
-                            @Html.ActionLink("Добавить осмотр", "Create", "Osmotrs", new { id = item.AdresId, date = DateTime.Now }, new { @type = "button", @class = "btn btn-success" });
+                                        @Html.ActionLink("Добавить осмотр", "Create", "Osmotrs", new { id = item.AdresId, date = DateTime.Now }, new { @type = "button", @class = "btn btn-success" });
 
-                        }
-                        else
-                        {
-                            @Html.ActionLink("Создать осмотр с нуля", "Create", "Osmotrs", new { id = item.AdresId, date = DateTime.Now }, new { @type = "button", @class = "btn btn-warning" });
-                        };
-                    }
-                    @if (item.OsmotrEst == true)
-                    {
-                        @Html.ActionLink("Изменить осмотр", "Create", "Osmotrs", new { id = item.AdresId, date = DateTime.Now }, new { @type = "button", @class = "btn btn-primary" });
-                    }
+                                    }
+                                    else
+                                    {
+                                        @Html.ActionLink("Создать осмотр с нуля", "Create", "Osmotrs", new { id = item.AdresId, date = DateTime.Now }, new { @type = "button", @class = "btn btn-warning" });
+                                    };
+                                }
 
-                </td>
-                <td>
-                    @Html.ActionLink("Информация", "Edit", new { id = item.AdresId }, new { @type = "button", @class = "form-control" })
-                </td>
-            </tr>
+                                if (item.OsmotrEst == true)
+                                {
+                                    @Html.ActionLink("Изменить осмотр", "Create", "Osmotrs", new { id = item.AdresId, date = DateTime.Now }, new { @type = "button", @class = "btn btn-primary" });
+                                    @Html.ActionLink("Осмотр дома", "Info", "Osmotrs", new { id = item.AdresId, date = DateTime.Now }, new { @type = "button", @class = "btn btn-success" });
+                                }
+                            }
+                            else
+                            {
+
+                                if (item.OsmotrEst == true)
+                                {
+                                    @Html.ActionLink("Осмотр дома", "Info", "Osmotrs", new { id = item.AdresId, date = DateTime.Now }, new { @type = "button", @class = "btn btn-primary" });
+                                }
+
+                            }
+
+                        </td>
+                        <!--
+
+
+    <td>
+        @Html.ActionLink("Информация", "Edit", new { id = item.AdresId }, new { @type = "button", @class = "form-control" })
+    </td>
+        -->
+                    </tr>
         }
 
     </table>

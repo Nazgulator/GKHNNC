@@ -4,9 +4,26 @@
     ViewBag.Title = "Create";
     Layout = "~/Views/Shared/_LayoutNULL.cshtml";
 }
+@{string style = "";}
+@if (Model.Est == false)
+{
+    string TableName = "T" + Model.ElementId;
+    style = "style=display:none";
+    <table width="100%" id="@TableName" class="table-bordered table-striped">
+        <tr width="100%" style="background-color:lightgray">
+            <td width="80%" style="text-align:center">
+                <h4> @Model.Element.Name (отсутствует)</h4>
+            </td>
+            <td width="20%" style="text-align:center">
+                <button type="button" id="ReturnElement" class="btn btn-outline-success go" style="text-align:center" MOsmotr="@Model.OsmotrId" MElement="@Model.ElementId" MId="@Model.Id">Вернуть элемент</button>
 
+            </td>
 
-<table id="@Model.ElementId" class="table-bordered table-striped">
+        </tr>
+
+    </table>
+}
+<table @style id="@Model.ElementId" name="@Model.Element.Name" class="table-bordered table-striped">
     @{string Part2 = Model.Id.ToString() + Model.OsmotrId.ToString();
         string Part = Model.ElementId.ToString();
         string PhotoElement1 = "PhotoElement1" + Part;
@@ -15,6 +32,9 @@
         string DivSost = "DivSost" + Part;
         string PED1 = "PED1" + Part;
         string PED2 = "PED2" + Part;
+        string Material = "Mat" + Part;
+        string Kolvo = "Kolvo" + Part;
+        string EdIzm = "EdIzm" + Part;
         string PE1 = Model.Photo1;
         if (PE1 == null || PE1.Equals(""))
         {
@@ -55,42 +75,85 @@
 
         string DefectId = "Defect" + Model.Id;
     }
-    <tr style="background-color:lightgray">
-        <th colspan="1" style="text-align:center">
+    @if (Model.Photo1 == null && Model.Photo2 == null)
+    {
+        <tr style="background-color:lightgray">
+            <th colspan="1" rowspan="3" style="text-align:center">
 
-            <h5> @Model.Element.Name</h5>
-        </th>
-        @if (Model.Photo1 == null && Model.Photo2 == null)
-        {
+                <h4> @Model.Element.Name</h4>
+            </th>
+            <td width="100px">
 
+                <input type="file" name="Photo" onchange="InputChange(this)" id="@PhotoElement1" class="form-control-file" />
 
-            <td width="100px" style="text-align:center">
-                <input type="file" name="Photo" id="@PhotoElement1" onchange="InputChange(this)" class="form-control-file" />
             </td>
-            <td width="100px" style="text-align:center">
-                <input type="file" name="Photo" id="@PhotoElement2" onchange="InputChange(this)" class="form-control-file" />
+            <td width="100px">
+
+                <input type="file" name="Photo" onchange="InputChange(this)" id="@PhotoElement2" class="form-control-file" />
+
             </td>
-            <th style="text-align:center">
+            <th width="10%" style="text-align:center">
                 Состояние Элемента:
             </th>
-            <th>
-                <div class="ratingElement" id ="@DivSost">
-                    <input id="@SostoyanieElement" type="number" name="val" value="@Model.Sostoyanie" />
 
-                    <input type="hidden" name="vote-id" value="@SostoyanieElement" />
+            <td width="250px" align="center">
+                <center>
+                    <div class="ratingElement" id="@DivSost">
+                        <input id="@SostoyanieElement" type="number" name="val" value="5" />
+                        <input type="hidden" name="vote-id" value="@SostoyanieElement" />
+                    </div>
+                </center>
+            </td>
 
-                </div>
-            </th>
-
-            <td colspan="1" style="text-align:center">
-                <button type="button" id="SaveElement" MId="@Model.Id" MDate="@Model.Date" MAdres="@Model.AdresId" MElement="@Model.ElementId" MOsmotr="@Model.OsmotrId" class="btn btn-success go" style="text-align:center">
+            <td rowspan="3" style="text-align:center">
+                <button type="button" id="SaveElement" MId="@Model.Id" MElement="@Model.ElementId" MOsmotr="@Model.OsmotrId" class="btn btn-success go" style="text-align:center">
                     Сохранить элемент
                 </button>
+                <button style="margin:5px"  type="button" id="DeleteElement" MId="@Model.Id" MElement="@Model.ElementId" MOsmotr="@Model.OsmotrId" class="btn btn-outline-danger go" style="text-align:center">
+                    Удалить элемент
+                </button>
+            </td>
+
+        </tr>
+        <tr style="background-color:lightgray; text-align:center;align-content:center">
+
+            <td width="200px" colspan="2" >
+                Материал
+            </td>
+            <td  width="10%">
+                Единицы измерения
+            </td>
+            <td  width="250px">
+                Количество
+            </td>
+        </tr>
+        <tr style="background-color:lightgray">
+
+            <td width="200px" colspan="2" style="text-align:center">
+                @Html.DropDownList(Material, new SelectList(ViewBag.Materials, "Value", "Text", Model.MaterialId), htmlAttributes: new { @class = "form-control", width = "196" })
 
             </td>
-        }
-        else
-        {
+            <td style="text-align:center" width="10%">
+                @Html.DropDownList(EdIzm, new SelectList(ViewBag.Izmerenies, "Value", "Text", Model.IzmerenieId), htmlAttributes: new { @class = "form-control", width = "196" })
+
+
+            </td>
+            <td style="text-align:center" width="250px">
+                <input id="@Kolvo" value="@Model.Kolichestvo" type="number" class="form-control" />
+
+            </td>
+        </tr>
+
+
+
+    }
+    else
+    {
+        <tr style="background-color:lightgray">
+            <th colspan="1" rowspan="3" style="text-align:center">
+
+                <h4> @Model.Element.Name</h4>
+            </th>
 
             <td width="100px">
                 <a data-fancybox="gallery" id="@PED1" href="@PE1">
@@ -105,18 +168,56 @@
             <th style="text-align:center">
                 Состояние Элемента:
             </th>
-            <th>
-                <div class="rating" id ="@DivSost">
-                    <input id="@SostoyanieElement" type="hidden" name="val" value="@Model.Sostoyanie" />
-                </div>
 
-            </th>
-            <td style="text-align:center">
-                <button type="button" id="EditElement" MId="@Model.Id" MElement="@Model.ElementId" MOsmotr="@Model.OsmotrId" class="btn btn-danger go" style="text-align:center">
+            <td align="center">
+                <center>
+                    <div class="rating" align="center" id="@DivSost">
+                        <input id="@SostoyanieElement" type="hidden" name="val" value="@Model.Sostoyanie" />
+                    </div>
+                </center>
+            </td>
+
+            <td rowspan="3" style="text-align:center">
+                <button type="button" id="EditElement" MId="@Model.Id" MElement="@Model.ElementId" MOsmotr="@Model.OsmotrId" class="btn btn-outline-success go" style="text-align:center">
                     Изменить элемент
                 </button>
+              
+                <button style="margin:5px" type="button" id="DeleteElement" MId="@Model.Id" MElement="@Model.ElementId" MOsmotr="@Model.OsmotrId" class="btn btn-outline-danger go" style="text-align:center">
+                    Удалить элемент
+                </button>
             </td>
-        }
+
+        </tr>
+        <tr style="background-color:lightgray; text-align:center; align-content:center">
+
+            <td width="200px" colspan="2">
+                Материал
+            </td>
+            <td width="10%">
+                Единицы измерения
+            </td>
+            <td width="250px">
+                Количество
+            </td>
+        </tr>
+        <tr style="background-color:lightgray">
+
+            <td width="200px" colspan="2">
+
+                <input width="196" value="@Model.Material.Name" class="form-control" disabled="disabled" readonly />
+            </td>
+            <td width="10%">
+                <input value="@Model.Izmerenie.Name" class="form-control" disabled="disabled" readonly />
+
+            </td>
+            <td width="250px">
+                <input value="@Model.Kolichestvo" type="number" class="form-control" disabled="disabled" readonly />
+
+            </td>
+        </tr>
+    }
+    <tr style="background-color:#ffd800">
+        <td colspan="6" height="3px"></td>
     </tr>
     <tr>
         <td width="30%" style="text-align:center">
@@ -132,7 +233,7 @@
             Фото2
         </td>
         <td width="10%" style="text-align:center">
-            Процент разрушения
+            Степень повреждения
         </td>
         <td width="250px" style="text-align:center">
             Описание дефекта
@@ -141,7 +242,6 @@
         <td width="20%" style="text-align:center">Опции</td>
 
     </tr>
-
 
     @{
         string Def = "D" + Part;
@@ -172,12 +272,12 @@
         </td>
         <td width="10%" style="text-align:center">
             <div class="ratingElementRed">
-                <input id="@Sost" type="hidden" name="val" value="@Model.Sostoyanie" />
+                <input id="@Sost" type="hidden" name="val" value="0" />
                 <input type="hidden" name="vote-id" value="@Sost" />
             </div>
         </td>
         <td width="250px" style="text-align:center">
-            <input id="@Op" placeholder="Введите описание дефекта" class="form-control" style="width:230px"/>
+            <input id="@Op" placeholder="Введите описание дефекта" class="form-control" style="width:230px" />
 
         </td>
 
@@ -189,80 +289,81 @@
 
         </td>
     </tr>
-     
-        @for (int i = 0; i < Model.ActiveDefects.Count; i++)
+
+    @for (int i = 0; i < Model.ActiveDefects.Count; i++)
+    {
+        string Ph1 = Model.ActiveDefects[i].Photo1;
+        if (Ph1 == null || Ph1.Equals(""))
         {
-            string Ph1 = Model.ActiveDefects[i].Photo1;
-            if (Ph1 == null || Ph1.Equals(""))
+            Ph1 = "/Content/Images/NoDownload.png";
+        }
+        else
+        {
+            if (File.Exists(Server.MapPath("~/Files/" + Model.OsmotrId.ToString() + "/" + Model.ActiveDefects[i].Photo1)) == false)
+            { Ph1 = "/Content/Images/NoDownload.png"; }
+            else
             {
-                Ph1 = "/Content/Images/NoDownload.png";
-            }
-            else {
-                if (File.Exists(Server.MapPath("~/Files/" + Model.OsmotrId.ToString() + "/" + Model.ActiveDefects[i].Photo1)) == false)
-                { Ph1 = "/Content/Images/NoDownload.png"; }
-                else
-                {
 
-                    Ph1 = "/Files/" + Model.OsmotrId.ToString() + "/" + Model.ActiveDefects[i].Photo1;
-                }
-
+                Ph1 = "/Files/" + Model.OsmotrId.ToString() + "/" + Model.ActiveDefects[i].Photo1;
             }
-            string Ph2 = Model.ActiveDefects[i].Photo2;
-            if (Ph2==null||Ph2.Equals(""))
+
+        }
+        string Ph2 = Model.ActiveDefects[i].Photo2;
+        if (Ph2 == null || Ph2.Equals(""))
+        { Ph2 = "/Content/Images/NoDownload.png"; }
+        else
+        {
+            if (File.Exists(Server.MapPath("~/Files/" + Model.OsmotrId.ToString() + "/" + Model.ActiveDefects[i].Photo2)) == false)
             { Ph2 = "/Content/Images/NoDownload.png"; }
             else
             {
-                if (File.Exists(Server.MapPath("~/Files/" + Model.OsmotrId.ToString() + "/" + Model.ActiveDefects[i].Photo2)) == false)
-                { Ph2 = "/Content/Images/NoDownload.png"; }
-                else
-                {
-                    Ph2 = "/Files/" + Model.OsmotrId.ToString() + "/" + Model.ActiveDefects[i].Photo2;
-                }
-
+                Ph2 = "/Files/" + Model.OsmotrId.ToString() + "/" + Model.ActiveDefects[i].Photo2;
             }
 
+        }
 
 
-    <tr id="@Model.ActiveDefects[i].Id">
-        <td style="text-align:center">
-            @Model.ActiveDefects[i].Defect.Def
-        </td>
+
+        <tr id="@Model.ActiveDefects[i].Id">
+            <td style="text-align:center">
+                @Model.ActiveDefects[i].Defect.Def
+            </td>
 
 
-        <td style="text-align:center">
-            <a data-fancybox="gallery" href="@Ph1">
-                <img src="@Ph1" id="Photo" to="@P2" class="img-responsive" height="32" width="32" onerror="this.style.display = 'none'">
-            </a>
-        </td>
-        <td style="text-align:center">
-            <a data-fancybox="gallery" href="@Ph2">
-                <img src="@Ph2" id="Photo" to="@P2" class="img-responsive" height="32" width="32" onerror="this.style.display = '/Content/Images/NoDownload.png'">
-            </a>
-        </td>
-        <td style="text-align:center">
-            <div class="ratingRed">
-                <input type="hidden" name="val" value="@Model.ActiveDefects[i].Sostoyanie" />
+            <td style="text-align:center">
+                <a data-fancybox="gallery" href="@Ph1">
+                    <img src="@Ph1" id="Photo" to="@P2" class="img-responsive" height="32" width="32" onerror="this.style.display = 'none'">
+                </a>
+            </td>
+            <td style="text-align:center">
+                <a data-fancybox="gallery" href="@Ph2">
+                    <img src="@Ph2" id="Photo" to="@P2" class="img-responsive" height="32" width="32" onerror="this.style.display = '/Content/Images/NoDownload.png'">
+                </a>
+            </td>
+            <td style="text-align:center">
+                <div class="ratingRed">
+                    <input type="hidden" name="val" value="@Model.ActiveDefects[i].Sostoyanie" />
 
-            </div>
+                </div>
 
-        </td>
-        <td style="text-align:center">
-            @Model.ActiveDefects[i].Opisanie
-        </td>
-        <td style="text-align:center">
-            <button type="button" id="RemoveDefect" ADId="@Model.ActiveDefects[i].Id" class="btn btn-danger rem">Удалить дефект</button>
-        </td>
-    </tr>
-    
+            </td>
+            <td style="text-align:center">
+                @Model.ActiveDefects[i].Opisanie
+            </td>
+            <td style="text-align:center">
+                <button type="button" id="RemoveDefect" ADId="@Model.ActiveDefects[i].Id" class="btn btn-outline-danger rem">Удалить дефект</button>
+            </td>
+        </tr>
+
+
     }
 
 
 
 
 
-
 </table>
-
+<hr style="color:#28a745;border:none;background-color:#28a745;height:5px;margin:0px" />
 
 
 

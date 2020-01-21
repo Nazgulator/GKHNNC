@@ -99,12 +99,12 @@
                             </p>
                             <p>
                                 <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Houses")'">
-                                    <i class="glyphicon glyphicon-map-marker"></i> Детализация по домам и осмотры &raquo;
+                                    <i class="glyphicon glyphicon-map-marker"></i> Тех. паспорт домов и осмотры &raquo;
                                 </button>
                             </p>
                             <p>
                                 <button class="btn btn-success btn-lg" style="width:500Px" onclick="location.href='@Url.Action("TechPasport", "Home")'">
-                                    <i class="glyphicon glyphicon-inbox"></i> Тех. паспорт дома &raquo;
+                                    <i class="glyphicon glyphicon-inbox"></i> Справочники частей дома &raquo;
                                 </button>
                             </p>
                             <p>
@@ -312,7 +312,7 @@
 
 
             }
-            if (User.Identity.Name.Contains("БухгалтерПоТопливу") || User.IsInRole("Администратор") || User.Identity.Name.Contains("НачальникУАТ"))
+            if (User.Identity.Name.Contains("БухгалтерПоТопливу") || User.Identity.Name.Equals("Экономист")|| User.IsInRole("Администратор") || User.Identity.Name.Contains("НачальникУАТ"))
             {
                 <p>
                     <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "TypeAvtos")'">

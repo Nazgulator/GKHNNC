@@ -63,9 +63,7 @@
     </div>
 </div>
 @section Scripts {
-    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
-    @Scripts.Render("~/scripts/jquery-3.3.1.js")
-    @Scripts.Render("~/Scripts/chosen.jquery.min.js")
+   
 
 
     <script>
@@ -82,11 +80,17 @@
                             var selectedValue = $('#GEU').val();//выбраное значение в селекте
                             $.post('@Url.Action("PoiskPoGeu", "VipolnennieUslugis")', { selection: selectedValue }, function (data) {
                                 if (data.length > 0) {
+
+                                    $('#preloader').fadeIn(500);
+                                       
+
+                                  
                                     for (i = 0; i < data.length; i++) {
                                         $("#Adres").append('<option value=' + data[i] + '>' + data[i] + '</option>');
 
                                     }
-                                    $("#PartPoDomam").load('@Url.Action("IndexPoDomamPartial", "VipolnennieUslugis")', { Year: SV });
+                                    $("#PartPoDomam").load('@Url.Action("IndexPoDomamPartial", "VipolnennieUslugis")', { Year: SV }, function () { $('#preloader').fadeOut(500); });
+                                   
                                 }
                                 else {
                                     alert("К выбранному ЖЭУ не прикреплено ни одного дома.");
@@ -110,9 +114,13 @@
                             var Y = $('#Year').val();//выбраное значение в селекте
                             var M = $('#Month').val();//выбраное значение в селекте
                             var GEU = $('#GEU').val();
-                            var SV = Y + ";" + M+";"+GEU;
-                            $("#PartPoDomam").load('@Url.Action("IndexPoDomamPartial", "VipolnennieUslugis")', { Year: SV });
-
+                            var SV = Y + ";" + M + ";" + GEU;
+                            $('#preloader').fadeIn(500).delay(100);
+                            $("#PartPoDomam").load('@Url.Action("IndexPoDomamPartial", "VipolnennieUslugis")', { Year: SV }, function ()
+                            {
+                                $('#preloader').fadeOut(500);
+                            });
+                            
 
                            //идем в комплит воркс контроллер и там действие поиск по жэу отправляем выбранное значение в селекте, получаем дату список всех домов по жэу из БД перекинутых в лист стринг
 
@@ -131,7 +139,8 @@
                             var M = $('#Month').val();//выбраное значение в селекте
                             var GEU = $('#GEU').val();
                             var SV = Y + ";" + M + ";" + GEU;
-                            $("#PartPoDomam").load('@Url.Action("IndexPoDomamPartial", "VipolnennieUslugis")', { Year: SV });
+                            $('#preloader').fadeIn(500).delay(500);
+                            $("#PartPoDomam").load('@Url.Action("IndexPoDomamPartial", "VipolnennieUslugis")', { Year: SV }, function () { $('#preloader').fadeToggle(500); });
 
 
                            //идем в комплит воркс контроллер и там действие поиск по жэу отправляем выбранное значение в селекте, получаем дату список всех домов по жэу из БД перекинутых в лист стринг

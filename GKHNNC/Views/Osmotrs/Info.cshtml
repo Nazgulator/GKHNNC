@@ -26,7 +26,7 @@
     </script>
 
     <div id='wrap_preloader' style=" width: 100%;height: 100%;position: fixed;top:0px;margin: 0px auto;background: #1C1C1C;z-index: 99;text-align: center;color: #fff;font-size: 15px;padding-top: 260px;color:limegreen">
-
+        
         <p>
             <img src="~/Content/Images/Download/D1.gif" align="middle" class="rounded mr-2" alt="Идёт загрузка...">
         </p>
@@ -47,8 +47,6 @@
         {
             <a href="#@i" style="color:white;font-size:20px">@ViewBag.DOMParts[i] |</a>
         }
-        @Html.ActionLink("Назад", "Index", "Houses", null, new { @style = "color:white;font-size:20px" })
-
     </div>
     <div class="fixed-bottom">
         <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="3000">
@@ -61,7 +59,7 @@
 
         </div>
     </div>
-    <h2>Создание осмотра #@Model.Id</h2>
+    <h2>Осмотр #@Model.Id</h2>
     <h3>@Model.Adres.Adress</h3>
     <h4>От @Model.Date.ToString("dd.MMMM.yyyy")</h4>
     @if (ViewBag.Error != "")
@@ -90,7 +88,6 @@
 
 
 
-
                 <div id="@j" class="row">
                     <div class="col-md-12" style="background-color:#28a745">
                         <table>
@@ -102,12 +99,9 @@
 
                         </table>
 
-
                     </div>
 
-
-
-
+               
                     <div class="col-md-12">
 
 
@@ -118,12 +112,11 @@
                             {
                                 string Part = "Partial" + Model.Elements[i].Id.ToString();
 
-                                @Html.Action("ViewActiveDefect", "Osmotrs", new { ElementId = Model.Elements[i].ElementId })
+                                @Html.Action("ViewActiveDefectReadOnly", "Osmotrs", new { ElementId = Model.Elements[i].ElementId })
                             }
                         }
 
                     </div>
-
                 </div>
 
 
@@ -206,21 +199,25 @@
             }
         });
     </script>
-
+    
     <script>
         //изменение размеров текстового поля при фокусе
-        $(function () {
+        $(function ()
+        {
             $("input").focus(function () {
                 if ($(this).attr("name") != "Photo") {
                     $(this).animate({ width: "500px" }, 500);
-                } else {
+                } else
+                {
                     $(this).animate({ width: "250px" }, 500);
                 }
-            }).blur(function () {
+            }).blur(function ()
+            {
                 if ($(this).attr("name") != "Photo") {
                     $(this).animate({ width: "230px" }, 500);
                 }
-                else {
+                else
+                {
                     $(this).animate({ width: "50px" }, 500);
                 }
 
@@ -250,7 +247,7 @@
             {
                 console.log('Была нажата кнопка' + Element);
                 console.log('Нашли вот такие данные Defect=' + Defect + 'Opisanie=' + Opisanie + 'Sostoyanie=' + Sostoyanie);
-                var AddDiv = $('table#' + Element );
+                var AddDiv = $('table#' + Element);
                 $.post('@Url.Action("AddAD", "Osmotrs")', { DefectId: Defect, Opisanie: Opisanie, Sostoyanie: Sostoyanie, ElementId: Element, Photo1:Photo1,Photo2:Photo2 },
                     function (data) {
                         var S = data.split(';');
@@ -293,12 +290,9 @@
             var MElementId = _this.attr('MElement');
             var Photo1 = $('#PhotoElement1' + MElementId).val();
             var Photo2 = $('#PhotoElement2' + MElementId).val();
-            var Material = $('#Mat' + MElementId).val();
-            var EdIzm = $('#EdIzm' + MElementId).val();
-            var Kolvo = $('#Kolvo' + MElementId).val();
             var Sostoyanie = $('#SostoyanieElement' + MElementId).val();
             console.log('Начинаем действие.' + Id + ' Photo1=' + Photo1 + ' Photo2=' + Photo2 );
-                $.post('@Url.Action("SaveElement", "Osmotrs")', { Id: Id, Photo1: Photo1, Photo2: Photo2, Sostoyanie:Sostoyanie,Kolvo:Kolvo,EdIzm:EdIzm,Material:Material},
+                $.post('@Url.Action("SaveElement", "Osmotrs")', { Id: Id, Photo1: Photo1, Photo2: Photo2, Sostoyanie:Sostoyanie},
                     function (data)
                     {
                         var S = data.split(';');
@@ -313,9 +307,8 @@
                                 fx: 'full',
                                 readOnly: 'true'
                             });
-                            $('#EdIzm' + MElementId).attr('disabled', 'disabled');
-                            $('#Mat' + MElementId).attr('disabled', 'disabled');
-                            $('#Kolvo' + MElementId).attr('disabled', 'disabled');
+
+
                             _this.replaceWith('<button type="button" id="EditElement" MId="' + Id + '" MElement="' + MElementId + '" MOsmotr="' + OsmotrId + '" class="btn btn-outline-success go">Изменить элемент </button>');
 
                         }
@@ -344,63 +337,13 @@
             $('#PED2' + MElementId).replaceWith(' <input type="file" name="Photo" onchange="InputChange(this)" id="PhotoElement2' + MElementId + '" class="form-control-file" /> ');
             $('#PhotoElement1' + MElementId).replaceWith(' <input type="file" name="Photo" onchange="InputChange(this)" id="PhotoElement1' + MElementId + '" class="form-control-file" /> ');//если нет блоков галереи то просто заменяем инпут инпутом
             $('#PhotoElement2' + MElementId).replaceWith(' <input type="file" name="Photo" onchange="InputChange(this)" id="PhotoElement2' + MElementId + '" class="form-control-file" /> ');
-            $('#DivSost' + MElementId).replaceWith('<div class="ratingElement" id="DivSost' + MElementId +'> <input id="SostoyanieElement' + MElementId + '" type="number" name="val" value="5" /> <input type="hidden" name="vote-id" value="SostoyanieElement' + MElementId + '" /> </div>');
+            $('#DivSost' + MElementId).replaceWith('<div class="ratingElement" id="DivSost' + MElementId +'> <input id="SostoyanieElement' + MElementId + '" type="number" name="val" value="10" /> <input type="hidden" name="vote-id" value="SostoyanieElement' + MElementId + '" /> </div>');
              $('div.ratingElement').rating({
                  fx: 'full',
             url:'@Url.Action("Zvezda", "Osmotrs")'
             });
 
-            $('#EdIzm' + MElementId).removeAttr('disabled');
-            $('#Mat' + MElementId).removeAttr('disabled');
-            $('#Kolvo' + MElementId).removeAttr('disabled');
-
             _this.replaceWith('<button type="button" id="SaveElement" MId="' + Id + '" MElement="' + MElementId + '" MOsmotr="' + OsmotrId + '" class="btn btn-success go">Сохранить элемент </button>');
-
-
-
-
-        });
-    </script>
-
-    <script>
-        $(document).on('click', '#DeleteElement', function (e) {
-            console.log("Нажата кнопка удалить элемент");
-            var _this = $(this);
-            var Id = _this.attr('MId');
-            var OsmotrId = _this.attr('MOsmotr');
-            console.log('Нажата кнопка изменить активный элемент. Начинаем сохранение.' + Id);
-            var MElementId = _this.attr('MElement');
-            var Photo1 = $('#PhotoElement1' + MElementId).val();
-            var Photo2 = $('#PhotoElement2' + MElementId).val();
-            var Sostoyanie = $('#SostoyanieElement' + MElementId).val();
-            console.log('Скрываем таблицу.' + MElementId);
-            $.post('@Url.Action("DeleteElement", "Osmotrs")', { Id: Id },
-                function () {
-               
-                    Tablica = $('#' + MElementId).fadeOut(500, function () {
-                        Tablica.after("<table id='T" + MElementId + "' width='100%' class='table-bordered table-striped'><tr width='100%' style='background-color:lightgray'><td width='80%' style='text-align:center'><h4>" + Tablica.attr("Name") + " (отсутствует)" + "</h4></td><td width='20%' style='text-align:center' ><button type='button' id='ReturnElement' class='btn btn-outline-success go' style='text-align:center' MOsmotr='" + OsmotrId + "' MElement='" + MElementId + "' MId='" + Id + "'>Вернуть элемент</button></td></tr></table>");
-                $('#T' + MElementId).hide().fadeIn(500);
-                    });
-                });
-        });
-    </script>
-    <script>
-        $(document).on('click', '#ReturnElement', function (e) {
-            console.log("Нажата кнопка вернуть элемент");
-            var _this = $(this);
-            var OsmotrId = _this.attr('MOsmotr');
-            var Id = _this.attr('MId');
-            console.log('Нажата кнопка изменить активный элемент. Начинаем сохранение.');
-            var MElementId = _this.attr('MElement');
-            console.log('Открываем таблицу. T' + MElementId);
-            var Tablica = $('#' + MElementId);
-            $.post('@Url.Action("ReturnElement", "Osmotrs")', { Id: Id },
-                function () {
-                    $('#T' + MElementId).fadeOut(500, function () {
-                        Tablica.fadeIn(500);
-                        $('#T' + MElementId).remove();
-                    });
-                });
 
 
 
@@ -517,7 +460,7 @@
         $('div.ratingRed').red({
             fx: 'full',
             readOnly: 'true'
-        }).attr("style='align:center'");
+        });
 
     </script>
 }

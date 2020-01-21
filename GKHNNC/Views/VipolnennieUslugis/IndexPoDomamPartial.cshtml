@@ -133,7 +133,9 @@
                         case 12:
                             M = "Декабрь";
                             break;
-
+                        case 13:
+                            M = "Год";
+                            break;
                         default:
                             M = "Январь";
                             break;
@@ -148,7 +150,20 @@
 
         </tr>
     }
+<tr>
+    <th colspan="3">
+       Итого за выбранный период
+    </th>
+  
+    <th>
+       @ViewBag.SummaRub
+    </th>
+    <th colspan="4">
+        
+    </th>
 
+
+</tr>
     </table>
 
     <p>
@@ -157,9 +172,7 @@
 
 
     @section Scripts {
-        @Scripts.Render("~/Scripts/jquery-ui-1.12.1.min.js")
-        @Scripts.Render("~/Scripts/jquery-3.3.1.js")
-        @Scripts.Render("~/Scripts/chosen.jquery.min.js")
+
 
         <script>
             //скрипт для обработки нажатия галочки

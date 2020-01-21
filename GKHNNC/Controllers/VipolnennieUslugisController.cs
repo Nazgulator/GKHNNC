@@ -98,10 +98,19 @@ namespace GKHNNC.Controllers
                 HttpContext.Response.Cookies["Month"].Expires = DateTime.Now.AddDays(1);
             }
             int M = 0;
+            
             Obratno(Month, out M);
             int Y = Convert.ToInt16(Year);
             Month = M.ToString();
-            List<VipolnennieUslugi> vipolnennieUslugis = db.VipolnennieUslugis.Include(v => v.Adres).Include(v => v.Usluga).Where(x => x.Date.Year == Y&&x.Date.Month == M).ToList();
+            List<VipolnennieUslugi> vipolnennieUslugis = new List<VipolnennieUslugi>();
+            if (M < 13)
+            {
+               vipolnennieUslugis = db.VipolnennieUslugis.Where(x => x.Date.Year == Y && x.Date.Month == M).Include(v => v.Adres).Include(v => v.Usluga).ToList();
+            }
+            else
+            {
+                vipolnennieUslugis = db.VipolnennieUslugis.Where(x => x.Date.Year == Y).Include(v => v.Adres).Include(v => v.Usluga).ToList();
+            }
             if (GEU != "") { vipolnennieUslugis = vipolnennieUslugis.Where(z => z.Adres.GEU.Equals(GEU)).ToList(); }
             List<VipolnennieUslugi> vu = new List<VipolnennieUslugi>();
             List<int> NU = new List<int>();
@@ -112,17 +121,24 @@ namespace GKHNNC.Controllers
 
             List<List<string>> Mass = new List<List<string>>();
             List<Adres> MasAdr = vipolnennieUslugis.Select(r => r.Adres).Distinct().ToList();
+            List<string> MasUslugiNames = vipolnennieUslugis.Select(r => r.Usluga.Name).Distinct().ToList();
             List<string> Summ = new List<string>();
+            decimal SummaRub = 0;
             foreach(Adres A in MasAdr)
             {
-                List<string> s = vipolnennieUslugis.Where(u=>u.Adres.Adress==A.Adress).Select(t => t.Usluga.Name+"= "+t.StoimostNaMonth.ToString()).ToList();
-                Summ.Add(vipolnennieUslugis.Where(u => u.Adres.Adress == A.Adress).Sum(x=>x.StoimostNaMonth).ToString());
+                decimal summarub = 0;
+                List<string> s = vipolnennieUslugis.Where(u => u.Adres.Adress == A.Adress).GroupBy(x=>x.Usluga.Name).Select(x=>x.Key+ "= "+x.Sum(y=>y.StoimostNaMonth)).ToList();
+                // = vipolnennieUslugis.Where(u=>u.Adres.Adress==A.Adress).OrderBy(x=>x.Usluga.Name).Select(t => t.Usluga.Name+"= "+t.StoimostNaMonth.ToString()).ToList();
+                summarub = vipolnennieUslugis.Where(u => u.Adres.Adress == A.Adress).Sum(x => x.StoimostNaMonth);
+                Summ.Add(summarub.ToString());
+                SummaRub += summarub;
                 int col = vipolnennieUslugis.Where(u => u.Adres.Adress == A.Adress).Count();
                 s.Insert(0, col.ToString());
                 Mass.Add(s);
             }
             ViewBag.Mass = Mass;
             ViewBag.Summ = Summ;
+            ViewBag.SummaRub = SummaRub;
             foreach (VipolnennieUslugi v in vipolnennieUslugis)
             {
                 if (v.Adres.Adress.Equals(adr) == false)
@@ -242,11 +258,16 @@ namespace GKHNNC.Controllers
             {
                 M.Text = HttpContext.Request.Cookies["Month"].Value;
                 M.Value = HttpContext.Request.Cookies["Month"].Value;//Opr.MonthObratno(M.Text).ToString();
-                Month.RemoveAt(Opr.MonthObratno(M.Text) - 1);
+                //Month.RemoveAt(Opr.MonthObratno(M.Text) - 1);
                 Month.Insert(0, M);
             }
 
+            M = new SelectListItem();
+            M.Text = "Год";
+            M.Value = "Год";
+            Month.Add(M);
             ViewBag.Month = Month;
+            
 
 
             ViewBag.Adres = AdresaForGeu(GGEU[0]);
@@ -341,6 +362,9 @@ namespace GKHNNC.Controllers
                     break;
                 case "Декабрь":
                     mes = 12;
+                    break;
+                case "Год":
+                    mes = 13;
                     break;
 
             }

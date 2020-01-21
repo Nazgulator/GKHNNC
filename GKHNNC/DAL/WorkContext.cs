@@ -121,6 +121,7 @@ namespace GKHNNC.DAL
         public System.Data.Entity.DbSet<GKHNNC.Models.ActiveElement> ActiveElements { get; set; }
         public System.Data.Entity.DbSet<GKHNNC.Models.Iskluchit> Iskluchits { get; set; }
         public System.Data.Entity.DbSet<GKHNNC.Models.DOMPart> DOMParts { get; set; }
+        public System.Data.Entity.DbSet<GKHNNC.Models.Izmerenie> Izmerenies { get; set; }
 
         //protected override void OnModelCreating(DbModelBuilder modelBuilder)
 

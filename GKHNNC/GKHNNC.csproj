@@ -322,6 +322,7 @@
     <Compile Include="Models\ActiveElement.cs" />
     <Compile Include="Models\DOMPart.cs" />
     <Compile Include="Models\Iskluchit.cs" />
+    <Compile Include="Models\Izmerenie.cs" />
     <Compile Include="Models\Osmotr.cs" />
     <Compile Include="Models\ActiveDefect.cs" />
     <Compile Include="Models\Unit.cs" />
@@ -499,6 +500,12 @@
     <Content Include="Content\Images\DDD4.png" />
     <Content Include="Content\Images\DDD5.png" />
     <Content Include="Content\Images\DDD6.png" />
+    <Content Include="Content\Images\Download\7YQo.gif" />
+    <Content Include="Content\Images\Download\D1.gif" />
+    <Content Include="Content\Images\Download\downloadcomplete.gif" />
+    <Content Include="Content\Images\Download\galka.gif" />
+    <Content Include="Content\Images\Download\galkaRepeat.gif" />
+    <Content Include="Content\Images\Download\gif-preloader-11.gif" />
     <Content Include="Content\Images\Fasads\GN.png" />
     <Content Include="Content\Images\fire.png" />
     <Content Include="Content\Images\fireBig.png" />
@@ -1529,6 +1536,8 @@
     <Content Include="Views\Osmotrs\SpisokActiveDefect.cshtml" />
     <Content Include="Views\Osmotrs\Error.cshtml" />
     <Content Include="Views\Shared\_LayoutNULL.cshtml" />
+    <Content Include="Views\Osmotrs\Info.cshtml" />
+    <Content Include="Views\Osmotrs\ViewActiveDefectReadOnly.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

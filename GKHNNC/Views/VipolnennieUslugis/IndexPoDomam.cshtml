@@ -6,9 +6,20 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+
+<div id='preloader' style=" width: 100%;height: 100%;position: fixed;top:0px;left:0px;margin: 0px auto;background: #1C1C1C;z-index: 99;text-align: center;color: #fff;font-size: 15px;padding-top: 260px;color:limegreen">
+
+    <p>
+        <img src="~/Content/Images/Download/D1.gif" align="middle" class="rounded mr-2" alt="Идёт загрузка...">
+    </p>
+    <p>
+        Загружаем платные услуги...
+    </p>
+</div>
+
 <h2>Выполненные услуги по домам</h2>
 
-    @Html.Action("IndexPoDomamPartial0")
+@Html.Action("IndexPoDomamPartial0")
 
 <div class="row" id="PartPoDomam">
     @Html.Action("IndexPoDomamPartial")
@@ -17,3 +28,17 @@
 
 
 
+@section Scripts
+    {
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+    @Scripts.Render("~/Scripts/chosen.jquery.min.js")
+    @Scripts.Render("~/scripts/jquery-3.3.1.min.js")
+<script type='text/javascript'>
+
+    $(window).on('load', function () {
+
+        $('#preloader').delay(500).fadeOut(500);
+
+    });
+</script>
+}
