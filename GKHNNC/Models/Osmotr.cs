@@ -72,5 +72,8 @@ namespace GKHNNC.Models
 
         [Display(Name = "Элементы ")]
         public List<ActiveElement> Elements;
+
+        [Display(Name = "Элементы здания из Сашкиной программы")]
+        public List<BuildElement> BE;
     }
 }

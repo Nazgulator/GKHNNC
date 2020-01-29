@@ -47,6 +47,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ImageResizer, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ImageResizer.4.2.5\lib\net45\ImageResizer.dll</HintPath>
+    </Reference>
     <Reference Include="Ionic.Zip, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
       <HintPath>..\packages\Selenium.WebDriver.PhantomJS.Xplatform.2.45.0.1\lib\net40\Ionic.Zip.dll</HintPath>
     </Reference>
@@ -320,6 +323,9 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\ActiveElement.cs" />
+    <Compile Include="Models\BuildElement.cs" />
+    <Compile Include="Models\Street.cs" />
+    <Compile Include="Models\Build.cs" />
     <Compile Include="Models\DOMPart.cs" />
     <Compile Include="Models\Iskluchit.cs" />
     <Compile Include="Models\Izmerenie.cs" />

@@ -41,7 +41,7 @@
         </div>
 
         <div class=" row col-md-8 col-md-offset-2">
-            <div class="form-group ">
+            
                 <div class=" col-md-4" style="text-align:right; vertical-align:middle">
                     <b>Дата выполнения работы</b>
                 </div>
@@ -124,11 +124,11 @@
 
                 </div>
                 <div class=" col-md-12 "><p> </p> </div>
-            </div>
+            
         </div>
 
         <div class=" row col-md-8 col-md-offset-2">
-            <div class="form-group ">
+            
                 <div class=" col-md-4" style="text-align:right; vertical-align:middle">
                     <b>Дата создания работы</b>
                 </div>
@@ -211,21 +211,21 @@
 
                 </div>
                 <div class=" col-md-12 "><p> </p> </div>
-            </div>
+            
         </div>
         @using (Html.BeginForm())
         {
             @Html.AntiForgeryToken()
 
             <div class="row col-md-8 col-md-offset-2">
-                <div class=" form-group">
+                
                     <div class=" col-md-6  ">
                         @Html.ActionLink("Назад", "IndexMain", null, new { @class = "btn btn-success btn-block" })
                     </div>
                     <div class=" col-md-6  ">
                         <input type="submit" value="Удалить" class="btn btn-success btn-block" />
                     </div>
-                </div>
+                
             </div>
 
         }

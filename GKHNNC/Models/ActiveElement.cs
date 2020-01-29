@@ -52,5 +52,11 @@ namespace GKHNNC.Models
         public Izmerenie Izmerenie { get; set; }
         [Display(Name = "Материалы")]
         public Material Material { get; set; }
+        [Display(Name = "Выбранный материал")]
+        public int M;
+        [Display(Name = "Выбранная ед. изм.")]
+        public int EI;
+
+
     }
 }

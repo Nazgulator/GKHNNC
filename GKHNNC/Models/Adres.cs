@@ -12,6 +12,8 @@ namespace GKHNNC.Models
         public int Id { get; set; }
         [Display(Name = "Адрес")]
         public string Adress { get; set; }
+        [Display(Name = "Билдинг")]
+        public int BuildId { get; set; }
         [Display(Name = "Площадь")]
         public decimal Ploshad { get; set; }
         [Display(Name = "Теплота12")]

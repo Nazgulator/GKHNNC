@@ -26,8 +26,18 @@ using Microsoft.AspNet.Identity;
 using System.Web.Helpers;
 using Opredelenie;
 using System.Diagnostics;
-
-
+using GKHNNC.DAL;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Entity;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Web;
+using System.Web.Mvc;
+using GKHNNC.DAL;
+using GKHNNC.Models;
 
 namespace GKHNNC.Controllers
 {
@@ -1377,6 +1387,7 @@ namespace GKHNNC.Controllers
 
     public class ExcelExportDomVipolnennieUslugi
     {
+        static private WorkContext db = new WorkContext();
         public int ver = 0;
         public static void EXPORT(List<VipolnennieUslugi> CompleteWorks, string Month, string GEU, string Year, string Adres, string Nachalnik, string Prikaz,string patch,string Summa)
         {
@@ -1802,6 +1813,366 @@ namespace GKHNNC.Controllers
             GC.WaitForPendingFinalizers();
 
         }
+
+        //Акт осеннего и весеннего осмотра
+        public static void ActOsmotra(List<ActiveElement> ActiveElements,Osmotr O, List<DOMPart> DP,string path)
+        {
+
+            if (ActiveElements.Count == 0)
+            {
+
+                return;
+            }
+
+
+            Excel.Application ApExcel = new Excel.Application();
+            Excel.Workbooks WB = null;
+            WB = ApExcel.Workbooks;
+            Excel.Workbook WbExcel = WB.Add(Missing.Value);
+            Excel.Worksheet WS = WbExcel.Sheets[1];
+            Excel.Range range;//рэндж
+            ApExcel.Visible = false;//невидимо
+            ApExcel.ScreenUpdating = false;//и не обновляемо
+            ApExcel.StandardFont = "TimesNewRoman";
+
+
+
+            int from = 1;
+
+           
+            string month = Opr.MonthToNorm(Opr.MonthOpred(O.Date.Month));
+            string year = O.Date.Year.ToString();
+            int periodichnost = 2;
+            int izmerenie = 3;
+            int stoimost = 4;
+            int cena = 5;
+            int naimenovanie = 1;
+
+
+
+            WS.Cells[from, 3] = "УТВЕРЖДАЮ: ";
+            range = WS.get_Range("C" + from, "E" + from);
+            range.Merge(Type.Missing);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.RowHeight = 15;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            WS.Cells[from, 1] = "СОГЛАСОВАНО: ";
+            range = WS.get_Range("A" + from, "A" + from);
+            range.Merge(Type.Missing);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.RowHeight = 15;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 3] = " Заместитель директора по эксплуатации ЖФ _______________(_______)";
+            range = WS.get_Range("C" + from, "E" + from);
+            range.Merge(Type.Missing);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.RowHeight = 40;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            WS.Cells[from, 1] = " Главный инженер  __________________(_________)";
+            range = WS.get_Range("A" + from, "A" + from);
+            range.Merge(Type.Missing);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.RowHeight = 40;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 3] = " ___________________ "+O.Date.Year;
+            range = WS.get_Range("C" + from, "E" + from);
+            range.Merge(Type.Missing);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.RowHeight = 20;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            WS.Cells[from, 1] = " ___________________ " + O.Date.Year;
+            range = WS.get_Range("A" + from, "A" + from);
+            range.Merge(Type.Missing);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.RowHeight = 20;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 2] = "Акт осмотра №"+ O.Id+" от "+O.Date.ToString("dd.MM.yy");
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Merge(Type.Missing);
+            range.Font.Bold = true;
+            range.Font.Size = 13;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.RowHeight = 20;
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            string Ad = O.Adres.Ulica;
+
+            if (Ad.Contains("МОЛОДЕЖИ") || Ad.Contains("ЛЕОНАРДО")) { Ad = "БУЛЬВАР " + Ad; }
+            if (Ad.Contains("МОРСКОЙ") || Ad.Contains("СТРОИТЕЛЕЙ")) { Ad = Ad + " ПРОСПЕКТ"; }
+            if (Ad.Contains("ДЕТСКИЙ") || Ad.Contains("ВЕСЕННИЙ") || Ad.Contains("ЦВЕТНОЙ")) { Ad = Ad + " ПРОЕЗД"; }
+            Ad = "ул. " + Ad;
+            string Res = " д. " + O.Adres.Dom.Replace(" ", "");
+            string Adres = Ad+ Res;
+
+            from++;
+            WS.Cells[from, 2] = "по обследованию жилого дома ";
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Merge(Type.Missing);
+            range.Font.Bold = true;
+            range.Font.Size = 13;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.RowHeight = 20;
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 2] =  Adres;
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Merge(Type.Missing);
+            range.Font.Bold = true;
+            range.Font.Size = 13;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.RowHeight = 20;
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 2] = "на наличие дефектов.";
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Merge(Type.Missing);
+            range.Font.Bold = true;
+            range.Font.Size = 13;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.RowHeight = 20;
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            range = WS.get_Range("A" + from, "E" + from);
+            range.RowHeight = 7;
+
+            int startStroka = from + 1;
+            range = WS.Cells[startStroka, naimenovanie];//столбец номер ширина
+            range.ColumnWidth = 37;
+            range.Font.Size = 10;
+            range.Value = "Конструктивный элемент";
+            range.Font.Bold = true;
+            range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 15;//высота строки
+            range.WrapText = true;
+            range.HorizontalAlignment = Excel.Constants.xlLeft;
+
+
+
+            range = WS.Cells[startStroka, periodichnost];
+            range.ColumnWidth = 13;
+            range.Value = "Материал";
+            range.Font.Bold = true;
+            range.Font.Size = 8;
+            range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 15;//высота строки
+            range.WrapText = true;
+            range.HorizontalAlignment = Excel.Constants.xlLeft;
+
+
+            range = WS.Cells[startStroka, izmerenie];
+            range.ColumnWidth = 6;
+            range.Value = "Ед. изм.";
+            range.Font.Bold = true;
+            range.Font.Size = 8;
+            range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 15;//высота строки
+            range.WrapText = true;
+            range.HorizontalAlignment = Excel.Constants.xlLeft;
+
+
+            range = WS.Cells[startStroka, stoimost];
+            range.ColumnWidth = 10;
+            range.Font.Size = 8;
+            range.Value = "Кол-во";
+            range.Font.Bold = true;
+            range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 15;//высота строки
+            range.WrapText = true;
+            range.HorizontalAlignment = Excel.Constants.xlLeft;
+
+
+            range = WS.Cells[startStroka, cena];
+            range.ColumnWidth = 9;
+            range.Font.Size = 8;
+            range.Value = "Состояние";
+            range.Font.Bold = true;
+            range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 15;//высота строки
+            range.WrapText = true;
+            range.HorizontalAlignment = Excel.Constants.xlLeft;
+
+            foreach (DOMPart P in DP)
+            {
+                startStroka++;
+                List<ActiveElement> AE = ActiveElements.Where(x=>x.Element.ElementTypeId==P.Id).ToList();
+                WS.Cells[startStroka, naimenovanie] = P.Name;
+                range = WS.get_Range("A" + startStroka, "E" + startStroka);
+                range.Font.Size = 14;
+                range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+                range.Merge();
+
+                foreach (ActiveElement A in AE)
+                {
+                    if (A.Est != false)
+                    {
+                        startStroka++;
+
+                        WS.Cells[startStroka, naimenovanie] = A.Element.Name;
+                        if (A.Element.Name.Replace(" ", "").Length > 50)
+                        {
+                            WS.Cells[startStroka, naimenovanie].RowHeight = 25;
+                            WS.Cells[startStroka, naimenovanie].WrapText = true;
+                            WS.Cells[startStroka, periodichnost].WrapText = true;
+                        }
+                        WS.Cells[startStroka, periodichnost] = A.Material.Name;
+                        WS.Cells[startStroka, izmerenie] = A.Izmerenie.Name;
+                        WS.Cells[startStroka, stoimost] = A.Kolichestvo;
+                        
+                        WS.Cells[startStroka, cena] = sostOpred(A.Sostoyanie);
+
+                        range = WS.get_Range("A" + startStroka, "E" + startStroka);
+                        range.Font.Size = 8;
+                        range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+                        //теперь ищем дефекты 
+                        List<ActiveDefect> AD = new List<ActiveDefect>();
+                        try
+                        {
+                            AD = db.ActiveDefects.Where(x => x.OsmotrId == O.Id && x.ElementId == A.ElementId).Include(x => x.Defect).Include(x=>x.Element).ToList();
+                        }
+                        catch { }
+                        if (AD.Count > 0)
+                        {
+                            foreach (ActiveDefect D in AD)
+                            {
+                                startStroka++;
+                                WS.Cells[startStroka, 1] = "      "+D.Defect.Def;
+                                WS.Cells[startStroka, 2] = "Дефект";
+                                WS.Cells[startStroka, 3] = D.Opisanie;
+                                range = WS.get_Range("C" + startStroka, "E" + startStroka);
+                                range.Merge();
+                               
+                                range = WS.get_Range("A" + startStroka, "E" + startStroka);
+                                range.Font.Size = 8;
+                                range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+                                range.Interior.Color = Color.LightGray;
+
+                            }
+                        }
+
+
+                    }
+                }
+            }
+
+
+
+            startStroka++;
+            from = startStroka;
+            WS.Cells[startStroka, 1] = "Члены коммиссии:";
+            range = WS.get_Range("A" + from, "A" + from);
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
+            range.RowHeight = 25;//высота строки
+            WS.Cells[startStroka, 5] = "1._______________(___________) Начальник ЖЭУ";
+            WS.Cells[startStroka+1, 5] = "2._______________(___________) Управдом";
+            WS.Cells[startStroka+2, 5] = "3._______________(___________) Старший по дому";
+            WS.Cells[startStroka+3, 5] = "4._______________(___________) Проверил";
+            for (int i = 0; i < 4; i++)
+            {
+                range = WS.get_Range("B" + (from+i), "E" + (from+i));
+                //range.Merge(Type.Missing);
+                range.Font.Size = 10;
+                range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+                range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                range.Merge();
+                range.RowHeight = 25;//высота строки
+            }
+
+           
+            // Сохранение файла Excel.
+            try
+            {
+                if (File.Exists(path)) { File.Delete(path); }
+                WbExcel.SaveCopyAs(path);//сохраняем в папку
+            }
+            catch
+            {
+
+            }
+            //WbExcel.PrintOutEx(1, 1, 1, true, null, null, null, null, null);//печать сразу после сохранения
+            ApExcel.Visible = false;//невидимо
+            ApExcel.ScreenUpdating = false;//и не обновляемо
+                                           // Закрытие книги.
+            WbExcel.Close(false, "", Type.Missing);
+            // Закрытие приложения Excel.
+
+
+            ApExcel.Quit();
+            Marshal.FinalReleaseComObject(WS);
+            Marshal.FinalReleaseComObject(range);
+            Marshal.FinalReleaseComObject(WbExcel);
+            Marshal.FinalReleaseComObject(WB);
+
+
+
+            GC.Collect();
+            Marshal.FinalReleaseComObject(ApExcel);
+            GC.WaitForPendingFinalizers();
+
+
+            CloseProcess();
+        }
+        public static string sostOpred (int i)
+        {
+            string sostoyanie = "";
+            switch (i)
+            {
+                case 4:
+                    sostoyanie = "в хор.сост.";
+                    break;
+                case 5:
+                    sostoyanie = "в отл.сост.";
+                    break;
+                default:
+                    sostoyanie = "в удов.сост.";
+                    break;
+            }
+            return sostoyanie;
+        }
+
         public static void SFORMIROVATAKT(List<CompleteWork> CompleteWorks, List<VipolnennieUslugi> VipolnennieUslugi, string Month, string GEU, string Year, string Ulica,string Dom, string Nachalnik, string Prikaz, string patch, string Summa)
         {
 
@@ -1936,9 +2307,9 @@ namespace GKHNNC.Controllers
             range.WrapText = true;
             int M = Opr.MonthObratno(Month);
             M++;
-            if (M > 12) { M = 1; }
+            if (M > 12) { M = 1; year = (Convert.ToInt32(year)+1).ToString(); }
             string Mon = Opr.MonthToNorm(Opr.MonthOpred(M));
-            WS.Cells[from, 3] = "22 " + Mon + " " + Year;
+            WS.Cells[from, 3] = "22 " + Mon + " " + year;
             range = WS.get_Range("C" + from, "E" + from);
             range.Merge(Type.Missing);
             range.Font.Bold = true;

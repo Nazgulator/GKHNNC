@@ -9,6 +9,7 @@ using System.Web;
 using System.Web.Mvc;
 using GKHNNC.DAL;
 using GKHNNC.Models;
+using ImageResizer;
 
 namespace GKHNNC.Controllers
 {
@@ -22,8 +23,68 @@ namespace GKHNNC.Controllers
             var osmotrs = db.Osmotrs.Include(o => o.Adres).Include(o => o.DOMCW).Include(o => o.DOMElectro).Include(o => o.DOMFasad).Include(o => o.DOMFundament).Include(o => o.DOMHW).Include(o => o.DOMOtoplenie).Include(o => o.DOMRoof).Include(o => o.DOMRoom).Include(o => o.DOMVodootvod);
             return View(osmotrs.ToList());
         }
-      
-        public ActionResult SaveElement(int Id=0, string Photo1="", string Photo2="",int EdIzm=0,int Kolvo = 0, int Material=0)
+
+        //модуль экспорта осмотра в эксель
+        public FileResult ExportToExcel()
+        {
+            DateTime Date = DateTime.Now;
+            Osmotr O = new Osmotr();
+            List<ActiveElement> AE = new List<ActiveElement>();
+            List<DOMPart> DP = db.DOMParts.ToList();
+            HttpCookie cookieReq = Request.Cookies["Osmotr"];
+            int AdresId = 0;
+
+            // Проверить, удалось ли обнаружить cookie-набор с таким именем.
+            // Это хорошая мера предосторожности, потому что         
+            // пользователь мог отключить поддержку cookie-наборов,         
+            // в случае чего cookie-набор не существует        
+            DateTime DateCook;
+
+            if (cookieReq != null)
+            {
+                Date = Convert.ToDateTime(cookieReq["Date"]);
+                O.Id = Convert.ToInt32(cookieReq["OsmotrId"]);
+                try
+                {
+                   O = db.Osmotrs.Where(x => x.Id == O.Id).Include(x=>x.Adres).First();
+                    AE = db.ActiveElements.Where(x => x.OsmotrId == O.Id).Include(x=>x.Element).Include(x=>x.Material).Include(x=>x.Izmerenie).OrderBy(x=>x.Element.ElementTypeId).ToList();
+                }
+                catch { }
+               
+            }
+
+            if (Directory.Exists(Server.MapPath("~/Files")) == false)
+            {
+                Directory.CreateDirectory(Server.MapPath("~/Files"));
+            }
+            if (Directory.Exists(Server.MapPath("~/Files/" + O.Id.ToString())) == false)
+            {
+                Directory.CreateDirectory(Server.MapPath("~/Files/" + O.Id.ToString()));
+            }
+                    // получаем имя файла
+                    string fileName = "Osmotr.xlsx";
+                    var path = Server.MapPath("~/Files/" + O.Id.ToString() + "/" + fileName);
+
+            //экспорт в эксель акта осмотра отправляем все активные элементы и сам осмотр
+            ExcelExportDomVipolnennieUslugi.ActOsmotra(AE,O,DP,path);
+
+
+            // Путь к файлу
+          
+            // Тип файла - content-type
+            string file_type = "application/xlsx";
+            // Имя файла - необязательно
+           
+            return File(path, file_type, fileName);
+         
+        }
+
+    
+        
+    
+
+
+            public ActionResult SaveElement(int Id=0, string Photo1="", string Photo2="",int EdIzm=0,int Kolvo = 0, int Material=0)
         {
             string Data = "";
             if (Photo1 != "" && Photo2 != "")
@@ -302,8 +363,8 @@ namespace GKHNNC.Controllers
             }
 
 
-          
-           
+
+            
             foreach (string file in Request.Files)
             {
                 var upload = Request.Files[file];
@@ -311,11 +372,22 @@ namespace GKHNNC.Controllers
                 {
                     // получаем имя файла
                     string fileName = System.IO.Path.GetFileName(upload.FileName);
-                   // string NumberFiles = new DirectoryInfo(Server.MapPath("~/Files/" + OsmotrId )).GetFiles().Length.ToString();
-                   // string rash = fileName.Substring(fileName.LastIndexOf(".") + 1);
 
-                // сохраняем файл в папку Files в проекте
-                upload.SaveAs(Server.MapPath("~/Files/"+OsmotrId.ToString()+"/" + fileName));
+                    var path = Server.MapPath("~/Files/" + OsmotrId.ToString() + "/" + fileName);
+                    upload.InputStream.Seek(0, System.IO.SeekOrigin.Begin);
+
+                    ImageBuilder.Current.Build(
+                        new ImageJob(
+                            upload.InputStream,
+                            path,
+                            new Instructions("maxwidth=800&maxheight=800"),
+                            false,
+                            false));
+
+
+
+
+                   // upload.SaveAs(Server.MapPath("~/Files/"+OsmotrId.ToString()+"/" + fileName));
                 }
             }
             return Json("файл успешно загружен!");
@@ -412,6 +484,9 @@ namespace GKHNNC.Controllers
             }
                 string Data = "";
             ActiveElement AE = new ActiveElement();
+            List<BuildElement> BE = new List<BuildElement>();
+            Build B = new Build();
+            
             // if (A != null)
             //{
             //    Date = A.Date;
@@ -428,9 +503,16 @@ namespace GKHNNC.Controllers
 
                     try
                     {//для загрузки осмотра
+                        Adres Ad = db.Adres.Where(x => x.Id == AdresId).First();
                         AE = db.ActiveElements.Where(x => x.ElementId == ElementId && x.AdresId == AdresId).Include(x => x.Element).Include(x=>x.Material).Include(x=>x.Izmerenie).OrderByDescending(x => x.Date).First();
+                        B = db.Builds.Where(x => x.Id==Ad.BuildId).First();//совмещены все кроме Морского и Шатурской 10
+                        int E = db.Elements.Where(x => x.Id == ElementId).Select(x=>x.ElementId).First();//ищем связку элемент ИД в Элементе. Это ссылка на элементы в справочнике Build_ELements
+                        int M = db.BuildElements.Where(z => z.ElementId == E&& z.BuildId==B.Id).Select(z=>z.Material).First();
+                        AE.M = M;
+                        int EI = db.BuildElements.Where(z => z.ElementId == E && z.BuildId == B.Id).Select(z => z.EdIzm).First();
+                        AE.EI = EI;
                     }
-                    catch
+                    catch (Exception e)
                     {//если осмотр новый
                       //  AE.ElementId = ElementId;
                        // AE.Element = db.Elements.Where(x => x.Id == ElementId).First();
@@ -496,6 +578,10 @@ namespace GKHNNC.Controllers
             }
             string Data = "";
             ActiveElement AE = new ActiveElement();
+            
+            List<BuildElement> BE = new List<BuildElement>();
+            Build B = new Build();
+
             // if (A != null)
             //{
             //    Date = A.Date;
@@ -504,6 +590,9 @@ namespace GKHNNC.Controllers
             //     OsmotrId = Convert.ToInt32(A.OsmotrId);
 
             // }
+         
+            
+
             if (ElementId != 1)
             {
                 if (Date != null)
@@ -513,6 +602,16 @@ namespace GKHNNC.Controllers
                     try
                     {//для загрузки осмотра
                         AE = db.ActiveElements.Where(x => x.ElementId == ElementId && x.AdresId == AdresId).Include(x => x.Element).Include(x=>x.Izmerenie).Include(x=>x.Material).OrderByDescending(x => x.Date).First();
+
+                        Adres Ad = db.Adres.Where(x => x.Id == AdresId).First();
+                        AE = db.ActiveElements.Where(x => x.ElementId == ElementId && x.AdresId == AdresId).Include(x => x.Element).Include(x => x.Material).Include(x => x.Izmerenie).OrderByDescending(x => x.Date).First();
+                        B = db.Builds.Where(x => x.Id == Ad.BuildId).First();//совмещены все кроме Морского и Шатурской 10
+                        int E = db.Elements.Where(x => x.Id == ElementId).Select(x => x.ElementId).First();//ищем связку элемент ИД в Элементе. Это ссылка на элементы в справочнике Build_ELements
+                        int M = db.BuildElements.Where(z => z.ElementId == E && z.BuildId == B.Id).Select(z => z.Material).First();
+                        AE.M = M;
+                        int EI = db.BuildElements.Where(z => z.ElementId == E && z.BuildId == B.Id).Select(z => z.EdIzm).First();
+                        AE.EI = EI;
+
                     }
                     catch
                     {//если осмотр новый
@@ -574,10 +673,11 @@ namespace GKHNNC.Controllers
             }
            
             Osmotr Result = new Osmotr();
+
             //ищем по базе осмотры, если есть за текущий месяц на данном доме то продолжаем заполнять его.
             try
             {
-                Result = db.Osmotrs.Where(x => x.Date.Year == date.Year && x.Date.Month == date.Month && x.AdresId == id).OrderByDescending(x => x.Date).Include(x=>x.Adres).Include(x=>x.DOMCW).Include(x=>x.DOMElectro).Include(x=>x.DOMFasad).Include(x=>x.DOMFundament).Include(x=>x.DOMHW).Include(x=>x.DOMOtoplenie).Include(x=>x.DOMRoof).Include(x=>x.DOMRoom).Include(x=>x.DOMVodootvod).First();
+                Result = db.Osmotrs.Where(x => x.Date.Year == date.Year && x.Date.Month == date.Month && x.AdresId == id).OrderByDescending(x => x.Date).Include(x=>x.Adres).Include(x => x.DOMCW).Include(x => x.DOMElectro).Include(x => x.DOMFasad).Include(x => x.DOMFundament).Include(x => x.DOMHW).Include(x => x.DOMOtoplenie).Include(x => x.DOMRoof).Include(x => x.DOMRoom).Include(x => x.DOMVodootvod).First();
                 LoadOsmotr = true;//Удалось загрузить осмотр используем уже имеющиеся данные
                 Result.Elements = db.ActiveElements.Where(x => x.OsmotrId == Result.Id).ToList();//берем все активные элементы и кидаем в список
                 if (Result.Elements.Count > 0)
@@ -605,7 +705,7 @@ namespace GKHNNC.Controllers
 
 
             }
-            catch
+            catch (Exception ex)
             {
 
                 if (id != 0)
@@ -613,6 +713,9 @@ namespace GKHNNC.Controllers
                     Result.AdresId = id;
                     Result.Adres = db.Adres.Where(x => x.Id == id).First();
                     Result.Date = date;
+                    Build B = new Build();//сашкины данные
+                    List<BuildElement> BE = new List<BuildElement>();
+              
                     try
                     {//пробуем грузануть данные по дому
                         Result.DOMCW = db.DOMCWs.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
@@ -625,8 +728,98 @@ namespace GKHNNC.Controllers
                         Result.DOMRoof = db.DOMRoofs.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
                         Result.DOMRoom = db.DOMRooms.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
                         Result.DOMVodootvod = db.DOMVodootvods.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
+
+                        //Пробуем грузануть Сашкины поэлементные данные
+                       // B = db.Builds.Where(x => x.Address.Replace("д.", "").Replace(",", "").Replace(" ", "").Replace("БУЛЬВ.","").Equals(Result.Adres.Adress)).First();
+                         BE = db.BuildElements.Where(x => x.BuildId == B.Id).ToList();
+                         BE=db.BuildElements.ToList();
+                        //Тут сохранение материалов
+                        /*
+                         foreach (BuildElement El in BE)
+                         {
+                             El.EdIzm = El.EdIzm.Replace(" ", "").Replace(",", "").Replace("-","").Replace(".","").ToLower();
+                             if (El.EdIzm.Length>0&&El.EdIzm[0].Equals('/'))
+                             {
+                                 El.EdIzm = El.EdIzm.Remove(0, 1);
+                             }
+                             if (El.EdIzm.Equals(""))
+                             {
+                                 El.EdIzm = "нет";
+                             }
+                             if (El.EdIzm.Equals("мпог")|| El.EdIzm.Equals("мп") || El.EdIzm.Equals("пм") || El.EdIzm.Equals("погм"))
+                             {
+                                 El.EdIzm = "пог.м";
+                             }
+                             try
+                             {
+                                 int Z = Convert.ToInt32(El.EdIzm);
+                                     continue;
+
+                             }catch
+                             {
+
+                             }
+                             Izmerenie M = null;
+                             try
+                             {
+                                M = db.Izmerenies.Where(x => x.Name.Equals(El.EdIzm)).First();
+                                 try
+                                 {
+                                     El.EdIzm = M.Id.ToString();
+                                     db.Entry(El).State = EntityState.Modified;
+                                     db.SaveChanges();
+                                 }
+                                 catch
+                                 {
+                                 }
+                             } catch
+                             {
+
+                             }
+                             if (M == null)
+                             {
+                                 try
+                                 {
+                                     M = new Izmerenie();
+                                     M.Name = El.EdIzm.Replace(" ", "");
+                                     db.Izmerenies.Add(M);
+                                     db.SaveChanges();
+                                     El.EdIzm = M.Id.ToString();
+                                     db.Entry(El).State = EntityState.Modified;
+                                     db.SaveChanges();
+                                 }
+                                 catch
+                                 {
+
+                                 }
+                             }
+
+
+                         }
+                         */
+
+                     /*   //Совмещаем адреса и билдингс
+                      *   List<Adres> Ad = db.Adres.ToList();
+                        foreach (Adres A in Ad)
+                        {
+                            if (A.BuildId != 0) { continue; }
+                            try
+                            {
+                                B = db.Builds.Where(x => x.Address.Replace("д.", "").Replace(",", "").Replace(" ", "").Replace("БУЛЬВ.", "").ToUpper().Replace("ПРОЕЗД","").Replace("ПРОСПЕКТ", "").Replace("БУЛЬВ", "").Equals(A.Adress.Replace(" ",""))).First();
+                                A.BuildId = B.Id;
+                                db.Entry(A).State = EntityState.Modified;
+                                db.SaveChanges();
+                            }
+                            catch (Exception e)
+                            {
+
+                            }
+                        }
+                        */
+
+                        Result.BE = BE;
                     }
-                    catch
+                    catch (Exception e)
                     {//если данных нет, значит проблема с загрузкой данных с ГИСЖКХ. Проверьте данные. 
                         error += "Нет данных дома из ГИСЖКХ! Проверьте данные или заполните с нуля. Созданы нулевые данные.";
                         Result.DOMCW = new DOMCW(); ;
@@ -681,6 +874,7 @@ namespace GKHNNC.Controllers
                                 AE.Date = date;
                                 AE.OsmotrId = Result.Id;
                                 
+                                
                             }
                             catch
                             {
@@ -697,6 +891,7 @@ namespace GKHNNC.Controllers
                                 AE.MaterialId = 1;
                                 AE.Izmerenie = db.Izmerenies.Where(x => x.Id == AE.IzmerenieId).First();
                                 AE.Material = db.Materials.Where(x => x.Id == AE.MaterialId).First();
+                                AE.Est = true;
                                 try
                                 {
                                     AE.Defects = db.Defects.Where(x => x.ElementId == E.Id).ToList();

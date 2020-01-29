@@ -21,111 +21,112 @@
 
     </table>
 }
-<table  @style id="@Model.ElementId" class="table-bordered table-striped" style="font-family:Roboto">
-    @{string Part2 = Model.Id.ToString() + Model.OsmotrId.ToString();
-        string Part = Model.ElementId.ToString();
-        string PhotoElement1 = "PhotoElement1" + Part;
-        string PhotoElement2 = "PhotoElement2" + Part;
-        string SostoyanieElement = "SostoyanieElement" + Part;
-        string DivSost = "DivSost" + Part;
-        string PED1 = "PED1" + Part;
-        string PED2 = "PED2" + Part;
-        string PE1 = Model.Photo1;
-        string collapse = "COL" + Part;
-        if (PE1 == null || PE1.Equals(""))
-        {
-            PE1 = "/Content/Images/NoDownload.png";
-        }
-        else
-        {
-            if (File.Exists(Server.MapPath("~/Files/" + Model.OsmotrId.ToString() + "/" + Model.Photo1)) == false)
-            { PE1 = "/Content/Images/NoDownload.png"; }
+    <table  id="@Model.ElementId" class="table-bordered table-striped" style="font-family:Roboto;table-layout:fixed">
+        @{string Part2 = Model.Id.ToString() + Model.OsmotrId.ToString();
+            string Part = Model.ElementId.ToString();
+            string PhotoElement1 = "PhotoElement1" + Part;
+            string PhotoElement2 = "PhotoElement2" + Part;
+            string SostoyanieElement = "SostoyanieElement" + Part;
+            string DivSost = "DivSost" + Part;
+            string PED1 = "PED1" + Part;
+            string PED2 = "PED2" + Part;
+            string PE1 = Model.Photo1;
+            string collapse = "COL" + Part;
+            if (PE1 == null || PE1.Equals(""))
+            {
+                PE1 = "/Content/Images/NoDownload.png";
+            }
             else
             {
+                if (File.Exists(Server.MapPath("~/Files/" + Model.OsmotrId.ToString() + "/" + Model.Photo1)) == false)
+                { PE1 = "/Content/Images/NoDownload.png"; }
+                else
+                {
 
-                PE1 = "/Files/" + Model.OsmotrId.ToString() + "/" + Model.Photo1;
+                    PE1 = "/Files/" + Model.OsmotrId.ToString() + "/" + Model.Photo1;
+                }
+
             }
-
-        }
-        string PE2 = Model.Photo2;
-        if (PE2 == null || PE2.Equals(""))
-        {
-            PE2 = "/Content/Images/NoDownload.png";
-        }
-        else
-        {
-            if (File.Exists(Server.MapPath("~/Files/" + Model.OsmotrId.ToString() + "/" + Model.Photo2)) == false)
-            { PE2 = "/Content/Images/NoDownload.png"; }
+            string PE2 = Model.Photo2;
+            if (PE2 == null || PE2.Equals(""))
+            {
+                PE2 = "/Content/Images/NoDownload.png";
+            }
             else
             {
+                if (File.Exists(Server.MapPath("~/Files/" + Model.OsmotrId.ToString() + "/" + Model.Photo2)) == false)
+                { PE2 = "/Content/Images/NoDownload.png"; }
+                else
+                {
 
-                PE2 = "/Files/" + Model.OsmotrId.ToString() + "/" + Model.Photo2;
+                    PE2 = "/Files/" + Model.OsmotrId.ToString() + "/" + Model.Photo2;
+                }
+
             }
 
+
+
+            string Sostoyanie = "Sostoyanie" + Model.Id;
+            string Opisanie = "Opisanie" + Model.Id;
+
+            string DefectId = "Defect" + Model.Id;
         }
+        
+        <tr style="background-color:white">
+            <th width="250px" style="text-align:center">
+
+                <h4> @Model.Element.Name</h4>
+            </th>
 
 
-
-        string Sostoyanie = "Sostoyanie" + Model.Id;
-        string Opisanie = "Opisanie" + Model.Id;
-
-        string DefectId = "Defect" + Model.Id;
-    }
-    <tr style="background-color:white">
-        <th width="20%" style="text-align:center">
-
-            <h4> @Model.Element.Name</h4>
-        </th>
-
-
-        <td width="10%" align="center">
-            <a data-fancybox="gallery" id="@PED1" href="@PE1">
-                <img src="@PE1" id="@PhotoElement1" to="@PE1" class="img-responsive" height="64" onerror="this.style.display = 'none'">
-            </a>
-        </td>
-        <td width="10%" align="center">
-            <a data-fancybox="gallery" id="@PED2" href="@PE2">
-                <img src="@PE2" id="@PhotoElement2" to="@PE2" class="img-responsive" height="64"  onerror="this.style.display = 'none'">
-            </a>
-        </td>
-        <th width="15%" style="text-align:center">
-            @Model.Material.Name
-        </th>
-        <th width="7%" style="text-align:center">
-            @Model.Kolichestvo
-        </th>
-        <th width="8%" style="text-align:center">
-            @Model.Izmerenie.Name
-        </th>
-
-        <th width="7%" style="text-align:center">
-            Состояние:
-        </th>
-
-        <td width="13%" align="center">
-            <center>
-                <div class="rating" align="center" id="@DivSost">
-                    <input id="@SostoyanieElement" type="hidden" name="val" value="@Model.Sostoyanie" />
-                </div>
-            </center>
-        </td>
-        <td width="10%" align="center">
-            @if (Model.ActiveDefects.Count > 0)
-            {
-                <a class="btn btn-warning" data-toggle="collapse" href="#@collapse" role="button" aria-expanded="false" aria-controls="collapseExample">
-                    Дефекты элемента
+            <td width="100px" align="center">
+                <a data-fancybox="gallery" id="@PED1" href="@PE1">
+                    <img src="@PE1" id="@PhotoElement1" to="@PE1" class="img-responsive" height="64" width="70" onerror="this.style.display = 'none'">
                 </a>
-            }
-            else
-            {
-                <a class="btn btn-outline-success" data-toggle="collapse" role="button">
-                    Дефекты отсутствуют
+            </td>
+            <td width="100px" align="center">
+                <a data-fancybox="gallery" id="@PED2" href="@PE2">
+                    <img src="@PE2" id="@PhotoElement2" to="@PE2" class="img-responsive" height="64" width="70" onerror="this.style.display = 'none'">
                 </a>
-            }
-        </td>
+            </td>
+            <th width="100px" style="text-align:center">
+                @Model.Material.Name
+            </th>
+            <th width="100px" style="text-align:center">
+                @Model.Kolichestvo
+            </th>
+            <th width="50px" style="text-align:center">
+                @Model.Izmerenie.Name
+            </th>
 
-    </tr>
-</table>
+            <th width="50px" style="text-align:center">
+                Состояние:
+            </th>
+
+            <td width="180px" align="center">
+                <center>
+                    <div class="rating" align="center" id="@DivSost">
+                        <input id="@SostoyanieElement" type="hidden" name="val" value="@Model.Sostoyanie" />
+                    </div>
+                </center>
+            </td>
+            <td width="150px" align="center">
+                @if (Model.ActiveDefects.Count > 0)
+                {
+                    <a class="btn btn-warning" data-toggle="collapse" href="#@collapse" role="button" aria-expanded="false" aria-controls="collapseExample">
+                        Дефекты элемента
+                    </a>
+                }
+                else
+                {
+                    <a class="btn btn-outline-success" data-toggle="collapse" role="button">
+                        Дефекты отсутствуют
+                    </a>
+                }
+            </td>
+
+        </tr>
+    </table>
 
 <div class="collapse" id="@collapse">
     <div class="card card-body">

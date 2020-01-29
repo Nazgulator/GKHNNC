@@ -47,6 +47,7 @@
         {
             <a href="#@i" style="color:white;font-size:20px">@ViewBag.DOMParts[i] |</a>
         }
+        @Html.ActionLink("Сохранить отчет в Excel |", "ExportToExcel", "Osmotrs", null, new { @style = "color:white;font-size:20px" })
         @Html.ActionLink("Назад", "Index", "Houses", null, new { @style = "color:white;font-size:20px" })
 
     </div>
@@ -99,7 +100,7 @@
                                     <h3 style="color:white"> @ViewBag.DOMParts[j] </h3>
                                 </td>
                             </tr>
-
+                          
                         </table>
 
 
@@ -296,7 +297,14 @@
             var Material = $('#Mat' + MElementId).val();
             var EdIzm = $('#EdIzm' + MElementId).val();
             var Kolvo = $('#Kolvo' + MElementId).val();
+            var TR1 = $('#TR1' + MElementId);
+            var TR2 = $('#TR2' + MElementId);
+            var TR3 = $('#TR3' + MElementId);
+            var TR4 = $('#TR4' + MElementId);
+            var TR5 = $('#TR5' + MElementId);
+            var TR6 = $('#TR6' + MElementId);
             var Sostoyanie = $('#SostoyanieElement' + MElementId).val();
+            if (Photo1 == "" || Photo2 == "") { alert('Пожалуйста загрузите обе фотографии!'); }
             console.log('Начинаем действие.' + Id + ' Photo1=' + Photo1 + ' Photo2=' + Photo2 );
                 $.post('@Url.Action("SaveElement", "Osmotrs")', { Id: Id, Photo1: Photo1, Photo2: Photo2, Sostoyanie:Sostoyanie,Kolvo:Kolvo,EdIzm:EdIzm,Material:Material},
                     function (data)
@@ -305,7 +313,16 @@
                         if (S[0] != 'Ошибка'&&S[0]!='') {
 
 
-                                console.log('Данные сохранены' + MElementId);
+                           // console.log('Начинаем исчезновение' + MElementId);
+                           //TR1.hide();
+                           // TR2.hide();
+                           // TR3.fadeOut(500, function ()
+                           // {
+                           //     TR4.fadeIn(500);
+                           //     TR5.fadeIn(500);
+                           //     TR6.fadeIn(500);
+                            //});
+                            console.log('Данные сохранены' + MElementId);
                             $('#PhotoElement1' + MElementId).replaceWith(' <a data-fancybox="gallery" href="/Files/' + OsmotrId + '/' + S[0] + '" id= "PED1' + MElementId+'"><img src=" /Files/' + OsmotrId + '/' + S[0] + '" id = "PhotoElement1' + MElementId +'" class= "img - responsive" height = "32" width = "32" onerror = "this.style.display = "none"" ></a> ');
                             $('#PhotoElement2' + MElementId).replaceWith(' <a data-fancybox="gallery" href="/Files/' + OsmotrId + '/' + S[1] + '" id= "PED2' + MElementId+'"><img src="/Files/' + OsmotrId + '/' + S[1] + '" id = "PhotoElement2' + MElementId +'" class= "img-responsive" height = "32" width = "32" onerror = "this.style.display = "none"" ></a> ');
                             $('#DivSost' + MElementId).replaceWith('<div class="rating" id="DivSost' + MElementId+'"> <input id=SostoyanieElement"' + MElementId + '" type="hidden" name="val" value="' + S[2] + '" /> </div> ');
@@ -344,15 +361,17 @@
             $('#PED2' + MElementId).replaceWith(' <input type="file" name="Photo" onchange="InputChange(this)" id="PhotoElement2' + MElementId + '" class="form-control-file" /> ');
             $('#PhotoElement1' + MElementId).replaceWith(' <input type="file" name="Photo" onchange="InputChange(this)" id="PhotoElement1' + MElementId + '" class="form-control-file" /> ');//если нет блоков галереи то просто заменяем инпут инпутом
             $('#PhotoElement2' + MElementId).replaceWith(' <input type="file" name="Photo" onchange="InputChange(this)" id="PhotoElement2' + MElementId + '" class="form-control-file" /> ');
-            $('#DivSost' + MElementId).replaceWith('<div class="ratingElement" id="DivSost' + MElementId +'> <input id="SostoyanieElement' + MElementId + '" type="number" name="val" value="5" /> <input type="hidden" name="vote-id" value="SostoyanieElement' + MElementId + '" /> </div>');
+            $('#EdIzm' + MElementId).prop("disabled", false).prop("readonly", false);
+            console.log('Ед изм изменены.' + Id);
+            $('#Mat' + MElementId).prop("disabled", false).prop("readonly",false);
+            $('#Kolvo' + MElementId).prop("disabled", false).prop("readonly", false);
+            $('#DivSost' + MElementId).replaceWith('<div class="ratingElement" id="DivSost' + MElementId + '> <input id="SostoyanieElement' + MElementId + '" type="number" name="val" value="5" /> <input type="hidden" name="vote-id" value="SostoyanieElement' + MElementId + '" /> </div>');
              $('div.ratingElement').rating({
                  fx: 'full',
             url:'@Url.Action("Zvezda", "Osmotrs")'
             });
 
-            $('#EdIzm' + MElementId).removeAttr('disabled');
-            $('#Mat' + MElementId).removeAttr('disabled');
-            $('#Kolvo' + MElementId).removeAttr('disabled');
+            
 
             _this.replaceWith('<button type="button" id="SaveElement" MId="' + Id + '" MElement="' + MElementId + '" MOsmotr="' + OsmotrId + '" class="btn btn-success go">Сохранить элемент </button>');
 

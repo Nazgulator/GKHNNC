@@ -148,6 +148,9 @@
     <button type="button" class="btn btn-success btn-block" data-toggle="modal" data-target="#KonstructiveModal">
         Конструктивные элементы
     </button>
+    <button type="button" class="btn btn-success btn-block" data-toggle="modal" data-target="#EngineerModal">
+        Внутридомовое инженерное оборудование
+    </button>
     @if (ViewBag.Arendators.Count > 0)
     {
         <button type="button" class="btn btn-success btn-block" data-toggle="modal" data-target="#ArendatorsModal">
@@ -175,13 +178,13 @@
     @if (ViewBag.Uslugis.Count > 0)
     {
         <button type="button" class="btn btn-success btn-block" data-toggle="modal" data-target="#UslugsModal">
-            Выполненные услуги
+            Исполненные работы и услуги по содержанию и текущему ремонту общего имущества
         </button>
     }
     else
     {
         <button type="button" class="btn btn-secondary btn-block">
-            Выполненных услуг нет
+            Платных работ и услуг по содержанию и текущему ремонту общего имущества нет
         </button>
     }
 
@@ -431,8 +434,28 @@
 
 
                         </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success btn-block" data-dismiss="modal">Закрыть</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
 
 
+    <div class="modal fade" id="EngineerModal" tabindex="-1" role="dialog" aria-labelledby="EngineerModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content col-12">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="EngineerModalLabel">Конструктивные элементы дома</h3>
+
+                </div>
+                <div class="modal-body">
+
+                    <div class="accordion" id="accordionExample2">
                         <div class="card">
                             <div class="card-header" id="heading6">
                                 <h5 class="mb-0">
@@ -441,7 +464,7 @@
                                     </button>
                                 </h5>
                             </div>
-                            <div id="collapse6" class="collapse" aria-labelledby="heading6" data-parent="#accordionExample">
+                            <div id="collapse6" class="collapse" aria-labelledby="heading6" data-parent="#accordionExample2">
                                 <div class="card-body">
                                     <table class="table-striped col-12">
                                         <tr>
@@ -511,7 +534,7 @@
                                     </button>
                                 </h5>
                             </div>
-                            <div id="collapse7" class="collapse" aria-labelledby="heading7" data-parent="#accordionExample">
+                            <div id="collapse7" class="collapse" aria-labelledby="heading7" data-parent="#accordionExample2">
                                 <div class="card-body">
                                     <table class="table-striped col-12">
                                         <tr>
@@ -554,7 +577,7 @@
                                     </button>
                                 </h5>
                             </div>
-                            <div id="collapse8" class="collapse" aria-labelledby="heading8" data-parent="#accordionExample">
+                            <div id="collapse8" class="collapse" aria-labelledby="heading8" data-parent="#accordionExample2">
                                 <div class="card-body">
                                     <table class="table-striped col-12">
                                         <tr>
@@ -597,7 +620,7 @@
                                     </button>
                                 </h5>
                             </div>
-                            <div id="collapse9" class="collapse" aria-labelledby="heading9" data-parent="#accordionExample">
+                            <div id="collapse9" class="collapse" aria-labelledby="heading9" data-parent="#accordionExample2">
                                 <div class="card-body">
                                     <table class="table-striped col-12">
                                         <tr>
@@ -636,7 +659,7 @@
                                     </button>
                                 </h5>
                             </div>
-                            <div id="collapse10" class="collapse" aria-labelledby="heading10" data-parent="#accordionExample">
+                            <div id="collapse10" class="collapse" aria-labelledby="heading10" data-parent="#accordionExample2">
                                 <div class="card-body">
                                     <table class="table-striped col-12">
                                         <tr>
