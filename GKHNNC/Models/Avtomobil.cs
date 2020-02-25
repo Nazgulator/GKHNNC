@@ -28,6 +28,12 @@ namespace GKHNNC.Models
         [Display(Name = "Тип автомобиля")]
         public TypeAvto Type { get; set; }
 
+        [Display(Name = "Контрагент ИД")]
+        public int? KontrAgentId { get; set; }
+
+        [Display(Name = "Контрагент")]
+        public KontrAgent KontrAgent { get; set; }
+
         [Display(Name = "Гос. Номер")]
         public string Number { get; set; }
 
@@ -41,9 +47,17 @@ namespace GKHNNC.Models
         [Display(Name = "Глонасс")]
         public bool? Glonass { get; set; }
 
-        
+        [Display(Name = "Объём бункера")]
+        public decimal ObiemBunkera { get; set; }
 
+        [Display(Name = "Объём бункера")]
+        public decimal KoefficientSgatiya { get; set; }
 
+        [Display(Name = "Наша ли машина")]
+        public bool GKHNNC { get; set; }
+
+        //только для визуала
+        public string NewNumber;
 
     }
 }

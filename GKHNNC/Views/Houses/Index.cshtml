@@ -25,7 +25,10 @@
             <th>
                 Осмотр дома
             </th>
-           
+            <th>
+                Добавление осмотра
+            </th>
+
         </tr>
         @{bool Y = false; }
         @foreach (var item in Model)
@@ -60,21 +63,13 @@
                             {
                                 if (item.OsmotrEst == false)
                                 {
-                                    if (item.GISGKH)
-                                    {
-
-                                        @Html.ActionLink("Добавить осмотр", "Create", "Osmotrs", new { id = item.AdresId, date = DateTime.Now }, new { @type = "button", @class = "btn btn-success" });
-
-                                    }
-                                    else
-                                    {
-                                        @Html.ActionLink("Создать осмотр с нуля", "Create", "Osmotrs", new { id = item.AdresId, date = DateTime.Now }, new { @type = "button", @class = "btn btn-warning" });
-                                    };
+                              <p>Осмотров нет</p>
                                 }
 
                                 if (item.OsmotrEst == true)
                                 {
-                                    @Html.ActionLink("Изменить осмотр", "Create", "Osmotrs", new { id = item.AdresId, date = DateTime.Now }, new { @type = "button", @class = "btn btn-primary" });
+                                    
+                                   
                                     @Html.ActionLink("Осмотр дома", "Info", "Osmotrs", new { id = item.AdresId, date = DateTime.Now }, new { @type = "button", @class = "btn btn-success" });
                                 }
                             }
@@ -88,6 +83,25 @@
 
                             }
 
+                        </td>
+                        <td>
+                            @if (item.Osmotrs.Count>0&&(item.Osmotrs[0].Sostoyanie == 0 || User.IsInRole("Администратор")))
+                            {
+                                @Html.ActionLink("Изменить осмотр", "Create", "Osmotrs", new { id = item.Osmotrs[0].AdresId, date = item.Osmotrs[0].Date }, new { @type = "button", @class = "btn btn-primary" });
+                            }
+                            else
+                            {
+                                if (item.GISGKH)
+                                {
+
+                                    @Html.ActionLink("Добавить осмотр", "Create", "Osmotrs", new { id = item.AdresId, date = DateTime.Now }, new { @type = "button", @class = "btn btn-success" });
+
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("Создать осмотр с нуля", "Create", "Osmotrs", new { id = item.AdresId, date = DateTime.Now }, new { @type = "button", @class = "btn btn-warning" });
+                                }
+                            }
                         </td>
                         <!--
 
@@ -106,10 +120,6 @@
         <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-
-
-
-
                     <h4>Загрузка данных, пожалуйста подождите...</h4>
                     <button id="X" type="button" class="close hide" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>

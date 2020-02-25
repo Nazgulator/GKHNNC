@@ -364,7 +364,7 @@ namespace GKHNNC.Controllers
     public class ExcelSVNUpload
     {
         //Универсальный метод загрузки требует          имя файла        наименования колонок  номер вкладки или наименование  ( массив номеров столбцов) по желанию
-        public static List<List<string>> IMPORT(string FilePatch, string[] Names, out string Error, string Vkladka = "1", int[] X = null )
+        public static List<List<string>> IMPORT(string FilePatch, string[] Names, out string Error, string Vkladka = "1", int[] X = null,bool delete=true )
         {
             Error = "";
             List<List<string>> SVNKI = new List<List<string>>();
@@ -646,7 +646,7 @@ namespace GKHNNC.Controllers
             GC.WaitForPendingFinalizers();
 
             //Удаление файла с сервера
-            File.Delete(FilePatch);
+            if (delete) { File.Delete(FilePatch); }
 
 
             return SVNKI;

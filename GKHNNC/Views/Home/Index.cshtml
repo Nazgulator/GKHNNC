@@ -44,8 +44,17 @@
 
     @if (Request.IsAuthenticated)
     {
-        if ((User.IsInRole("Пользователь") || User.IsInRole("Администратор")))
+        if (((User.IsInRole("Пользователь") || User.IsInRole("Администратор"))) && User.Identity.Name.Contains("Полигон") == false)
         {
+
+            <div class="alert-success">
+                <p>Сейчас работает тестовый режим системы ОСМОТРЫ.</p>
+                <p> Плановая дата начала работы системы ОСМОТРЫ перенесена на 20.02.2020. </p>
+                <p>Сейчас вы можете вносить любые изменения в системе ОСМОТРЫ.</p>
+                <p> 20.02.2020 в 10:00 все созданные осмотры НА ЭТОМ САЙТЕ будут удалены и система ОСМОТРЫ перейдёт в рабочий режим.</p>
+                <p>Все вопросы по работе программы вы можете задать в отдел начислений. </p>
+            </div>
+
             if (User.Identity.Name.Contains("БухгалтерПоТопливу") == false && User.Identity.Name.Contains("УАТ") == false && User.Identity.Name.Contains("УЭВ") == false)
             {
                 <div class="media col-md-4 col-md-offset-4">
@@ -68,7 +77,14 @@
                         <span class="glyphicon glyphicon-list-alt"></span> Формирование актов &raquo;
                     </button>
                 </p>
+                <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Houses")'">
+                        <i class="glyphicon glyphicon-map-marker"></i> Тех. паспорт домов и осмотры &raquo;
+                    </button>
+                </p>
+
             }
+
             if (User.IsInRole("Администратор") || User.Identity.Name.Contains("ИнженерОЭЖФ") || User.Identity.Name.Contains("Эксплуатация"))
             {
 
@@ -98,10 +114,11 @@
                                 </button>
                             </p>
                             <p>
-                                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Houses")'">
-                                    <i class="glyphicon glyphicon-map-marker"></i> Тех. паспорт домов и осмотры &raquo;
+                                <button class="btn btn-success btn-lg" style="width:500Px" onclick="location.href='@Url.Action("Index", "AllStreets")'">
+                                    <i class="glyphicon glyphicon-road"></i> Улицы &raquo;
                                 </button>
                             </p>
+
                             <p>
                                 <button class="btn btn-success btn-lg" style="width:500Px" onclick="location.href='@Url.Action("TechPasport", "Home")'">
                                     <i class="glyphicon glyphicon-inbox"></i> Справочники частей дома &raquo;
@@ -130,6 +147,16 @@
                             <p>
                                 <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Materials")'">
                                     <i class="glyphicon glyphicon-tint"></i> Редактор материалов &raquo;
+                                </button>
+                            </p>
+                            <p>
+                                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("MaterialEdit", "Osmotrs")'">
+                                    <i class="glyphicon glyphicon-map-marker"></i> Объединение материалов &raquo;
+                                </button>
+                            </p>
+                            <p>
+                                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Houses")'">
+                                    <i class="glyphicon glyphicon-map-marker"></i> Тех. паспорт домов и осмотры &raquo;
                                 </button>
                             </p>
                         </div>
@@ -162,7 +189,7 @@
                                     <i class="glyphicon glyphicon-home"></i> Адреса &raquo;
                                 </button>
                             </p>
-                           
+
                             <p>
                                 <button class="btn btn-success btn-lg" style="width:500Px" onclick="location.href='@Url.Action("Index", "Arendators")'">
                                     <i class="glyphicon glyphicon-lock"></i> Арендаторы &raquo;
@@ -276,8 +303,10 @@
                 </div>
 
                 <p>
+
                     <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "TypeAvtos")'">
                         <i class="glyphicon glyphicon-road"></i>  Типы автомобилей &raquo;
+
                     </button>
                 </p>
 
@@ -312,7 +341,7 @@
 
 
             }
-            if (User.Identity.Name.Contains("БухгалтерПоТопливу") || User.Identity.Name.Equals("Экономист")|| User.IsInRole("Администратор") || User.Identity.Name.Contains("НачальникУАТ"))
+            if (User.Identity.Name.Contains("БухгалтерПоТопливу") || User.Identity.Name.Equals("Экономист") || User.IsInRole("Администратор") || User.Identity.Name.Contains("НачальникУАТ"))
             {
                 <p>
                     <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "TypeAvtos")'">
@@ -361,7 +390,11 @@
                     </button>
                 </p>
 
-
+                <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "MusorPloshadkas")'">
+                        <i class="glyphicon glyphicon-trash"></i>  Мусорные площадки &raquo;
+                    </button>
+                </p>
                 <p>
                     <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("AvtoWarnings", "ASControls")'">
                         <i class="glyphicon glyphicon-warning-sign"></i> Автомобили с проблемами связи &raquo;
@@ -385,6 +418,8 @@
                     </button>
                 </p>
             }
+
+
             if (User.IsInRole("Администратор"))
 
             {
@@ -404,6 +439,21 @@
 
         }
 
+        if (User.Identity.Name.Contains("Полигон") || User.IsInRole("Администратор"))
+        {
+            <p>
+                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Poligons")'">
+                    <i class="glyphicon glyphicon-trash"></i>  Полигон &raquo;
+                </button>
+            </p>
+            <p>
+                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "KontrAgents")'">
+                    <i class="glyphicon glyphicon-trash"></i>  Контрагенты &raquo;
+                </button>
+            </p>
+        }
+
+
         <p><a href="http://gkhnsc.ru/" class="btn btn-success btn-lg" style="width:500Px"><i class="glyphicon glyphicon-new-window"></i>Web сайт &raquo;</a></p>
 
     }
@@ -414,6 +464,7 @@
     }
 
 </Center>
+
 
 @section Scripts
 {

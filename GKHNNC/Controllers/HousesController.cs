@@ -38,6 +38,7 @@ namespace GKHNNC.Controllers
             {
                 
                 House ho = new House();
+               
               // List<Arendator> TekArend = Arendators.Where(d => d.AdresId == a.Id).ToList();//арендаторы в данном доме для ускорения поиска
                // List<UEV> TekUevs = Uevs.Where(d => d.AdresId == a.Id).ToList();//выставлено в УЭВ применим позже
                // List<OPU> TekOpus = Opus.Where(d => d.AdresId == a.Id).ToList();//Фактические затраты воды по ОПУ андрей Исх
@@ -57,7 +58,7 @@ namespace GKHNNC.Controllers
                 try
                 {
                     DateTime Dat = DateTime.Now;
-                    int O = db.Osmotrs.Where(x => x.Date.Year == Dat.Year && x.Date.Month == Dat.Month && x.AdresId == a.Id).OrderByDescending(x => x.Date).Select(x=>x.Id).First();
+                    ho.Osmotrs = db.Osmotrs.Where(x=>x.AdresId == a.Id ).OrderByDescending(x => x.Date).ToList();//все осмотры дома
                     ho.OsmotrEst = true;
                 }
                 catch { ho.OsmotrEst = false; }

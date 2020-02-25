@@ -37,7 +37,204 @@ namespace GKHNNC.Controllers
         {
             return View(db.Musors.ToList());
         }
+        /*
+        public ActionResult  MusorPloshadkas(HttpPostedFileBase upload)
+        {
+            int progress = 0;
+            double pro100 = 0;
+            int procount = 0;
+            if (upload != null)
+            {
+                HttpCookie cookie = new HttpCookie("My localhost cookie");
 
+                //найдем старые данные за этот месяц и заменим их не щадя
+                List<MusorPloshadka> dbMusor = new List<MusorPloshadka>();
+                try { dbMusor = db.MusorPloshadkas.ToList(); }
+                catch { }
+                pro100 = dbMusor.Count;
+                foreach (MusorPloshadka S in dbMusor)
+                {
+                    try
+                    {
+                        db.MusorPloshadkas.Remove(S);
+                        db.SaveChanges();
+                        procount++;
+                        progress = Convert.ToInt16(procount / pro100 * 100);
+                        if (procount > pro100) { procount = Convert.ToInt32(pro100); }
+                        ProgressHub.SendMessage("Удаляем старые данные...", progress);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                }
+
+                Excel.Application ApExcel = new Excel.Application();
+                Excel.Workbooks WB = null;
+                WB = ApExcel.Workbooks;
+                Excel.Workbook WbExcel = ApExcel.Workbooks.Add(System.Reflection.Missing.Value);
+
+                List<List<string>> excel = new List<List<string>>();
+             
+                    //call this method inside your working action
+                    ProgressHub.SendMessage("Инициализация и подготовка...", 0);
+
+                    // получаем имя файла
+                    string fileName = Path.GetFileName(upload.FileName);
+                    // сохраняем файл в папку Files в проекте
+                    if (Directory.Exists(Server.MapPath("~/Files/")) == false)
+                    {
+                        Directory.CreateDirectory(Server.MapPath("~/Files/"));
+
+                    }
+                    upload.SaveAs(Server.MapPath("~/Files/" + fileName));
+                WbExcel = WB.Open(Server.MapPath("~/Files/" + fileName));
+                int Count = WbExcel.Sheets.Count;
+                WbExcel = null;
+                WB = null;
+                ApExcel.Quit();
+               // Marshal.FinalReleaseComObject(WbExcel);
+               // Marshal.FinalReleaseComObject(WB);
+                Marshal.FinalReleaseComObject(ApExcel);
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                //обрабатываем файл после загрузки
+                //Загружаем файл ТБО
+                string[] Names = null;
+                string Error = "";
+                for (int h = 1; h <= Count; h++)
+                {
+                    //upload.SaveAs(Server.MapPath("~/Files/" + fileName));
+                    //Загружаем файл наших выездов
+                    Names = new string[] { "Улица", "Номер дома", "ID Площадки", "Категория потребителя (ИЖД/ЮЛ/МКД)", "Наименование(физ/юр.лица)", "Объем вывезенного КГО м3", "Объем ТКО за смену, м3" };
+                    Error = "";
+                    List<List<string>> excelList = ExcelSVNUpload.IMPORT(Server.MapPath("~/Files/" + fileName), Names, out Error, h.ToString(),null,false);
+                    excel.AddRange(excelList);
+                }
+                
+                List<Musor> Result = new List<Musor>();
+                    if (excel.Count < 1)
+                    {
+                        //если нифига не загрузилось то 
+                        ViewBag.Error = Error;
+                        ViewBag.Names = Names;
+                        return View("NotUpload");
+                    }
+                    else
+                    {
+                        foreach (List<string> E in excel)
+                        {
+                            MusorPloshadka MP = new MusorPloshadka();
+                            
+                                try
+                                {
+                                    MP.Obiem = Convert.ToDecimal(E[5]);
+                                    MP.TKO = false;
+                            if (MP.Obiem == 0)
+                            {
+                               
+                               
+                                try
+                                {
+                                    MP.Obiem = Convert.ToDecimal(E[6]);
+                                    MP.TKO = true;
+                                }
+                                catch
+                                {
+                                    MP.Obiem = 0;
+                                }
+                            }
+                                }
+                                catch
+                                {
+                            MP.Obiem = 0;
+                        }
+                            
+                            if (E[4].Equals("0") == false && E[4] != "")
+                            {
+
+                                MP.NameUL= E[4];
+                            }
+                            else
+                            {
+                                MP.NameUL = "";
+                            }
+                            if (E[3].Equals("0") == false && E[3] != "")
+                            {
+
+                                MP.UL = E[3];
+                            }
+                            MP.UL = "МКД";
+                            if (E[2].Equals("0")==false && E[2] != "") {
+
+                                MP.IDPloshadki = E[2];
+                                    }
+                            else { MP.IDPloshadki = "0"; }
+                            if (E[1].Equals("0") == false && E[1] != "")
+                            {
+
+                                MP.Name = E[1];
+                            }
+                            else { MP.Name = ""; }
+                            if (E[0].Equals("0") == false && E[0] != "Улица")
+                            {
+                               
+                                string[] Ulica = E[0].ToUpper().Replace("Ё","Е").Replace("МУССЫ","МУСЫ").Replace("БУЛЬВАР","").Replace("ПР.","").Replace(" ","").Replace(".","").Replace("-","").Replace("ПРОСП","").Replace("ПРД","").Split(',');
+                            foreach (string U in Ulica)
+                            {
+                                if (U.Length > 3)
+
+                                {
+                                    try
+                                    {
+                                   
+                                        AllStreet AS = db.AllStreets.Where(x => x.Name.ToUpper().Replace(" ","").Contains(U)).First();
+                                        MP.StreetId += AS.Id + ";";
+                                    }
+                                    catch (Exception e)
+                                    {
+                                    AllStreet S = new AllStreet();
+                                    S.Name = U.ToLower();
+                                    S.Name = S.Name[0].ToString().ToUpper()+U.ToLower().Remove(0,1); 
+                                    try
+                                    {
+                                        db.AllStreets.Add(S);
+                                        db.SaveChanges();
+                                        MP.StreetId += S.Id + ";";
+                                    }
+                                    catch
+                                    {
+                                        db.AllStreets.Remove(S);
+                                    }
+                                    }
+
+                                }
+                            }
+
+                            MP.StreetId = MP.StreetId.Remove(MP.StreetId.Length - 1, 1);   
+                            }
+                            else { continue; }
+
+                            try
+                        {
+                            //если такая площадка есть то игнорим
+                            db.MusorPloshadkas.Where(x => x.Name.Equals(MP.Name) && x.StreetId == MP.StreetId).First();
+                        }
+                        catch
+                        {
+                            //иначе сохраняем как новую площадку
+                            db.MusorPloshadkas.Add(MP);
+                            db.SaveChanges();
+                        }
+                          
+                        }
+
+                    }
+                
+            }
+                        return View();
+        }
+        */
         // GET: Musors/Details/5
         public ActionResult Details(int? id)
         {

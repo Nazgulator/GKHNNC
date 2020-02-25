@@ -1,0 +1,136 @@
+﻿@model IEnumerable<GKHNNC.Models.Material>
+
+<h3>Модуль объединения материалов</h3>
+<div class="align-content-start" style="text-align:left">
+
+    <p>1.Введите часть наименования материала и нажмите Найти - программа найдет все материалы содержащие это наименование.</p>
+    <p>2.Слева выбираете материал</p>
+    <p>3.Справа выбираете в какой материал превратить.</p>
+    <p>4.Нажимаете кнопку превратить.</p>
+    <p>Дальше программа сама превращает левый материал в правый и заменяет все ссылки на них из других элементов.</p>
+    <p>Зеленый и синий ответ означает удачный результат, красный означает ошибки.</p>
+    <br />
+</div>
+<div class="container">
+    <div class="form-horizontal">
+        <div class="row  align-content-center">
+            <div class="col-md-6">
+                <input id="txt" value="введите часть наименования материала" class="form-control" />
+            </div>
+            <div class="col-md-6">
+                <button id="search" class="btn btn-block btn-success">Найти</button>
+            </div>
+
+        </div>
+        <div class="row " style="margin-top:10px">
+            <div class="col-md-6">
+                <h5> Что превратить</h5>
+            </div>
+            <div class="col-md-6">
+                <h5>Во что превратить</h5>
+            </div>
+        </div>
+        <div class="row " style="margin-top:10px">
+            <div class="col-md-6">
+                @Html.DropDownList("mat", new SelectList(Model, "id", "name"), htmlAttributes: new { @class = "form-control" })
+                @foreach (var Item in Model)
+                {
+
+                }
+            </div>
+            <div class="col-md-6">
+                @Html.DropDownList("tomat", new SelectList(ViewBag.ToMaterials, "id", "name"), htmlAttributes: new { @class = "form-control" })
+                @foreach (var Item in Model)
+                {
+
+                }
+            </div>
+        </div>
+        <div class="row " style="margin-top:10px">
+            <div class="col-md-12">
+                <button id="magic" class="btn btn-block btn-success">Превратить</button>
+            </div>
+
+            
+        </div>
+        <div id="alert">
+
+        </div>
+        </div>
+    </div>
+@section Scripts{
+    @Scripts.Render("~/scripts/jquery-3.3.1.min.js")
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+    @Scripts.Render("~/scripts/jquery-1.7.1.js")
+    @Scripts.Render("~/scripts/jquery.unobtrusive-ajax.js")
+    @Scripts.Render("~/scripts/bootstrap.js")
+    @Scripts.Render("~/scripts/bootstrap.bundle.js")
+    @Scripts.Render("https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js")
+
+
+    <script>
+
+
+
+        $('#search').on('click', function () {
+            var _this = $(this);
+
+            var S = $('#txt').val();
+            if (S != "") {
+
+                 var url = "@Url.Action("MaterialEdit", "Osmotrs")";
+
+
+                window.location.replace(url + '?S=' +S);
+
+
+
+            }
+        });
+    </script>
+    <script>
+
+
+
+        $('#magic').click(function () {
+            var _this = $(this);
+
+            var Mat = $('#mat').val();
+            var ToMat = $('#tomat').val();
+            if (Mat != "" && ToMat != "") {
+                $('#alert').empty();
+                $('#alert').append("<div class='alert alert-warning' role='alert'>Объединяем материалы, пожалуйста подождите...</div>");
+                  $.post('@Url.Action("MaterialToMaterial", "Osmotrs")', { Material: Mat, ToMaterial: ToMat },
+                      function (data) {
+                             
+
+                          $('#mat option:selected').remove();
+                          $('#alert').empty();
+                         
+                          // переберём массив arr
+                          $.each(data, function (index,value) {
+
+                              // действия, которые будут выполняться для каждого элемента массива
+                              // index - это текущий индекс элемента массива (число)
+                              // value - это значение текущего элемента массива
+
+                              //выведем индекс и значение массива в консоль
+                              
+                              $('#alert').append(value);
+                              console.log('Индекс: ' + index + '; Значение: ' + value);
+
+                          });
+
+
+                        });
+                }
+
+
+            
+        });
+    </script>
+
+
+}
+
+

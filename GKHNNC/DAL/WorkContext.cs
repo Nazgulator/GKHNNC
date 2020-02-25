@@ -123,10 +123,15 @@ namespace GKHNNC.DAL
         public System.Data.Entity.DbSet<GKHNNC.Models.DOMPart> DOMParts { get; set; }
         public System.Data.Entity.DbSet<GKHNNC.Models.Izmerenie> Izmerenies { get; set; }
         public System.Data.Entity.DbSet<GKHNNC.Models.Build> Builds { get; set; }
-     
+
+        public System.Data.Entity.DbSet<GKHNNC.Models.KontrAgent> KontrAgents { get; set; }
         public System.Data.Entity.DbSet<GKHNNC.Models.Street> Streets { get; set; }
+        public System.Data.Entity.DbSet<GKHNNC.Models.AllStreet> AllStreets { get; set; }
+        public System.Data.Entity.DbSet<GKHNNC.Models.MusorPloshadka> MusorPloshadkas { get; set; }
 
         public System.Data.Entity.DbSet<GKHNNC.Models.BuildElement> BuildElements { get; set; }
+
+        public System.Data.Entity.DbSet<GKHNNC.Models.Poligon> Poligons { get; set; }
 
         //protected override void OnModelCreating(DbModelBuilder modelBuilder)
 

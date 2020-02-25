@@ -1,0 +1,203 @@
+﻿@model IEnumerable<GKHNNC.Models.Poligon>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+<h2>Дневной результат</h2>
+
+<table id="tableData" class="table table-bordered table-striped">
+
+    <tr>
+        <td colspan="8" style="background-color:#28a745">
+            <h4 style="color:white; text-align:center"> @ViewBag.Date.Day.@ViewBag.Date.Month.@ViewBag.Date.Year</h4>
+        </td>
+    </tr>
+    <tr style="text-align:center">
+        <th>
+            @Html.DisplayNameFor(model => model.Number)
+        </th>
+        <th>
+            Тип автомобиля
+        </th>
+        <th>
+            Марка автомобиля
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.MassIn)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.MassOut)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.MassMusor)
+        </th>
+        <th>
+            Количество выездов
+        </th>
+        <th>
+            Опции
+        </th>
+
+    </tr>
+
+    @foreach (var item in Model.OrderByDescending(x => x.Date))
+    {
+        string Nasha = "";
+        string Atype = "";
+        string TType = "";
+        string Radiation = "";
+        string DataTarget = "#Avto" + item.Avtomobil.Id;
+        if (item.Avtomobil.GKHNNC) { Nasha = "table-success"; }
+        Atype = item.Avtomobil.Type.Ico.ToString() + ".png";
+        TType = item.Avtomobil.Type.Type;
+    <tr class="@Radiation" style="text-align:center">
+
+        <td style="font-size:16px">
+            @if (Nasha != "")
+            {
+                <img src="~/Content/Images/star.png"  alt ="ФГУП ЖКХ ННЦ" height="16" width="16" data-toggle="tooltip" data-placement="top" title="Автомобиль ФГУП ЖКХ ННЦ">
+            }
+            @item.Number
+
+        </td>
+        <td style="background-color:#FFFFFF">
+            <img src="~/Content/Images/@Atype" height="64" width="128" data-toggle="modal" alt="@item.Avtomobil.Type.Type" data-target="@DataTarget" data-placement="top" title="@TType нажмите чтобы узнать детальную информацию">
+        </td>
+        <td style="background-color:#FFFFFF">
+        @item.Avtomobil.Marka.Name @item.Avtomobil.Type.Type    
+        </td>
+        <td style="font-size:16px">
+            @Html.DisplayFor(modelItem => item.MassIn)
+        </td>
+        <td style="font-size:16px">
+            @Html.DisplayFor(modelItem => item.MassOut)
+
+
+        </td>
+        <td style="font-size:16px">
+            @Html.DisplayFor(modelItem => item.MassMusor)
+        </td>
+        <td style="font-size:16px">
+            @Html.DisplayFor(modelItem => item.Description)
+        </td>
+
+        <td></td>
+    </tr>
+    }
+
+
+
+</table>
+
+
+
+<p><a onclick="Export()" style="color:white" class="btn btn-success btn-block">В эксель &raquo;</a> </p>
+<p><a href="/Poligons/Index" class="btn btn-success btn-block">К текущим рейсам &raquo;</a> </p>
+@section Scripts{
+    @Scripts.Render("~/scripts/jquery-3.4.1.js")
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.js")
+    @Scripts.Render("~/scripts/jquery.unobtrusive-ajax.js")
+    @Scripts.Render("~/scripts/bootstrap.js")
+    @Scripts.Render("~/scripts/bootstrap.bundle.js")
+    @Scripts.Render("/scripts/ExportToExcel/excelexportjs.js")
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.3/themes/ui-lightness/jquery-ui.css" />
+
+    <script>
+        function Export() {
+            var images = $('img');
+            for (var i = 0; i < images.length; i++) {
+                var Alt = images[i].getAttribute("alt");
+                images[i].replaceWith(Alt);
+            };
+            $("#tableData").excelexportjs({
+                containerid: "tableData",
+                datatype: 'table'
+            });
+        };
+    </script>
+
+    <script type="text/javascript">
+    $("#Number").autocomplete({
+        source: '@Url.Action("SearchNumber", "Poligons")',
+        minLength: 4,
+        select: function (event, ui)
+        {
+            var _this = ui.item.label;
+
+            window.location.replace('/Poligons/NumberAndRefresh?term='+_this);
+        },
+        search: function () {
+            $(this).addClass('ui-autocomplete-loading');
+            var _this = $(this).val();
+            if ($(this).val().length >= 6)
+            {
+                 $.post('@Url.Action("SearchCompleteNumber", "Poligons")', { term: _this },
+                        function (data) {
+
+                            if (data != "")
+                            {
+                                window.location.replace('/Poligons/Index?Number=' + _this);
+                            }
+                            else {
+                                $("#AddAvtoModal").modal('show');
+                            }
+
+
+
+                        });
+
+            }
+        },
+        open: function (event, ui) {
+            $(this).removeClass('ui-autocomplete-loading');
+
+        }
+    });
+    </script>
+
+
+
+
+    <script>
+        function MassOutChange(a) {
+
+            var _this = a.value;
+            var id = a.id;
+            $.post('@Url.Action("MassOutEdit", "Poligons")', { MassOut: _this,id:id },
+                        function (data) {
+                            var S = data.split(';');
+                            if (data="Ok") {
+                                alert("Масса выезда успешно обновлена");
+                            }
+                            else {
+                                alert("Масса не обновлена");
+                            }
+
+
+
+                        });
+
+        };
+    </script>
+    <script>
+        function DeletePoligon(a) {
+            var id = a.id;
+            var isDelete = confirm("Вы уверены, что хотите удалить данный заезд на полигон?");
+
+            if (isDelete)
+            {
+                $.post('@Url.Action("DeleteZaezd", "Poligons")', { id: id },
+                    function (data) {
+                            window.location.replace('/Poligons/Index');
+                        // $('body').append('<ul><li>Java</li><li>JavaScript</li></ul>');
+                    });
+            }
+        };
+    </script>
+
+
+
+
+}

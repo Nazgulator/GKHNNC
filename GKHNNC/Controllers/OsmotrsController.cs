@@ -20,7 +20,7 @@ namespace GKHNNC.Controllers
         // GET: Osmotrs
         public ActionResult Index()
         {
-            var osmotrs = db.Osmotrs.Include(o => o.Adres).Include(o => o.DOMCW).Include(o => o.DOMElectro).Include(o => o.DOMFasad).Include(o => o.DOMFundament).Include(o => o.DOMHW).Include(o => o.DOMOtoplenie).Include(o => o.DOMRoof).Include(o => o.DOMRoom).Include(o => o.DOMVodootvod);
+            var osmotrs = db.Osmotrs.Where(x=>x.Sostoyanie==0).Include(o => o.Adres).Include(o => o.DOMCW).Include(o => o.DOMElectro).Include(o => o.DOMFasad).Include(o => o.DOMFundament).Include(o => o.DOMHW).Include(o => o.DOMOtoplenie).Include(o => o.DOMRoof).Include(o => o.DOMRoom).Include(o => o.DOMVodootvod);
             return View(osmotrs.ToList());
         }
 
@@ -380,7 +380,7 @@ namespace GKHNNC.Controllers
                         new ImageJob(
                             upload.InputStream,
                             path,
-                            new Instructions("maxwidth=800&maxheight=800"),
+                            new Instructions("maxwidth=1000&maxheight=1000"),
                             false,
                             false));
 
@@ -393,7 +393,17 @@ namespace GKHNNC.Controllers
             return Json("файл успешно загружен!");
         }
 
-
+        public JsonResult SaveOsmotr (int OsmotrId=1)
+        {
+            Osmotr O = db.Osmotrs.Where(x => x.Id == OsmotrId).First();
+            O.Sostoyanie = 1;
+            db.Entry(O).State = EntityState.Modified;
+            db.SaveChanges();
+            string data = "OK";
+            return Json(data);
+           
+        }
+        
         public ActionResult SpisokActiveDefect(string D="", int ElementId = 1,  int OsmotrId = 1)
         {
             DateTime Date = DateTime.Now;
@@ -466,23 +476,23 @@ namespace GKHNNC.Controllers
         }
 
         //служит для отображения списка активных дефектов и возможных дефектов модели
-        public ActionResult ViewActiveDefect(int ElementId = 1,ActiveDefect A=null)
+        public ActionResult ViewActiveDefect(DateTime Date,int ElementId = 1,int OsmotrId=1,int AdresId =1,ActiveDefect A=null)
         {
-            DateTime Date = DateTime.Now;
-            int OsmotrId = 13;
-            int AdresId = 1;
-            HttpCookie cookieReq = Request.Cookies["Osmotr"];
-            if (cookieReq != null)
-            {
-                Date = Convert.ToDateTime(cookieReq["Date"]);
-                OsmotrId = Convert.ToInt32(cookieReq["OsmotrId"]);
-                AdresId = Convert.ToInt32(cookieReq["AdresId"]); 
-            }
-            else
-            {
+            //Date = DateTime.Now;
+            
+           
+           // HttpCookie cookieReq = Request.Cookies["Osmotr"];
+           // if (cookieReq != null)
+           // {
+           //     Date = Convert.ToDateTime(cookieReq["Date"]);
+           //     OsmotrId = Convert.ToInt32(cookieReq["OsmotrId"]);
+           //     AdresId = Convert.ToInt32(cookieReq["AdresId"]); 
+           // }
+           // else
+           // {
 
-            }
-                string Data = "";
+           // }
+            string Data = "";
             ActiveElement AE = new ActiveElement();
             List<BuildElement> BE = new List<BuildElement>();
             Build B = new Build();
@@ -529,7 +539,13 @@ namespace GKHNNC.Controllers
                     //для загруженных и новых
                     try
                     {
-                        AE.Defects = db.Defects.Where(x => x.ElementId == ElementId).ToList();
+                        Defect D = new Defect();
+                        D.ElementId = 0;
+                        D.Def = "Отсутствует";
+                        AE.Defects = new List<Defect>();
+                        AE.Defects.Add(D);
+                        AE.Defects.AddRange(db.Defects.Where(x => x.ElementId == ElementId).ToList());
+                        
                     }
                     catch (Exception e)
                     {
@@ -560,22 +576,20 @@ namespace GKHNNC.Controllers
 
 
         //служит для отображения списка активных дефектов и возможных дефектов модели
-        public ActionResult ViewActiveDefectReadOnly(int ElementId = 1, ActiveDefect A = null)
+        public ActionResult ViewActiveDefectReadOnly(DateTime Date, int ElementId = 1, int OsmotrId = 1, int AdresId = 1, ActiveDefect A = null)
         {
-            DateTime Date = DateTime.Now;
-            int OsmotrId = 13;
-            int AdresId = 1;
-            HttpCookie cookieReq = Request.Cookies["Osmotr"];
-            if (cookieReq != null)
-            {
-                Date = Convert.ToDateTime(cookieReq["Date"]);
-                OsmotrId = Convert.ToInt32(cookieReq["OsmotrId"]);
-                AdresId = Convert.ToInt32(cookieReq["AdresId"]);
-            }
-            else
-            {
+          
+           // HttpCookie cookieReq = Request.Cookies["Osmotr"];
+          //  if (cookieReq != null)
+           // {
+           //     Date = Convert.ToDateTime(cookieReq["Date"]);
+          //      OsmotrId = Convert.ToInt32(cookieReq["OsmotrId"]);
+          //      AdresId = Convert.ToInt32(cookieReq["AdresId"]);
+          //  }
+          //  else
+          //  {
 
-            }
+          //  }
             string Data = "";
             ActiveElement AE = new ActiveElement();
             
@@ -656,7 +670,120 @@ namespace GKHNNC.Controllers
             }
             return PartialView("ViewActiveDefectReadOnly", AE);
         }
+        public static string Alert (string clas, string value)
+        {
+            return "<div class='" + clas + "' role='alert'>'" + value + "'</div>";
+        }
+        [HttpPost]
+        public JsonResult MaterialToMaterial(string Material = "", string ToMaterial = "")
+        {
+            Material Mat = new Material();
+            Material ToMat = new Material();
+            string clas = "alert alert-success";
+            string value = "";
+            //string Alert = "<div class='"+clas+"' role='alert'>'"+value+"'</div>";
+            int M = Convert.ToInt32(Material);
+            int TOM = Convert.ToInt32(ToMaterial);
+            List<string> Errors = new List<string>();
+             if (Material != "" && ToMaterial != "")
+            {
+                bool errors = false;
+                try
+                {
+                    Mat = db.Materials.Where(x => x.Id == M).First();
+                }
+                catch (Exception e)
+                {
+                    clas = "alert alert-danger";
+                    value = "Нет такого материала" + Mat.Id;
+                    Errors.Add(Alert(clas, value));
+                    errors = true;
+                }
+                try
+                {
+                    ToMat = db.Materials.Where(x => x.Id == TOM).First();
+                }
+                catch (Exception e)
+                {
+                    errors = true;
+                    clas = "alert alert-danger";
+                    value = "Нельзя превратить в выбранный материал" + ToMat.Id;
+                    Errors.Add(Alert(clas,value));
+                }
+                if (errors == false)
+                {
+                    clas = "alert alert-success";
+                    try
+                    {
+                        List<BuildElement> BE = db.BuildElements.Where(x => x.Material == Mat.Id).ToList();
+                        foreach (BuildElement B in BE)
+                        {
+                            try
+                            {
+                                B.Material = ToMat.Id;
+                                db.Entry(B).State = EntityState.Modified;
+                                db.SaveChanges();
+                                clas = "alert alert-primary";
+                                value = "Ссылка на материал в Билд Элементе " + B.Id.ToString() + " успешно изменена!";
+                                Errors.Add(Alert(clas, value));
 
+                            }
+                            catch
+                            {
+                                clas = "alert alert-danger";
+                                value = "Нельзя превратить материал " + B.Material;
+                                Errors.Add(Alert(clas, value));
+                            }
+                        }
+                        try
+                        {
+                            Material RM = db.Materials.Where(x => x.Id == Mat.Id).First();
+                            db.Materials.Remove(RM);
+                            db.SaveChanges();
+                            clas = "alert alert-success";
+                            value = "Материал " + RM.Id.ToString() + " успешно удалён!";
+                            Errors.Add(Alert(clas, value));
+
+                        }
+                        catch
+                        {
+                            clas = "alert alert-danger";
+                            value = "Нельзя удалить материал " + Mat.Id;
+                            Errors.Add(Alert(clas, value));
+                        }
+
+                    }
+                    catch
+                    {
+                       
+                    }
+                }
+            }
+           
+            return Json(Errors);
+        }
+
+        public ActionResult MaterialEdit (string S = "")
+        {
+            S =S.ToUpper();
+            List<Material> Materials = db.Materials.ToList();
+            List<Material> ToMaterials = db.Materials.ToList();
+            List<List<BuildElement>> BE = new List<List<BuildElement>>();
+            if (S != "") {
+                Materials = Materials.Where(x => x.Name.ToUpper().Contains(S)).ToList();
+                ToMaterials = Materials.Where(x => x.Name.ToUpper().Contains(S)).ToList();
+                foreach (Material M in Materials)
+                {
+
+                    List<BuildElement>  BEM = db.BuildElements.Where(x => x.Material == M.Id).ToList();
+                    BE.Add(BEM);
+                        
+                        }
+                    }
+            ViewBag.ToMaterials = ToMaterials;
+            ViewBag.BuildElements = BE;
+            return View(Materials);
+        }
         // GET: Osmotrs/Create
         public ActionResult Create(DateTime date,int id = 0)
         {
@@ -672,6 +799,10 @@ namespace GKHNNC.Controllers
                 date = DateTime.Now;
             }
            
+
+
+
+
             Osmotr Result = new Osmotr();
 
             //ищем по базе осмотры, если есть за текущий месяц на данном доме то продолжаем заполнять его.
@@ -680,6 +811,8 @@ namespace GKHNNC.Controllers
                 Result = db.Osmotrs.Where(x => x.Date.Year == date.Year && x.Date.Month == date.Month && x.AdresId == id).OrderByDescending(x => x.Date).Include(x=>x.Adres).Include(x => x.DOMCW).Include(x => x.DOMElectro).Include(x => x.DOMFasad).Include(x => x.DOMFundament).Include(x => x.DOMHW).Include(x => x.DOMOtoplenie).Include(x => x.DOMRoof).Include(x => x.DOMRoom).Include(x => x.DOMVodootvod).First();
                 LoadOsmotr = true;//Удалось загрузить осмотр используем уже имеющиеся данные
                 Result.Elements = db.ActiveElements.Where(x => x.OsmotrId == Result.Id).ToList();//берем все активные элементы и кидаем в список
+            
+
                 if (Result.Elements.Count > 0)
                 {
                     foreach (ActiveElement A in Result.Elements)
@@ -718,22 +851,59 @@ namespace GKHNNC.Controllers
               
                     try
                     {//пробуем грузануть данные по дому
-                        Result.DOMCW = db.DOMCWs.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
-                        Result.DOMHW = db.DOMHWs.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
-                        Result.DOMElectro = db.DOMElectroes.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
-                        Result.DOMFasad = db.DOMFasads.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
-                        Result.DOMFundament = db.DOMFundaments.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).Include(x => x.Material).Include(x => x.Type).First();
+                        //Result.DOMCW = db.DOMCWs.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
+                        //Result.DOMHW = db.DOMHWs.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
+                        //Result.DOMElectro = db.DOMElectroes.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
+                        //Result.DOMFasad = db.DOMFasads.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
+                        //Result.DOMFundament = db.DOMFundaments.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).Include(x => x.Material).Include(x => x.Type).First();
 
-                        Result.DOMOtoplenie = db.DOMOtoplenies.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
-                        Result.DOMRoof = db.DOMRoofs.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
-                        Result.DOMRoom = db.DOMRooms.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
-                        Result.DOMVodootvod = db.DOMVodootvods.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
+                        //Result.DOMOtoplenie = db.DOMOtoplenies.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
+                        //Result.DOMRoof = db.DOMRoofs.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
+                       // Result.DOMRoom = db.DOMRooms.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
+                        //Result.DOMVodootvod = db.DOMVodootvods.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
 
                         //Пробуем грузануть Сашкины поэлементные данные
                        // B = db.Builds.Where(x => x.Address.Replace("д.", "").Replace(",", "").Replace(" ", "").Replace("БУЛЬВ.","").Equals(Result.Adres.Adress)).First();
+
                          BE = db.BuildElements.Where(x => x.BuildId == B.Id).ToList();
-                         BE=db.BuildElements.ToList();
+                        // BE=db.BuildElements.ToList();
                         //Тут сохранение материалов
+
+                       
+                        /* foreach (BuildElement El in BE)
+                         {
+                             El.Count = El.Count.Replace(" ", "").Replace("-","").Replace(".","").ToLower();
+                            if (El.Count == "") { El.Count = "0"; }
+                             try
+                             {
+                                 decimal Z = Convert.ToDecimal(El.Count);
+                                 El.Count = Z.ToString();
+                                 db.Entry(El).State = EntityState.Modified;
+                                 db.SaveChanges();
+                                continue;
+
+                             }catch (Exception e)
+                             {
+                                try
+                                {
+                                    El.Count = "0";
+                                    if (El.Material!=null&&El.Material < 1) {
+                                        El.Material = 1;
+                                    }
+                                    if (El.Material == 50) { El.Material = 1; }
+                                    db.Entry(El).State = EntityState.Modified;
+                                    db.SaveChanges();
+                                }
+                                catch
+                                {
+
+                                }
+                            }
+
+                         }
+                         */
+                         
+
                         /*
                          foreach (BuildElement El in BE)
                          {
@@ -798,24 +968,24 @@ namespace GKHNNC.Controllers
                          }
                          */
 
-                     /*   //Совмещаем адреса и билдингс
-                      *   List<Adres> Ad = db.Adres.ToList();
-                        foreach (Adres A in Ad)
-                        {
-                            if (A.BuildId != 0) { continue; }
-                            try
-                            {
-                                B = db.Builds.Where(x => x.Address.Replace("д.", "").Replace(",", "").Replace(" ", "").Replace("БУЛЬВ.", "").ToUpper().Replace("ПРОЕЗД","").Replace("ПРОСПЕКТ", "").Replace("БУЛЬВ", "").Equals(A.Adress.Replace(" ",""))).First();
-                                A.BuildId = B.Id;
-                                db.Entry(A).State = EntityState.Modified;
-                                db.SaveChanges();
-                            }
-                            catch (Exception e)
-                            {
+                        /*   //Совмещаем адреса и билдингс
+                         *   List<Adres> Ad = db.Adres.ToList();
+                           foreach (Adres A in Ad)
+                           {
+                               if (A.BuildId != 0) { continue; }
+                               try
+                               {
+                                   B = db.Builds.Where(x => x.Address.Replace("д.", "").Replace(",", "").Replace(" ", "").Replace("БУЛЬВ.", "").ToUpper().Replace("ПРОЕЗД","").Replace("ПРОСПЕКТ", "").Replace("БУЛЬВ", "").Equals(A.Adress.Replace(" ",""))).First();
+                                   A.BuildId = B.Id;
+                                   db.Entry(A).State = EntityState.Modified;
+                                   db.SaveChanges();
+                               }
+                               catch (Exception e)
+                               {
 
-                            }
-                        }
-                        */
+                               }
+                           }
+                           */
 
                         Result.BE = BE;
                     }
@@ -934,6 +1104,7 @@ namespace GKHNNC.Controllers
                 }
                
             }
+            ViewBag.Month = Opredelenie.Opr.MonthToNorm(Opredelenie.Opr.MonthOpred(Result.Date.Month));
             ViewBag.Materials = new SelectList(db.Materials, "Id", "Material");
             ViewBag.Izmerenies = new SelectList(db.Izmerenies, "Id", "Name");
             ViewBag.Error = error;
@@ -971,9 +1142,20 @@ namespace GKHNNC.Controllers
                     HttpCookie cookie = new HttpCookie("Osmotr");
                     cookie["Date"] = date.ToString();
                     cookie["OsmotrId"] = Result.Id.ToString();
-                    cookie["AdresId"] = id.ToString();
-                    // Добавить куки в ответ
-                    Response.Cookies.Add(cookie);
+                    cookie["AdresId"] = Result.AdresId.ToString();
+
+                    HttpCookie cookieR = Request.Cookies["Osmotr"];
+                    if (cookieR != null)
+                    {
+                        Response.Cookies.Set(cookie);
+                       
+                    }
+                    else
+                    {
+                        // Добавить куки в ответ
+                        Response.Cookies.Add(cookie);
+                    }
+                    
 
                     //Result.DOMCW = db.DOMCWs.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
                     // Result.DOMHW = db.DOMHWs.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
@@ -1056,7 +1238,7 @@ namespace GKHNNC.Controllers
             }
 
 
-
+            ViewBag.Month = Opredelenie.Opr.MonthToNorm(Opredelenie.Opr.MonthOpred(Result.Date.Month));
             ViewBag.Error = error;
             return View(Result);
         }

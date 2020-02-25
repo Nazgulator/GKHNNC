@@ -1,0 +1,93 @@
+﻿@model GKHNNC.Models.MusorPloshadka
+
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+<h2><Удалить></h2>
+
+<h3>Удаление элемента?</h3>
+<div>
+    <h4>MusorPloshadka</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Street.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Street.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Obiem)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Obiem)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IDPloshadki)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IDPloshadki)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.NameUL)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NameUL)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.UL)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UL)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TKO)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TKO)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+       
+           
+            
+       
+		<div class="row col-md-6 col-md-offset-3">
+            <div class=" form-group">
+                <div class=" col-md-6  ">
+                    @Html.ActionLink("Отмена", "Index", null, new { @class = "btn btn-success btn-block" })
+                </div>
+                <div class=" col-md-6  ">
+                    <input type="submit" value="Delete" class="btn btn-success" /> 
+                </div>
+
+            </div>
+        </div>
+
+    }
+</div>

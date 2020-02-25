@@ -1410,7 +1410,7 @@ namespace GKHNNC.Controllers
                 List<OPU> dbOPU = new List<OPU>();
                 try
                 {
-                    dbSVNs = db.SVNs.Where(a => a.Date.Year == DateTime.Now.Year && a.Date.Month == i && (a.ServiceId == 1)).Include(b => b.Service).ToList();
+                    dbSVNs = db.SVNs.Where(a => a.Date.Year == Year && a.Date.Month == i && (a.ServiceId == 1)).Include(b => b.Service).ToList();
                 }
                 catch { }
                 try
@@ -1456,7 +1456,7 @@ namespace GKHNNC.Controllers
 
                     try
                     {
-                        OTOPSVN = dbSVNs.Where(d => d.AdresId == A.Id && d.ServiceId == 1).First();//горячая вода
+                        OTOPSVN = dbSVNs.Where(d => d.AdresId == A.Id && d.ServiceId == 1).First();//отопление
                     }
                     catch { }
                     Plan = OTOPSVN.Plan;// берем данные только из свн
@@ -1482,7 +1482,7 @@ namespace GKHNNC.Controllers
 
 
                     //сохраняем данные для вывода
-                    //0 факт 1 план 2 уэв 3 пу
+                    //0 уэв 1 план 2 факт 3 пу
                     V += OTOPUEV.ToString() + ";";
                     V += Plan.ToString() + ";";
                     V += Fact.ToString()+";";
@@ -1537,7 +1537,7 @@ namespace GKHNNC.Controllers
             ViewBag.Months = Months;
             ViewBag.VV = VV;
             ViewBag.SummFact = SummFact;
-            ViewBag.SummPlan = SummFact;
+            ViewBag.SummPlan = SummPlan;
             ViewBag.SummUev = SummUEV;
             return View();
         }

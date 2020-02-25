@@ -26,7 +26,7 @@
     </script>
 
     <div id='wrap_preloader' style=" width: 100%;height: 100%;position: fixed;top:0px;margin: 0px auto;background: #1C1C1C;z-index: 99;text-align: center;color: #fff;font-size: 15px;padding-top: 260px;color:limegreen">
-        
+
         <p>
             <img src="~/Content/Images/Download/D1.gif" align="middle" class="rounded mr-2" alt="Идёт загрузка...">
         </p>
@@ -61,9 +61,19 @@
 
         </div>
     </div>
+    <br/>
     <h2>Осмотр #@Model.Id</h2>
-    <h3>@Model.Adres.Adress</h3>
-    <h4>От @Model.Date.ToString("dd.MMMM.yyyy")</h4>
+    <div class="col-md-12" style="background-color:#28a745">
+        <table>
+            <tr>
+                <td>
+                    <h3>@Model.Adres.Ulica @Model.Adres.Dom</h3>
+                </td>
+            </tr>
+
+        </table>
+    </div>
+    <h4>От @Model.Date.Day @ViewBag.Month @Model.Date.Year</h4>
     @if (ViewBag.Error != "")
     {
         <H5>При загрузке возникла ошибка!!!</H5>
@@ -92,7 +102,7 @@
 
                 <div id="@j" class="row">
                     <div class="col-md-12" style="background-color:#28a745">
-                        <table style="width:100%" >
+                        <table style="width:100%">
                             <tr>
                                 <td colspan="7" align="center">
                                     <h3 style="color:white"> @ViewBag.DOMParts[j] </h3>
@@ -105,7 +115,7 @@
                                 </th>
 
 
-                                <th width="185px"  style="text-align:center">
+                                <th width="185px" style="text-align:center">
                                     Фото
                                 </th>
 
@@ -119,12 +129,12 @@
                                     Ед.Изм.
                                 </th>
 
-                                <th width="230px"  style="text-align:center">
+                                <th width="230px" style="text-align:center">
                                     Состояние элемента
                                 </th>
 
 
-                                <th width="150px"  style="text-align:center">
+                                <th width="150px" style="text-align:center">
                                     Дефекты
                                 </th>
                             </tr>
@@ -133,7 +143,7 @@
 
                     </div>
 
-               
+
                     <div class="col-md-12">
 
 
@@ -144,7 +154,7 @@
                             {
                                 string Part = "Partial" + Model.Elements[i].Id.ToString();
 
-                                @Html.Action("ViewActiveDefectReadOnly", "Osmotrs", new { ElementId = Model.Elements[i].ElementId })
+                                @Html.Action("ViewActiveDefectReadOnly", "Osmotrs", new { ElementId = Model.Elements[i].ElementId, OsmotrId = Model.Id, AdresId = Model.AdresId, Date = Model.Date })
                             }
                         }
 

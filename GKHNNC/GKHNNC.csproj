@@ -244,6 +244,7 @@
     <Compile Include="Controllers\ActiveDefectsController.cs" />
     <Compile Include="Controllers\ActiveElementsController.cs" />
     <Compile Include="Controllers\AdresController.cs" />
+    <Compile Include="Controllers\AllStreetsController.cs" />
     <Compile Include="Controllers\ArendatorsController.cs" />
     <Compile Include="Controllers\ASControlsController.cs" />
     <Compile Include="Controllers\AvtomobilsController.cs" />
@@ -271,11 +272,13 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\HousesController.cs" />
     <Compile Include="Controllers\IPUsController.cs" />
+    <Compile Include="Controllers\KontrAgentsController.cs" />
     <Compile Include="Controllers\LogsController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\MarkaAvtomobilsController.cs" />
     <Compile Include="Controllers\MaterialsController.cs" />
     <Compile Include="Controllers\MechanicsController.cs" />
+    <Compile Include="Controllers\MusorPloshadkasController.cs" />
     <Compile Include="Controllers\MusorsController.cs" />
     <Compile Include="Controllers\NegilayasController.cs" />
     <Compile Include="Controllers\OBSDsController.cs" />
@@ -283,6 +286,7 @@
     <Compile Include="Controllers\OPUsController.cs" />
     <Compile Include="Controllers\OsmotrsController.cs" />
     <Compile Include="Controllers\PeriodichnostsController.cs" />
+    <Compile Include="Controllers\PoligonsController.cs" />
     <Compile Include="Controllers\RoofFormsController.cs" />
     <Compile Include="Controllers\RoofTypesController.cs" />
     <Compile Include="Controllers\RoofUtepleniesController.cs" />
@@ -323,6 +327,10 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\ActiveElement.cs" />
+    <Compile Include="Models\KontrAgent.cs" />
+    <Compile Include="Models\Poligon.cs" />
+    <Compile Include="Models\MusorPloshadka.cs" />
+    <Compile Include="Models\AllStreet.cs" />
     <Compile Include="Models\BuildElement.cs" />
     <Compile Include="Models\Street.cs" />
     <Compile Include="Models\Build.cs" />
@@ -491,6 +499,8 @@
     <Content Include="Content\Images\38.png" />
     <Content Include="Content\Images\39.png" />
     <Content Include="Content\Images\4.png" />
+    <Content Include="Content\Images\40.png" />
+    <Content Include="Content\Images\41.png" />
     <Content Include="Content\Images\5.png" />
     <Content Include="Content\Images\6.png" />
     <Content Include="Content\Images\7.png" />
@@ -559,6 +569,7 @@
     <Content Include="Content\Images\Kanistra2.png" />
     <Content Include="Content\Images\Kanistra3.png" />
     <Content Include="Content\Images\Kanistra4.png" />
+    <Content Include="Content\Images\LegendaPoligon.png" />
     <Content Include="Content\Images\NoDownload.png" />
     <Content Include="Content\Images\OBSDOff.png" />
     <Content Include="Content\Images\OBSDOn.png" />
@@ -626,6 +637,7 @@
     <Content Include="Content\Images\W5.png" />
     <Content Include="Content\Images\W6.png" />
     <Content Include="Content\Images\W7.png" />
+    <Content Include="Content\Images\X.png" />
     <Content Include="Content\Images\Y.png" />
     <Content Include="Content\Images\Zap1.png" />
     <Content Include="Content\Images\Zap2.png" />
@@ -801,7 +813,11 @@
     <Content Include="Content\bootstrap-datepicker3.css.map" />
     <Content Include="Content\bootstrap-datepicker.standalone.css.map" />
     <Content Include="Content\bootstrap-datepicker.css.map" />
+    <Content Include="Scripts\ExportToExcel\README.md" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
+    <Content Include="Scripts\ExportToExcel\Example - Export Data to Excel.html" />
+    <Content Include="Scripts\ExportToExcel\excelexportjs.js" />
+    <Content Include="Scripts\ExportToExcel\Important for IE.txt" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
     <Content Include="Scripts\jquery-3.4.1.slim.js" />
@@ -1544,6 +1560,29 @@
     <Content Include="Views\Shared\_LayoutNULL.cshtml" />
     <Content Include="Views\Osmotrs\Info.cshtml" />
     <Content Include="Views\Osmotrs\ViewActiveDefectReadOnly.cshtml" />
+    <Content Include="Views\Osmotrs\MaterialEdit.cshtml" />
+    <Content Include="Views\MusorPloshadkas\Create.cshtml" />
+    <Content Include="Views\MusorPloshadkas\Delete.cshtml" />
+    <Content Include="Views\MusorPloshadkas\Details.cshtml" />
+    <Content Include="Views\MusorPloshadkas\Edit.cshtml" />
+    <Content Include="Views\MusorPloshadkas\Index.cshtml" />
+    <Content Include="Views\Musors\MusorPloshadkas.cshtml" />
+    <Content Include="Views\AllStreets\Create.cshtml" />
+    <Content Include="Views\AllStreets\Delete.cshtml" />
+    <Content Include="Views\AllStreets\Details.cshtml" />
+    <Content Include="Views\AllStreets\Edit.cshtml" />
+    <Content Include="Views\AllStreets\Index.cshtml" />
+    <Content Include="Views\Poligons\Create.cshtml" />
+    <Content Include="Views\Poligons\Delete.cshtml" />
+    <Content Include="Views\Poligons\Details.cshtml" />
+    <Content Include="Views\Poligons\Edit.cshtml" />
+    <Content Include="Views\Poligons\Index.cshtml" />
+    <Content Include="Views\Poligons\Resultat.cshtml" />
+    <Content Include="Views\KontrAgents\Create.cshtml" />
+    <Content Include="Views\KontrAgents\Delete.cshtml" />
+    <Content Include="Views\KontrAgents\Details.cshtml" />
+    <Content Include="Views\KontrAgents\Edit.cshtml" />
+    <Content Include="Views\KontrAgents\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
