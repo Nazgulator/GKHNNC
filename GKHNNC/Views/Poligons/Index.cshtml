@@ -139,7 +139,7 @@
         </td>
     </tr>
 
-    @if (ViewBag.PoiskId != 0 || ViewBag.PoiskKontrId != 0 || ViewBag.Resultat != 0 || ViewBag.Vesi != 0 || ViewBag.Avtosort != 0|| ViewBag.Date.Month != DateTime.Now.Month || ViewBag.Date.Day != DateTime.Now.Day)
+    @if (ViewBag.PoiskId != 0 || ViewBag.PoiskKontrId != 0 || ViewBag.Resultat != 0 || ViewBag.Vesi != 0 || ViewBag.Avtosort != 0 || ViewBag.Date.Month != DateTime.Now.Month || ViewBag.Date.Day != DateTime.Now.Day)
     {
         string p = "";
         if (ViewBag.PoiskId != 0) { p = " номеру "; }
@@ -169,12 +169,12 @@
 
                 @if (ViewBag.PoiskKontrId != 0)
                 {
-                    <button class="btn btn-outline-secondary " onclick="AvtoNomerPoisk('@ViewBag.PoiskId','0','@ViewBag.Resultat','@ViewBag.Vesi','@ViewBag.Avtosort','@ViewBag.Date')">@ViewBag.PoiskKontr</button>
+                    <button class="btn btn-outline-secondary " style="width:400px"onclick="AvtoNomerPoisk('@ViewBag.PoiskId','0','@ViewBag.Resultat','@ViewBag.Vesi','@ViewBag.Avtosort','@ViewBag.Date')">@ViewBag.PoiskKontr</button>
                 }
 
                 @if (ViewBag.Resultat == 1)
                 {
-                    <button class="btn btn-outline-secondary " onclick="AvtoNomerPoisk('@ViewBag.PoiskId','@ViewBag.PoiskKontrId','0','@ViewBag.Vesi','@ViewBag.Avtosort','@ViewBag.Date')">ДНЕВНЫЕ РЕЗУЛЬТАТЫ</button>
+                    <button class="btn btn-outline-secondary "  style="width:300px" onclick="AvtoNomerPoisk('@ViewBag.PoiskId','@ViewBag.PoiskKontrId','0','@ViewBag.Vesi','@ViewBag.Avtosort','@ViewBag.Date')">ДНЕВНЫЕ РЕЗУЛЬТАТЫ</button>
                 }
 
                 @if (ViewBag.Avtosort == 1)
@@ -210,7 +210,7 @@
             <img src="~/Content/Images/LegendaPoligon.png" height="40" data-toggle="tooltip" alt="ФГУП ЖКХ ННЦ" data-placement="top" title="Легенда к ведомости">
           </td>
         <td colspan="2">
-            <p><a onclick="Export()" style="color:white" class="btn btn-success btn-block">В EXCEL &raquo;</a> </p>
+            <p><a onclick="Export('@ViewBag.PoiskId','@ViewBag.PoiskKontrId','@ViewBag.Resultat','@ViewBag.Vesi','@ViewBag.Avtosort','@ViewBag.Date')" style="color:white" class="btn btn-success btn-block">В EXCEL &raquo;</a> </p>
         </td>
     </tr>
 </table>
@@ -218,7 +218,7 @@
     <tr style="background-color:#28a745">
 
         <td colspan="11">
-            @{string Reisi = "Ведомость приема ТКО на полигон за " + ViewBag.Date.Day+"."+ViewBag.Date.Month+"."+ViewBag.Date.Year;
+            @{string Reisi = "Ведомость приема ТКО на полигон за " + ViewBag.Date.Day + "." + ViewBag.Date.Month + "." + ViewBag.Date.Year;
 
                 if (ViewBag.PoiskKontr != "0")
                 {
@@ -240,14 +240,14 @@
             }
             else
             {
-                <p>Автомобиль ID</p>
+                <p>Номер ПП</p>
             }
         </th>
         <th>
             Государственный регистрационный знак
         </th>
         <th>
-            Тип автомобиля
+            Модель ТС
         </th>
         <th>
             Объем бункера, куб.м.
@@ -270,11 +270,11 @@
         <th>
             @if (ViewBag.Resultat != 0)
             {
-                <p>Количество ездок</p>
+                <p>Количество рейсов</p>
             }
             else
             {
-                <p> Результаты измерения при проведении радиационного дозиметрического контроля, мн3в</p>
+                <p> Результаты измерения при проведении радиационного дозиметрического контроля, мк3в</p>
             }
         </th>
 
@@ -283,32 +283,33 @@
         </th>
 
     </tr>
-
-    @foreach (var item in Model)
-    {
-        string Nasha = "";
-        string Atype = "";
-        string TType = "";
-        string Radiation = "";
-        string DataTarget = "#Avto" + item.Avtomobil.Id;
-        if (item.Description.Equals("В пределах нормы.") == false && ViewBag.Resultat == 0) { Radiation = "table-danger"; }
-        if (item.Avtomobil.GKHNNC) { Nasha = "table-success"; }
-        Atype = item.Type.Ico.ToString() + ".png";
-        TType = item.Type.Type;
-        string ecoclass = "";
-        string VesiClass = "";
-        if (item.MassMusor < 0 && Radiation.Equals("")) { VesiClass = "table-success"; }
-        if (item.MassOut == 0 && Radiation.Equals("")) { VesiClass = "table-warning"; }
-        if (item.KontrAgentName.Equals("Регион. оператор «Экология-Новосибирск»"))
+    @{int counter = 0;}
+        @foreach (var item in Model)
         {
-            ecoclass = "btn btn-success";
-        }
-        else
-        {
+            counter++;
+            string Nasha = "";
+            string Atype = "";
+            string TType = "";
+            string Radiation = "";
+            string DataTarget = "#Avto" + item.Avtomobil.Id;
+            if (item.Description.Equals("В пределах нормы.") == false && ViewBag.Resultat == 0) { Radiation = "table-danger"; }
+            if (item.Avtomobil.GKHNNC) { Nasha = "table-success"; }
+            Atype = item.Type.Ico.ToString() + ".png";
+            TType = item.Type.Type;
+            string ecoclass = "";
+            string VesiClass = "";
+            if (item.MassMusor < 0 && Radiation.Equals("")) { VesiClass = "table-success"; }
+            if (item.MassOut == 0 && Radiation.Equals("")) { VesiClass = "table-warning"; }
+            if ((item.KontrAgentName.Equals("Регион. оператор «Экология-Новосибирск»")||ViewBag.PoiskKontrId==2)&& ViewBag.PoiskKontrId != -2)
+            {
+                ecoclass = "btn btn-success";
+            }
+            else
+            {
 
-            ecoclass = "btn btn-info";
+                ecoclass = "btn btn-info";
 
-        }
+            }
         <tr class="@Radiation @VesiClass" style="text-align:center">
             <td style="font-size:16px">
                 @if (ViewBag.Resultat == 0)
@@ -317,7 +318,7 @@
                 }
                 else
                 {
-                    @item.AvtomobilId
+                    @counter
                 }
 
             </td>
@@ -362,9 +363,14 @@
                 @Html.DisplayFor(modelItem => item.MassMusor)
             </td>
             <td style="font-size:16px">
-
-                <input readonly="readonly" class="@ecoclass" style="font-size:16px;cursor:pointer" onclick="AvtoNomerPoisk('@ViewBag.PoiskId','@item.KontrAgentId','@ViewBag.Resultat','@ViewBag.Vesi','@ViewBag.Avtosort','@ViewBag.Date')" value="@Html.DisplayFor(modelItem => item.KontrAgentName)" />
-
+                @if (ViewBag.PoiskKontr == null||ViewBag.PoiskKontrId==-2|| ViewBag.PoiskKontr.Equals("0"))
+                {
+                    <input readonly="readonly" class="@ecoclass" style="font-size:16px;cursor:pointer" onclick="AvtoNomerPoisk('@ViewBag.PoiskId','@item.KontrAgentId','@ViewBag.Resultat','@ViewBag.Vesi','@ViewBag.Avtosort','@ViewBag.Date')" value="@Html.DisplayFor(modelItem => item.KontrAgentName)" />
+                }
+                else
+                {
+                    <input readonly="readonly" class="@ecoclass" style="font-size:16px;cursor:pointer" onclick="AvtoNomerPoisk('@ViewBag.PoiskId','@item.KontrAgentId','@ViewBag.Resultat','@ViewBag.Vesi','@ViewBag.Avtosort','@ViewBag.Date')" value="@ViewBag.PoiskKontr" />
+                }
 
             </td>
             <td style="font-size:16px">
@@ -650,7 +656,7 @@
     </script>
 
     <script>
-        function Export() {
+        function Export(P, PK, R, V, AS, D) {
             var images = $("img");
             for (var i = 0; i < images.length; i++) {
                 var Alt = images[i].getAttribute("alt");
@@ -667,7 +673,7 @@
                 containerid: "tableData",
                 datatype: 'table'
             });
-            window.location.replace('/Poligons/Index');
+            window.location.replace('/Poligons/Index?PoiskKontr=' + PK + '&Poisk=' + P + '&result=' + R + '&Vesi=' + V + '&Avtosort=' + AS + '&TekDate=' + D);
         };
     </script>
 

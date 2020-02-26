@@ -438,6 +438,14 @@
             }
 
         }
+        if (User.Identity.Name.Contains("Логист") || User.IsInRole("Администратор"))
+        {
+            <p>
+                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "MusorPloshadkas")'">
+                    <i class="glyphicon glyphicon-trash"></i>  Мусорные площадки &raquo;
+                </button>
+            </p>
+        }
 
         if (User.Identity.Name.Contains("Полигон") || User.IsInRole("Администратор"))
         {

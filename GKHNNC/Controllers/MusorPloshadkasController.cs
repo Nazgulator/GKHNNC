@@ -59,6 +59,18 @@ namespace GKHNNC.Controllers
                         M.Obiem7[i] = 0;
                     }
                 }
+                string[] Kontainers = M.Kontainers.Split(';');
+                for (int i = 0; i < 7; i++)
+                {
+                    if (i <= Kontainers.Length - 1)
+                    {
+                        M.Kontainers7[i] = Convert.ToInt32(Kontainers[i]);
+                    }
+                    else
+                    {
+                        M.Kontainers7[i] = 0;
+                    }
+                }
 
             }
             List<MusorPloshadka> MP = new List<MusorPloshadka>();
@@ -137,6 +149,37 @@ namespace GKHNNC.Controllers
         }
 
         [HttpPost]
+        public ActionResult ReKontainer(decimal Value = 0, int Day = 0, int Id = 0)
+        {//день, размер и ид площадки
+            string Data = "";
+            MusorPloshadka MP = new MusorPloshadka();
+            string[] S = new string[7] { "0", "0", "0", "0", "0", "0", "0" };
+            try
+            {
+                MP = db.MusorPloshadkas.Where(x => x.Id == Id).First();
+                string[] SS = MP.Kontainers.Split(';');
+                for (int i = 0; i < SS.Length; i++)
+                {
+                    S[i] = SS[i];
+                }
+                S[Day] = Value.ToString();
+                string result = "";
+                for (int i = 0; i < 7; i++)
+                {
+                    result += S[i] + ";";
+                }
+                MP.Kontainers = result.Remove(result.Length - 1, 1);
+                db.Entry(MP).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+            catch
+            {
+
+            }
+            return Json(Data);
+        }
+
+        [HttpPost]
         public ActionResult ReObiem(decimal Value = 0, int Day=0, int Id = 0)
         {//день, размер и ид площадки
             string Data = "";
@@ -169,20 +212,30 @@ namespace GKHNNC.Controllers
 
 
         [HttpPost]
-        public ActionResult AddPloshadka(bool TKO = true,string MKD="", string Obiem = "0;0;0;0;0;0;0", string UL = "", string StreetId = "", int Id = 0)
+        public ActionResult AddPloshadka(bool TKO = true, string MKD = "", string Obiem = "0;0;0;0;0;0;0", string Kontainers = "0;0;0;0;0;0;0", string UL = "", string StreetId = "", int Id = 0, string Name = "")
         {//день, размер и ид площадки
             string Data = "";
             MusorPloshadka MP = new MusorPloshadka();
-           
-            try
+            if (StreetId != null && StreetId != "" && StreetId != null&&Name.Equals("")==false)
             {
-               
-                db.Entry(MP).State = EntityState.Modified;
-                db.SaveChanges();
-            }
-            catch
-            {
+                MP.IDPloshadki = Id.ToString();
+                if (UL.Equals("0")) { UL = ""; }
+                MP.NameUL = UL;
+                MP.Obiem = Obiem;
+                MP.TKO = TKO;
+                MP.UL = MKD;
+                MP.Name = Name;
+                MP.StreetId = StreetId;
+                try
+                {
 
+                    db.MusorPloshadkas.Add(MP);
+                    db.SaveChanges();
+                }
+                catch (Exception e)
+                {
+
+                }
             }
             return Json(Data);
         }

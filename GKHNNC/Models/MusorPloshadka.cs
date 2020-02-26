@@ -19,6 +19,8 @@ namespace GKHNNC.Models
         public AllStreet Street;
         [Display(Name = "Объём")]
         public string Obiem { get; set; }
+        [Display(Name = "Контэйнеры")]
+        public string Kontainers { get; set; }
         [Display(Name = "ID площадки")]
         public string IDPloshadki { get; set; }
         [Display(Name = "Наименование ЮЛ")]
@@ -35,5 +37,7 @@ namespace GKHNNC.Models
         public List<AllStreet> VseUlici;
         [Display(Name = "Объём по дням недели")]
         public decimal[] Obiem7 = new decimal[7];
+        [Display(Name = "Контэйнеры по дням недели")]
+        public int[] Kontainers7 = new int[7];
     }
 }

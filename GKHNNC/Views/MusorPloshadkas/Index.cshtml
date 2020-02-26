@@ -13,8 +13,8 @@
         <th colspan="3">
             Основные данные
         </th>
-        <th colspan="7">
-            Базовые объёмы
+        <th colspan="8">
+            Базовые параметры
         </th>
         <th colspan="4">
             Дополнительные данные
@@ -37,30 +37,34 @@
 
 
         </th>
+        <th>
+
+        </th>
         @for (int i = 0; i < 7; i++)
         {
             <th>
                 @switch (i)
 
                 {
-                    case 0:<p>ПН</p>
+                    case 0:<p>ПН V</p>
                         break;
-                    case 1: <p>ВТ</p>
+                    case 1: <p>ВТ V</p>
                         break;
-                    case 2: <p>СР</p>
+                    case 2: <p>СР V</p>
                         break;
-                    case 3: <p>ЧТ</p>
+                    case 3: <p>ЧТ V</p>
                         break;
-                    case 4: <p>ПТ</p>
+                    case 4: <p>ПТ V</p>
                         break;
-                    case 5: <p>СБ</p>
+                    case 5: <p>СБ V</p>
                         break;
-                    case 6: <p>ВС</p>
+                    case 6: <p>ВС V</p>
                         break;
-                    default:<p>ВС</p>
+                    default:<p>ВС V</p>
                         break;
                 }
             </th>
+
         }
         <th>
             @Html.DisplayNameFor(model => model.IDPloshadki)
@@ -89,11 +93,21 @@
 
         </td>
 
-
+        <td>
+            <p>
+                Объём
+            </p>
+            <p>
+                Количество контейнеров
+            </p>
+        </td>
         @for (int i = 0; i < 7; i++)
         {
             <td>
-                <input id="@i" class="btn btn-circle btn-light" value="0" type="number" min="0" step="0.01" style="width:70px">
+                <input id="@i" class="btn btn-circle btn-light" value="0" type="number" min="0" step="0.01" style="width:70px;background:lightyellow">
+
+
+                <input id="K_@i" class="btn btn-circle btn-light" value="0" type="number" min="0" step="1" style="width:70px;background:lightgreen">
 
             </td>
 
@@ -155,12 +169,21 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
+            <td>
+                <p>
+                    Объём
+                </p>
+                <p>
+                    Количество контейнеров
+                </p>
+            </td>
             @{int OO = 0;}
             @foreach (decimal O in item.Obiem7)
             {
                 <td>
-                    <input class="btn btn-circle btn-light" value="@O" type="number" min="0" step="0.01" onchange="ReObiem('@item.Id',this,'@OO')" style="width:70px">
+                    <input class="btn btn-circle btn-light" style="width:70px;background:lightyellow;width:70px" value="@O" type="number" min="0" step="0.01" onchange="ReObiem('@item.Id',this,'@OO')">
 
+                    <input class="btn btn-circle btn-light" style="width:70px;background:lightgreen;width:70px" value="@item.Kontainers7[OO]" type="number" min="0" step="1" onchange="ReKontainers('@item.Id',this,'@OO')" >
                 </td>
                 OO++;
             }
@@ -309,32 +332,57 @@
 
         };
     </script>
+    <script>
+        function ReKontainers(id, a, day) {
+            var _this = a.value;
+
+            $.post('@Url.Action("ReKontainer", "MusorPloshadkas")', { Id: id, Value: _this, Day: day });
+
+        };
+    </script>
 
     <script>
         function AddPloshadka() {
             var Obiem = "";
+            var Kontainers = "";
             for (var i = 0; i < 7; i++)
             {
-                Obiem += $('#' + i).val()+";";
+                Obiem += $('#' + i).val() + ";";
+                Kontainers += $('#K_' + i).val() + ";";
+
             }
             Obiem = Obiem.slice(0, Obiem.length - 1);
+            Kontainers = Kontainers.slice(0, Kontainers.length - 1);
             var Id = $('#IdPloshadki').val();
             var UL = $('#UL').val();
             var MKD = $('#MKD').val();
             var TKO = $('#TKO').attr('checked');
             var Name = $('#Name').val();
+
             var StreetId = $('#MyStreet').val();
-            alert(Id + ";" + StreetId + ";" + UL + ";" + MKD + ";" + TKO + ";" + Obiem+";"+Name);
+            if (UL == "") { UL = "0"; }
+            alert(Id + ";" + Name + ";" + StreetId + ";" + UL + ";" + MKD + ";" + TKO + ";" + Obiem + ";" + Name + ";" + Kontainers);
 
             if (Id != null && UL != "" && MKD != null && TKO != null && StreetId != 0) {
-                $.post('@Url.Action("AddPloshadka", "MusorPloshadkas")', { Id: Id, UL: UL, MKD: MKD, TKO: TKO, StreetId: StreetId, Obiem: Obiem, Name:Name });
+                $.post('@Url.Action("AddPloshadka", "MusorPloshadkas")', { Id: Id, UL: UL, MKD: MKD, TKO: TKO, StreetId: StreetId, Obiem: Obiem, Name: Name, Kontainers: Kontainers }
+                    , function () {
+
+                        window.location.replace('/MusorPloshadkas/Index?StreetId=' + StreetId);
+
+                    }
+
+                );
+            }
+            else
+            {
+                alert('Выберите улицу и введите номера домов!');
             }
 
 
 
         };
     </script>
-   
+
 
     <script>
         function MyStreetChange(a) {
@@ -357,6 +405,15 @@
 
 
         };
+    </script>
+    <script>
+
+        $('input').on("click", function () {
+            var _this = $(this);
+
+
+            _this.select();
+        });
     </script>
     <script>
         function DeletePoligon(a) {
