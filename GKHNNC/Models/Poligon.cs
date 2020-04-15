@@ -76,7 +76,9 @@ namespace GKHNNC.Models
         [Display(Name = "Глонасс")]
         public bool Glonass = false;
 
-      
+        [Display(Name = "Въездов на полигон")]
+        public int PoligonIn = 0;
+
 
 
 

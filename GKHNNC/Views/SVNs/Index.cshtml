@@ -38,9 +38,9 @@
                 </th>
                 @for (int j = 0; j < 3; j++)
                 {
-                    <td>
-                        @Html.DropDownList("Сервисы", new SelectList(@ViewBag.SVNKI[i * 3 + j]), new { @class = "form-control col-md-4", @style = "width:100%" })
-                    </td>
+                <td>
+                    @ViewBag.SVNKI[i * 3 + j]
+                </td>
                 }
             </tr>
         }

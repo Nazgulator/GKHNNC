@@ -27,17 +27,19 @@ namespace GKHNNC.Controllers
         // GET: SVNs
         public ActionResult Index()
         {
-            List<List<string>> SVNKI = new List<List<string>>();
+            List<string> SVNKI = new List<string>();
             List<string> Head = new List<string>();
             List<TableService> Services = db.TableServices.ToList();
             List<DateTime> dates = db.SVNs.Select(x => x.Date).Distinct().ToList();//даты загрузок без повторений
+            dates = dates.OrderByDescending(x => x.Date).ToList();
             foreach (DateTime D in dates)
             {
                 Head.Add(Opr.MonthOpred(D.Month) +" "+ D.Year.ToString());
-                foreach (TableService T in Services)
+                for (int i = 1; i < 4; i++)
                 {
-                    SVNKI.Add(db.SVNs.Where(y => y.Date == D).Include(s => s.Adres).Include(g=>g.Service).Where(h=>h.Service.Id==T.Id).Select(z => z.Adres.Adress +" F="+ z.Fact+" P="+ z.Plan).Distinct().ToList());
+                    SVNKI.Add("Plan="+ db.SVNs.Where(y => y.Date == D).Where(h => h.Service.Id == i).Sum(x=>x.Plan).ToString()+" Fact="+ db.SVNs.Where(y => y.Date == D).Where(h => h.Service.Id == i).Sum(x => x.Fact).ToString());
                 }
+                
             }
 
 
@@ -47,6 +49,7 @@ namespace GKHNNC.Controllers
             return View();
         }
 
+      
 
         public ActionResult IndexMain()
         {
@@ -182,6 +185,11 @@ namespace GKHNNC.Controllers
                         string Service = L[1].Replace(" ", "").ToUpper();
                         
                         bool EstService = false;
+                        if (Service.Contains("ОБЩ.ИМУЩ."))
+                        {
+
+                        }
+
                        
                         foreach(TableService TS in TSdb)
                         {
@@ -269,6 +277,189 @@ namespace GKHNNC.Controllers
             }
             return RedirectToAction("Index");
         }
+
+
+        [HttpPost]
+        public ActionResult SpecUpload(HttpPostedFileBase upload,int Month, int Year)
+        {
+            DateTime Date = new DateTime(Year, Month, 1);
+            int progress = 0;
+            double pro100 = 0;
+            int procount = 0;
+            if (upload != null)
+            {
+               
+
+                //найдем старые данные за этот месяц и заменим их не щадя
+                List<SVN> dbSVN = db.SVNs.Where(x => x.Date.Year == Date.Year && x.Date.Month == Date.Month).ToList();
+
+
+                pro100 = dbSVN.Count;
+                foreach (SVN S in dbSVN)
+                {
+                    try
+                    {
+                        db.SVNs.Remove(S);
+                        db.SaveChanges();
+                        procount++;
+                        progress = Convert.ToInt16(procount / pro100 * 100);
+                        if (procount > pro100) { procount = Convert.ToInt32(pro100); }
+                        ProgressHub.SendMessage("Удаляем старые данные...", progress);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+
+
+                }
+                
+                //call this method inside your working action
+                ProgressHub.SendMessage("Инициализация и подготовка...", 0);
+
+                // получаем имя файла
+                string fileName = System.IO.Path.GetFileName(upload.FileName);
+                // сохраняем файл в папку Files в проекте
+                if (Directory.Exists(Server.MapPath("~/Files/")) == false)
+                {
+                    Directory.CreateDirectory(Server.MapPath("~/Files/"));
+
+                }
+                upload.SaveAs(Server.MapPath("~/Files/" + fileName));
+                //обрабатываем файл после загрузки
+
+
+
+                string[] Names = new string[] { "STREET_HOUSE", "SERVICE", "DELIVER", "CHARGE_PLAN", "CHARGE_FACT", "MAKET" };
+                string Error = "";
+                List<List<string>> excel = ExcelSVNUpload.IMPORT(Server.MapPath("~/Files/" + fileName), Names, out Error);
+                if (excel.Count < 1)
+                {
+                    //если нифига не загрузилось то 
+                    ViewBag.Error = Error;
+                    ViewBag.Names = Names;
+                    Console.WriteLine("Пустой массив значит файл не загрузился!(он уже удалился)");
+                    return View("NotUpload");
+                }
+                else
+                {
+                    pro100 = excel.Count;
+                    SVN SVNKA = new SVN();
+                    List<Adres> Adresa = db.Adres.ToList();// грузим все адреса из БД
+
+                    List<TableService> TSdb = db.TableServices.ToList();
+                    List<List<string>> Services = new List<List<string>>();
+                    //один раз преобразуем таблицу сервисов для сравнения чтоб в цикле не вызывать
+                    int ser = 0;
+                    foreach (TableService T in TSdb)
+                    {
+
+                        T.Type = T.Type.Replace(" ", "").ToUpper();
+                        Services.Add(new List<string>());
+                        Services[ser].Add(T.Type);//для проверки сохраняем
+                        ser++;
+
+                    }
+                    //для каждой строки в экселе
+                    foreach (List<string> L in excel)
+                    {
+                        string Service = L[1].Replace(" ", "").ToUpper();
+
+                        bool EstService = false;
+                        if (Service.Contains("ОБЩ.ИМУЩ."))
+                        {
+
+                        }
+
+
+                        foreach (TableService TS in TSdb)
+                        {
+
+                            if (TS.Type.Equals(Service))
+                            {
+                                EstService = true;
+                                SVNKA.ServiceId = TS.Id;
+                                ser = TS.Id - 1;//номер сервиса по порядку с 0
+                                break;
+                            }
+
+                        }
+                        //если сервис не найден в списке то и адрес не проверяем идем дальше
+                        if (EstService)
+                        {
+                            bool EstName = false;
+                            string Name = L[0].Replace(" ", "");
+                            foreach (Adres A in Adresa)
+                            {
+                                string AName = A.Adress.Replace(" ", "");
+                                if (AName.Equals(Name))
+                                {
+                                    //если в массиве адресов есть адрес из строчки то сохраняем айдишник
+                                    EstName = true;
+                                    SVNKA.AdresId = A.Id;
+                                    if (ser < 4)
+                                    {
+                                        Services[ser].Add(Name);
+                                    }
+                                    // Adresa.Remove(A);//уменьшаем массив для дальнейшего ускорения поиска
+                                    break;
+                                }
+                            }
+                            //если имени нет в списке то и сохранять не будем
+                            if (EstName)
+                            {
+                                try
+                                {
+                                    SVNKA.Plan = Convert.ToDecimal(L[3]);
+                                    SVNKA.Fact = Convert.ToDecimal(L[4]);
+                                    SVNKA.Maket = Convert.ToDecimal(L[5]);
+                                    SVNKA.Agent = L[2];
+                                    SVNKA.Date = Date;
+                                }
+                                catch (Exception e)
+                                {
+                                    Console.WriteLine("Не преобразуется в децимал " + SVNKA.AdresId + " " + e.Message);
+                                }
+
+                                try
+                                {
+                                    db.SVNs.Add(SVNKA);
+                                    db.SaveChanges();
+                                }
+                                catch (Exception e)
+                                {
+                                    Console.WriteLine("Ошибка записи в базу данных " + e.Message);
+                                }
+                            }
+                        }
+                        procount++;
+                        progress = Convert.ToInt16(50 + procount / pro100 * 50);
+                        ProgressHub.SendMessage("Обрабатываем файл СВН...", progress);
+                        if (procount > pro100) { procount = Convert.ToInt32(pro100); }
+
+                    }
+                    List<string> Adr = Adresa.Select(x => x.Adress).ToList();
+                    for (int a = 0; a < Adr.Count; a++)
+                    {
+
+                        Adr[a] = Adr[a].Replace(" ", "").ToUpper();
+                    }
+
+
+                    ViewBag.VsegoServices = TSdb.Count;
+                    ViewBag.Services = Services;
+                    ViewBag.date = Date;
+                    ViewBag.file = fileName;
+
+
+
+                    return View("UploadComplete");
+                }
+            }
+            return RedirectToAction("Index");
+        }
+
+
 
         public ActionResult UploadComplete ()
         {

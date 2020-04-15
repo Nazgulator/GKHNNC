@@ -22,10 +22,38 @@ namespace GKHNNC.Controllers
             if (TekDate!="")
             {
                 Date = Convert.ToDateTime(TekDate);
+                //добавляем куки с осмотром
+                HttpCookie cookie = new HttpCookie("Poligon");
+                cookie["Date"] = Date.ToString();
+                // Добавить куки в ответ
+                Response.Cookies.Add(cookie);
             }
+            else
+            {
+                 HttpCookie cookieReq = Request.Cookies["Poligon"];
+                 if (cookieReq != null)
+                 {
+                     Date = Convert.ToDateTime(cookieReq["Date"]);
+                 }
+               
+            }
+            if (Date.Day == DateTime.Now.Day && Date.Month == DateTime.Now.Month && Date.Year == DateTime.Now.Year) { Date = DateTime.Now; }
             if (Number != null)
             {
+                //если выбрана машина 
                 ViewBag.Number = Number;
+                //и у нее уже были заезды, то забьем массу выезда сразу
+                try
+                {
+                    int idA = db.Avtomobils.Where(x => x.Number.Equals(Number)).Select(x => x.Id).First();
+                    ViewBag.MassOut = db.Poligons.Where(x => x.AvtomobilId == idA&& x.Date.Day == Date.Day && x.Date.Month == Date.Month && x.Date.Year == Date.Year).Select(x=>x.MassOut).First();
+                   
+                }
+                catch
+                {
+
+                }
+
             }
             else
             {
@@ -68,7 +96,7 @@ namespace GKHNNC.Controllers
                     ViewBag.AvtoKontragentId = Avto.KontrAgent.Id;
                     ViewBag.Avto = Avto;
                 }
-                catch
+                catch(Exception e)
                 {
                     ViewBag.Avto = null;
                     ViewBag.Number = null;
@@ -149,16 +177,25 @@ namespace GKHNNC.Controllers
 
             if (Avtosort!=0)
             {
-                Poligons = Poligons.OrderBy(x=>x.AvtomobilId).ThenBy(x => x.Date).ToList();
+                Poligons = Poligons.OrderBy(x=>x.AvtomobilId).ThenBy(x => x.Date).ThenByDescending(x=>x.Id).ToList();
+                foreach (Poligon P in Poligons)
+                {
+                    try
+                    {
+                        P.PoligonIn = db.AutoScans.Where(x => x.AvtoId == P.AvtomobilId && x.Date.Year == P.Date.Year && x.Date.Month == P.Date.Month && x.Date.Day == P.Date.Day).Select(x => x.Poligon).First();
+                    }
+                    catch { }
+                }
             }
+                
             else
             {
-                Poligons = Poligons.OrderByDescending(x => x.Date).ToList();
+                Poligons = Poligons.OrderByDescending(x => x.Date).ThenByDescending(x => x.Id).ToList();
             }
             ViewBag.Avtosort = Avtosort;
             if (result!=0)
             {
-                List<Avtomobil> Avtomobils = Poligons.Select(x => x.Avtomobil).Distinct().ToList();
+                /*List<Avtomobil> Avtomobils = Poligons.Select(x => x.Avtomobil).Distinct().ToList();
                 List<Poligon> NewPoligons = new List<Poligon>();
                 foreach (Avtomobil Avto in Avtomobils)
                 {
@@ -181,6 +218,10 @@ namespace GKHNNC.Controllers
                 }
 
                 Poligons = NewPoligons;
+                */
+
+                Poligons = Poligons.Where(x => x.Avtomobil.GKHNNC).ToList();
+
 
             }
             ViewBag.Resultat = result;
@@ -237,11 +278,14 @@ namespace GKHNNC.Controllers
         public ActionResult DeleteZaezd(int id)
         {
             Poligon P = new Poligon();
+            Poligon PTF = new Poligon(); 
             try
             {
                 P = db.Poligons.Where(x => x.Id == id).First();
+                PTF = P;
                 db.Poligons.Remove(P);
                 db.SaveChanges();
+                ObnovitMassuVMarshrutah(PTF);
 
             }
             catch
@@ -267,6 +311,7 @@ namespace GKHNNC.Controllers
                 P.MassMusor = P.MassIn - P.MassOut;
                 db.Entry(P).State = EntityState.Modified;
                 db.SaveChanges();
+                ObnovitMassuVMarshrutah(P);
                 return Json("Ok");
             }
             catch
@@ -397,6 +442,15 @@ namespace GKHNNC.Controllers
             poligon.AvtomobilId = 0;
             poligon.Number = poligon.Number.Replace(" ", "").ToUpper();
             poligon.User = User.Identity.Name;
+
+             HttpCookie cookieReq = Request.Cookies["Poligon"];
+             if (cookieReq != null)
+             {
+                poligon.Date = Convert.ToDateTime(cookieReq["Date"]);
+        
+             }
+             if (poligon.Date.Day == DateTime.Now.Day && poligon.Date.Month == DateTime.Now.Month && poligon.Date.Year == DateTime.Now.Year) { poligon.Date = DateTime.Now; }
+
             Avtomobil A = new Avtomobil();
             try
             {
@@ -446,11 +500,16 @@ namespace GKHNNC.Controllers
                 poligon.MassMusor = poligon.MassIn - poligon.MassOut;
                 db.Poligons.Add(poligon);
                 db.SaveChanges();
+                //обновляем суммарную массу на авто в активных маршрутах
+                ObnovitMassuVMarshrutah(poligon);
+
             }
             catch (Exception e)
             {
 
             }
+          
+
             ViewBag.Number = poligon.Number;
             ViewBag.TypeAvtos = new SelectList(db.TypeAvtos, "Id", "Type");
             ViewBag.MarkaAvtomobils = new SelectList(db.MarkaAvtomobils.OrderBy(x => x.Name), "Id", "Name");
@@ -461,6 +520,46 @@ namespace GKHNNC.Controllers
 
 
         }
+
+         public void ObnovitMassuVMarshrutah(Poligon poligon)
+        {
+            //обновляем суммарную массу на авто в активных маршрутах
+            List<MarshrutsALL> MA = new List<MarshrutsALL>();
+            try
+            {
+                //берем только активные маршруты на сегодня
+               MA = db.MarshrutsAlls.Where(x => x.Date.Year == poligon.Date.Year && x.Date.Month == poligon.Date.Month && x.Date.Day == poligon.Date.Day && x.Type.Equals("A")).ToList();
+                foreach (MarshrutsALL M in MA)
+                {
+                    string[] S = M.Avtomobils.Split(';');
+                    decimal MassMusor  = 0;
+                    foreach (string s in S)
+                    {
+                        try
+                        {
+                            int Id = Convert.ToInt32(s);
+                            MassMusor += db.Poligons.Where(x => x.Date.Year == poligon.Date.Year && x.Date.Month == poligon.Date.Month && x.Date.Day == poligon.Date.Day && x.AvtomobilId == Id).Sum(x => x.MassMusor);
+
+                        }
+                        catch
+                        {
+
+                        }
+                    }
+                    //сохраняем суммарную массу всех автомобилей
+                    M.MassaFact = Convert.ToInt32(MassMusor);
+                    db.Entry(M).State = EntityState.Modified;
+                    db.SaveChanges();
+
+                }
+            }
+            catch
+            {
+
+            }
+        }
+
+
         public void PoligonZamena(Avtomobil Avto, Avtomobil NewAvto)
             {
             List<Poligon> Polig = db.Poligons.Where(x => x.AvtomobilId == Avto.Id).ToList();
@@ -482,7 +581,7 @@ namespace GKHNNC.Controllers
             }
         }
         [HttpPost]
-        public ActionResult EditAvto([Bind(Include = "Id,Number,TypeId,MarkaId,ObiemBunkera,KoefficientSgatiya,KontrAgentId")] Avtomobil A)
+        public ActionResult EditAvto([Bind(Include = "Id,Number,TypeId,MarkaId,ObiemBunkera,KoefficientSgatiya,KontrAgentId,NePuskat")] Avtomobil A)
         {
             A.Date = DateTime.Now.Year;
 
@@ -514,6 +613,7 @@ namespace GKHNNC.Controllers
                             Avto.Marka = db.MarkaAvtomobils.Where(x => x.Id == Avto.MarkaId).First();
                             Avto.KoefficientSgatiya = A.KoefficientSgatiya;
                             Avto.KontrAgentId = A.KontrAgentId;
+                            Avto.NePuskat = A.NePuskat;
                             db.Entry(Avto).State = EntityState.Modified;
                             db.SaveChanges();
                             PoligonZamena(StarAvto, Avto);//чтоб картинка в полигонах заменилась

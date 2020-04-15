@@ -18,14 +18,42 @@ namespace GKHNNC.Controllers
         private WorkContext db = new WorkContext();
 
         // GET: Houses
-        public ActionResult Index()
+        public JsonResult SearchAdres(string term)
+        {
+           
+                if (term != null)
+                {
+
+                    term = term.ToUpper().Replace(" ", "");
+                }
+                List<string> Num = new List<string>();
+                try
+                {
+                    Num = db.Adres.Where(x => x.Adress.Contains(term)).Select(x => x.Adress.Replace(" ", "")).ToList();
+                }
+                catch
+                {
+                    Num.Add("Нет такой площадки");
+                }
+                return Json(Num, JsonRequestBehavior.AllowGet);
+            
+        }
+        public ActionResult Index(string Adres="")
         {
             List<House> H = new List<House>();
             List<House> Y = new List<House>();
 
             List<Adres> houses = db.Adres.OrderBy(x=>x.Adress).ToList();
+            if (Adres.Equals("")==false)
+            {
+                    houses = houses.Where(x => x.Adress.Equals(Adres)).ToList();
+                        
+            }
             DateTime Date = Opr.MonthMinus(1, DateTime.Now);//берем прошлый месяц
-            
+            if (User.Identity.Name.Contains("ЖЭУ"))
+            {
+                houses = houses.Where(x=>x.GEU!=null).Where(x => x.GEU.Equals(User.Identity.Name)).ToList();
+            }
             List<string> Primechanie = new List<string>();
            // List<Arendator> Arendators = db.Arendators.Where(c => c.Date.Year == Date.Year && c.Date.Month == Date.Month).ToList();//Берем всех арендаторов за текущий месяц
             //List<UEV> Uevs = db.UEVs.Where(c => c.Date.Year == Date.Year && c.Date.Month == Date.Month).ToList();
@@ -530,14 +558,14 @@ namespace GKHNNC.Controllers
             ViewBag.Works = Works;
             ViewBag.Uslugis = Uslugis;
             ViewBag.UslugisCost = UslugisCost;
-            List<string> Years = Opr.YearZabit();
-            Years.Insert(0, Date.Year.ToString());
+            List<SelectListItem> Years = Opr.YearZabit();
+          
             List<SelectListItem> Months = Opr.IMonthZabit();
             SelectListItem SLI = new SelectListItem();
             SLI.Value = Date.Month.ToString();
             SLI.Text = Opr.MonthOpred(Date.Month);
             Months.Insert(0, SLI);
-            Years.Insert(0, Date.Year.ToString());
+           
             ViewBag.Months = Months;
             ViewBag.Years = Years;
             ViewBag.MaxDate = MaxDate;

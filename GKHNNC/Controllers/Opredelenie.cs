@@ -69,13 +69,16 @@ namespace Opredelenie
             DateTime NewDate = new DateTime(Year, Month, 1);
             return NewDate;
         }
-        public static List<string> YearZabit()
+        public static List<SelectListItem> YearZabit()
         {
             DateTime D = DateTime.Now;
-            List<string> Year = new List<string>();
+            List<SelectListItem> Year = new List<SelectListItem>();
             for (int i = D.Year; i >= 2010; i--)
             {
-                Year.Add(i.ToString());
+                SelectListItem SLI = new SelectListItem();
+                SLI.Text = i.ToString();
+                SLI.Value = i.ToString();
+                Year.Add(SLI);
             }
             return Year;
         }
@@ -226,7 +229,7 @@ namespace Opredelenie
         }
         public static string OpredelenieBukvi(int i)
         {
-            string bukva = "A";
+            string bukva = "";
             int celaya = 0;
             if (i > 26)
             {

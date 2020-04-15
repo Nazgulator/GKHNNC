@@ -7,13 +7,58 @@
 
 <h2>Мусорные площадки</h2>
 
-
+@if(ViewBag.Errors!=null&&ViewBag.Errors.Length>1)
+{
+    if (ViewBag.Errors.Contains(";"))
+    {
+        string[] S = ViewBag.Errors.Split(";");
+    <H3>Ошибки загрузки данных:</H3>
+<table class="table-bordered table-striped">
+    
+    @foreach (string s in S)
+    {
+        <tr>
+            <td>
+                @s
+            </td>
+        </tr>
+    }
+</table>
+    }
+    else
+    {
+<H3>Ошибка: @ViewBag.Errors</H3>
+    }
+}
 <table id="T" class="table table-bordered table-striped">
+    <tr>
+        @Html.BeginForm("ImportMusorPloshadka", "MusorPloshadkas", FormMethod.Post, new { enctype = "multipart/form-data" })
+        <td colspan="3">
+            
+        </td>
+        <td colspan="5">
+            <input name="file" type="file" class="form-control" />
+        </td>
+        <td colspan="5">
+            <select id="DA" name="Day" class="form-control">
+                <option value="0">Понедельник</option>
+                <option value="1">Вторник</option>
+                <option value="2">Среда</option>
+                <option value="3">Четверг</option>
+                <option value="4">Пятница</option>
+                <option value="5">Суббота</option>
+                <option value="6">Воскресенье</option>
+            </select>
+        </td>
+        <td colspan="4">
+<button id="LOAD" type="submit" class="btn btn-success btn-block" onclick="ImportExcel()">Загрузить данные</button>
+        </td>
+    </tr>
     <tr style="text-align:center">
         <th colspan="3">
             Основные данные
         </th>
-        <th colspan="8">
+        <th colspan="10">
             Базовые параметры
         </th>
         <th colspan="4">
@@ -21,21 +66,26 @@
         </th>
     </tr>
     <tr>
-        <th>
-            ИД
-        </th>
+
+
         <th>
             <p>
                 @Html.DisplayNameFor(model => model.Street.Name)
             </p>
-
-
-
         </th>
+
         <th>
             <p> Номера домов</p>
 
 
+        </th>
+        <th>
+            <p>
+                Тип площадки
+            </p>
+        </th>
+        <th>
+            Объём контейнера
         </th>
         <th>
 
@@ -46,21 +96,21 @@
                 @switch (i)
 
                 {
-                    case 0:<p>ПН V</p>
+                    case 0:<p>ПН</p>
                         break;
-                    case 1: <p>ВТ V</p>
+                    case 1: <p>ВТ</p>
                         break;
-                    case 2: <p>СР V</p>
+                    case 2: <p>СР</p>
                         break;
-                    case 3: <p>ЧТ V</p>
+                    case 3: <p>ЧТ</p>
                         break;
-                    case 4: <p>ПТ V</p>
+                    case 4: <p>ПТ</p>
                         break;
-                    case 5: <p>СБ V</p>
+                    case 5: <p>СБ</p>
                         break;
-                    case 6: <p>ВС V</p>
+                    case 6: <p>ВС</p>
                         break;
-                    default:<p>ВС V</p>
+                    default:<p>ВС</p>
                         break;
                 }
             </th>
@@ -75,24 +125,29 @@
         <th>
             @Html.DisplayNameFor(model => model.UL)
         </th>
-        <th width="30px">
-            @Html.DisplayNameFor(model => model.TKO)
-        </th>
+
 
     </tr>
     <tr>
-        <td></td>
+
         <td>
             <p>
-                @Html.DropDownList("MyStreet", new SelectList(ViewBag.Streets, "Value", "Text", ViewBag.StreetId), new { @class = "form-control", onchange = "MyStreetChange()" })
+                <input class="form-control" id="Street" value="@ViewBag.Name" />
+                <button class="btn btn-light" onclick="window.location.replace('/MusorPloshadkas/Index')">Все</button>
+                <!--   @Html.DropDownList("MyStreet", new SelectList(ViewBag.Streets, "Value", "Text", ViewBag.StreetId), new { @class = "form-control", onchange = "MyStreetChange()", value= "@ViewBag.Name" })-->
             </p>
         </td>
         <td>
-            <input id="Name" class="btn btn-circle btn-light" style="width:120px">
+            <input id="Name" class="btn btn-circle btn-light" style="width:120px" value="">
 
 
         </td>
-
+        <td>
+            @Html.DropDownList("TypeId", new SelectList(ViewBag.ContainersTypes, "Value", "Text"), new { @class = "form-control" })
+        </td>
+        <td>
+            <input id="KontainerObiem" class="btn btn-circle btn-light" value="0" type="number" min="0" step="0.01" style="width:70px">
+        </td>
         <td>
             <p>
                 Объём
@@ -106,7 +161,7 @@
             <td>
                 <input id="@i" class="btn btn-circle btn-light" value="0" type="number" min="0" step="0.01" style="width:70px;background:lightyellow">
 
-
+                
                 <input id="K_@i" class="btn btn-circle btn-light" value="0" type="number" min="0" step="1" style="width:70px;background:lightgreen">
 
             </td>
@@ -124,21 +179,100 @@
             <input id="MKD" class="btn btn-circle btn-light" value="МКД" style="width:70px">
 
         </td>
-        <td>
-            <input id="TKO" class="form-control" type="checkbox" checked="checked">
 
-        </td>
 
     </tr>
     <tr>
-        <td colspan="15">
+        <td colspan="6">
             <button class="btn btn-circle btn-success btn-block" onclick="AddPloshadka()">
                 Добавить новую площадку
             </button>
         </td>
+        <td colspan="3">
+            <button class="btn btn-circle btn-success btn-block" onclick="ToExcel()">
+                В Excel &raquo;
+            </button>
+        </td>
+        <td colspan="3">
+            <button class="btn btn-circle btn-success btn-block" onclick="window.location.replace('/MusorPloshadkas/MarshrutsBaseIndex')">
+                К маршрутам  &raquo;
+            </button>
+        </td>
+        <td colspan="3">
+            <button class="btn btn-circle btn-success btn-block" onclick="window.location.replace('/Home/Index')">
+                В главное меню  &raquo;
+            </button>
+        </td>
+    </tr>
+</table>
+<table class="table-bordered table-striped" id="TableData">
+    <tr style="text-align:center">
+        <th>
+            ИД
+        </th>
+        <th>
+            <p>
+                @Html.DisplayNameFor(model => model.Street.Name)
+            </p>
+
+
+
+        </th>
+        <th>
+            <p> Номера домов (имя площадки)</p>
+        </th>
+        <th>
+            <p> Тип площадки</p>
+        </th>
+        <th>
+
+        </th>
+
+        @for (int i = 0; i < 7; i++)
+        {
+            <th>
+                @switch (i)
+
+                {
+                    case 0:<p>ПН</p>
+                        break;
+                    case 1: <p>ВТ</p>
+                        break;
+                    case 2: <p>СР</p>
+                        break;
+                    case 3: <p>ЧТ</p>
+                        break;
+                    case 4: <p>ПТ</p>
+                        break;
+                    case 5: <p>СБ</p>
+                        break;
+                    case 6: <p>ВС</p>
+                        break;
+                    default:<p>ВС</p>
+                        break;
+                }
+            </th>
+
+        }
+        <th>
+            @Html.DisplayNameFor(model => model.IDPloshadki)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.NameUL)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.UL)
+        </th>
+
+
     </tr>
     @foreach (var item in Model)
     {
+        string KontStyle = "";
+        if (item.TypeId == 1)
+        {
+            KontStyle = "display:none";
+        }
 
 
         //Streets = Streets.Remove(Streets.Length - 1, 1);
@@ -152,7 +286,7 @@
                 @{string Streets = "";
                     for (int i = 0; i < item.VseUlici.Count; i++)
                     {
-                        <button class="btn btn-circle btn-light" onclick="MyStreetChange(@item.VseUlici[i].Id)">
+                        <button class="btn btn-circle btn-success" value="@item.VseUlici[i].Name" onclick="MyStreetChange(@item.VseUlici[i].Id)">
                             @item.VseUlici[i].Name
                             @if (item.VseUlici.Count > 1)
                             {
@@ -162,45 +296,106 @@
 
                     }
                 }
-                <button class="btn btn-circle btn-light" onclick="AddUlica(@item.Id)" style="width:50px">
+                <button class="btn btn-circle btn-warning" onclick="AddUlica(@item.Id)" style="width:50px">
                     +
                 </button>
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Name)
+                <input id="Name_@item.Id" class="btn btn-circle btn-light" value="@item.Name" onchange="ReName('@item.Id',this.value)">
+
             </td>
             <td>
-                <p>
-                    Объём
-                </p>
-                <p>
-                    Количество контейнеров
-                </p>
+                <div class="card" style="width: 18rem;">
+
+
+                    <table class="table-responsive-xl">
+                        <tr>
+                            <td rowspan="2">
+                                <img id="Ico_@item.Id" src="@item.Type.Ico" height="64" width="64" title="@item.Type.Name">
+                            </td>
+                            <td>
+                                @Html.DropDownList("IDAll", new SelectList(ViewBag.ContainersTypes, "Value", "Text", item.TypeId), new { @class = "form-control", onchange = "RefreshType(this)", Ico = item.Id })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="table-borderless">
+                                    <div class="row ">
+                                        <div class="col-6">Объём контейнера</div>
+                                        <div class="col-6"><input class="btn btn-circle btn-light" style="width:90px" value="@item.ObiemContainera" type="number" min="0" step="0.01" onchange="ObiemConteinera('@item.Id',this.value)"></div>
+
+                                    </div>
+                                </div>
+
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+            </td>
+
+            <td>
+                <div class="tab-content">
+                    <div class="row" style="text-align:center">
+                        <div class="col-12">
+                            <p>
+                                Объём
+                            </p>
+                        </div>
+                        <div class="col-12">
+                            <p id="Kol_@item.Id" style="@KontStyle">
+                                Количество контейнеров
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+
             </td>
             @{int OO = 0;}
             @foreach (decimal O in item.Obiem7)
             {
+                string Obiem = "Obiem" + item.Id.ToString() + "_" + OO.ToString();
+                string Kontainer = "Kontainer" + item.Id.ToString() + "_" + OO.ToString();
+              
                 <td>
-                    <input class="btn btn-circle btn-light" style="width:70px;background:lightyellow;width:70px" value="@O" type="number" min="0" step="0.01" onchange="ReObiem('@item.Id',this,'@OO')">
+                    <input id="@Obiem" class="btn btn-circle btn-light" style="width:70px;background:lightyellow;width:70px" value="@O" type="number" min="0" step="0.001" onchange="ReObiem('@item.Id',this,'@OO')">
 
-                    <input class="btn btn-circle btn-light" style="width:70px;background:lightgreen;width:70px" value="@item.Kontainers7[OO]" type="number" min="0" step="1" onchange="ReKontainers('@item.Id',this,'@OO')" >
+                    <input id="@Kontainer"  class="btn btn-circle btn-light" style="width:70px;background:lightgreen;width:70px;@KontStyle" value="@item.Kontainers7[OO]" type="number" min="0" step="1" onchange="ReKontainers('@item.Id',this,'@OO')">
                 </td>
                 OO++;
             }
 
             <td>
-                @Html.DisplayFor(modelItem => item.IDPloshadki)
+                <input id="P_@item.Id" class="form-control" value="@item.IDPloshadki" onchange="IDPloshadki('@item.Id',this.value)" />
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.NameUL)
+                <input id="P_@item.Id" class="form-control" value="@item.NameUL" onchange="NameUL('@item.Id',this.value)" />
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UL)
-            </td>
-            <td width="30px">
-                <input checked="@item.TKO" class="form-control" type="checkbox" />
+            <td width="100px">
+                @{
+                    string select = "selected";
+                }
+                <select class="form-control" onchange="UL('@item.Id',this.value)">
+                    @if (item.UL.Equals("МКД"))
+                    {
+                        <option value="МКД" selected>МКД</option>
+                        <option value="ЮЛ">ЮЛ</option>
+                        <option value="ИЖД">ИЖД</option>
+                    }
+                    else
+                    {
+                        <option value="МКД">МКД</option>
+                        <option value="ЮЛ" selected>ЮЛ</option>
+                        <option value="ИЖД">ИЖД</option>
+                    }
+
+
+                </select>
+
 
             </td>
+
 
         </tr>
     }
@@ -254,20 +449,99 @@
     @Scripts.Render("/scripts/ExportToExcel/excelexportjs.js")
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.3/themes/ui-lightness/jquery-ui.css" />
 
+   
+
+    <script>
+        $('#Street').on('keypress', function () {
+            var that = this;
+
+            setTimeout(function () {
+                var res = /[^а-я,0-9,А-Я ]/g.exec(that.value);
+                console.log(res);
+                that.value = that.value.replace(res, '');
+            }, 0);
+        });
+    </script>
+    <script>
+        function ReName(Id, Val)
+        {
+        $.post('@Url.Action("SaveNamePloshadki", "MusorPloshadkas")', { Id: Id, Val:Val},
+                  function (data) {
+
+                       
+                    });
+        }
+    </script>
+    <script>
+        function ObiemConteinera(Id,Val)
+        {
+              $.post('@Url.Action("SaveObiemContainera", "MusorPloshadkas")', { Id: Id, Val:Val},
+                  function (data) {
+
+                      RefreshObiems(Id, data);
+                    });
+
+        }
+    </script>
+    <script>
+        function RefreshObiems(Id,data)
+        {
+            var S = data.split(';');
+            for (var i = 0; i < 7; i++) {
+                $("#Obiem" + Id + "_" + i).val(S[i]);
+
+            }
+        }
+    </script>
+    <script type="text/javascript">
+    $("#Street").autocomplete({
+        source: '@Url.Action("SearchStreet", "MusorPloshadkas")',
+        minLength: 1,
+        select: function (event, ui)
+        {
+
+            var _this = ui.item.label;
+            window.location.replace('/MusorPloshadkas/Index?StreetId=' + _this);
+
+
+        },
+
+        open: function (event, ui) {
+            $(this).removeClass('ui-autocomplete-loading');
+
+        }
+    });
+    </script>
 
 
     <script>
-        function Export() {
+
+        function ToExcel() {
             var images = $("img");
             for (var i = 0; i < images.length; i++) {
                 var Alt = images[i].getAttribute("alt");
                 images[i].replaceWith(Alt);
+
+
             };
-            $("#tableData").excelexportjs({
-                containerid: "tableData",
+
+            var inputs = $("input");
+            for (var i = 0; i < inputs.length; i++) {
+                var Inp = inputs[i].value;
+                inputs[i].replaceWith(Inp);
+            }
+            var buttons = $("button");
+            for (var i = 0; i < buttons.length; i++) {
+                var But = buttons[i].value;
+                buttons[i].replaceWith(But);
+            }
+            $("#TableData").excelexportjs({
+                containerid: "TableData",
                 datatype: 'table'
             });
+            window.location.replace('/MusorPloshadkas/Index');
         };
+
     </script>
     <script type="text/javascript">
     $("#Number").autocomplete({
@@ -308,6 +582,49 @@
         }
     });
     </script>
+    <script>
+        function RefreshType(t)
+        {
+            var _this = $(t);
+            var Id = _this.attr("Ico");
+            var Value = _this.val();
+
+              $.post('@Url.Action("SaveTypePloshadki", "MusorPloshadkas")', { Id: Id, Val:Value},
+                  function (data) {
+                      $("#Ico_" + Id).attr("src", data);
+                      if (Value == 1) {
+                          var Kol = $("#Kol_" + Id);
+                          for (var i = 0; i < 7; i++) {
+                              $("#Kontainer" + Id + "_" + i).fadeOut("slow");
+
+                          }
+                          Kol.fadeOut("slow");
+                      }
+                      else
+                      {
+
+                          for (var i = 0; i < 7; i++)
+                          {
+                              var Kontainer = $("#Kontainer" + Id + "_" + i);
+
+                              if (Kontainer.is(':hidden'))
+                              {
+                                  Kontainer.fadeIn("slow");
+                              }
+
+                          }
+                          var Kol = $("#Kol_" + Id);
+                          if (Kol.is(':hidden'))
+                          {
+                              Kol.fadeIn("slow");
+                          }
+
+                      }
+                    });
+
+
+        }
+    </script>
 
     <script>
         function DeleteUlica(a,b,ploshadka) {
@@ -323,6 +640,39 @@
             }
         };
     </script>
+    <script>
+        function NameUL(ploshadka,v) {
+
+                $.post('@Url.Action("NameUL", "MusorPloshadkas")', { Id: ploshadka, V:v},
+                    function (data) {
+
+                    });
+
+        };
+    </script>
+    <script>
+        function IDPloshadki(ploshadka,v) {
+
+                $.post('@Url.Action("IDPloshadki", "MusorPloshadkas")', { Id: ploshadka, V:v},
+                    function (data) {
+                         //   window.location.replace('/MusorPloshadkas/Index');
+                        // $('body').append('<ul><li>Java</li><li>JavaScript</li></ul>');
+                    });
+
+        };
+    </script>
+    <script>
+        function UL(ploshadka,v) {
+
+                $.post('@Url.Action("UL", "MusorPloshadkas")', { Id: ploshadka, V:v},
+                    function (data) {
+                         //   window.location.replace('/MusorPloshadkas/Index');
+                        // $('body').append('<ul><li>Java</li><li>JavaScript</li></ul>');
+                    });
+
+        };
+    </script>
+
 
     <script>
         function ReObiem(id, a, day) {
@@ -336,7 +686,14 @@
         function ReKontainers(id, a, day) {
             var _this = a.value;
 
-            $.post('@Url.Action("ReKontainer", "MusorPloshadkas")', { Id: id, Value: _this, Day: day });
+            $.post('@Url.Action("ReKontainer", "MusorPloshadkas")', { Id: id, Value: _this, Day: day },
+                function (data)
+                {
+                    RefreshObiems(id, data);
+                }
+
+            );
+            
 
         };
     </script>
@@ -356,17 +713,18 @@
             var Id = $('#IdPloshadki').val();
             var UL = $('#UL').val();
             var MKD = $('#MKD').val();
-            var TKO = $('#TKO').attr('checked');
+           // var TKO = $('#TKO').attr('checked');
             var Name = $('#Name').val();
+            var TypeId = $('#TypeId').val();
+            var KontainerObiem = $('#KontainerObiem').val();
 
-            var StreetId = $('#MyStreet').val();
+            var StreetId = @ViewBag.StreetId;
             if (UL == "") { UL = "0"; }
-            alert(Id + ";" + Name + ";" + StreetId + ";" + UL + ";" + MKD + ";" + TKO + ";" + Obiem + ";" + Name + ";" + Kontainers);
+            //alert(Id + ";" + Name + ";" + StreetId + ";" + UL + ";" + MKD +  ";" + Obiem + ";" + Name + ";" + Kontainers + ";" + TypeId + ";" + KontainerObiem);
 
-            if (Id != null && UL != "" && MKD != null && TKO != null && StreetId != 0) {
-                $.post('@Url.Action("AddPloshadka", "MusorPloshadkas")', { Id: Id, UL: UL, MKD: MKD, TKO: TKO, StreetId: StreetId, Obiem: Obiem, Name: Name, Kontainers: Kontainers }
+            if (Id != null && UL != "" && MKD != null && StreetId != 0) {
+                $.post('@Url.Action("AddMusorPloshadka", "MusorPloshadkas")', { Id: Id, UL: UL, MKD: MKD,  StreetId: StreetId, Obiem: Obiem, Name: Name, Kontainers: Kontainers, TypeId: TypeId, KontainerObiem: KontainerObiem }
                     , function () {
-
                         window.location.replace('/MusorPloshadkas/Index?StreetId=' + StreetId);
 
                     }

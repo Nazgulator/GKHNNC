@@ -47,84 +47,94 @@
 
 
                     </div>
-
-
-                    <div class="row col-md-6 col-md-offset-3">
-
-
+                    <div id="AD1" class="row col-md-6 col-md-offset-3">
                         <label>Адрес</label>
-                        @Html.DropDownList("WorkAdress", new MultiSelectList(ViewBag.Adresa), new { @class = "form-control" })
-                        <small class="form-text text-muted" style="text-align:right">Выберите адрес из списка</small>
-
                     </div>
 
-
-
-
-
-
-                    <div id="WId" class="row col-md-6 col-md-offset-3">
-
-
-                        <label>Наименование</label>
-                        <select name="WorkWorkId" id="WorkWorkId" class="form-control"></select>
-
-                        <small class="form-text text-muted" style="text-align:right">Выберите вид работы из списка.</small>
-
-                    </div>
-
-                    <div id="WN" class="row col-md-6 col-md-offset-3">
-                        <div class="row">
-                            <div class="col-12">
-                                <label>Количество</label>
+                        <div id="AD2" class="row col-md-6 ">
+                        
+                            <div class="col-10">
+                                @Html.DropDownList("WorkAdress", new MultiSelectList(ViewBag.Adresa), new { @class = "form-control" })
+                                <small class="form-text text-muted" style="text-align:right">Выберите адрес из списка</small>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-8">
-                                @Html.EditorFor(model => model.WorkNumber, new { htmlAttributes = new { @class = "form-control" } })
-                                @Html.ValidationMessageFor(model => model.WorkNumber, "", new { @class = "text-danger" })
-                                <small id="AdressHelp" class="form-text text-muted" style="text-align:right">Введите количество: целое число или дробное. Пример: 7.32</small>
-                            </div>
-                            <div class="col-4">
-                                <input name="Izmerenie" id="Izmerenie" class="form-control"></input>
+                            <div class="col-2">
+                                <input id="Arrow" class="btn btn-success" onclick="OpenAll()" style="width:90px;cursor:pointer" value="▼" readonly>
                             </div>
 
-                        </div>
-
-                    </div>
-
-                    <div id="WD" class="row col-md-6 col-md-offset-3">
 
 
-                        <label>Дата выполнения</label>
 
-                        @Html.EditorFor(model => model.WorkDate, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.WorkDate, "", new { @class = "text-danger" })
-                        <small id="AdressHelp" class="form-text text-muted">Выберите дату выполнения работы из календаря.</small>
-
-                    </div>
-                    <div class="container  col-md-6 col-md-offset-3">
-                        <div class="row">
-
-                            <div class="col col-md-6">
-                                @Html.ActionLink("Назад", "IndexMain", null, new { @class = "btn btn-success btn-block" })
-                            </div>
-                            <div class="col col-md-6">
-                                <input id="NEXT" type="button" value="Добавить" class="btn btn-success btn-block" />
-                            </div>
 
 
                         </div>
 
+
+
+
+
+                        <div id="WId" class="row col-md-6 col-md-offset-3">
+
+
+                            <label>Наименование</label>
+                            <select name="WorkWorkId" id="WorkWorkId" class="form-control"></select>
+
+                            <small class="form-text text-muted" style="text-align:right">Выберите вид работы из списка.</small>
+
+                        </div>
+
+                        <div id="WN" class="row col-md-6 col-md-offset-3">
+                            <div class="row">
+                                <div class="col-12">
+                                    <label>Количество</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-8">
+                                    @Html.EditorFor(model => model.WorkNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.WorkNumber, "", new { @class = "text-danger" })
+                                    <small id="AdressHelp" class="form-text text-muted" style="text-align:right">Введите количество: целое число или дробное. Пример: 7.32</small>
+                                </div>
+                                <div class="col-4">
+                                    <input name="Izmerenie" id="Izmerenie" class="form-control"></input>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div id="WD" class="row col-md-6 col-md-offset-3">
+
+
+                            <label>Дата выполнения</label>
+
+                            @Html.EditorFor(model => model.WorkDate, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.WorkDate, "", new { @class = "text-danger" })
+                            <small id="AdressHelp" class="form-text text-muted">Выберите дату выполнения работы из календаря.</small>
+
+                        </div>
+                        <div class="container  col-md-6 col-md-offset-3">
+                            <div class="row">
+
+                                <div class="col col-md-6">
+                                    @Html.ActionLink("Назад", "IndexMain", null, new { @class = "btn btn-success btn-block" })
+                                </div>
+                                <div class="col col-md-6">
+                                    <input id="NEXT" type="button" value="Добавить" class="btn btn-success btn-block" />
+                                </div>
+
+
+                            </div>
+
+                        </div>
+
+
                     </div>
+                    <div id="ALERT" class="col-md-6 col-md-offset-3">
 
-
+                    </div>
                 </div>
-
-            </div>
-            <div id="ALERT" class="row col-md-6 col-md-offset-3">
-
-            </div>
+            
+          
         </div>
     </center>
 }
@@ -142,12 +152,28 @@
     @Scripts.Render("~/scripts/validate.js")
     @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
     @Scripts.Render("~/scripts/jquery.unobtrusive.min.js")
+<script>
+    function OpenAll()
+    {
+        var WA = $("#WorkAdress").val();
+        if (WA != "Все адреса")
+        {
+            $("#WId").fadeIn();
+            $("#WIz").fadeIn();
+            $("#WN").fadeIn();
+            $("#WD").fadeIn();
+        }
+    }
+    </script>
 
     <script>
         $("#WId").hide();
         $("#WIz").hide();
         $("#WN").hide();
         $("#WD").hide();
+        $("#AD1").hide();
+        $("#AD2").hide();
+        $("#Arrow").hide();
        
     </script>
     <script>
@@ -165,7 +191,10 @@
                 for (var i = 0; i < data.length; i++) {
                 WA.append('<option value="'+data[i]+'">'+data[i]+'</option>');
                 }
-
+                $("#WId").fadeOut();
+                $("#WIz").fadeOut();
+                $("#WN").fadeOut();
+                $("#WD").fadeOut();
             });
         });
     </script>
@@ -196,9 +225,12 @@
                     $("#WD").fadeOut();
                
                 }
-                $("#ALERT").append('<div class="' + res[1] + '" role="alert">' + res[2] + '</div >');
-                $("#ALERT").fadeIn();
-                $("#ALERT").fadeOut(10000);
+                var Alert = $("#ALERT");
+
+                Alert.html('<div class="' + res[1] + '" role="alert">' + res[2] + '</div >');
+                Alert.fadeIn();
+                Alert.fadeOut(10000);
+              
 
 
             });
@@ -210,6 +242,22 @@
         $("#WorkAdress").change(function () {
             //$("#WG").fadeIn('fast', function () { });
             $("#WId").fadeIn('slow');
+            var WA = $("#WorkAdress").val();
+            if (WA == "Все адреса")
+            {
+                $("#WId").fadeOut('slow');
+                $("#Arrow").fadeOut('slow');
+                $("#WIz").fadeOut();
+                $("#WN").fadeOut();
+                $("#WD").fadeOut();
+            }
+            else
+            {
+                $("#WId").fadeIn('slow');
+                $("#Arrow").fadeIn('slow');
+          
+            }
+           
         });
     </script>
 
@@ -221,7 +269,7 @@
 
                 var WA = $("#WorkWorkId");
                 WA.empty();
-                $("#WId").fadeIn('slow');
+              
 
                 for (var i = 0; i < data.length; i++) {
                     var str = data[i];
@@ -237,7 +285,8 @@
                 WA.text(data2);
                 WA.val(data2);
                 WA.prop('readonly', true);
-
+                $("#AD1").fadeIn();
+                $("#AD2").fadeIn();
 
             });
             });

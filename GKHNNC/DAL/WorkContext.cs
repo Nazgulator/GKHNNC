@@ -132,6 +132,11 @@ namespace GKHNNC.DAL
         public System.Data.Entity.DbSet<GKHNNC.Models.BuildElement> BuildElements { get; set; }
 
         public System.Data.Entity.DbSet<GKHNNC.Models.Poligon> Poligons { get; set; }
+        public System.Data.Entity.DbSet<GKHNNC.Models.Marshrut> Marshruts { get; set; }
+        public DbSet<MarshrutsALL> MarshrutsAlls { get; set; }
+        public DbSet<ContainersType> ContainersTypes { get; set; }
+        public DbSet<MusorPloshadkaActive> MusorPloshadkaActives { get; set; }
+
 
         //protected override void OnModelCreating(DbModelBuilder modelBuilder)
 

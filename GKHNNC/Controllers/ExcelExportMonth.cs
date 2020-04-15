@@ -1,43 +1,22 @@
 ﻿using System;
+using System.Web;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using Excel = Microsoft.Office.Interop.Excel;
-using System.Collections;
-
-using System.IO;
-
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Net;
-//using DocumentFormat.OpenXml.Packaging;
-//using DocumentFormat.OpenXml.Wordprocessing;
-//using DocumentFormat.OpenXml.Packaging;
-//using DocumentFormat.OpenXml.Spreadsheet;
-using System.Text.RegularExpressions;
-using System.Threading;
-using GKHNNC.Models;
-using Microsoft.AspNet.Identity;
-using System.Web.Helpers;
-using Opredelenie;
-using System.Diagnostics;
 using GKHNNC.DAL;
-using System;
-using System.Collections.Generic;
+using GKHNNC.Models;
+using Opredelenie;
 using System.Data;
 using System.Data.Entity;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Web;
-using System.Web.Mvc;
-using GKHNNC.DAL;
-using GKHNNC.Models;
+using System.Drawing;
+using System.Diagnostics;
+using System.Web.UI;
+
+
+
 
 namespace GKHNNC.Controllers
 {
@@ -348,6 +327,94 @@ namespace GKHNNC.Controllers
             GC.WaitForPendingFinalizers();
 
         }
+
+
+
+        public static void StandartExport(List<string> Stolbci, List<List<string>> Stroki, List<string> Shapka, string path)
+        {
+
+            
+            Excel.Application ApExcel = new Excel.Application();
+            Excel.Workbooks WB = null;
+            WB = ApExcel.Workbooks;
+            Excel.Workbook WbExcel = ApExcel.Workbooks.Add(System.Reflection.Missing.Value);
+            Excel.Worksheet WS = WbExcel.Sheets[1];
+            Excel.Range range;//рэндж
+            ApExcel.Visible = false;//невидимо
+            ApExcel.ScreenUpdating = false;//и не обновляемо
+            int stroka = 1;
+            //шапка
+            for (int i=0;i<Shapka.Count;i++)
+            {
+                WS.Cells[stroka, 1] = Shapka[i];
+                range = WS.get_Range("A" + stroka.ToString(), Opr.OpredelenieBukvi(Stolbci.Count) + stroka.ToString());
+                range.Merge(Type.Missing);
+                range.Font.Bold = true;
+                range.Font.Size = 15;
+                range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                range.RowHeight = 25;
+                range.WrapText = true;
+                stroka++;
+            }
+            //заголовки
+            for (int i=0;i<Stolbci.Count;i++)
+            {
+                WS.Cells[stroka, i + 1] = Stolbci[i];
+            }
+            range = WS.get_Range("A" + stroka.ToString(), Opr.OpredelenieBukvi(Stolbci.Count) + stroka.ToString());
+            range.Font.Bold = true;
+            range.Font.Size = 13;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.RowHeight = 20;
+            range.WrapText = true;
+            int strokaOld = stroka;
+            stroka++;
+         
+          
+
+            //строки
+
+            for (int j = 0; j < Stroki.Count; j++)
+            {
+                for (int i = 0; i < Stroki[j].Count; i++)
+                {
+                    WS.Cells[stroka, i + 1] = Stroki[j][i];
+                }
+                stroka++;
+            }
+
+            range = WS.get_Range("A" + strokaOld.ToString(), Opr.OpredelenieBukvi(Stolbci.Count) + (stroka).ToString());
+            range.Font.Size = 13;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.RowHeight = 20;
+            range.Columns.AutoFit();
+            range.WrapText = true;
+            range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+
+
+            // Сохранение файла Excel.
+
+            WbExcel.SaveCopyAs(path);//сохраняем в папку
+
+            ApExcel.Visible = true;//видимо
+            ApExcel.ScreenUpdating = true;//обновляемо
+                                          // Закрытие книги.
+            WbExcel.Close(false, "", Type.Missing);
+            // Закрытие приложения Excel.
+            ApExcel.Quit();
+
+            Marshal.FinalReleaseComObject(WbExcel);
+            Marshal.FinalReleaseComObject(WB);
+            Marshal.FinalReleaseComObject(ApExcel);
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+
+        }
+
 
     }
     public class HouseToAkt

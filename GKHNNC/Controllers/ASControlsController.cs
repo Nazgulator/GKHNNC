@@ -9,6 +9,7 @@ using System.Web.Mvc;
 using GKHNNC.DAL;
 using GKHNNC.Models;
 using Opredelenie;
+using GKHNNC.Controllers;
 
 namespace GKHNNC.Controllers
 {
@@ -929,6 +930,50 @@ namespace GKHNNC.Controllers
         Avtomobil Avto = db.Avtomobils.Where(a => a.Id == AvtoId).First();
         Voditel Vod = db.Voditels.Where(a => a.Id == VoditelId).First();
         Zakazchik Zak = db.Zakazchiks.Where(a => a.Id == ZakazchikId).First();
+
+
+            //запускаем создание базовых маршрутов
+            List<MarshrutsALL> Base = null;
+            DateTime DD = D.AddDays(1);
+            int Day = Convert.ToInt16(DD.DayOfWeek)-1;
+           
+            
+            try
+            {
+                Base = db.MarshrutsAlls.Where(x => x.Date.Year == DD.Year && x.Date.Month == DD.Month && x.Date.Day == DD.Day).ToList();
+            }
+            catch
+            {
+            
+            }
+            if (Base==null||Base.Count==0)
+            {
+                Base = db.MarshrutsAlls.Where(x => x.Day == Day && x.Type.Equals("B")).ToList();
+                foreach (MarshrutsALL M in Base)
+                {
+                    M.Type = "A";
+                    M.Date = DD;
+                    db.MarshrutsAlls.Add(M);
+                    db.SaveChanges();
+                    string[] SS = M.MusorPloshadkas.Split(';');
+                    for(int i=0;i<SS.Length;i++)
+                    {
+                        MusorPloshadkaActive MA = new MusorPloshadkaActive();
+                        int id = Convert.ToInt32(SS[i]);
+                        MusorPloshadka MP = db.MusorPloshadkas.Where(x => x.Id == id).First();
+                        string[] K = MP.Kontainers.Split(';');
+                        string[] O = MP.Obiem.Split(';');
+                        MA.KontainersFact = Convert.ToInt32(K[i]);
+                        MA.ObiemFact = Convert.ToDecimal(O[i]);
+                        MA.MarshrutId = M.Id;
+                        MA.PloshadkaId = id;
+                        db.MusorPloshadkaActives.Add(MA);
+                        db.SaveChanges();
+                    }
+                }
+            }
+
+
             ASControl A = null;
             try
             {
@@ -951,6 +996,7 @@ namespace GKHNNC.Controllers
                         {
                             db.Entry(A).State = EntityState.Modified;
                             db.SaveChanges();
+                         
                         }
                         catch
                         {

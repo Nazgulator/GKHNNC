@@ -21,6 +21,7 @@ namespace GKHNNC.Controllers
         public ActionResult Index()
         {
             var osmotrs = db.Osmotrs.Where(x=>x.Sostoyanie==0).Include(o => o.Adres).Include(o => o.DOMCW).Include(o => o.DOMElectro).Include(o => o.DOMFasad).Include(o => o.DOMFundament).Include(o => o.DOMHW).Include(o => o.DOMOtoplenie).Include(o => o.DOMRoof).Include(o => o.DOMRoom).Include(o => o.DOMVodootvod);
+   
             return View(osmotrs.ToList());
         }
 
@@ -301,8 +302,20 @@ namespace GKHNNC.Controllers
             if (ElementId > 0 && DefectId > 0)//если данные не нулевые
             {
                 A.ElementId = ElementId;
+                try
+                {
+                    int z =db.ActiveDefects.Where(x => x.DefectId == DefectId && x.ElementId == ElementId&&x.OsmotrId==A.OsmotrId).Count();
+                    if (z > 0)
+                    {
+                        Data = "Ошибка;Такой дефект уже есть! Выберите другой тип дефекта.";
+                        return Json(Data);
+                    }
+                }
+                catch
+                {
 
-
+                }
+              
                 HttpCookie cookieReq = Request.Cookies[ElementId.ToString()];
                 // Проверить, удалось ли обнаружить cookie-набор с таким именем.
                 // Это хорошая мера предосторожности, потому что         
@@ -325,7 +338,7 @@ namespace GKHNNC.Controllers
                     db.SaveChanges();
                     Data = db.Defects.Where(x=>x.Id==A.DefectId).Select(y=>y.Def).First() + ";" + A.Sostoyanie + ";" + A.Opisanie + ";" + A.DefectId+";"+A.Id+";"+A.Photo1+";"+A.Photo2+";"+A.OsmotrId;
                 }
-                catch (Exception e) { Data = "Ошибка;сохранения;в;БД"; }
+                catch (Exception e) { Data = "Ошибка; Ошибка сохранения в базу данных. Обновите страницу и попробуйте повторить через минуту."; }
             }
             return Json(Data);//RedirectToAction("ViewActiveDefect",A);
         }
@@ -848,35 +861,55 @@ namespace GKHNNC.Controllers
                     Result.Date = date;
                     Build B = new Build();//сашкины данные
                     List<BuildElement> BE = new List<BuildElement>();
-              
+                    List<Build> Builds = new List<Build>();
+                    int test = 0;
                     try
                     {//пробуем грузануть данные по дому
-                        //Result.DOMCW = db.DOMCWs.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
-                        //Result.DOMHW = db.DOMHWs.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
-                        //Result.DOMElectro = db.DOMElectroes.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
-                        //Result.DOMFasad = db.DOMFasads.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
-                        //Result.DOMFundament = db.DOMFundaments.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).Include(x => x.Material).Include(x => x.Type).First();
 
-                        //Result.DOMOtoplenie = db.DOMOtoplenies.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
-                        //Result.DOMRoof = db.DOMRoofs.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
-                       // Result.DOMRoom = db.DOMRooms.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
-                        //Result.DOMVodootvod = db.DOMVodootvods.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
+                        Builds = db.Builds.ToList();
+                        foreach (Build b in Builds)
+                        {
+                            test++;
+                            try
+                            {
+                                b.Address = b.Address.ToUpper().Replace("Д.", "").Replace(",", "").Replace(" ", "").Replace("-","").Replace("БУЛЬВ.", "").Replace("ПРОСП.", "");
+                            }
+                            catch { }
+                        }
+                        Result.DOMCW = db.DOMCWs.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
+                        Result.DOMHW = db.DOMHWs.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
+                        Result.DOMElectro = db.DOMElectroes.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
+                        Result.DOMFasad = db.DOMFasads.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
+                        Result.DOMFundament = db.DOMFundaments.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).Include(x => x.Material).Include(x => x.Type).First();
+
+                        Result.DOMOtoplenie = db.DOMOtoplenies.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
+                        Result.DOMRoof = db.DOMRoofs.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
+                        Result.DOMRoom = db.DOMRooms.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
+                        Result.DOMVodootvod = db.DOMVodootvods.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
 
                         //Пробуем грузануть Сашкины поэлементные данные
-                       // B = db.Builds.Where(x => x.Address.Replace("д.", "").Replace(",", "").Replace(" ", "").Replace("БУЛЬВ.","").Equals(Result.Adres.Adress)).First();
+                        try
+                        {
+                            B = Builds.Where(x => x.Address.Equals(Result.Adres.Adress)).First();
+                            BE = db.BuildElements.Where(x => x.BuildId == B.Id).ToList();
+                            
+                        }
+                        catch (Exception e)
+                        {
 
-                         BE = db.BuildElements.Where(x => x.BuildId == B.Id).ToList();
+                        }
+                       
                         // BE=db.BuildElements.ToList();
                         //Тут сохранение материалов
 
-                       
-                        /* foreach (BuildElement El in BE)
+                       /*
+                         foreach (BuildElement El in BE)
                          {
                              El.Count = El.Count.Replace(" ", "").Replace("-","").Replace(".","").ToLower();
                             if (El.Count == "") { El.Count = "0"; }
                              try
                              {
-                                 decimal Z = Convert.ToDecimal(El.Count);
+                                    decimal Z = Convert.ToDecimal(El.Count);
                                  El.Count = Z.ToString();
                                  db.Entry(El).State = EntityState.Modified;
                                  db.SaveChanges();
@@ -901,8 +934,8 @@ namespace GKHNNC.Controllers
                             }
 
                          }
-                         */
-                         
+                        */
+
 
                         /*
                          foreach (BuildElement El in BE)
@@ -967,6 +1000,7 @@ namespace GKHNNC.Controllers
 
                          }
                          */
+                         
 
                         /*   //Совмещаем адреса и билдингс
                          *   List<Adres> Ad = db.Adres.ToList();
@@ -991,6 +1025,10 @@ namespace GKHNNC.Controllers
                     }
                     catch (Exception e)
                     {//если данных нет, значит проблема с загрузкой данных с ГИСЖКХ. Проверьте данные. 
+                        Console.WriteLine(test);
+                    }
+                    if (BE==null||BE.Count==0)
+                    {
                         error += "Нет данных дома из ГИСЖКХ! Проверьте данные или заполните с нуля. Созданы нулевые данные.";
                         Result.DOMCW = new DOMCW(); ;
                         Result.DOMHW = new DOMHW();
@@ -998,11 +1036,12 @@ namespace GKHNNC.Controllers
                         Result.DOMFasad = new DOMFasad();
                         Result.DOMFundament = new DOMFundament();
 
-                        Result.DOMOtoplenie =new DOMOtoplenie();
+                        Result.DOMOtoplenie = new DOMOtoplenie();
                         Result.DOMRoof = new DOMRoof();
                         Result.DOMRoom = new DOMRoom();
                         Result.DOMVodootvod = new DOMVodootvod();
                     }
+
                     Result.Sostoyanie = 0;
                     Result.Elements = new List<ActiveElement>();
 
@@ -1046,7 +1085,7 @@ namespace GKHNNC.Controllers
                                 
                                 
                             }
-                            catch
+                            catch (Exception e2)
                             {
                                 AE.ElementId = E.Id;
                                 AE.Element = db.Elements.Where(x => x.Id == E.Id).First();
@@ -1065,6 +1104,7 @@ namespace GKHNNC.Controllers
                                 try
                                 {
                                     AE.Defects = db.Defects.Where(x => x.ElementId == E.Id).ToList();
+                                    AE.Defects = AE.Defects.OrderBy(x => x.Def).ToList();
                                 }
                                 catch (Exception e)
                                 {
@@ -1072,8 +1112,9 @@ namespace GKHNNC.Controllers
                                 }
                                 try
                                 {
-
-                                    AE.ActiveDefects = db.ActiveDefects.Where(x => x.ElementId == E.Id && x.AdresId == id && x.Date == D).OrderByDescending(x => x.Date).Include(x => x.Defect).ToList();
+                                    
+                                    AE.ActiveDefects = db.ActiveDefects.Where(x => x.ElementId == E.Id && x.AdresId == id &&x.Date==D).OrderByDescending(x => x.Date).Include(x => x.Defect).ToList();
+                                   
                                 }
                                 catch (Exception e)
                                 {

@@ -691,6 +691,61 @@ namespace GKHNNC.Controllers
             return View(MainResult);
         }
 
+        public string SearchSVN(int Year, int Month)
+        {
+            string Result = "";
+            List<SVN> SVNKI = db.SVNs.Where(x => x.Date.Year == Year && x.Date.Month == Month).ToList();
+            for (int i = 1; i < 4; i++)
+            {
+                Result += db.TableServices.Where(x => x.Id == i).Select(x => x.Type).First() + "=" + db.SVNs.Where(x => x.ServiceId == i).Sum(x => x.Fact)+" ";
+            }
+            return Result;
+        }
+
+
+        public ActionResult SpecUpload(int Year =0,int Month=0)
+        {
+            if (Year==0)
+            {
+                HttpCookie cookieReq = Request.Cookies["SpecUpload"];
+                // Проверить, удалось ли обнаружить cookie-набор с таким именем.
+                // Это хорошая мера предосторожности, потому что         
+                // пользователь мог отключить поддержку cookie-наборов,         
+                // в случае чего cookie-набор не существует        
+                if (cookieReq != null)
+                {
+                    Year = Convert.ToInt32(cookieReq["Year"]);
+                    Month = Convert.ToInt32(cookieReq["Month"]);
+                }
+                if (Month == 0) { Month = DateTime.Now.AddMonths(-1).Month; }
+                if (Year == 0) { Year = DateTime.Now.AddMonths(-1).Year; }
+
+            }
+            else
+            {
+                HttpCookie cookie = new HttpCookie("SpecUpload");
+                // Установить значения в нем
+                cookie["Year"] = Year.ToString();
+                cookie["Month"] = Month.ToString();
+                // Добавить куки в ответ
+                Response.Cookies.Add(cookie);
+
+            }
+            List<SelectListItem> Months = Opr.IMonthZabit();
+            foreach (SelectListItem M in Months)
+            {
+                if (M.Value.Equals(Month.ToString()))
+                {
+                    M.Selected = true;
+                }
+            }
+            List<SelectListItem> Years = Opr.YearZabit();
+            ViewBag.Years = new SelectList(Years,"Value", "Text",Year);
+            ViewBag.Month = new SelectList(Months, "Value", "Value", Month);
+            ViewBag.SVN = SearchSVN(DateTime.Now.Year, DateTime.Now.Month);
+            return View();
+        }
+
         public decimal RubliVObiem(decimal number, decimal tarif, decimal NDS) //преобразует рубли в объём 
         {
             //(10-10/1.18*0.18)/тариф       (сумма - ндс)/тариф

@@ -7,7 +7,6 @@
     {
         <ul class="nav nav-pills nav-fill">
             <li>@Html.ActionLink("Главная", "Index", "Home", htmlAttributes: new { @class = "nav-link", @style = "color:white" })</li>
-            <li>@Html.ActionLink("Выполненные работы", "IndexMain", "CompleteWorks", htmlAttributes: new { @class = "nav-link", @style = "color:white" })</li>
 
         </ul>
     }
@@ -16,9 +15,6 @@
 
         <ul class="nav nav nav-pills nav-fill">
             <li >@Html.ActionLink("Главная", "Index", "Home", htmlAttributes: new { @class = "nav-link", @style = "color:white" })</li>
-            <li>@Html.ActionLink("Виды работ", "Index", "Works", htmlAttributes: new { @class = "nav-link", @style = "color:white" })</li>
-            <li>@Html.ActionLink("Адреса", "Index", "Adres", htmlAttributes: new { @class = "nav-link", @style = "color:white" })</li>
-            <li>@Html.ActionLink("Выполненные работы", "Index", "CompleteWorks", htmlAttributes: new { @class = "nav-link", @style = "color:white" })</li>
             @if (User.IsInRole("Администратор"))
             {
                 <li>@Html.ActionLink("Пользователи", "RolesAndUsers", "Manage", htmlAttributes: new { @class = "nav-link", @style = "color:white" })</li>}

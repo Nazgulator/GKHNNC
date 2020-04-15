@@ -1,0 +1,161 @@
+﻿@{ Layout = "~/Views/Shared/_Layout0.cshtml"; }
+
+<h3> Загрузка ведомостей для создания отчёта</h3>
+<div class="container">
+    <div class="table">
+        <div class="row">
+            <div class="col-6">
+                Выберите месяц
+                @Html.DropDownList("Month", (SelectList)ViewBag.Month, new { @class = "form-control", onchange = "MYChange()" })
+
+
+            </div>
+            <div class="col-6">
+                Выберите год
+                @Html.DropDownList("Year", (SelectList) ViewBag.Years, new { @class = "form-control", onchange = "MYChange()" })
+
+            </div>
+        </div>
+
+
+
+        <div class="row" style="margin-top:10px">
+            <div class="col-4">
+                <button class="btn btn-success btn-block " onclick="LoadSVN()">
+                    Загрузить сводную ведомость начислений &raquo;
+                </button>
+            </div>
+            <div class="col-4">
+                <form id="svn" name="svn" method="post" enctype="multipart/form-data">
+                    <input id="svnfile" type="file" class="form-control" accept=".xls,.xlsx" />
+                </form>
+                <label>Файл для загрузки</label>
+
+            </div>
+            <div class="col-4" style="text-align:left">
+                @ViewBag.SVN
+            </div>
+        </div>
+
+
+
+
+    </div>
+</div>
+
+@section Scripts
+    {
+
+    @Scripts.Render("~/scripts/jquery-3.4.1.min.js")
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+    @Scripts.Render("~/scripts/nprogress.min.js")
+    @Scripts.Render("~/scripts/jquery.signalR-2.4.0.min.js")
+    @Scripts.Render("~/signalr/hubs")
+
+    <script>
+        function MYChange() {
+            var Year = $("#Year").val();
+            var Month = $("#Month").val();
+            var fd = new FormData;
+            fd.append('Year', Year);
+            fd.append('Month', Month);
+            alert("Отправляю");
+            $.ajax({
+                url: '/Home/SpecUpload',
+                data: fd,
+                processData: false,
+                contentType: false,
+                type: 'POST',
+                success: function (data) {
+                    if (data != 0) {
+                        alert("Отправлено");
+                        window.location.replace('/Home/SpecUpload');
+
+                    }
+                    else {
+
+                    }
+
+                }
+            });
+        }
+    </script>
+    <script>
+        function LoadSVN() {
+            //Грузим СВН
+            var Year = $("#Year").val();
+            var Month = $("#Month").val();
+            //var Upload = $("#svn").prop('files')[0];
+            var data = new FormData();
+
+
+            var $input = $("#svnfile").prop('files')[0];
+            var fd = new FormData;
+
+            fd.append('upload', $input);
+            fd.append('Year', Year);
+            fd.append('Month', Month);
+            $.ajax({
+                url: '/SVNs/SpecUpload',
+                data: fd,
+                processData: false,
+                contentType: false,
+                type: 'POST',
+                success: function (data) {
+                    if (data != 0) {
+                        alert(data);
+                    }
+                    else {
+
+                    }
+
+                }
+            });
+
+
+
+
+
+        }
+
+    </script>
+
+
+
+    <script>
+        $(function () {
+            var PB = $.connection.progressHub;
+            console.log("Loading...");
+            PB.client.sendMessage = function (message, count) {
+                // update progress
+                console.log(count);
+                UpdateProgress(message, count);
+                //alert(message);
+            };
+
+            $.connection.hub.start().done(function () {
+                console.log("Приконнектились");
+                // call the method CallLongOperation defined in the Hub
+                PB.server.getCountAndMessage();
+                $("#progressBar").hide();
+            });
+
+
+            // Update the progress bar
+            function UpdateProgress(message, count) {
+                $("#progressBar").fadeIn("slow");
+                var result = $("#result");
+                if (count >= 98) { $("#progressBar").fadeOut("slow"); }
+                result.html(message);
+
+                //$("#progressBar").data("progressbar").value(count);
+
+                $("#progressBar").attr("aria-valuenow", count);
+                $("#progressBar").width(count + '%');
+                $("#progressBar").text(count + '%');
+                $("#nadpis").text(message);
+                // $("#progressBar").css("width", count);
+            }
+        });
+    </script>
+}

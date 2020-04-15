@@ -308,7 +308,7 @@ namespace GKHNNC.Controllers
                 if (!AV && !MO)
                 {
                     //если ничего не выбрано
-                    ezdkas = db.Ezdkas.Include(e => e.Avto).Include(t => t.Avto.Marka).Where(f => f.Date.Year == Year).OrderBy(c => c.Date).ToList();
+                    ezdkas = db.Ezdkas.Include(e => e.Avto).Include(t => t.Avto.Marka).Include(t => t.Avto.Glonass).Where(f => f.Date.Year == Year).OrderBy(c => c.Date).ToList();
                   
                 }
                
@@ -327,7 +327,18 @@ namespace GKHNNC.Controllers
                 }
 
                 ezdkas = db.Ezdkas.Include(e => e.Avto).Include(t => t.Avto.Marka).Where(f => f.Date.Year == Year && f.Date.Month == Month).OrderBy(c => c.AvtoId).ToList();
-                
+                foreach (Ezdka E in ezdkas)
+                {
+                    try
+                    {
+                        bool Glo = E.Avto.Glonass;
+                    }
+                    catch (Exception e)
+                    {
+
+                    }
+
+                }
             }
 
             //если выбран глонас то выводим только глонассовские машины
@@ -353,7 +364,7 @@ namespace GKHNNC.Controllers
                 decimal OstatokGloSS = 0;
                 int TochnostSS = 0;
                 List<List<string>> ExportExcelMain = new List<List<string>>();
-                ezdkas = ezdkas.Where(x => x.Avto.Glonass == true).ToList();
+                ezdkas = ezdkas.Where(x => x.Avto.Glonass!=null&&x.Avto.Glonass == true).ToList();
 
                 //если выбраны все авто то делаем список на каждую тачку
               
@@ -722,7 +733,14 @@ namespace GKHNNC.Controllers
                             AutoScan AS = ASAvto.Where(d => d.Date.Day == F).First();
                              bool KMOT = false;
 
-                                KMOT = db.Avtomobils.Where(g => g.Number.Equals(AS.Name)).Include(p => p.Marka.KmMoto).Select(f => f.Marka.KmMoto).First();
+                            try
+                            {
+                                KMOT = db.Avtomobils.Where(g => g.Number.Equals(AS.Name)).Include(p => p.Marka).Select(f => f.Marka.KmMoto).First();
+                            }
+                            catch
+                            {
+
+                            }
                             int prob = 0;
                             if (KMOT)
                             {

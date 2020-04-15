@@ -58,6 +58,9 @@ namespace GKHNNC.Models
         [Display(Name = "АвтоID")]
         public int AvtoId { get; set; }
 
+        [Display(Name = "Полигон")]
+        public int Poligon { get; set; }
+
 
     }
 }

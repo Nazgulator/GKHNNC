@@ -23,12 +23,22 @@ namespace GKHNNC.Models
         public string Kontainers { get; set; }
         [Display(Name = "ID площадки")]
         public string IDPloshadki { get; set; }
+        [Display(Name = "ID новый")]
+        public string IDNew { get; set; }
+        [Display(Name = "График вывоза")]
+        public string GrafikVivoza { get; set; }
         [Display(Name = "Наименование ЮЛ")]
         public string NameUL { get; set; }
         [Display(Name = "Юр лицо или МКД?")]
         public string UL { get; set; }
         [Display(Name = "ТКО или КГО?")]
         public bool TKO { get; set; }
+        [Display(Name = "Тип")]
+        public decimal ObiemContainera { get; set; }
+        [Display(Name = "Тип")]
+        public int TypeId { get; set; }
+        [Display(Name = "Тип")]
+        public ContainersType Type { get; set; }
 
         //только для вива
         [Display(Name = "Все улицы")]
@@ -39,5 +49,11 @@ namespace GKHNNC.Models
         public decimal[] Obiem7 = new decimal[7];
         [Display(Name = "Контэйнеры по дням недели")]
         public int[] Kontainers7 = new int[7];
+        [Display(Name = "Имя временное")]
+        public string TimeName = "";
+        [Display(Name = "Активная площадка")]
+        public MusorPloshadkaActive MPA = new MusorPloshadkaActive();
+
+
     }
 }

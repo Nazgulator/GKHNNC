@@ -50,7 +50,7 @@
 
 
 
-    <table id="Table" class="table table-bordered table-striped">
+    <table id="tableData" class="table table-bordered table-striped">
         <tr>
             <th>
 
@@ -105,92 +105,80 @@
         @for (int j = 0; j < ViewBag.Adresa.Count; j++)
         {
             string[] S = ViewBag.VV[0][j].Split(';');
-           
-        <tr>
-            <td>
-                @ViewBag.Adresa[j]
-            </td>
-            <td>
-                <input type="checkbox" class="form-control" id="SelectAll" style="width:15px;height:15px" checked=@Convert.ToBoolean(S[3])>
-            </td>
-            @for (int m = 0; m < ViewBag.Months.Count; m++)
-            {
-                string[] SS = ViewBag.VV[m][j].Split(';');
-               
 
+            <tr>
                 <td>
-                    @SS[0]
+                    @ViewBag.Adresa[j]
                 </td>
-                <td >
-                    @SS[1]
+                <td>
+                    <input type="checkbox" class="form-control" id="SelectAll" style="width:15px;height:15px" value="@Convert.ToBoolean(S[3])" checked=@Convert.ToBoolean(S[3])>
                 </td>
-                <td >
-                    @SS[2]
-                </td>
+                @for (int m = 0; m < ViewBag.Months.Count; m++)
+                {
+                    string[] SS = ViewBag.VV[m][j].Split(';');
 
-            }
-            @{
-                string clFact = "";
-                string clPlan = "";
-                if (Convert.ToDecimal(@ViewBag.SummUev[j]) <= Convert.ToDecimal(@ViewBag.SummPlan[j]) - 1000) { clPlan = "bg-success"; } else { clPlan = "bg-danger"; }
-                if (Convert.ToDecimal(@ViewBag.SummUev[j]) <= Convert.ToDecimal(@ViewBag.SummFact[j]) - 1000) { clFact = "bg-success"; } else { clFact = "bg-danger"; }
-            }
-            <td>
-                @ViewBag.SummUev[j]
-            </td>
-            <td class="@clPlan">
-                @ViewBag.SummPlan[j]
-            </td>
-            <td class="@clFact">
-                @ViewBag.SummFact[j]
-            </td>
-        </tr>
+
+                    <td>
+                        @SS[0]
+                    </td>
+                    <td>
+                        @SS[1]
+                    </td>
+                    <td>
+                        @SS[2]
+                    </td>
+
+                }
+                @{
+                    string clFact = "";
+                    string clPlan = "";
+                    if (Convert.ToDecimal(@ViewBag.SummUev[j]) <= Convert.ToDecimal(@ViewBag.SummPlan[j]) - 1000) { clPlan = "bg-success"; } else { clPlan = "bg-danger"; }
+                    if (Convert.ToDecimal(@ViewBag.SummUev[j]) <= Convert.ToDecimal(@ViewBag.SummFact[j]) - 1000) { clFact = "bg-success"; } else { clFact = "bg-danger"; }
+                }
+                <td>
+                    @ViewBag.SummUev[j]
+                </td>
+                <td class="@clPlan">
+                    @ViewBag.SummPlan[j]
+                </td>
+                <td class="@clFact">
+                    @ViewBag.SummFact[j]
+                </td>
+            </tr>
         }
-      
+
 
     </table>
     <p><a href="/Home/VODAIndex" class="btn btn-success btn-block"> Назад </a> </p>
-    <p><button tag ="ToExcel" class="btn btn-success btn-block">Экспорт в эксель &raquo;</button> </p>
+    <p><button tag="ToExcel" class="btn btn-success btn-block" onclick="Export()">Экспорт в эксель &raquo;</button> </p>
 </body>
 </html>
 @section Scripts {
     @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
-    @Scripts.Render("~/scripts/jquery-3.3.1.js")
-  
+
+    @Scripts.Render("/scripts/ExportToExcel/excelexportjs.js")
+
     <script>
-        //Нажатие на кнопку "input[type='submit']"
-        $("button[tag='ToExcel']").click(function () {
+        function Export() {
+            var images = $("img");
+            for (var i = 0; i < images.length; i++) {
+                var Alt = images[i].getAttribute("alt");
+                images[i].replaceWith(Alt);
 
+            };
 
-           
-           
-
-
-
-                var S = "";
-                var array = [];
-                var table = $("#Table");
-                var rows = table.children();
-                for (var i = 0; i < rows.length; i++) {
-                    var fields = rows.eq(i).children();
-                    var rowArray = [];
-                    for (var j = 0; j < fields.length; j++) {
-                        rowArray.push(fields[j].innerHTML);
-                        S += fields[j].innerHTML + ";";
-                    }
-
-                    array.push(rowArray);
-                    S += ";";
-                }
-                var T = table.html().replace("</tr>", "|").replace("<tr>", "").replace("<td>", "").replace("</td>", ";").replace(" ", "");
-
-                console.log(array);
-
-                $.post('@Url.Action("ExportToExcelJquery", "Home")', { selection: array }, function (data) {
-
-                    window.location.href = data;
-                });
-
+            var inputs = $("input");
+            for (var i = 0; i < inputs.length; i++) {
+                var Inp = inputs[i].value;
+                inputs[i].replaceWith(Inp);
+            }
+            $("#tableData").excelexportjs({
+                containerid: "tableData",
+                datatype: 'table'
             });
+           
+        };
     </script>
+
+   
 }

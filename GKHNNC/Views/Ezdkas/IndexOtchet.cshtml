@@ -134,7 +134,7 @@
             }
             inf += "Автомобиль " + s[0] + " " + s[1] + " за " + ViewBag.Month + " " + ViewBag.Year + " совершил " + s[18] + " ездок, " + s[20] + " заправок." + NE;
 
-            string clRashod = ""; if (s[7].Equals(s[15]) == false) { clRashod = "bg-danger"; }
+            string clRashod = ""; if (s[7].Equals(s[15]) == false) { clRashod = "table-danger"; }
             string[] NetEzdok = s[31].Split('|');
             string[] NetEzdokLiters = s[32].Split('|');
             string NEtit = "";
@@ -164,7 +164,7 @@
             string clProbeg = "";
             if (ASNEtit.Equals("") == false)
             {
-                clProbeg = "bg-danger"; //пробег не совпал
+                clProbeg = "table-danger"; //пробег не совпал
             }
 
             string[] ASNetEzdokDUT = s[35].Split('|');
@@ -198,24 +198,24 @@
             string clDUT = "";
             if (ASNEDUTtit.Equals("") == false)
             {
-                clDUT = "bg-danger"; //пробег не совпал
+                clDUT = "table-danger"; //пробег не совпал
             }
             string[] SlivkiDays = s[39].Split('|');//сливы на авто
             string[] Slivki = s[40].Split('|');
 
-            string clDut = ""; if (s[8].Equals(s[13]) == false) { clDut = "bg-danger"; inf += ("Потрачено на" + Convert.ToString(Convert.ToInt32(s[13].Replace("л.", "")) - Convert.ToInt32(s[8].Replace("л.", ""))) + " л. топлива больше, чем в дни ездок по ДУТ. Очевидно автомобиль работал на территории или возможен слив топлива. "); }
-            string clAZS = ""; if (s[9].Equals(s[16]) == false) { clAZS = "bg-danger"; inf += ("Сумма заправок игнорируя ездки у данного автомобиля составила " + s[16] + "! Как минимум автомобиль выезжал за территорию предприятия и находился на Бердском Шоссе 500 заправка 'ЭНЕРГИЯ' без оформления ездки (ездок). Зафиксированные даты заправок:" + NEtit); }
-            string clOstatok = ""; if (Convert.ToInt16(s[25].Replace("л.", "")) > 50) { clOstatok = "bg-danger"; inf += ("На конец месяца в баке автомобиля должно остаться не менее " + s[25] + " топлива (по данным одометра, норм на ездки и учёта заправок)"); }
-            if (Convert.ToInt16(s[25].Replace("л.", "")) < -10) { clOstatok = "bg-success"; inf += ("В баке автомобиля почти не осталось топлива! Его расход составил " + s[25] + " за месяц (по данным одометра, норм на ездки и учёта заправок)."); }
+            string clDut = ""; if (s[8].Equals(s[13]) == false) { clDut = "table-danger"; inf += ("Потрачено на" + Convert.ToString(Convert.ToInt32(s[13].Replace("л.", "")) - Convert.ToInt32(s[8].Replace("л.", ""))) + " л. топлива больше, чем в дни ездок по ДУТ. Очевидно автомобиль работал на территории или возможен слив топлива. "); }
+            string clAZS = ""; if (s[9].Equals(s[16]) == false) { clAZS = "table-danger"; inf += ("Сумма заправок игнорируя ездки у данного автомобиля составила " + s[16] + "! Как минимум автомобиль выезжал за территорию предприятия и находился на Бердском Шоссе 500 заправка 'ЭНЕРГИЯ' без оформления ездки (ездок). Зафиксированные даты заправок:" + NEtit); }
+            string clOstatok = ""; if (Convert.ToInt16(s[25].Replace("л.", "")) > 50) { clOstatok = "table-danger"; inf += ("На конец месяца в баке автомобиля должно остаться не менее " + s[25] + " топлива (по данным одометра, норм на ездки и учёта заправок)"); }
+            if (Convert.ToInt16(s[25].Replace("л.", "")) < -10) { clOstatok = "table-success"; inf += ("В баке автомобиля почти не осталось топлива! Его расход составил " + s[25] + " за месяц (по данным одометра, норм на ездки и учёта заправок)."); }
             string clMin1 = "";
             string clMin2 = "";
             string clMin3 = "";
-            if (s[28].Equals("1")) { clMin1 = "bg-success"; }
-            if (s[28].Equals("2")) { clMin2 = "bg-success"; }
-            if (s[28].Equals("3")) { clMin3 = "bg-success"; }
+            if (s[28].Equals("1")) { clMin1 = "table-success"; }
+            if (s[28].Equals("2")) { clMin2 = "table-success"; }
+            if (s[28].Equals("3")) { clMin3 = "table-success"; }
             string clTochnost = "";
-            if (Convert.ToInt16(s[27].Replace("%", "")) < 90) { clTochnost = "bg-warning"; }
-            if (Convert.ToInt16(s[27].Replace("%", "")) < 70) { clTochnost = "bg-danger"; }
+            if (Convert.ToInt16(s[27].Replace("%", "")) < 90) { clTochnost = "table-warning"; }
+            if (Convert.ToInt16(s[27].Replace("%", "")) < 70) { clTochnost = "table-danger"; }
             Info.Add(inf);
             //1Наименование
             //2Пробег по одометру
@@ -318,12 +318,12 @@
                                     {
                                         string[] sss = ss[D].Split(';');
                                         string cl1 = "";
-                                        if (sss[11].Equals("1")) { cl1 = "bg-danger"; }
+                                        if (sss[11].Equals("1")) { cl1 = "table-danger"; }
                                         string cl2 = "";
-                                        if (sss[12].Equals("1")) { cl2 = "bg-danger"; }
+                                        if (sss[12].Equals("1")) { cl2 = "table-danger"; }
                                         string RaznicaZapravok = "Недолив:" + (Convert.ToDecimal(sss[6].Replace("л.", "")) - Convert.ToDecimal(sss[17].Replace("л.", ""))).ToString() + "л.";
-                                        string clSliv = ""; if (sss[18].Equals("0.00л.") == false) { clSliv = "bg-danger"; }
-                                        string clNight = ""; if (Convert.ToDecimal(sss[19].Replace("л.", "")) > 2) { clNight = "bg-danger"; }
+                                        string clSliv = ""; if (sss[18].Equals("0.00л.") == false) { clSliv = "table-danger"; }
+                                        string clNight = ""; if (Convert.ToDecimal(sss[19].Replace("л.", "")) > 2) { clNight = "table-danger"; }
                                 <tr>
                                     <td>@sss[9]</td>
                                     <td class="@cl1">@sss[0]</td>
@@ -351,7 +351,7 @@
                                     if (ASNetEzdok.Length > 0 && ASNetEzdok[0] != "")
                                     {
                                         <tr>
-                                            <td colspan="16" style="text-align:center" class="bg-danger">
+                                            <td colspan="16" style="text-align:center" class="table-danger">
                                                 Зафиксированы пробеги по Глонасс без оформления выездов:
                                             </td>
                                         </tr>
@@ -397,7 +397,7 @@
                                     if (NetEzdok.Length > 0 && NetEzdok[0] != "")
                                     {
                                         <tr>
-                                            <td colspan="16" style="text-align:center" class="bg-danger">
+                                            <td colspan="16" style="text-align:center" class="table-danger">
                                                 Зафиксированы заправки без оформления выездов:
                                             </td>
                                         </tr>
@@ -442,7 +442,7 @@
                                     if (ASNetEzdokDUT.Length > 0 && ASNetEzdokDUT[0] != "")
                                     {
                                         <tr>
-                                            <td colspan="16" style="text-align:center" class="bg-danger">
+                                            <td colspan="16" style="text-align:center" class="table-danger">
                                                 Зафиксированы расходы по ДУТ без оформления выездов:
                                             </td>
                                         </tr>
@@ -487,7 +487,7 @@
                                     if (SlivkiDays.Length > 0 && SlivkiDays[0] != "")
                                     {
                                         <tr>
-                                            <td colspan="16" style="text-align:center" class="bg-danger">
+                                            <td colspan="16" style="text-align:center" class="table-danger">
                                                 Зафиксированые сливы топлива:
                                             </td>
                                         </tr>
@@ -530,7 +530,7 @@
                                         }
                                     }
                                     <tr>
-                                        <td colspan="16" style="text-align:center" class="bg-danger">
+                                        <td colspan="16" style="text-align:center" class="table-danger">
 
                                             @{ string nedotext = "Недолив топлива за месяц составил:";
                                                 if (s[44].Contains("-")) { nedotext = "Перелив топлива за месяц составил:"; s[44].Replace("-", ""); }
@@ -665,13 +665,13 @@
 
             string[] s = ViewBag.AvtoOtchet[j].Split(';');
 
-            string clOstatok = ""; if (Convert.ToInt16(s[25].Replace("л.", "")) > 50) { clOstatok = "bg-danger"; }
-            if (Convert.ToInt16(s[25].Replace("л.", "")) < 0) { clOstatok = "bg-success"; }
-            string clOstatokGlo = ""; if (Convert.ToInt16(s[30].Replace("л.", "")) > 50) { clOstatokGlo = "bg-danger"; }
-            if (Convert.ToInt16(s[30].Replace("л.", "")) < 0) { clOstatokGlo = "bg-success"; }
+            string clOstatok = ""; if (Convert.ToInt16(s[25].Replace("л.", "")) > 50) { clOstatok = "table-danger"; }
+            if (Convert.ToInt16(s[25].Replace("л.", "")) < 0) { clOstatok = "table-success"; }
+            string clOstatokGlo = ""; if (Convert.ToInt16(s[30].Replace("л.", "")) > 50) { clOstatokGlo = "table-danger"; }
+            if (Convert.ToInt16(s[30].Replace("л.", "")) < 0) { clOstatokGlo = "table-success"; }
             string clTochnost = "";
-            if (Convert.ToInt16(s[27].Replace("%", "")) < 90) { clTochnost = "bg-warning"; }
-            if (Convert.ToInt16(s[27].Replace("%", "")) < 70) { clTochnost = "bg-danger"; }
+            if (Convert.ToInt16(s[27].Replace("%", "")) < 90) { clTochnost = "table-warning"; }
+            if (Convert.ToInt16(s[27].Replace("%", "")) < 70) { clTochnost = "table-danger"; }
             Info.Add(" ");
             //1Наименование
             //2Пробег по одометру
@@ -784,8 +784,8 @@
             string[] s = ViewBag.AvtoOtchet[j].Split(';');
 
             string clTochnost = "";
-            if (Convert.ToInt16(s[27].Replace("%", "")) < 90) { clTochnost = "bg-warning"; }
-            if (Convert.ToInt16(s[27].Replace("%", "")) < 70) { clTochnost = "bg-danger"; }
+            if (Convert.ToInt16(s[27].Replace("%", "")) < 90) { clTochnost = "table-warning"; }
+            if (Convert.ToInt16(s[27].Replace("%", "")) < 70) { clTochnost = "table-danger"; }
             //1Наименование
             //2Пробег по одометру
             //3Пробег по Глонасс

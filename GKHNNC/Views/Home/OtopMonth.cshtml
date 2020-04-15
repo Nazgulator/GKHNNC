@@ -17,7 +17,7 @@
 </head>
 <body>
     <h5>Загруженные данные:</h5>
-    <div class="container" >
+    <div class="container">
         <div class="row">
             <div class="col-md-4">
                 @if (ViewBag.SVN)
@@ -115,91 +115,91 @@
 
             </tr>
         </table>
-       
-    </div>
-        <div class="table-responsive">
-            <table id="Table" class="table table-bordered table-striped ">
-               
-                <tbody>
-                    @foreach (var item in Model)
-                    {
-                        string cl1 = "table-warning"; string cl2 = "table-warning"; string cl3 = ""; string cl4 = ""; string cl5 = ""; string cl6 = ""; string cl7 = ""; string cl8 = "";
-                        string prim = "";string op1 = "";string op2 = ""; string op3 = ""; string op4 = "";
-                        if (item.RaznFact < 0)
-                        {
-                            cl1 = "table-success";
-                        }
-                        if (item.RaznFact == 0)
-                        {
-                            cl1 = "";
-                        }
-                        if (item.RaznFact > 1000)
-                        {
-                            cl1 = "table-danger";
-                        }
-                        if (item.RaznPlan < 0)
-                        {
-                            cl2 = "table-success";
-                        }
-                        if (item.RaznPlan == 0)
-                        {
-                            cl2 = "";
-                        }
-                        if (item.RaznPlan > 1000)
-                        {
-                            cl2 = "table-danger";
-                        }
-                        if (item.Uev == 0 && (item.Plan + item.Fact != 0))
-                        {
-                            cl3 = "table-warning";
-                        }
-                        if (item.VFact < item.GVUEVM3 - 1)
-                        {
-                            cl4 = "table-warning";
-                        }
-                        if (item.VFact < item.GVUEVM3 - 5)
-                        {
-                            cl4 = "table-danger";
-                        }
 
-                        if (item.VFact == 0 && item.PU == false && item.GVUEVM3 != 0)
-                        {
-                            cl4 = "table-info"; prim = "Нет ПУ";
-                        }
-                        if (item.VFact - 3 > item.GVUEVM3)
-                        {
-                            cl5 = "table-success";
-                        }
-                        if (item.Primech.Contains("*") || item.Primech.Contains("о"))
-                        {
-                            cl5 = "table-info"; prim = "Ремонт"; cl4 = "table-info";
-                        }
-                        else { cl5 = cl4; }
-                        if (item.Srednyaya < item.GVUEVM3 - 5)
-                        {
-                            cl7 = "table-success";
-                            op1 = "Средняя за отопительный сезон прошлого года меньше, чем в этом месяце на " + Math.Round(item.GVUEVM3 - item.Srednyaya,0).ToString() + " Гкал";
-                            op2 = "Выставленная сумма УЭВ за отопительный сезон прошлого года меньше, чем в этом месяце на " + Math.Round(item.Uev - item.SrednyayaRub,0).ToString() + " Руб";
-                        }
-                        if (item.Srednyaya > item.GVUEVM3 + 5)
-                        {
-                            cl7 = "table-danger";
-                            op1 = "Средняя за отопительный сезон прошлого года больше, чем в этом месяце на " + Math.Round(item.Srednyaya- item.GVUEVM3,0).ToString() + " Гкал";
-                            op2 = "Выставленная сумма УЭВ за отопительный сезон прошлого года больше, чем в этом месяце на " + Math.Round(item.SrednyayaRub- item.Uev,0).ToString() + " Руб";
-                        }
-                        if (item.LastYear < item.GVUEVM3 - 5)
-                        {
-                            cl8 = "table-success";
-                            op3 = "Объём за аналогичный период прошлого года меньше, чем в этом месяце на " + Math.Round(item.GVUEVM3 - item.LastYear,0).ToString() + " Гкал";
-                            op4 = "Выставленная сумма УЭВ за за аналогичный период прошлого года меньше, чем в этом месяце на " + Math.Round(item.Uev - item.LastYearRub,0).ToString() + " Руб";
-                        }
-                        if (item.LastYear > item.GVUEVM3 + 5)
-                        {
-                            cl8 = "table-danger";
-                            op3 = "Объём за аналогичный период прошлого года больше, чем в этом месяце на " + Math.Round(item.LastYear - item.GVUEVM3,0).ToString() + " Гкал";
-                            op4 = "Выставленная сумма УЭВ за за аналогичный период прошлого года больше, чем в этом месяце на " + Math.Round(item.LastYearRub - item.Uev,0).ToString() + " Руб";
-                        }
-                        string tit = Convert.ToString(item.VFact - item.GVUEVM3);
+    </div>
+    <div class="table-responsive">
+        <table id="tableData" class="table table-bordered table-striped ">
+
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    string cl1 = "table-warning"; string cl2 = "table-warning"; string cl3 = ""; string cl4 = ""; string cl5 = ""; string cl6 = ""; string cl7 = ""; string cl8 = "";
+                    string prim = ""; string op1 = ""; string op2 = ""; string op3 = ""; string op4 = "";
+                    if (item.RaznFact < 0)
+                    {
+                        cl1 = "table-success";
+                    }
+                    if (item.RaznFact == 0)
+                    {
+                        cl1 = "";
+                    }
+                    if (item.RaznFact > 1000)
+                    {
+                        cl1 = "table-danger";
+                    }
+                    if (item.RaznPlan < 0)
+                    {
+                        cl2 = "table-success";
+                    }
+                    if (item.RaznPlan == 0)
+                    {
+                        cl2 = "";
+                    }
+                    if (item.RaznPlan > 1000)
+                    {
+                        cl2 = "table-danger";
+                    }
+                    if (item.Uev == 0 && (item.Plan + item.Fact != 0))
+                    {
+                        cl3 = "table-warning";
+                    }
+                    if (item.VFact < item.GVUEVM3 - 1)
+                    {
+                        cl4 = "table-warning";
+                    }
+                    if (item.VFact < item.GVUEVM3 - 5)
+                    {
+                        cl4 = "table-danger";
+                    }
+
+                    if (item.VFact == 0 && item.PU == false && item.GVUEVM3 != 0)
+                    {
+                        cl4 = "table-info"; prim = "Нет ПУ";
+                    }
+                    if (item.VFact - 3 > item.GVUEVM3)
+                    {
+                        cl5 = "table-success";
+                    }
+                    if (item.Primech.Contains("*") || item.Primech.Contains("о"))
+                    {
+                        cl5 = "table-info"; prim = "Ремонт"; cl4 = "table-info";
+                    }
+                    else { cl5 = cl4; }
+                    if (item.Srednyaya < item.GVUEVM3 - 5)
+                    {
+                        cl7 = "table-success";
+                        op1 = "Средняя за отопительный сезон прошлого года меньше, чем в этом месяце на " + Math.Round(item.GVUEVM3 - item.Srednyaya, 0).ToString() + " Гкал";
+                        op2 = "Выставленная сумма УЭВ за отопительный сезон прошлого года меньше, чем в этом месяце на " + Math.Round(item.Uev - item.SrednyayaRub, 0).ToString() + " Руб";
+                    }
+                    if (item.Srednyaya > item.GVUEVM3 + 5)
+                    {
+                        cl7 = "table-danger";
+                        op1 = "Средняя за отопительный сезон прошлого года больше, чем в этом месяце на " + Math.Round(item.Srednyaya - item.GVUEVM3, 0).ToString() + " Гкал";
+                        op2 = "Выставленная сумма УЭВ за отопительный сезон прошлого года больше, чем в этом месяце на " + Math.Round(item.SrednyayaRub - item.Uev, 0).ToString() + " Руб";
+                    }
+                    if (item.LastYear < item.GVUEVM3 - 5)
+                    {
+                        cl8 = "table-success";
+                        op3 = "Объём за аналогичный период прошлого года меньше, чем в этом месяце на " + Math.Round(item.GVUEVM3 - item.LastYear, 0).ToString() + " Гкал";
+                        op4 = "Выставленная сумма УЭВ за за аналогичный период прошлого года меньше, чем в этом месяце на " + Math.Round(item.Uev - item.LastYearRub, 0).ToString() + " Руб";
+                    }
+                    if (item.LastYear > item.GVUEVM3 + 5)
+                    {
+                        cl8 = "table-danger";
+                        op3 = "Объём за аналогичный период прошлого года больше, чем в этом месяце на " + Math.Round(item.LastYear - item.GVUEVM3, 0).ToString() + " Гкал";
+                        op4 = "Выставленная сумма УЭВ за за аналогичный период прошлого года больше, чем в этом месяце на " + Math.Round(item.LastYearRub - item.Uev, 0).ToString() + " Руб";
+                    }
+                    string tit = Convert.ToString(item.VFact - item.GVUEVM3);
 
 
 
@@ -251,32 +251,48 @@
                     </tr>
 
 
-                    }
-                </tbody>
-            </table>
-        </div>
-        <p><a href="/Home/VODAIndex" class="btn btn-success btn-block"> Назад </a> </p>
-        <p><button tag="ToExcel" class="btn btn-success btn-block">Экспорт в эксель &raquo;</button> </p>
+                }
+            </tbody>
+        </table>
+    </div>
+    <p><a href="/Home/VODAIndex" class="btn btn-success btn-block"> Назад </a> </p>
+    <p><button tag="ToExcel" class="btn btn-success btn-block" onclick="Export()">Экспорт в эксель &raquo;</button> </p>
 </body>
 </html>
 @section Scripts {
     @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
-    @Scripts.Render("~/scripts/jquery-3.3.1.js")
+
     @Scripts.Render("~/scripts/bootstrap.min.js")
     @Scripts.Render("~/scripts/bootstrap.bundle.min.js")
+    @Scripts.Render("/scripts/ExportToExcel/excelexportjs.js")
+
+    <script>
+        function Export() {
+            var images = $("img");
+            for (var i = 0; i < images.length; i++) {
+                var Alt = images[i].getAttribute("alt");
+                images[i].replaceWith(Alt);
+
+            };
+
+            var inputs = $("input");
+            for (var i = 0; i < inputs.length; i++) {
+                var Inp = inputs[i].value;
+                inputs[i].replaceWith(Inp);
+            }
+            $("#tableData").excelexportjs({
+                containerid: "tableData",
+                datatype: 'table'
+            });
+
+        };
+    </script>
     <script>
         //Нажатие на кнопку "input[type='submit']"
-        $("button[tag='ToExcel']").click(function () {
-
-
-
-
-
-
-
+        function ExportTwo()  {
                 var S = "";
                 var array = [];
-                var table = $("#Table");
+                var table = $("#tableData");
                 var rows = table.children();
                 for (var i = 0; i < rows.length; i++) {
                     var fields = rows.eq(i).children();
@@ -298,10 +314,10 @@
                     window.location.href = data;
                 });
 
-            });
+        };
     </script>
 
-   
+
 
 
 }

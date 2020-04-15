@@ -48,14 +48,13 @@
         {
 
             <div class="alert-success">
-                <p>Сейчас работает тестовый режим системы ОСМОТРЫ.</p>
-                <p> Плановая дата начала работы системы ОСМОТРЫ перенесена на 20.02.2020. </p>
-                <p>Сейчас вы можете вносить любые изменения в системе ОСМОТРЫ.</p>
-                <p> 20.02.2020 в 10:00 все созданные осмотры НА ЭТОМ САЙТЕ будут удалены и система ОСМОТРЫ перейдёт в рабочий режим.</p>
+                <p>Ура! ОСМОТРЫ активны и готовы к заполнению! </p>
+                <p>10.03.2020 фоициально запущены весенние осмотры! </p>
+                <p>Вы можете начинать их заполнять! </p>
                 <p>Все вопросы по работе программы вы можете задать в отдел начислений. </p>
             </div>
 
-            if (User.Identity.Name.Contains("БухгалтерПоТопливу") == false && User.Identity.Name.Contains("УАТ") == false && User.Identity.Name.Contains("УЭВ") == false)
+            if (User.Identity.Name.Contains("БухгалтерПоТопливу") == false && User.Identity.Name.Contains("УАТ") == false && User.Identity.Name.Contains("УЭВ") == false && User.Identity.Name.Contains("Асанова") == false)
             {
                 <div class="media col-md-4 col-md-offset-4">
                     <div class="media-left">
@@ -290,7 +289,8 @@
                 </p>
 
             }
-            if (User.Identity.Name.Contains("БухгалтерПоТопливу") || User.IsInRole("Администратор"))
+
+            if (User.Identity.Name.Contains("Асанова") || User.Identity.Name.Contains("БухгалтерПоТопливу") || User.IsInRole("Администратор"))
             {
                 <div class="media col-md-4 col-md-offset-4">
                     <div class="media-left">
@@ -333,11 +333,7 @@
                     </button>
                 </p>
 
-                <p>
-                    <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("IndexMain", "Ezdkas")'">
-                        <i class="glyphicon glyphicon-duplicate"></i> Отчёты по ездкам &raquo;
-                    </button>
-                </p>
+
 
 
             }
@@ -438,16 +434,48 @@
             }
 
         }
-        if (User.Identity.Name.Contains("Логист") || User.IsInRole("Администратор"))
+
+        if (User.Identity.Name.Contains("Логист") || User.IsInRole("Администратор") || User.Identity.Name.Contains("Асанова"))
         {
+            <div class="media col-md-4 col-md-offset-4">
+                <div class="media-left">
+                    <img src="~/Ico/icons8-материнская-плата-50.png" class="media-object" style="width:50px">
+                </div>
+                <div class="media-body">
+                    <h3 class="media-heading">Маршруты и мусор</h3>
+                    <p>Маршруты, отчеты, площадки, выезды</p>
+                </div>
+            </div>
+
+            <p>
+                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "ASControls")'">
+                    <i class="glyphicon glyphicon-expand"></i> Управление выездами &raquo;
+                </button>
+            </p>
+
             <p>
                 <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "MusorPloshadkas")'">
                     <i class="glyphicon glyphicon-trash"></i>  Мусорные площадки &raquo;
                 </button>
             </p>
+            <p>
+                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("MarshrutsBaseIndex", "MusorPloshadkas")'">
+                    <i class="glyphicon glyphicon-trash"></i> Базовые и активные маршруты  &raquo;
+                </button>
+            </p>
+            <p>
+                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Marshruts")'">
+                    <i class="glyphicon glyphicon-trash"></i> Маршруты  &raquo;
+                </button>
+            </p>
+            <p>
+                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("IndexMain", "Ezdkas")'">
+                    <i class="glyphicon glyphicon-duplicate"></i> Отчёты по ездкам &raquo;
+                </button>
+            </p>
         }
 
-        if (User.Identity.Name.Contains("Полигон") || User.IsInRole("Администратор"))
+        if (User.Identity.Name.Contains("Полигон") || User.IsInRole("Администратор") || User.Identity.Name.Contains("Логист") || User.Identity.Name.Contains("Асанова"))
         {
             <p>
                 <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Poligons")'">
@@ -457,6 +485,11 @@
             <p>
                 <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "KontrAgents")'">
                     <i class="glyphicon glyphicon-trash"></i>  Контрагенты &raquo;
+                </button>
+            </p>
+            <p>
+                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "MarkaAvtomobils")'">
+                    <i class="glyphicon glyphicon-screenshot"></i> Марки автомобилей &raquo;
                 </button>
             </p>
         }

@@ -1,0 +1,1151 @@
+﻿@model IEnumerable<GKHNNC.Models.MarshrutsALL>
+@{
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+    string Marshruts = "";
+    foreach (var M in Model)
+    {
+        Marshruts += M.Id.ToString() + ";";
+
+    }
+    if (Marshruts.Count() > 1)
+    {
+        Marshruts = Marshruts.Remove(Marshruts.Length - 1, 1);
+    }
+}
+@{
+    string type = "";
+    string Obiems = "";
+    string typeclass = "";
+    string typestyle = "";
+    bool BASE = true;
+    if (ViewBag.Type.Equals("Base"))
+    {
+        type = "Базовые маршруты";
+        typeclass = "btn btn-success btn-block";
+        typestyle = "color:white;";
+        Obiems = "Базовый объём";
+    }
+    else
+    {
+        BASE = false;
+        type = "Активные маршруты";
+        typeclass = "btn btn-warning btn-block";
+        typestyle = "color:black;";
+        Obiems = "Фактический объём / масса";
+    }
+
+}
+
+
+<table class="table table-bordered table-striped" style="background:#efefef;z-index:90;position:fixed;top:0px;">
+    <tr>
+        <td>
+            @if (ViewBag.Type.Equals("Base"))
+            {
+                <p><a data-toggle="modal" data-target="#AddBMarshrutModal" data-placement="top" style="cursor:pointer;@typestyle" class="@typeclass">Добавить базовый маршрут </a> </p>
+            }
+            else
+            {
+                <p><a data-toggle="modal" data-target="#AddAMarshrutModal" data-placement="top" style="cursor:pointer;@typestyle" class="@typeclass">Добавить активный маршрут </a> </p>
+            }
+
+
+        </td>
+        <td>
+            @if (ViewBag.Type.Equals("Base"))
+            {
+                <p><a href="/MusorPloshadkas/MarshrutsBaseIndex?Type=Active" style="cursor:pointer;@typestyle" class="@typeclass">Переключить на активные маршруты </a> </p>
+            }
+            else
+            {
+                <p><a href="/MusorPloshadkas/MarshrutsBaseIndex?Type=ToBase" style="cursor:pointer;@typestyle" class="@typeclass">Переключить на базовые маршруты </a> </p>
+            }
+
+        </td>
+        <td>
+            <p><a href="/MusorPloshadkas/Index" style="cursor:pointer;@typestyle" class="@typeclass">Мусорные площадки  &raquo;</a> </p>
+        </td>
+
+        <td>
+            <p><a href="/Home/Index" style="cursor:pointer;@typestyle" class="@typeclass">В главное меню &raquo;</a> </p>
+        </td>
+    </tr>
+    <tr id="help" style="text-align:center">
+        <th>Автомобиль</th>
+        <th>Мусорная площадка</th>
+        <th colspan="2">Перетащите площадку или автомобиль чтобы...</th>
+    </tr>
+    <tr>
+
+        <td>
+            @Html.Editor("Number", new { htmlAttributes = new { @class = "form-control", placeholder = "Введите номер автомобиля кириллицей" } })
+
+
+        </td>
+
+
+        <td>
+            <input id="Street" class="form-control" title="Начните вводить название улицы и появится список" placeholder="Введите улицу мусорной площадки кириллицей" />
+
+
+
+        </td>
+        <td width="33%">
+            <div id="ALL" marshruts="@Marshruts" ondrop="dropToAll(event)" ondragover="allowDropToAll(event)" title="Перетащите сюда, чтобы добавить машину или площадку сразу ко всем выбранным маршрутам">
+
+                <button class="btn btn-warning btn-block">Применить ко всем маршрутам с учетом фильтров</button>
+            </div>
+        </td>
+        <td>
+            <div id="ALL" marshruts="@Marshruts" ondrop="drop(event)" ondragover="allowDrop(event)" title="Перетащите сюда, чтобы удалить машину или площадку">
+
+                <button class="btn btn-danger btn-block">Удалить</button>
+            </div>
+        </td>
+
+
+    </tr>
+    <tr>
+        <td colspan="5">
+            <div class="row" id="AVTOSEARCHPLOSHADKA">
+
+            </div>
+        </td>
+    </tr>
+
+    @{ int day = 8;
+        int marsh = 0;
+
+        // HttpCookie cookieReq = Request.Cookies["MarshrutBase"];
+        if (ViewBag.Day != 8 || ViewBag.Marshrut != 0)
+        {
+            <tr>
+                <td colspan="5">
+                    <p>Действует фильтр: </p>
+                    @try
+                    {
+                        day = Convert.ToInt32(ViewBag.Day + 1);
+                        if (day != 8)
+                        {
+                            <button class="btn btn-outline-light" style="color:black" onclick="window.location.replace('/MusorPloshadkas/MarshrutsBaseIndex?day=-1')">День недели @ViewBag.Days[day].Text</button>
+                        }
+                    }
+                    catch
+                    {
+
+                    }
+                    @try
+                    {
+                        marsh = Convert.ToInt32(ViewBag.Marshrut);
+                        if (marsh > 0)
+                        {
+
+                            <button class="btn btn-outline-light" style="color:black" onclick="window.location.replace('/MusorPloshadkas/MarshrutsBaseIndex?MarshrutId=-1')">Маршрут @ViewBag.MarshrutName</button>
+                        }
+                    }
+                    catch
+                    {
+
+                    }
+                </td>
+            </tr>
+
+
+        }
+
+    }
+    <tr></tr>
+</table>
+
+<div id="start" class="container-fluid" style="top:250px;position:absolute">
+    <h3>@type</h3>
+
+    <table class="table table-bordered table-striped">
+
+        <tr style="text-align:center">
+            @if (!BASE)
+            {
+                <td width="134px">
+                    Дата
+                    <input type="date" id="Date" name="Date" placeholder="@ViewBag.Date.ToString("dd.MM.yyyy")" class="form-control" autocomplete="off" onchange="window.location.replace('/MusorPloshadkas/MarshrutsBaseIndex?Date=' + this.value)" />
+                </td>
+            }
+
+            <td width="134px">
+                Номер маршрута
+                @Html.DropDownList("NumberMarshrut", new SelectList(ViewBag.Marshruts, "Value", "Text", ViewBag.Marshrut), new { @class = "form-control", onchange = "NM(this)", style = "width:130px" })
+            </td>
+            <td width="134px">
+                День
+                @Html.DropDownList("NumberDay", new SelectList(ViewBag.Days, "Value", "Text", ViewBag.Day), new { @class = "form-control", onchange = "ND(this)", style = "width:130px" })
+            </td>
+            <td width="285px">
+                Автомобили
+            </td>
+            <td>
+                Площадки
+            </td>
+            <td>
+                @Obiems
+            </td>
+            <td width="130px">
+                Удалить
+            </td>
+
+        </tr>
+
+        @foreach (var Item in Model)
+        {
+
+            <tr id="@Item.Id">
+                @if (!BASE)
+                {
+                    <td>
+                        <button class="btn btn-light" style="width:130px; height:105px" onclick="MBM('@Item.MarshrutId')">
+                            @Item.Date.ToString("dd.MM.yyyy")
+                        </button>
+                    </td>
+                }
+                <td>
+                    <button class="btn btn-light" style="width:130px; height:105px;font-size:25px;" onclick="MBM('@Item.MarshrutId')">
+                        #@Item.Marshrut.Name
+                    </button>
+                </td>
+                <td>
+                    <button class="btn btn-light" style="width:130px; height:105px" onclick="window.location.replace('/MusorPloshadkas/MarshrutsBaseIndex?day=@Item.Day')">
+                        @switch (Item.Day)
+
+                        {
+                            case 0:<p onclick="MBI('@Item.Day')">Понедельник</p>
+                                break;
+                            case 1: <p onclick="MBI('@Item.Day')">Вторник</p>
+                                break;
+                            case 2: <p onclick="MBI('@Item.Day')">Среда</p>
+                                break;
+                            case 3: <p onclick="MBI('@Item.Day')">Четверг</p>
+                                break;
+                            case 4: <p onclick="MBI('@Item.Day')">Пятница</p>
+                                break;
+                            case 5: <p onclick="MBI('@Item.Day')">Суббота</p>
+                                break;
+                            case 6: <p onclick="MBI('@Item.Day')">Воскресенье</p>
+                                break;
+                            default:<p onclick="MBI('@Item.Day')">Воскресенье</p>
+                                break;
+                        }
+                    </button>
+
+                </td>
+                <td>
+                    <div class="container">
+                        <div class="row" id="A_@Item.Id" ondrop="dropToAvto(event)" ondragover="allowDropToAvto(event)" marshrutid="@Item.Id" title="Перетащите автомобиль для добавления">
+                            @if (Item.Avtomobils != null)
+                            {
+                                foreach (var A in Item.Avtomobils7)
+                                {
+                                    string Atype = A.Type.Ico.ToString() + ".png";
+                                    string AID = "A" + Item.Id.ToString() + A.Id.ToString();
+
+                                    <div marshrutid="@Item.Id" avtoid="@A.Id" class="card bg-light text-black-100 avto" draggable="true" onclick="AvtoNomerPoisk('@A.Id','null','true','null','null','@ViewBag.Date')" ondragstart="drag(event)" id="@AID" style="width:130px;height:105px;cursor:pointer">
+                                        <img src="~/Content/Images/@Atype" height="64" width="128" data-toggle="modal" alt="@A.Type.Type @A.Marka.Name" style="cursor:pointer" title="Автомобиль">
+
+                                        <div class="card-img-overlay" style="vertical-align:top"></div>
+                                        <button class="btn btn-light" style="width:128px;vertical-align:bottom">
+                                            @A.Number
+
+                                        </button>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="btn-light" style="width:130px;height:105px;cursor:crosshair;position:center;top:50px;text-align:center" marshrutid="@Item.Id">Добавьте сюда хотя бы один автомобиль</div>
+                            }
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div class="container">
+                        <div class="row" id="P_@Item.Id" ondrop="dropToPloshadka(event)" ondragover="allowDropToPloshadka(event)" marshrutid="@Item.Id">
+
+
+                            @{ decimal BasoviiObiem = 0; decimal BasoviiObiemPloshadok = 0; decimal FactObiem = 0;}
+                            @if (Item.MusorPloshadkas != null)
+                            {
+                                foreach (var P in Item.MusorPloshadkas7)
+                                {
+                                    string[] S = P.Obiem.Split(';');
+                                    string[] STR = P.StreetId.Split(';');
+                                    string OF = P.Obiem7[Item.Day].ToString();
+                                    if (P.MPA != null) { OF = Math.Round(P.MPA.ObiemFact,1).ToString(); }
+                                    string KF = P.Kontainers7[Item.Day].ToString();
+                                    if (P.MPA != null) { KF = P.MPA.KontainersFact.ToString(); }
+
+                                    if (Item.Type.Equals("A"))
+                                    {
+                                        BasoviiObiem += Convert.ToDecimal(P.MPA.ObiemFact);
+                                    }
+                                    else
+                                    {
+                                        BasoviiObiem += Convert.ToDecimal(S[Item.Day]);
+                                    }
+                                    FactObiem = BasoviiObiem;
+                                    string PID = "P" + Item.Id.ToString() + P.Id.ToString();
+                                    if (P.TimeName.Length > 40) { P.TimeName = P.TimeName.Remove(40); }
+                                    string onclick = "window.location.replace('/MusorPloshadkas/Index?StreetId=" + STR[0] + "')";
+
+                                    if (Item.Type.Equals("A")) { onclick = "IzmenitObiems(this)"; }
+
+
+                                    <div class="card bg-light ploshadka" mpaid="@P.MPA.Id" ploshadkaname="@P.TimeName" ploshadkatype="@P.Type.Name" ico="@P.Type.Ico" obiem="@S[Item.Day]"   marshrutid="@Item.Id" onclick="@onclick" ploshadkaid="@P.Id" obiemfact="@P.MPA.ObiemFact" containersfact="@P.MPA.KontainersFact" containersplan="@P.Kontainers7[Item.Day]" style="width: 18rem;width:130px;height:105px;cursor:pointer" draggable="true" ondragstart="drag(event)" id="@PID" title="Базовый объём @S[Item.Day]">
+                                        <div class="card-body">
+                                            <p style='position:absolute;top:5px;left:5px' class="card-text">@P.TimeName</p>
+
+                                            <img id="Ico_@Item.Id" src="@P.Type.Ico" style="position:absolute;top:65px;left:5px" height="32" width="32" title="@P.Type.Name">
+                                            <img src="~/Content/Images/ObiemPlanW.png" style="position:absolute;top:65px;left:50px" height="16" width="16" title="Объём плановый">
+                                            <img src="~/Content/Images/KontainersPlanW.png" style="position:absolute;top:85px;left:50px" height="16" width="16" title="Контейнеры план">
+                                            <p style="font-size:12px;position:absolute;top:63px;left:68px">@Math.Round(P.Obiem7[Item.Day],1)</p>
+                                            <p style="font-size:12px;position:absolute;top:83px;left:68px">@P.Kontainers7[Item.Day]</p>
+                                            <img src="~/Content/Images/ObiemFactW.png" style="position:absolute;top:65px;left:90px" height="16" width="16" title="Объём факт">
+                                            <img src="~/Content/Images/KontainersFactW.png" style="position:absolute;top:85px;left:90px" height="16" width="16" title="Контейнеры факт">
+                                            <p id="OF" style="font-size:12px;position:absolute;top:63px;left:108px">@OF</p>
+                                            <p id="KF" style="font-size:12px;position:absolute;top:83px;left:108px">@KF</p>
+
+                                        </div>
+                                    </div>
+
+                                }
+                                BasoviiObiemPloshadok = BasoviiObiem;
+                                if (!BASE && Item.ObiemFact != 0) { BasoviiObiem = Item.ObiemFact; }
+
+                            }
+                            else
+                            {
+                                <div class="btn-light" style="width:130px;height:105px;cursor:crosshair;position:center;top:50px;text-align:center" marshrutid="@Item.Id">
+                                    Добавьте сюда хотя бы одну площадку
+                                </div>
+
+                            }
+                        </div>
+                    </div>
+
+                </td>
+                <td width="134px">
+                    @{ string StyleObiem = "readonly";
+                        string Podsvetka = "";
+                        decimal BO = BasoviiObiemPloshadok;
+
+                        if (!BASE)
+                        {
+                            StyleObiem = "";
+                            BO = Item.ObiemFact;
+                        }
+                        if (Item.Modify)
+                        {
+                            Podsvetka = "background-color:lightgreen";
+                        }
+                    }
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <input id="BOP_@Item.Id" onchange="NewObiem('@Item.Id',this)" class="form-control" style="width:130px;height:50px;text-align:center;vertical-align:central;@Podsvetka" @StyleObiem value="@FactObiem" title="Суммарный объём площадок =@BasoviiObiemPloshadok " />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <input id="Mass_@Item.Id" class="form-control" style="width:130px;height:50px;text-align:center;vertical-align:central" readonly @StyleObiem value="@Item.MassaFact" title="Суммарная масса по всем въездам на полигон данной машины." />
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                </td>
+                <td>
+                    <div id="div1" style="width:100px;height:105px;text-align:center;vertical-align:central" ondrop="drop(event)" ondragover="allowDrop(event)" title="Перетащите элемент для удаления">
+                        <button class="btn btn-danger" style="height:105px;width:105px" onclick="DeleteMarshrut(@Item.Id)">Удалить</button>
+                    </div>
+
+
+
+                </td>
+            </tr>
+        }
+
+    </table>
+    <button onclick="ExportMarshrut('@ViewBag.Date.ToString("yyyy/MM/dd")')" class="btn btn-success btn-block"> Экспорт отчета по площадкам в Excel</button>
+    <button onclick="ExportShortMarshrut('@ViewBag.Date.ToString("yyyy/MM/dd")')" class="btn btn-success btn-block"> Экспорт Акта приёма-сдачи на ОРО в Excel</button>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="ObiemsFact" tabindex="-1" role="dialog" aria-labelledby="ObiemsFactLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content col-12">
+            <div class="modal-header">
+                <h4 class="modal-title" id="ObiemsFactLabel">Изменение фактических объёмов мусорной площадки </h4>
+
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("RefreshObiemsActivePloshadka", "MusorPloshadkas", FormMethod.Post))
+                {
+                    <input hidden id="ActivePloshadkaId" name="ActivePloshadkaId"  value="" />
+                    
+                    <div class="table">
+                        <div class="row" style="margin-top:4px">
+                            <div class="col-2">
+                                <img id="ActivePloshadkaIco" src="" height="64" width="64" data-toggle="modal" style="cursor:pointer">
+                            </div>
+                            <div class="col-10">
+                                <input id="ActivePloshadkaName" readonly class="btn btn-info btn-block" value="" />
+
+                                <input id="ActivePloshadkaType" readonly class="btn btn-light btn-block" value="" />
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top:4px">
+                            <div class="col-4">
+                                <input readonly class="btn btn-warning" value="Объём базовый" />
+
+                            </div>
+                            <div class="col-2">
+                                <input id="ActivePloshadkaObiemPlan" readonly class="form-control" value="" />
+                            </div>
+                            <div class="col-4">
+                                <input readonly class="btn btn-success" value="Объём фактический" />
+
+                            </div>
+                            <div class="col-2">
+                                <input id="ActivePloshadkaObiemFact" name="ActivePloshadkaObiemFact" type="number" step="0.1" class="form-control" value="" />
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top:4px">
+                            @Html.AntiForgeryToken()
+                            <div class="col-4">
+                                <input readonly class="btn btn-warning" value="Всего контейнеров" />
+
+                            </div>
+                            <div class="col-2">
+                                <input id="ActivePloshadkaKontainersPlan" readonly class="form-control" />
+                            </div>
+                            <div class="col-4">
+                                <input readonly class="btn btn-success" value="Вывезено контейнеров" />
+
+                            </div>
+                            <div class="col-2">
+                                <input id="ActivePloshadkaKontainersFact" name="ActivePloshadkaKontainersFact" type="number" class="form-control" />
+                            </div>
+
+
+                        </div>
+                        <div class="row" style="margin-top:8px">
+                            <div class="col-12">
+                                <button id="ActivePloshadkaSave" type="submit" class="btn btn-success btn-block">Сохранить</button>
+                            </div>
+                        </div>
+
+                    </div>
+
+                }
+                    
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="AddBMarshrutModal" tabindex="-1" role="dialog" aria-labelledby="AddAvtoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content col-12">
+            <div class="modal-header">
+                <h3 class="modal-title" id="AddAvtoModalLabel">Добавить новый базовый маршрут</h3>
+
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("AddMarshrutBase", "MusorPloshadkas", FormMethod.Post))
+                {
+                    <div class="col-6">
+                        Номер маршрута
+                    </div>
+                    <div class="col-6">
+                        @Html.DropDownList("MarshrutId", new SelectList(ViewBag.Marshruts, "Value", "Text"), new { @class = "form-control" })
+
+                    </div>
+                    @Html.AntiForgeryToken()
+                    <div class="col-6">
+                        День недели
+                    </div>
+                    <div class="col-6">
+                        @Html.DropDownList("Day", new SelectList(ViewBag.Days, "Value", "Text"), new { @class = "form-control" })
+                    </div>
+
+                    <div class="col-6" style="margin:10px">
+                        <button id="AddBMarshrut" type="submit" class="btn btn-success btn-block">Добавить базовый маршрут</button>
+                    </div>
+                }
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="AddAMarshrutModal" tabindex="-1" role="dialog" aria-labelledby="AddAvtoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content col-12">
+            <div class="modal-header">
+                <h3 class="modal-title" id="AddAvtoModalLabel">Добавить новый активный маршрут</h3>
+
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("AddMarshrutActive", "MusorPloshadkas", FormMethod.Post))
+                {
+                    <div class="col-6">
+                        Номер маршрута
+                    </div>
+                    <div class="col-6">
+                        @Html.DropDownList("MarshrutId", new SelectList(ViewBag.Marshruts, "Value", "Text"), new { @class = "form-control" })
+
+                    </div>
+                    @Html.AntiForgeryToken()
+
+
+
+                    <div class="col-6" style="margin:10px">
+                        <button id="AddAMarshrut" type="submit" class="btn btn-success btn-block">Добавить активный маршрут</button>
+                    </div>
+                }
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="AddPloshadkaModal" tabindex="-1" role="dialog" aria-labelledby="AddAvtoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content col-12">
+            <div class="modal-header">
+                <h3 class="modal-title" id="AddAvtoModalLabel">Добавить мусорную площадку</h3>
+
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("AddPloshadka", "MusorPloshadkas", FormMethod.Post))
+                {
+                    <div class="col-6">
+                        Площадка
+                    </div>
+                    <div class="col-6">
+                        <input id="Id" name="Id" value="" class="btn btn-block btn-light" readonly="readonly" />
+                    </div>
+                    @Html.AntiForgeryToken()
+                    <div class="col-6">
+                        Мусорная площадка
+                    </div>
+                    <div class="col-6">
+                        @Html.DropDownList("PloshadkaId", new SelectList(ViewBag.Ploshadkas, "Value", "Text"), new { @class = "form-control" })
+                    </div>
+
+                    <div class="col-6" style="margin:10px">
+                        <button id="AddAvto" type="submit" class="btn btn-success btn-block">Добавить автомобиль</button>
+                    </div>
+                }
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (ViewBag.Error != null)
+{
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="Error" tabindex="-1" role="dialog" aria-labelledby="ErrorLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content col-12">
+                <div class="modal-header">
+                    <h4 class="modal-title btn-danger" align="center" id="ErrorLabel">Ошибка!</h4>
+
+                </div>
+                <div class="modal-body">
+                    <h5> @ViewBag.Error </h5>
+
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+@section Scripts{
+    @Scripts.Render("~/scripts/jquery-3.4.1.js")
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.js")
+
+    @Scripts.Render("~/scripts/jquery.unobtrusive-ajax.js")
+    @Scripts.Render("~/scripts/bootstrap.js")
+    @Scripts.Render("~/scripts/bootstrap.bundle.js")
+    @Scripts.Render("/scripts/ExportToExcel/excelexportjs.js")
+    @Scripts.Render("~/scripts/jquery.cookie.js")
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.3/themes/ui-lightness/jquery-ui.css" />
+
+    <script>
+        window.onload = $('#Error').modal('show');
+        $("#help").delay(7000).fadeOut('slow');
+    </script>
+    <script>
+        function AvtoNomerPoisk(P, PK, R, V, AS, D) {
+            window.location.replace('/Poligons/Index?PoiskKontr=' + PK + '&Poisk=' + P + '&result=' + R + '&Vesi=' + V + '&Avtosort=' + AS + '&TekDate=' + D);
+
+        };
+    </script>
+    <script>
+        function ExportMarshrut(Date)
+        {
+
+            $.post('@Url.Action("ExportMarshrutsToday", "MusorPloshadkas")', { date: Date },
+                function (data)
+                {
+                    if (data != "")
+                    {
+                        window.location.replace(data);
+                    }
+                }
+            );
+
+
+        }
+         function ExportShortMarshrut(Date)
+        {
+
+            $.post('@Url.Action("ExportShortMarshrutsToday", "MusorPloshadkas")', { date: Date },
+                function (data)
+                {
+                    if (data != "")
+                    {
+                        window.location.replace(data);
+                    }
+                }
+            );
+
+
+        }
+    </script>
+    <script>
+        function NewObiem (id,a)
+        {
+            var _this = a.value;
+            $.post('@Url.Action("ObiemFact", "MusorPloshadkas")', { Id: id , Value:_this },
+                        function (data) {
+
+                            if (data != "")
+                            {
+                                window.location.replace('/MusorPloshadkas/MarshrutsBaseIndex');
+
+                            }
+                            else
+                            {
+
+                            }
+                        });
+        }
+    </script>
+    <script>
+        function DeleteMarshrut (id)
+        {
+            var isDelete = confirm("Вы уверены, что хотите удалить данный маршрут?");
+
+            if (isDelete)
+            {
+                $.post('@Url.Action("DeleteMarshrut", "MusorPloshadkas")', { Id: id },
+                    function (data) {
+
+                        if (data == "") {
+                            $('#' + id).fadeOut('slow');
+
+                        }
+                        else {
+                            alert(data);
+                        }
+                    });
+            }
+
+        }
+    </script>
+
+    <script>
+        //  alert($.cookie("MarshrutBase"));
+        function AvtoAdd(Id) {
+            $("#AddAvtoModal").modal('show');
+            $('#AddAvtoModal').find('#Id').val(Id);
+        }
+        function PloshadkaAdd(Id) {
+            $("#AddPloshadkaModal").modal('show');
+            $('#AddPloshadkaModal').find('#Id').val(Id);
+        }
+
+        function NM(T) {
+            var _This = $(T).val();
+
+            window.location.replace('/MusorPloshadkas/MarshrutsBaseIndex?MarshrutId=' + _This);
+        }
+        function ND(T) {
+            var _This = $(T).val();
+
+            window.location.replace('/MusorPloshadkas/MarshrutsBaseIndex?day=' + _This);
+        }
+    </script>
+    <script>
+        function PloshadkaDelete(Id,PloshadkaId) {
+           $.post('@Url.Action("DeletePloshadka", "MusorPloshadkas")', { PloshadkaId:PloshadkaId, Id:Id},
+                        function (data) {
+                            var S = data.split(';');
+                            if (data="Ok") {
+                                alert("Масса выезда успешно обновлена");
+                                window.location.replace('/Poligons/Index' );
+                            }
+                            else {
+                                alert("Масса не обновлена");
+                            }
+                        });
+        }
+    </script>
+    <script>
+        $('.draggable').draggable({
+            //revert: true
+        });
+    </script>
+    <script>
+        function IzmenitObiems(T)
+        {
+            var _this = $(T);
+            var MPAId = _this.attr("mpaid");
+            var MarshrutId = _this.attr("marshrutid");
+            var PloshadkaName = _this.attr("ploshadkaname");
+            var PloshadkaType = _this.attr("ploshadkatype");
+            var PloshadkaObiem = _this.attr("obiem");
+            var PloshadkaObiemFact = _this.attr("obiemfact");
+            var PloshadkaKontainers = _this.attr("containersplan");
+            var PloshadkaKontainersFact = _this.attr("containersfact");
+            var Ico = _this.attr("ico");
+            var O = $("#ObiemsFact");
+            O.find("#ActivePloshadkaName").val(PloshadkaName);
+            O.find("#ActivePloshadkaType").val(PloshadkaType);
+            O.find("#ActivePloshadkaIco").attr("Src",Ico);
+            O.find("#ActivePloshadkaObiemFact").val(PloshadkaObiemFact);
+            O.find("#ActivePloshadkaObiemPlan").val(PloshadkaObiem);
+            O.find("#ActivePloshadkaKontainersFact").val(PloshadkaKontainersFact);
+            O.find("#ActivePloshadkaKontainersPlan").val(PloshadkaKontainers);
+            O.find("#ActivePloshadkaId").val(MPAId);
+            O.modal("show");
+
+        }
+    </script>
+    <script>
+        function dragStart(event) {
+            event.dataTransfer.setData("Text", event.target.id);
+          
+                
+        }
+        function allowDrop(ev) {
+            ev.preventDefault();
+        }
+
+        function drag(ev) {
+            ev.dataTransfer.setData("text", ev.target.id);
+            var data = ev.dataTransfer.getData("text");
+            var _this = document.getElementById(data);
+              var _obj = $(_this);
+                if (_obj.hasClass("avto")) {
+                    var MarshrutId = _obj.attr('marshrutid');
+                    var AvtoId = _obj.attr('avtoid');
+
+                    $.post('@Url.Action("DeleteAvto", "MusorPloshadkas")', { AvtoId: AvtoId, MarshrutId: MarshrutId },
+                        function (data) {
+                            if (data != null) {
+                                $('#Mass_' + MarshrutId).val(data);
+
+
+
+                            }
+                        });
+
+                }
+                if (_obj.hasClass("ploshadka"))
+                {
+                    var MarshrutId = _obj.attr('marshrutid');
+                    var PloshadkaId = _obj.attr('ploshadkaid');
+                    $.post('@Url.Action("DeletePloshadka", "MusorPloshadkas")', { PloshadkaId: PloshadkaId, Id: MarshrutId },
+                        function (data) {
+                            if (data != null) {
+
+                                $("#BOP_" + MarshrutId).val(data);
+
+
+
+                            }
+                        });
+                }
+        }
+        function allowDropToAll(ev) {
+            ev.preventDefault();
+        }
+
+
+        function drop(ev) {
+            ev.preventDefault();
+            var data = ev.dataTransfer.getData("text");
+            var _this = document.getElementById(data);
+            ev.target.appendChild(_this);
+            $(_this).fadeOut('slow', function ()
+            {
+                var _obj = $(_this);
+                if (_obj.hasClass("avto")) {
+                    var MarshrutId = _obj.attr('marshrutid');
+                    var AvtoId = _obj.attr('avtoid');
+
+                    $.post('@Url.Action("DeleteAvto", "MusorPloshadkas")', { AvtoId: AvtoId, MarshrutId: MarshrutId },
+                        function (data) {
+                            if (data != null) {
+                                $('#Mass_' + MarshrutId).val(data);
+
+
+
+                            }
+                        });
+
+                }
+                if (_obj.hasClass("ploshadka"))
+                {
+                    var MarshrutId = _obj.attr('marshrutid');
+                    var PloshadkaId = _obj.attr('ploshadkaid');
+                    $.post('@Url.Action("DeletePloshadka", "MusorPloshadkas")', { PloshadkaId: PloshadkaId, Id: MarshrutId },
+                        function (data) {
+                            if (data != null) {
+
+
+
+
+
+                            }
+                        });
+                }
+                $(_this).remove();
+            }
+                );
+
+            }
+            function allowDropToAvto(ev) {
+                ev.preventDefault();
+            }
+        function dropToAvto(ev)
+        {
+            ev.preventDefault();
+            var data = ev.dataTransfer.getData("text");
+                  var _this = document.getElementById(data);
+                  var _obj = $(_this);
+                  if (_obj.hasClass("avto"))
+                  {
+                      var DIV = ev.target.closest(".row");
+                    
+                      var Base = ('@ViewBag.Type.Equals("Base")'=='True');
+                      if (Base == false)
+                      {
+                          $(DIV).empty();
+                      }
+                      DIV.appendChild(_this);
+
+                      var MarshrutId = $(DIV).attr('marshrutid');
+                      var AvtoId = _obj.attr('avtoid');
+                    $.post('@Url.Action("AddAvto", "MusorPloshadkas")', { AvtoId: AvtoId, Id: MarshrutId },
+                        function (data) {
+                            if (data != null) {
+                                $('#Number').empty();
+                                $('#Mass_' + MarshrutId).val(data);
+
+
+
+                            }
+                        });
+                  }
+        }
+          function dropToAll(ev)
+          {
+            ev.preventDefault();
+            var data = ev.dataTransfer.getData("text");
+                  var _this = document.getElementById(data);
+                  var _obj = $(_this);
+
+              ev.target.appendChild(_this);
+
+
+                     var AvtoId = _obj.attr('avtoid');
+              var Marshruts = $('#ALL').attr('marshruts');
+              var PloshadkaId = _obj.attr('ploshadkaid');
+              $(_this).fadeOut('slow', function ()
+              {
+
+              $.post('@Url.Action("AddToAll", "MusorPloshadkas")', { AvtoId: AvtoId, PloshadkaId:PloshadkaId, Marshruts:Marshruts },
+                        function (data) {
+
+                            if (data != null) {
+                                $('#Number').val("");
+                                $('#Street').val("");
+                                var S = Marshruts.split(';');
+                                var AP = "";
+                                if (AvtoId != undefined)
+                                {
+                                    AP = "A_";
+                                    var Base = ('@ViewBag.Type.Equals("Base")'=='True');
+                                 
+                                    for (var i = 0; i < S.length; i++)
+                                    {
+
+                                        var id = $(_this).attr("avtoid");
+                                        var ID = $("#" + AP + S[i]).find("[avtoid=" + id + "]").attr("id");
+
+                                        if (ID == undefined) {
+                                            if (Base == false) {
+                                                $("#" + AP + S[i]).empty();
+                                            }
+                                            $("#" + AP + S[i]).append($(_this).clone().hide().fadeIn('slow'));
+                                        }
+                                    }
+
+                                }
+                                if (PloshadkaId != undefined) {
+                                    AP = "P_";
+                                    for (var i = 0; i < S.length; i++)
+                                    {
+
+                                        var id = $(_this).attr("ploshadkaid");
+                                        var ID = $("#" + AP + S[i]).find("[ploshadkaid=" + id + "]").attr("id");
+
+                                        if (ID == undefined) {
+                                            $("#" + AP + S[i]).append($(_this).clone().hide().fadeIn('slow'));
+                                        }
+                                    }
+
+                                }
+
+
+
+                                $(_this).remove();
+
+                            }
+                        });
+
+              });
+          }
+
+        function allowDropToPloshadka(ev)
+        {
+                ev.preventDefault();
+
+        }
+        function dropToPloshadka(ev)
+        {
+            ev.preventDefault();
+            var data = ev.dataTransfer.getData("text");
+                  var _this = document.getElementById(data);
+                  var _obj = $(_this);
+                  if (_obj.hasClass("ploshadka"))
+                  {
+                       var DIV = ev.target.closest(".row");
+                      DIV.appendChild(_this);
+                      var MarshrutId = $(DIV).attr('marshrutid');
+                      var PloshadkaId = _obj.attr('ploshadkaid');
+                    $.post('@Url.Action("ADDMP", "MusorPloshadkas")', { PloshadkaId: PloshadkaId, Id: MarshrutId },
+                        function (data) {
+                            if (data != null) {
+                                if (data != "D")
+                                {
+                                    S = data.split(';');
+                                    _obj.attr('mpaid', S[1])
+                                    $('#Street').empty();
+                                    $("#BOP_" + MarshrutId).val(S[0]);
+                                    _obj.attr("id", "P" + MarshrutId + PloshadkaId);
+                                    _obj.attr("marshrutid", MarshrutId);
+                                    _obj.attr("containersfact", S[3]);
+                                    _obj.attr("obiemfact", S[2]);
+                                    _obj.find("#OF").html(S[2]); 
+                                    _obj.find("#KF").html(S[3]); 
+                                }
+                                else
+                                {
+                                    _obj.fadeOut('slow');
+                                }
+
+
+
+                            }
+                        });
+                  }
+
+        }
+    </script>
+    <script>
+
+        function MBI(day) {
+            //  alert(day);
+            var URL = "/MusorPloshadkas/MarshrutsBaseIndex?day=" + day;
+            window.location.replace(URL);
+
+        }
+        function MBM(marshrut) {
+            //  alert(marshrut);
+            var URL = "/MusorPloshadkas/MarshrutsBaseIndex?MarshrutId=" + marshrut;
+            window.location.replace(URL);
+
+        }
+    </script>
+    <script>
+        $('#Number').on('keypress', function () {
+            var that = this;
+
+            setTimeout(function () {
+                var res = /[^а-я,0-9,А-Я ]/g.exec(that.value);
+                console.log(res);
+                that.value = that.value.replace(res, '');
+            }, 0);
+        });
+    </script>
+    <script>
+        $('#Street').on('keypress', function () {
+            var that = this;
+
+            setTimeout(function () {
+                var res = /[^а-я,0-9,А-Я ]/g.exec(that.value);
+                console.log(res);
+                that.value = that.value.replace(res, '');
+            }, 0);
+        });
+    </script>
+    <script type="text/javascript">
+
+
+
+    $("#Number").autocomplete({
+        source: '@Url.Action("SearchNumber", "MusorPloshadkas")',
+        minLength: 1,
+        select: function (event, ui)
+        {
+            var _this = ui.item.label;
+             $.post('@Url.Action("SelectAvtoFromBase", "MusorPloshadkas")', { number: _this },
+                        function (data) {
+
+                            if (data != "")
+                            {
+                                var S = data.split(';');
+                                $('#AVTOSEARCHPLOSHADKA').empty();
+                                $('#AVTOSEARCHPLOSHADKA').append("<div avtoid=" + S[0] + " class='card bg-light text-black-100 avto' draggable='true' ondragstart='drag(event)' id='NewAvto' style='width:130px;height:105px'><img src='/Content/Images/" + S[2] + "' height='64' width='128'  title='Автомобиль'><div class='card-img-overlay' style='vertical - align: top'></div> <button class='btn btn-light' style='width:128px;vertical-align:bottom'>" + S[1] + "</button></div>");
+
+                            }
+                            else {
+
+                            }
+                        });
+
+        },
+        search: function () {
+            $(this).addClass('ui-autocomplete-loading');
+            var _this = $(this).val();
+            if ($(this).val().length >= 6)
+            {
+                 $.post('@Url.Action("SearchCompleteNumber", "Poligons")', { term: _this },
+                        function (data) {
+
+                            if (data != "")
+                            {
+                                window.location.replace('/Poligons/Index?Number=' + _this);
+                            }
+                            else {
+                                var AvtoNum = $("#AddAvtoModal").find("#Number").val(_this);
+                                $("#AddAvtoModal").modal('show');
+
+                            }
+
+
+
+                        });
+
+            }
+        },
+        open: function (event, ui) {
+            $(this).removeClass('ui-autocomplete-loading');
+
+        }
+    });
+    </script>
+
+
+    <script type="text/javascript">
+    $("#Street").autocomplete({
+        source: '@Url.Action("SearchStreet", "MusorPloshadkas")',
+        minLength: 1,
+        select: function (event, ui)
+        {
+            var _this = ui.item.label;
+             $.post('@Url.Action("SelectStreetFromBase", "MusorPloshadkas")', { number: _this },
+                        function (data) {
+                            $('#AVTOSEARCHPLOSHADKA').empty();
+                            if (data != "")
+                            {
+                                for (var i = 0; i < data.length; i++)
+                                {
+                                    var S = data[i].split(';');
+                                    $('#AVTOSEARCHPLOSHADKA').append("<div class='card bg-light ploshadka' ploshadkaid='" + S[0] + "' style='width: 18rem;width:130px;height:105px' draggable='true' ondragstart='drag(event)' id='Ploshadka" + S[0] + "' title='Базовый объём " + S[3] + "'><div class='card-body'><p style='position:absolute;top:5px;left:5px' class='card-text'>" + S[1] + "</p><img src='"+S[2]+"' style='position:absolute;top:65px;left:5px' height='32' width='32'><p style='font-size:12px;position:absolute;top:65px;left:40px'>Объём=" + S[3] +"</p><p style='font-size:12px;position:absolute;top:77px;left:40px'>Контейнеры="+S[10]+"</p></div></div>");
+
+
+                                }
+                                if (data.length > 11) {
+
+                                    document.getElementById('start').style.top = "400px";
+
+                                }
+                                else
+                                {
+                                    document.getElementById('start').style.top = "250px";
+
+                                }
+                            }
+
+                        });
+
+        },
+
+        open: function (event, ui) {
+            $(this).removeClass('ui-autocomplete-loading');
+
+        }
+    });
+    </script>
+    <script type="text/javascript">
+        $(function () {
+            $('#Date')
+                .datepicker({ dateFormat: 'yy/mm/dd' })
+                .get(0).setAttribute("type", "text");
+            $.datepicker.regional['ru'] = {
+                prevText: 'Пред',
+                nextText: 'След',
+                monthNames: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+                    'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+                monthNamesShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн',
+                    'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
+                dayNames: ['воскресенье', 'понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота'],
+                dayNamesShort: ['вск', 'пнд', 'втр', 'срд', 'чтв', 'птн', 'сбт'],
+                dayNamesMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+                weekHeader: 'Не',
+                dateFormat: 'yy/mm',
+                showOn: "both",
+                buttonText: "Выбрать дату",
+                firstDay: 1,
+                isRTL: false,
+                showMonthAfterYear: true,
+                yearSuffix: '',
+                gotoCurrent: false
+            };
+            $.datepicker.setDefaults($.datepicker.regional['ru']);
+
+        });
+    </script>
+
+}

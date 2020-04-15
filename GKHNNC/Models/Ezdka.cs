@@ -18,7 +18,7 @@ namespace GKHNNC.Models
         public int ArhNumb { get; set; }
 
         [Display(Name = "ID автомобиля")]
-        public int? AvtoId { get; set; }
+        public int AvtoId { get; set; }
 
         [Display(Name = "Автомобиль")]
         public Avtomobil Avto { get; set; }

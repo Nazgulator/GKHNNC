@@ -258,8 +258,9 @@ namespace GKHNNC.Controllers
             {
                 M.Text = HttpContext.Request.Cookies["Month"].Value;
                 M.Value = HttpContext.Request.Cookies["Month"].Value;//Opr.MonthObratno(M.Text).ToString();
+                ViewBag.TekMonth = M.Value;
                 //Month.RemoveAt(Opr.MonthObratno(M.Text) - 1);
-                Month.Insert(0, M);
+               // Month.Insert(0, M);
             }
 
             M = new SelectListItem();
@@ -267,6 +268,7 @@ namespace GKHNNC.Controllers
             M.Value = "Год";
             Month.Add(M);
             ViewBag.Month = Month;
+          
             
 
 

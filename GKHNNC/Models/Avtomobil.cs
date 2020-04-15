@@ -45,7 +45,7 @@ namespace GKHNNC.Models
         public int? Garage { get; set; }
 
         [Display(Name = "Глонасс")]
-        public bool? Glonass { get; set; }
+        public bool Glonass { get; set; }
 
         [Display(Name = "Объём бункера")]
         public decimal ObiemBunkera { get; set; }
@@ -55,6 +55,9 @@ namespace GKHNNC.Models
 
         [Display(Name = "Наша ли машина")]
         public bool GKHNNC { get; set; }
+
+        [Display(Name = "Не пускает")]
+        public bool NePuskat { get; set; }
 
         //только для визуала
         public string NewNumber;

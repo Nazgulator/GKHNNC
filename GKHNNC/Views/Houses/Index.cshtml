@@ -13,7 +13,16 @@
     <h2>Детальные данные по домам</h2>
 
     <p><a href="/Home/Index" class="btn btn-success btn-block"><< В главное меню </a> </p>
+   
     <table id="T" class="table table-bordered table-striped">
+        <tr>
+            <td colspan="3">
+                <input id="Search" class="form-control" placeholder="Начните вводить имя улицы для поиска" />
+            </td>
+            <td>
+                <button class="btn btn-block btn-success" onclick="window.location.replace('/Houses/Index')"> Все адреса </button>
+            </td>
+        </tr>
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.Adres)
@@ -49,68 +58,68 @@
                 }
                 Y = true;
             }
-                    <tr class="@GISGKH">
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Adres)
-                        </td>
+            <tr class="@GISGKH">
+                <td>
+                    @Html.DisplayFor(modelItem => item.Adres)
+                </td>
 
 
-                        <td>
-                            @Html.ActionLink("Технический паспорт дома", "Info", new { id = item.AdresId }, new { @type = "button", @class = "btn btn-success" })
-                        </td>
-                        <td>
-                            @if (User.IsInRole("Администратор") || User.Identity.Name.Contains("ИнженерОЭЖФ") || User.Identity.Name.Contains("Эксплуатация"))
-                            {
-                                if (item.OsmotrEst == false)
-                                {
-                              <p>Осмотров нет</p>
-                                }
+                <td>
+                    @Html.ActionLink("Технический паспорт дома", "Info", new { id = item.AdresId }, new { @type = "button", @class = "btn btn-success" })
+                </td>
+                <td>
+                    @if (User.IsInRole("Администратор") || User.Identity.Name.Contains("ИнженерОЭЖФ") || User.Identity.Name.Contains("Эксплуатация"))
+                    {
+                        if (item.OsmotrEst == false)
+                        {
+                            <p>Осмотров нет</p>
+                        }
 
-                                if (item.OsmotrEst == true)
-                                {
-                                    
-                                   
-                                    @Html.ActionLink("Осмотр дома", "Info", "Osmotrs", new { id = item.AdresId, date = DateTime.Now }, new { @type = "button", @class = "btn btn-success" });
-                                }
-                            }
-                            else
-                            {
-
-                                if (item.OsmotrEst == true)
-                                {
-                                    @Html.ActionLink("Осмотр дома", "Info", "Osmotrs", new { id = item.AdresId, date = DateTime.Now }, new { @type = "button", @class = "btn btn-primary" });
-                                }
-
-                            }
-
-                        </td>
-                        <td>
-                            @if (item.Osmotrs.Count>0&&(item.Osmotrs[0].Sostoyanie == 0 || User.IsInRole("Администратор")))
-                            {
-                                @Html.ActionLink("Изменить осмотр", "Create", "Osmotrs", new { id = item.Osmotrs[0].AdresId, date = item.Osmotrs[0].Date }, new { @type = "button", @class = "btn btn-primary" });
-                            }
-                            else
-                            {
-                                if (item.GISGKH)
-                                {
-
-                                    @Html.ActionLink("Добавить осмотр", "Create", "Osmotrs", new { id = item.AdresId, date = DateTime.Now }, new { @type = "button", @class = "btn btn-success" });
-
-                                }
-                                else
-                                {
-                                    @Html.ActionLink("Создать осмотр с нуля", "Create", "Osmotrs", new { id = item.AdresId, date = DateTime.Now }, new { @type = "button", @class = "btn btn-warning" });
-                                }
-                            }
-                        </td>
-                        <!--
+                        if (item.OsmotrEst == true)
+                        {
 
 
-    <td>
-        @Html.ActionLink("Информация", "Edit", new { id = item.AdresId }, new { @type = "button", @class = "form-control" })
-    </td>
-        -->
-                    </tr>
+                            @Html.ActionLink("Осмотр дома", "Info", "Osmotrs", new { id = item.AdresId, date = DateTime.Now }, new { @type = "button", @class = "btn btn-success" });
+                        }
+                    }
+                    else
+                    {
+
+                        if (item.OsmotrEst == true)
+                        {
+                            @Html.ActionLink("Осмотр дома", "Info", "Osmotrs", new { id = item.AdresId, date = DateTime.Now }, new { @type = "button", @class = "btn btn-primary" });
+                        }
+
+                    }
+
+                </td>
+                <td>
+                    @if (item.Osmotrs.Count > 0 && (item.Osmotrs[0].Sostoyanie == 0 || User.IsInRole("Администратор")))
+                    {
+                        @Html.ActionLink("Изменить осмотр", "Create", "Osmotrs", new { id = item.Osmotrs[0].AdresId, date = item.Osmotrs[0].Date }, new { @type = "button", @class = "btn btn-primary" });
+                    }
+                    else
+                    {
+                        if (item.GISGKH)
+                        {
+
+                            @Html.ActionLink("Добавить осмотр", "Create", "Osmotrs", new { id = item.AdresId, date = DateTime.Now }, new { @type = "button", @class = "btn btn-success" });
+
+                        }
+                        else
+                        {
+                            @Html.ActionLink("Создать осмотр с нуля", "Create", "Osmotrs", new { id = item.AdresId, date = DateTime.Now }, new { @type = "button", @class = "btn btn-warning" });
+                        }
+                    }
+                </td>
+                <!--
+
+
+                <td>
+                    @Html.ActionLink("Информация", "Edit", new { id = item.AdresId }, new { @type = "button", @class = "form-control" })
+                </td>
+                    -->
+            </tr>
         }
 
     </table>
@@ -140,3 +149,39 @@
 </body>
 
 </html>
+@Scripts.Render("~/scripts/jquery-3.4.1.js")
+@Scripts.Render("~/scripts/jquery-ui-1.12.1.js")
+@Scripts.Render("~/scripts/jquery.unobtrusive-ajax.js")
+@Scripts.Render("~/scripts/bootstrap.js")
+@Scripts.Render("~/scripts/bootstrap.bundle.js")
+@Scripts.Render("/scripts/ExportToExcel/excelexportjs.js")
+<link rel="stylesheet" href="~/Scripts/JqueryThemes/ui-lightness/jquery-ui.css" />
+<script>
+ $("#Search").autocomplete({
+        source: '@Url.Action("SearchAdres", "Houses")',
+        minLength: 1,
+        select: function (event, ui)
+        {
+
+        var _this = ui.item.label;
+        window.location.replace('/Houses/Index?Adres=' + _this);
+
+
+        },
+
+        open: function (event, ui) {
+        $(this).removeClass('ui-autocomplete-loading');
+
+        }
+    });
+
+    $('#Search').on('keypress', function () {
+        var that = this;
+
+        setTimeout(function () {
+            var res = /[^а-я,0-9,А-Я ]/g.exec(that.value);
+            console.log(res);
+            that.value = that.value.replace(res, '');
+        }, 0);
+    });
+</script>
