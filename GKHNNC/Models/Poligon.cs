@@ -58,6 +58,9 @@ namespace GKHNNC.Models
         [Display(Name = "КонтрагентИД")]
         public int KontrAgentId { get; set; }
 
+        [Display(Name = "Контрагента выбрал человек?")]
+        public bool VibralRab { get; set; }
+
 
 
 

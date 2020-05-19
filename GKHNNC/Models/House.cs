@@ -105,6 +105,10 @@ namespace GKHNNC.Models
         [Display(Name = "Электросеть")]
         public DOMVodootvod Vodootvod { get; set; }
 
+        [Display(Name = "Сколько осмотров")]
+        public int NumberOsmotrs { get; set; }
+
+
         [Display(Name = "Осмотры")]
         public List<Osmotr> Osmotrs;
 

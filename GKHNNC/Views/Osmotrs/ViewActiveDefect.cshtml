@@ -116,7 +116,7 @@
                     </center>
                 </td>
 
-                <td rowspan="3" style="text-align:center">
+                <td rowspan="3" style="text-align:center"  width="200px">
                     <button type="button" id="SaveElement" MId="@Model.Id" MElement="@Model.ElementId" MOsmotr="@Model.OsmotrId" class="btn btn-success go" style="text-align:center">
                         Сохранить элемент
                     </button>
@@ -190,7 +190,7 @@
                 </center>
             </td>
 
-            <td rowspan="3" style="text-align:center">
+            <td rowspan="3" style="text-align:center" width="200px">
                 <button type="button" id="EditElement" MId="@Model.Id" MElement="@Model.ElementId" MOsmotr="@Model.OsmotrId" class="btn btn-outline-success go" style="text-align:center">
                     Изменить элемент
                 </button>
@@ -351,36 +351,43 @@
 
 
 
-            <tr id="@Model.ActiveDefects[i].Id" class="@Model.ElementId" style="display:none">
-                <td style="text-align:center">
-                    @Model.ActiveDefects[i].Defect.Def
-                </td>
+        <tr id="@Model.ActiveDefects[i].Id" class="@Model.ElementId" style="display:none">
+            <td style="text-align:center">
+                @Model.ActiveDefects[i].Defect.Def
+            </td>
 
 
-                <td style="text-align:center">
-                    <a data-fancybox="gallery" href="@Ph1">
-                        <img src="@Ph1" id="Photo" to="@P2" class="img-responsive" height="32" width="32" onerror="this.style.display = 'none'">
-                    </a>
-                </td>
-                <td style="text-align:center">
-                    <a data-fancybox="gallery" href="@Ph2">
-                        <img src="@Ph2" id="Photo" to="@P2" class="img-responsive" height="32" width="32" onerror="this.style.display = '/Content/Images/NoDownload.png'">
-                    </a>
-                </td>
-                <td style="text-align:center">
-                    <div class="ratingRed">
-                        <input type="hidden" name="val" value="@Model.ActiveDefects[i].Sostoyanie" />
+            <td style="text-align:center">
+                <a data-fancybox="gallery" href="@Ph1">
+                    <img src="@Ph1" id="Photo" to="@P2" class="img-responsive" height="32" width="32" onerror="this.style.display = 'none'">
+                </a>
+            </td>
+            <td style="text-align:center">
+                <a data-fancybox="gallery" href="@Ph2">
+                    <img src="@Ph2" id="Photo" to="@P2" class="img-responsive" height="32" width="32" onerror="this.style.display = '/Content/Images/NoDownload.png'">
+                </a>
+            </td>
+            <td style="text-align:center">
+                <div class="ratingRed">
+                    <input type="hidden" name="val" value="@Model.ActiveDefects[i].Sostoyanie" />
 
-                    </div>
+                </div>
 
-                </td>
-                <td style="text-align:center">
-                    @Model.ActiveDefects[i].Opisanie
-                </td>
-                <td style="text-align:center">
-                    <button type="button" id="RemoveDefect" ADId="@Model.ActiveDefects[i].Id" class="btn btn-outline-danger rem">Удалить дефект</button>
-                </td>
-            </tr>
+
+            
+               
+            
+
+
+            </td>
+            <td style="text-align:center">
+                <input onchange="RefreshTextDefect('@Model.ActiveDefects[i].Id',this.value)" value="@Model.ActiveDefects[i].Opisanie" class="form-control" style="width:230px" />
+
+            </td>
+            <td style="text-align:center">
+                <button type="button" id="RemoveDefect" ADId="@Model.ActiveDefects[i].Id" class="btn btn-outline-danger rem">Удалить дефект</button>
+            </td>
+        </tr>
 
 
         }

@@ -20,29 +20,31 @@
 </div>
 <Center>
     <h3>Загрузка файла выполненных услуг</h3>
-    <div class="table">
-        <div class="row" style="margin-top:10px">
-            <div class="col-4">
-                <input id="Date" name="Date" placeholder="Выберите дату" type="file" class="form-control" autocomplete="off" accept=".xls,.xlsx" />
+    @using (Html.BeginForm("Upload", "Home", FormMethod.Post, new { enctype = "multipart/form-data", @placeholder = "Выберите дату" }))
+    {<div class="container" id="main">
+            <div class=" row justify-content-center">
+                <div class="col-4">
+                    <label>Дата выполнения услуг</label>
+                    @Html.Editor("Date", new { htmlAttributes = new { @class = "form-control", autocomplete = "off" } })
+                </div>
             </div>
-
-            <div class="col-4">
-                <form id="svn" name="svn" method="post" enctype="multipart/form-data">
-                    <input id="upload" name="upload" type="file" class="form-control" accept=".xls,.xlsx" />
-                </form>
-                <label>Файл для загрузки</label>
-
+            <div class=" row justify-content-center">
+                <div class="col-4">
+                    <label>Выберите файл для загрузки</label>
+                    <input type="file" name="upload" class="form-control" /><br>
+                </div>
             </div>
-            <div class="col-4">
-                <button class="btn btn-success btn-block " onclick="UploadFile()">
-                    Загрузить файл &raquo;
-                </button>
+            <div class=" row">
+                <div class="col-12">
+                    <a id="cancel" href="/Home/Index" class="btn btn-outline-success" style="width: 180Px">Назад</a>
+                    <input id="download" type="submit" value="Загрузить" class="btn btn-success" style="width: 180Px" />
+                </div>
             </div>
-
         </div>
-    </div>
 
-    @Html.ActionLink("Назад", "Index", "Houses", null, new { @class = "btn btn-success btn-block" })
+    }
+
+    @Html.ActionLink("Назад", "Home", "Index", null, new { @class = "btn btn-success btn-block" })
 
 
 
@@ -59,44 +61,7 @@
     @Scripts.Render("~/scripts/jquery.signalR-2.4.0.min.js")
     @Scripts.Render("~/signalr/hubs")
 
-    <script>
-        function UploadFile() {
-            //Грузим СВН
-            var Date = $("#Date").val();
-           
-            //var Upload = $("#svn").prop('files')[0];
-            var data = new FormData();
-
-
-            var $input = $("#upload").prop('files')[0];
-            var fd = new FormData;
-
-            fd.append('upload', $input);
-            fd.append('Date', Date);
-            $.ajax({
-                url: '/Home/Upload',
-                data: fd,
-                processData: false,
-                contentType: false,
-                type: 'POST',
-                success: function (data) {
-                    if (data != 0) {
-                        $('body').html(data);
-                    }
-                    else {
-
-                    }
-
-                }
-            });
-
-
-
-
-
-        }
-
-    </script>
+   
 
     <!--SignalR script to update the chat page and send messages.-->
     <script>

@@ -162,25 +162,25 @@ namespace GKHNNC.Controllers
             return View();
         }
             [HttpPost]
-        public ActionResult Upload(HttpPostedFileBase upload, DateTime Date)
+        public ActionResult Upload(HttpPostedFileBase upload, DateTime Date, bool JQ=false)
         {
             int progress = 0;
             double pro100 = 0;
             int procount = 0;
             if (upload != null)
             {
-                HttpCookie cookie = new HttpCookie("My localhost cookie");
+               
+
 
                 //найдем старые данные за этот месяц и заменим их не щадя
                 List<Arendator> dbArendator = db.Arendators.Where(x => x.Date.Year == Date.Year && x.Date.Month == Date.Month).ToList();
                 List<string> AR = new List<string>();
 
                 pro100 = dbArendator.Count;
-                foreach (Arendator S in dbArendator)
-                {
+                
                     try
                     {
-                        db.Arendators.Remove(S);
+                        db.Arendators.RemoveRange(dbArendator);
                         db.SaveChanges();
                         procount++;
                         progress = Convert.ToInt16(procount / pro100 * 100);
@@ -192,16 +192,6 @@ namespace GKHNNC.Controllers
                         Console.WriteLine(e.Message);
                     }
                     
-
-                }
-
-                // Установить значения в нем
-                cookie["Download"] = "0";
-                // Добавить куки в ответ
-                Response.Cookies.Add(cookie);
-
-
-
 
                 //call this method inside your working action
                 ProgressHub.SendMessage("Инициализация и подготовка...", 0);
@@ -225,7 +215,7 @@ namespace GKHNNC.Controllers
                 List<List<string>> Dannie;
 
                 int[] X = new int[] {1,2,3,4,6,8,10};
-                string[] Names = new string[] { "адрес", "№дома", "теплотаотопл,гкалфактич", "площадь", "теплота1/12(гкал,)", "гвкуб,м", "хвкуб,м" };
+                string[] Names = new string[] { "адрес", "№дома", "теплотаотопл, гкалфактич", "площадь", "теплота1/12(гкал,)", "гвкуб,м", "хвкуб,м" };
                 string Error;
                 List<List<string>> excel = ExcelSVNUpload.IMPORT(Server.MapPath("~/Files/" + fileName), Names,out Error,Vkladka,X);
                 if (excel.Count < 1)
@@ -234,13 +224,23 @@ namespace GKHNNC.Controllers
                     ViewBag.Names = Names;
                     //если нифига не загрузилось то 
                     Console.WriteLine("Пустой массив значит файл не загрузился!(он уже удалился)");
-                    return View("NotUpload");
+
+                    if (!JQ)
+                    {
+                        return View("NotUpload");
+                    }
+                    else
+                    {
+                        return Json(Error);
+                    }
                 }
 
                 string HomeAdress;
                 string ADRESS = "";
                 string CODE = "";
-             
+                progress = 0;
+                pro100 = excel.Count;
+                procount = 0;
                 for (int i = 0; i < excel.Count; i++)
                 {
                     Arendator Ar = new Arendator();
@@ -333,8 +333,11 @@ namespace GKHNNC.Controllers
                         
                         i = j-1;
                     }
-                  
-                   
+                    procount++;
+                    progress = Convert.ToInt16(i / pro100 * 100);
+                    if (procount > pro100) { procount = Convert.ToInt32(pro100); }
+                    ProgressHub.SendMessage("Обрабатываем файл аренды...", progress);
+
                 }
             
 
@@ -346,7 +349,15 @@ namespace GKHNNC.Controllers
                 {
                     //если нифига не загрузилось то 
                     Console.WriteLine("Пустой массив значит файл не загрузился!(он уже удалился)");
-                    return View("NotUpload");
+                    
+                    if (!JQ)
+                    {
+                        return View("NotUpload");
+                    }
+                    else
+                    {
+                        return Json(Error);
+                    }
                 }
                 else
                 {
@@ -382,12 +393,26 @@ namespace GKHNNC.Controllers
                     ViewBag.date = Date;
                     ViewBag.file = fileName;
                     ViewBag.AR = AR;
-                  
 
-                    return View("UploadComplete");
+
+                    if (!JQ)
+                    {
+                        return View("UploadComplete");
+                    }
+                    else
+                    {
+                        return Json("Ошибок загрузки нет!");
+                    }
                 }
             }
-            return RedirectToAction("Index");
+            if (!JQ)
+            {
+                return RedirectToAction("NotUpload");
+            }
+            else
+            {
+                return Json("Файл не выбран или неверный формат файла.");
+            }
         }
 
         public ActionResult UploadComplete ()

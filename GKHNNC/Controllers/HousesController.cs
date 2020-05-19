@@ -87,6 +87,7 @@ namespace GKHNNC.Controllers
                 {
                     DateTime Dat = DateTime.Now;
                     ho.Osmotrs = db.Osmotrs.Where(x=>x.AdresId == a.Id ).OrderByDescending(x => x.Date).ToList();//все осмотры дома
+                    ho.NumberOsmotrs = ho.Osmotrs.Count();
                     ho.OsmotrEst = true;
                 }
                 catch { ho.OsmotrEst = false; }

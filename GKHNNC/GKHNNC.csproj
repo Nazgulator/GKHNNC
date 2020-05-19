@@ -1006,6 +1006,8 @@
     <Content Include="Content\themes\basic\assets\fonts\icons.woff" />
     <Content Include="Content\themes\basic\assets\fonts\icons.ttf" />
     <Content Include="Content\themes\basic\assets\fonts\icons.eot" />
+    <None Include="Properties\PublishProfiles\CustomProfile1.pubxml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\ExportToExcel\Example - Export Data to Excel.html" />
     <Content Include="Scripts\ExportToExcel\excelexportjs.js" />
@@ -1880,6 +1882,7 @@
     <Content Include="Views\Marshruts\Index.cshtml" />
     <Content Include="Views\MusorPloshadkas\NotUpload.cshtml" />
     <Content Include="Views\Home\SpecUpload.cshtml" />
+    <Content Include="Views\Home\Load.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -88,8 +88,10 @@ namespace GKHNNC.Controllers
                 bool ignore = false;
                 try
                 {
-                    OtopGkal = Convert.ToDecimal(L[2].Replace(".", ","));
-                    OtopRub = Convert.ToDecimal(L[5].Replace(".", ","));
+                    OtopGkal = Math.Round(Convert.ToDecimal(L[2].Replace(",", ".")),2);
+                    if (OtopGkal < 0) { OtopGkal = 0; }
+                    OtopRub = Math.Round(Convert.ToDecimal(L[5].Replace(",", ".")),2);
+                    if (OtopRub < 0) { OtopRub = 0; }
                 }
                 catch
                 {
@@ -99,12 +101,12 @@ namespace GKHNNC.Controllers
                     } }
                 try
                 {
-                    GWM3 = Convert.ToDecimal(L[3].Replace(".", ","));
+                    GWM3 = Math.Round(Convert.ToDecimal(L[3].Replace(",", ".")),2);
                     if (GWM3 < 0)
                     {
                         GWM3 = 0;
                     }
-                    GWRub = Convert.ToDecimal(L[6].Replace(".", ","));
+                    GWRub = Math.Round(Convert.ToDecimal(L[6].Replace(",", ".")),2);
                     if (GWRub < 0){GWRub = 0;}
                 }
                 catch
@@ -112,9 +114,11 @@ namespace GKHNNC.Controllers
                 }
                 try
                 {
-                    HWM3 = Convert.ToDecimal(L[4].Replace(".", ","));
+                    
+                    HWM3 = Math.Round(Convert.ToDecimal(L[4].Replace(",", ".")),2);
+                   
                     if (HWM3 < 0) { HWM3 = 0; }
-                    HWRub = Convert.ToDecimal(L[7].Replace(".", ","));
+                    HWRub = Math.Round(Convert.ToDecimal(L[7].Replace(",", ".")),2);
                     if (HWRub < 0) { HWRub = 0; }
                 }
                 catch
@@ -233,7 +237,7 @@ namespace GKHNNC.Controllers
                 }
                 procount++;
                 progress = Convert.ToInt16(50 + procount / pro100 * 50);
-                ProgressHub.SendMessage("Обрабатываем файл ОБСД...", progress);
+                ProgressHub.SendMessage("Обрабатываем файл ОПУ...", progress);
                 if (procount > pro100) { procount = Convert.ToInt32(pro100); }
 
             }
@@ -257,7 +261,7 @@ namespace GKHNNC.Controllers
 
 
         [HttpPost]
-        public ActionResult Upload(HttpPostedFileBase upload, DateTime Date)
+        public ActionResult Upload(HttpPostedFileBase upload, DateTime Date, bool JQ=false)
         {
             int progress = 0;
             double pro100 = 0;
@@ -269,16 +273,16 @@ namespace GKHNNC.Controllers
                 //найдем старые данные за этот месяц и заменим их не щадя
                 List<OPU> dbOPU = db.OPUs.Where(x => x.Date.Year == Date.Year && x.Date.Month == Date.Month).ToList();
                 pro100 = dbOPU.Count;
-                foreach (OPU S in dbOPU)
-                {
+              
                     try
                     {
-                        db.OPUs.Remove(S);
-                        db.SaveChanges();
-                        procount++;
-                        progress = Convert.ToInt16(procount / pro100 * 100);
-                        if (procount > pro100) { procount = Convert.ToInt32(pro100); }
-                        ProgressHub.SendMessage("Удаляем старые данные...", progress);
+                    procount++;
+                    progress = Convert.ToInt16(procount / pro100 * 100);
+                    if (procount > pro100) { procount = Convert.ToInt32(pro100); }
+                    ProgressHub.SendMessage("Удаляем старые данные...", progress);
+                    db.OPUs.RemoveRange(dbOPU);
+                    db.SaveChanges();
+                       
                     }
                     catch (Exception e)
                     {
@@ -286,7 +290,7 @@ namespace GKHNNC.Controllers
                     }
 
 
-                }
+                
 
                 //call this method inside your working action
                 ProgressHub.SendMessage("Инициализация и подготовка...", 0);
@@ -312,7 +316,14 @@ namespace GKHNNC.Controllers
                     ViewBag.Error = Error;
                     ViewBag.Names = Names;
                     Console.WriteLine("Пустой массив значит файл не загрузился!(он уже удалился)");
-                    return View("NotUpload");
+                    if (!JQ)
+                    {
+                        return View("NotUpload");
+                    }
+                    else
+                    {
+                        return Json(Error);
+                    }
                 }
                 else
                 {
@@ -322,16 +333,35 @@ namespace GKHNNC.Controllers
                     {
                         A.Adress = A.Adress.Replace(" ", "");
                     }
-
-                    ZapuskPoiska(excel, Date, Adresa);
+                    if (!JQ)
+                    {
+                        ZapuskPoiska(excel, Date, Adresa);
+                    }
+                    else
+                    {
+                        Poisk(excel, Date, Adresa);
+                    }
                     ViewBag.date = Date;
                     ViewBag.file = fileName;
-
-                    return View("UploadComplete");
+                    if (!JQ)
+                    {
+                        return View("UploadComplete");
+                    }
+                    else
+                    {
+                        return Json("Ошибок загрузки нет!");
+                    }
 
                 }
             }
-            return RedirectToAction("NotUpload");
+            if (!JQ)
+            {
+                return RedirectToAction("NotUpload");
+            }
+            else
+            {
+                return Json("Файл не выбран или неверный формат файла.");
+            }
         }
         public async void ZapuskPoiska(List<List<string>> excel, DateTime Date, List<Adres> Adresa)
         {

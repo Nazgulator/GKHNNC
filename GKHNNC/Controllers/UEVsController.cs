@@ -133,7 +133,7 @@ namespace GKHNNC.Controllers
             return View();
         }
         [HttpPost]
-        public ActionResult Upload(HttpPostedFileBase upload, DateTime Date)
+        public ActionResult Upload(HttpPostedFileBase upload, DateTime Date, bool JQ = false)
         {
             int progress = 0;
             double pro100 = 0;
@@ -197,6 +197,7 @@ namespace GKHNNC.Controllers
                 }
                 else
                 {
+                    procount = 0;
                     pro100 = excel.Count;
                     UEV UEVKA = new UEV();
                     List<Adres> Adresa = db.Adres.ToList();// грузим все адреса из БД
@@ -206,7 +207,7 @@ namespace GKHNNC.Controllers
                     foreach (List<string> L in excel)
                     {
                         
-                            bool EstName = false;
+                        bool EstName = false;
                         int CodUEV = 0;
                         Codes.Add(L[0]);
                         Teplos.Add(L[4]);
@@ -367,10 +368,26 @@ namespace GKHNNC.Controllers
                     ViewBag.HWs = HWs;
                     ViewBag.Teplos = Teplos;
                     ViewBag.SmallErrors = SmallErrors;
-                    return View("UploadComplete");
+                    if (JQ == false)
+                    {
+                        return View("UploadComplete");
+                    }
+                    else
+                    {
+                        Errors.Add(Error);
+                        return Json(Errors);
+                    }
                 }
             }
-            return RedirectToAction("Index");
+            if (!JQ)
+            {
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return Json("Файл не выбран! Выберните файл EXCEL формата XLS или XLSX НЕ CSV!!!");
+            }
+
         }
 
         public ActionResult UploadComplete()

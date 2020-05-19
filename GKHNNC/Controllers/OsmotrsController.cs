@@ -85,19 +85,38 @@ namespace GKHNNC.Controllers
     
 
 
-            public ActionResult SaveElement(int Id=0, string Photo1="", string Photo2="",int EdIzm=0,int Kolvo = 0, int Material=0)
+            public ActionResult SaveElement(int Id=0, string Photo1="", string Photo2="",int EdIzm=0,decimal Kolvo = 0, int Material=0)
         {
             string Data = "";
-            if (Photo1 != "" && Photo2 != "")
-            {
+
+            ActiveElement A = new ActiveElement();
                 try
                 {
-                    ActiveElement A = db.ActiveElements.Where(x => x.Id == Id).First();
-                    A.Photo1 = Path.GetFileName(Photo1);
-                    A.Photo2 = Path.GetFileName(Photo2);
+                    A = db.ActiveElements.Where(x => x.Id == Id).First();
+                if ((A.Photo1 == null || A.Photo2 == null) && (Photo1 == "" || Photo2 == ""))
+                {
+                    Data = "Ошибка; Отсутствуют фотографии! Загрузите обе фотографии и сохраните элемент.";
+                }
+                else
+                {
+                    if (Photo1 != "" && Photo2 != "")
+                    {
+                        A.Photo1 = Path.GetFileName(Photo1);
+                        A.Photo2 = Path.GetFileName(Photo2);
+                    }
+                    else
+                    {
+                      //загружаются фотки по умолчанию
+                    }
+                }
+                   
                     A.DateIzmeneniya = DateTime.Now;
                     A.UserName = User.Identity.Name;
                     A.MaterialId = Material;
+                 if (Kolvo == 0 && A.Kolichestvo > 0)
+                {
+                    Kolvo = A.Kolichestvo;
+                }
                     A.Kolichestvo = Kolvo;
                     A.IzmerenieId = EdIzm;
                     db.Entry(A).State = EntityState.Modified;
@@ -109,7 +128,7 @@ namespace GKHNNC.Controllers
 
                 }
                 catch(Exception e) { Data = "Ошибка; сохранения изменений!"; }
-            }
+            
             return Json(Data);
 
         }
@@ -277,6 +296,29 @@ namespace GKHNNC.Controllers
                 A.AdresId = Convert.ToInt32(cookieReq["AdresId"]);
             }
         }
+
+        [HttpPost]
+        public ActionResult RefreshTextAD(int Id=0 , string text="")
+        {
+            if (Id!=0)
+            {
+                try
+                {
+                    ActiveDefect AD = db.ActiveDefects.Where(x => x.Id == Id).First();
+                    AD.Opisanie = text;
+                    db.Entry(AD).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+                catch
+                {
+                    return Json("Ошибка. Невозможно сохранить текст в базу данных. Попробуйте еще раз позже.");
+                }
+            }
+
+            return Json("");
+        }
+
+
         [HttpPost]
         public ActionResult RemoveAD(int ADId = 0)
         {
@@ -527,12 +569,21 @@ namespace GKHNNC.Controllers
                     try
                     {//для загрузки осмотра
                         Adres Ad = db.Adres.Where(x => x.Id == AdresId).First();
-                        AE = db.ActiveElements.Where(x => x.ElementId == ElementId && x.AdresId == AdresId).Include(x => x.Element).Include(x=>x.Material).Include(x=>x.Izmerenie).OrderByDescending(x => x.Date).First();
+                        if (OsmotrId == 1)
+                        {
+                            AE = db.ActiveElements.Where(x => x.ElementId == ElementId && x.AdresId == AdresId).Include(x => x.Element).Include(x => x.Material).Include(x => x.Izmerenie).OrderByDescending(x => x.Date).First();
+                        }
+                        else
+                        {
+                            AE = db.ActiveElements.Where(x => x.ElementId == ElementId && x.AdresId == AdresId&&x.OsmotrId==OsmotrId).Include(x => x.Element).Include(x => x.Material).Include(x => x.Izmerenie).First();
+                        }
                         B = db.Builds.Where(x => x.Id==Ad.BuildId).First();//совмещены все кроме Морского и Шатурской 10
                         int E = db.Elements.Where(x => x.Id == ElementId).Select(x=>x.ElementId).First();//ищем связку элемент ИД в Элементе. Это ссылка на элементы в справочнике Build_ELements
                         int M = db.BuildElements.Where(z => z.ElementId == E&& z.BuildId==B.Id).Select(z=>z.Material).First();
+                        if (AE != null && AE.MaterialId != 1) { M = AE.MaterialId; }
                         AE.M = M;
                         int EI = db.BuildElements.Where(z => z.ElementId == E && z.BuildId == B.Id).Select(z => z.EdIzm).First();
+                        if (AE != null && AE.IzmerenieId != 1) { EI = AE.IzmerenieId; }
                         AE.EI = EI;
                     }
                     catch (Exception e)

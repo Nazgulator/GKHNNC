@@ -95,6 +95,7 @@ namespace GKHNNC.Controllers
 
         public async void Poisk (List<List<string>> excel, DateTime Date,List<Adres>Adresa,List<TableService>Services)
         {
+
             int progress = 0;
             double pro100 = 0;
             int procount = 0;
@@ -138,21 +139,25 @@ namespace GKHNNC.Controllers
 
                 if (!ignore)//Если не игнорить то ищем
                 {
-                    if (adr.Contains("ДЕТСКИЙ7"))
+                   try
+                    {
+                        OBSDKA.TableServiceId = Services.Where(x => x.Type.Equals(ser)).Select(x => x.Id).First();
+                        EstService = true;
+                    }
+                    catch
                     {
 
                     }
+               //     foreach (TableService S in Services)
+                //    {
 
-                    foreach (TableService S in Services)
-                    {
-
-                        if (S.Type.Equals(ser))
-                        {
-                            OBSDKA.TableServiceId = S.Id;
-                            EstService = true;
-                            break;
-                        }
-                    }
+                 //       if (S.Type.Equals(ser))
+                 //       {
+                 //           OBSDKA.TableServiceId = S.Id;
+                 //           EstService = true;
+                 //           break;
+                 //       }
+                 //   }
                 }
 
 
@@ -264,8 +269,137 @@ namespace GKHNNC.Controllers
             
         }
 
+        class Adres2
+        {
+            public int id;
+            public string Adres;
+        }
+        public void FastPoisk(List<List<string>> excel, DateTime Date, List<Adres> Adresa, List<TableService> Services)
+        {
+            //упрощаем поиск
+            List<Adres2> A2 = new List<Adres2>();
+            foreach (Adres A in Adresa)
+            {
+                Adres2 AA = new Adres2();
+                AA.Adres = A.Adress;
+                AA.id = A.Id;
+                A2.Add(AA);
+            }
+            int progress = 0;
+            double pro100 = 0;
+            int procount = 0;
+            pro100 = excel.Count;
+           
+            CultureInfo culture = new CultureInfo("en-US");
+            //для каждой строки в экселе
+            int counter = 0;
+            foreach (List<string> L in excel)
+            {
+                OBSD OBSDKA = new OBSD();
+                counter++;
+                bool EstService = false;
+                string ser = L[2].Replace(" ", "").ToUpper();
+                string adr = L[0].Replace(" ", "").ToUpper();
+
+                decimal Saldo = 0;
+                decimal Nach = 0;
+                bool ignore = false;
+                try
+                {
+                    Saldo = Convert.ToDecimal(L[5], culture);
+
+                }
+                catch
+                {
+                }
+                try
+                {
+
+                    Nach = Convert.ToDecimal(L[3], culture);
+                }
+                catch
+                {
+                }
+
+                if (Nach == 0 && Saldo == 0)
+                {
+                    ignore = true;
+                }
+
+                if (!ignore)//Если не игнорить то ищем
+                {
+                    try
+                    {
+                        OBSDKA.TableServiceId = Services.Where(x => x.Type.Equals(ser)).Select(x => x.Id).First();
+                        EstService = true;
+                    }
+                    catch
+                    {
+
+                    }
+                    //     foreach (TableService S in Services)
+                    //    {
+
+                    //       if (S.Type.Equals(ser))
+                    //       {
+                    //           OBSDKA.TableServiceId = S.Id;
+                    //           EstService = true;
+                    //           break;
+                    //       }
+                    //   }
+                }
+
+
+
+                if (EstService)//если есть такой сервис
+                {
+                   
+
+                    try
+                    {
+                        OBSDKA.AdresId = A2.Where(x => x.Adres.Equals(adr)).Select(x => x.id).First();
+                        
+                        int licevoi = 0;
+                        try
+                        {
+                            licevoi = Convert.ToInt32(L[1]);
+                        }
+                        catch
+                        { }
+                        OBSDKA.Licevoi = licevoi;
+                        OBSDKA.Date = Date;
+                        OBSDKA.Nachislenie = Nach;
+                        OBSDKA.Saldo = Saldo;
+                        OBSDKA.FIO = L[4];
+                        OBSDKA.Kvartira = L[6];
+                        db.OBSDs.Add(OBSDKA);
+                        db.SaveChanges();
+                    }
+                    catch
+                    {
+
+                    }
+                }
+                   
+                procount++;
+                progress = Convert.ToInt16(50 + procount / pro100 * 50);
+                ProgressHub.SendMessage("Обрабатываем файл ОБСД...", progress);
+                if (procount > pro100) { procount = Convert.ToInt32(pro100); }
+
+            }
+            List<string> Adr = Adresa.Select(x => x.Adress).ToList();
+            for (int a = 0; a < Adr.Count; a++)
+            {
+
+                Adr[a] = Adr[a].Replace(" ", "").ToUpper();
+            }
+
+        }
+
+
+
         [HttpPost]
-        public ActionResult Upload(HttpPostedFileBase upload, DateTime Date)
+        public ActionResult Upload(HttpPostedFileBase upload, DateTime Date, bool JQ = false)
         {
             int progress = 0;
             double pro100 = 0;
@@ -277,16 +411,15 @@ namespace GKHNNC.Controllers
                 //найдем старые данные за этот месяц и заменим их не щадя
                 List<OBSD> dbOBSD = db.OBSDs.Where(x => x.Date.Year == Date.Year && x.Date.Month == Date.Month).ToList();
                 pro100 = dbOBSD.Count;
-                foreach (OBSD S in dbOBSD)
-                {
+                
                     try
                     {
-                        db.OBSDs.Remove(S);
+                        db.OBSDs.RemoveRange(dbOBSD);
                         db.SaveChanges();
                         procount++;
                         progress = Convert.ToInt16(procount / pro100 * 100);
                         if (procount > pro100) { procount = Convert.ToInt32(pro100); }
-                        ProgressHub.SendMessage("Удаляем старые данные...", progress);
+                        ProgressHub.SendMessage("Удаляем старые данные ОБСД...", progress);
                     }
                     catch (Exception e)
                     {
@@ -294,7 +427,7 @@ namespace GKHNNC.Controllers
                     }
 
 
-                }
+                
 
                 //call this method inside your working action
                 ProgressHub.SendMessage("Инициализация и подготовка...", 0);
@@ -320,7 +453,14 @@ namespace GKHNNC.Controllers
                     ViewBag.Names = Names;
                     ViewBag.Error = Error;
                     Console.WriteLine("Пустой массив значит файл не загрузился!(он уже удалился)");
-                    return View("NotUpload");
+                    if (!JQ)
+                    {
+                        return View("NotUpload");
+                    }
+                    else
+                    {
+                        return Json(Error);
+                    }
                 }
                 else
                 {
@@ -335,15 +475,39 @@ namespace GKHNNC.Controllers
                     {
                         S.Type = S.Type.Replace(" ", "");
                     }
-                    ZapuskPoiska(excel, Date,Adresa,Services);
+
+                    if (!JQ)
+                    {
+                        ZapuskPoiska(excel, Date, Adresa, Services);
+                    }
+                    else
+                    {
+                        FastPoisk(excel, Date, Adresa, Services);
+                    }
+
+                   
                     ViewBag.date = Date;
                     ViewBag.file = fileName;
 
-                    return View("UploadComplete");
+                    if (!JQ)
+                    {
+                        return View("UploadComplete");
+                    }
+                    else
+                    {
+                        return Json("Ошибок загрузки нет!");
+                    }
 
                 }
             }
-            return RedirectToAction("Index");
+            if (!JQ)
+            {
+                return RedirectToAction("NotUpload");
+            }
+            else
+            {
+                return Json("Файл не выбран или неверный формат файла.");
+            }
         }
 
 

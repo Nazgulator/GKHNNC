@@ -48,10 +48,9 @@
         {
 
             <div class="alert-success">
-                <p>Ура! ОСМОТРЫ активны и готовы к заполнению! </p>
-                <p>10.03.2020 фоициально запущены весенние осмотры! </p>
-                <p>Вы можете начинать их заполнять! </p>
-                <p>Все вопросы по работе программы вы можете задать в отдел начислений. </p>
+                <p>20.04 Сайт восстановлен после длительного сбоя </p>
+                <p>Возможны ошибки в работе о которых вы можете сообщить в отдел начислений !</p>
+                <p>Мы надеемся, что дальнейшая работа будет стабильной и приятной:) </p>
             </div>
 
             if (User.Identity.Name.Contains("БухгалтерПоТопливу") == false && User.Identity.Name.Contains("УАТ") == false && User.Identity.Name.Contains("УЭВ") == false && User.Identity.Name.Contains("Асанова") == false)
@@ -255,7 +254,7 @@
                             </p>
 
                             <p>
-                                <button class="btn btn-success btn-lg" style="width:500Px" onclick="location.href='@Url.Action("Upload", "Home")'">
+                                <button class="btn btn-success btn-lg" style="width:500Px" onclick="location.href='@Url.Action("Load", "Home")'">
                                     <i class="glyphicon glyphicon-open"></i> Загрузка таблиц для актов &raquo;
                                 </button>
                             </p>
@@ -490,6 +489,11 @@
             <p>
                 <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "MarkaAvtomobils")'">
                     <i class="glyphicon glyphicon-screenshot"></i> Марки автомобилей &raquo;
+                </button>
+            </p>
+            <p>
+                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Avtomobils")'">
+                    <i class="glyphicon glyphicon-dashboard"></i> Список автомобилей &raquo;
                 </button>
             </p>
         }

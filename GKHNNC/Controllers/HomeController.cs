@@ -695,10 +695,70 @@ namespace GKHNNC.Controllers
         {
             string Result = "";
             List<SVN> SVNKI = db.SVNs.Where(x => x.Date.Year == Year && x.Date.Month == Month).ToList();
+            decimal sum = 0;
             for (int i = 1; i < 4; i++)
             {
-                Result += db.TableServices.Where(x => x.Id == i).Select(x => x.Type).First() + "=" + db.SVNs.Where(x => x.ServiceId == i).Sum(x => x.Fact)+" ";
+                sum += SVNKI.Where(x => x.ServiceId == i).Sum(x => x.Fact);
+                Result += db.TableServices.Where(x => x.Id == i).Select(x => x.Type).First() + "=" + SVNKI.Where(x => x.ServiceId == i).Sum(x => x.Fact)+" ";
             }
+            if (sum == 0) { Result = null; }
+            return Result;
+        }
+
+        public string SearchUEV(int Year, int Month)
+        {
+            string Result = "";
+            List<UEV> UEVKI = db.UEVs.Where(x => x.Date.Year == Year && x.Date.Month == Month).ToList();
+            decimal sum = UEVKI.Sum(x => x.HwEnergyRub) + UEVKI.Sum(x => x.HwVodaRub);
+            
+                Result += "Отопление="+UEVKI.Sum(x => x.OtEnergyRub) + " Вода=" + sum;
+            
+            if (sum == 0) { Result = null; }
+            return Result;
+        }
+        public string SearchIPU(int Year, int Month)
+        {
+            string Result = "";
+            List<IPU> IPUKI = db.IPUs.Where(x => x.Date.Year == Year && x.Date.Month == Month).ToList();
+            decimal sum = IPUKI.Sum(x => x.Normativ) - IPUKI.Sum(x => x.Schetchik);
+
+            Result += "Корректировка по ИПУ=" + sum+" Счетчик="+ IPUKI.Sum(x => x.Schetchik)+" Норматив="+ IPUKI.Sum(x => x.Normativ);
+
+            if (sum == 0) { Result = null; }
+            return Result;
+        }
+        public string SearchOPU(int Year, int Month)
+        {
+            string Result = "";
+            List<OPU> OPUKI = db.OPUs.Where(x => x.Date.Year == Year && x.Date.Month == Month).ToList();
+            decimal sum = OPUKI.Sum(x => x.GWRub);
+
+            Result += "Отопление="+ OPUKI.Sum(x => x.OtopRub)+" Горячая вода=" + sum+" Холодная вода="+ OPUKI.Sum(x => x.HWRub);
+
+            if (sum == 0) { Result = null; }
+            return Result;
+        }
+        public string SearchArenda(int Year, int Month)
+        {
+            string Result = "";
+            List<Arendator> ARKI = db.Arendators.Where(x => x.Date.Year == Year && x.Date.Month == Month).ToList();
+            decimal sum = ARKI.Sum(x => x.Ploshad);
+
+            Result += "Теплота=" + ARKI.Sum(x => x.Teplota) + " Горячая вода=" + ARKI.Sum(x => x.HotWater) + " Холодная вода=" + ARKI.Sum(x => x.ColdWater);
+
+            if (sum == 0) { Result = null; }
+            return Result;
+        }
+
+        public string SearchOBSD(int Year, int Month)
+        {
+            string Result = "";
+            int OBSDKI = db.OBSDs.Where(x => x.Date.Year == Year && x.Date.Month == Month).Count();
+            decimal sum = OBSDKI;
+
+            Result += "Всего записей=" + OBSDKI;
+
+            if (sum == 0) { Result = null; }
             return Result;
         }
 
@@ -734,6 +794,7 @@ namespace GKHNNC.Controllers
             List<SelectListItem> Months = Opr.IMonthZabit();
             foreach (SelectListItem M in Months)
             {
+
                 if (M.Value.Equals(Month.ToString()))
                 {
                     M.Selected = true;
@@ -741,8 +802,14 @@ namespace GKHNNC.Controllers
             }
             List<SelectListItem> Years = Opr.YearZabit();
             ViewBag.Years = new SelectList(Years,"Value", "Text",Year);
-            ViewBag.Month = new SelectList(Months, "Value", "Value", Month);
-            ViewBag.SVN = SearchSVN(DateTime.Now.Year, DateTime.Now.Month);
+            ViewBag.Month = new SelectList(Months, "Value", "Text", Month);
+            ViewBag.M = Month;
+            ViewBag.SVN = SearchSVN(Year, Month);
+            ViewBag.UEV = SearchUEV(Year, Month);
+            ViewBag.IPU = SearchIPU(Year, Month);
+            ViewBag.OPU = SearchOPU(Year, Month);
+            ViewBag.Arenda = SearchArenda(Year, Month);
+            ViewBag.OBSD = SearchOBSD(Year, Month);
             return View();
         }
 
@@ -1668,7 +1735,7 @@ namespace GKHNNC.Controllers
         }
 
         [HttpGet]
-        public ActionResult Upload()
+        public ActionResult Load()
         {
             return View();
         }
@@ -1676,6 +1743,7 @@ namespace GKHNNC.Controllers
         [HttpPost]
         public ActionResult Upload(HttpPostedFileBase upload, DateTime Date)
         {
+            string warning = "";
             if (upload != null)
             {
                 HttpCookie cookie = new HttpCookie("My localhost cookie");
@@ -1697,15 +1765,24 @@ namespace GKHNNC.Controllers
                 if (Directory.Exists(Server.MapPath("~/Files/")) == false)
                 {
                     Directory.CreateDirectory(Server.MapPath("~/Files/"));
+                    warning += "Невозможно создать дирректорию Files";
 
                 }
-                upload.SaveAs(Server.MapPath("~/Files/" + fileName));
+                try
+                {
+                    upload.SaveAs(Server.MapPath("~/Files/" + fileName));
+                }
+                catch
+                {
+                    warning += "Невозможно сохранить в папку Files файл "+fileName;
+                }
                 //обрабатываем файл после загрузки
                 List<HouseToAkt> houses = ExcelUpload.IMPORT(Server.MapPath("~/Files/" + fileName));
               if (houses.Count < 1)
                 {
-                    
-                    RedirectToAction("Warning");
+                    warning += "Невозможно сохранить в папку Files файл " + fileName;
+                    ViewBag.Warning = warning;
+                    return View("Warning");
                     
                   
                 }

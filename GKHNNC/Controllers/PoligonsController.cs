@@ -436,7 +436,7 @@ namespace GKHNNC.Controllers
         // сведения см. в статье https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Number,MassIn,MassOut,Description,Marka,TypeId,KontrAgentId")] Poligon poligon)
+        public ActionResult Create([Bind(Include = "Number,MassIn,MassOut,Description,Marka,TypeId,KontrAgentId,VibralRab")] Poligon poligon)
         {
             poligon.Date = DateTime.Now;
             poligon.AvtomobilId = 0;

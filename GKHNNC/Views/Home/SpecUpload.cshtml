@@ -1,29 +1,90 @@
 ﻿@{ Layout = "~/Views/Shared/_Layout0.cshtml"; }
 
+<!-- Modal -->
+<div class="modal fade" id="Download" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+
+
+
+
+                <h4 id="CText">Загрузка данных, пожалуйста подождите...</h4>
+
+            </div>
+            <div class="modal-body">
+                <div class="progress">
+
+                    <div id="progressBar" class="progress-bar progress-bar-striped bg-success progress-bar-animated" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                    <center>
+                        <label id="nadpis">Загрузка данных...</label>
+                    </center>
+
+                </div>
+                <div id="C" class="alert-warning">
+
+                </div>
+                <div>
+                    <button class="btn btn-success btn-block" id="CButton" data-dismiss="modal" aria-label="Close" onclick="window.location.replace('/Home/SpecUpload')">Загрузка успешно завершена!</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
 <h3> Загрузка ведомостей для создания отчёта</h3>
 <div class="container">
     <div class="table">
         <div class="row">
             <div class="col-6">
                 Выберите месяц
-                @Html.DropDownList("Month", (SelectList)ViewBag.Month, new { @class = "form-control", onchange = "MYChange()" })
+                <select id="Month" name="Month" class="form-control" onchange="MYChange()">
+                    @{ int c = 0;}
+                    @foreach (SelectListItem Z in ViewBag.Month)
+                    {
+                        c++;
+                        if (c == ViewBag.M)
+                        {
+                            <option value="@Z.Value" selected>@Z.Text</option>
+                        }
+                        else
+                        {
+                            <option value="@Z.Value">@Z.Text</option>
+                        }
+                    }
+
+                </select>
+
 
 
             </div>
             <div class="col-6">
                 Выберите год
-                @Html.DropDownList("Year", (SelectList) ViewBag.Years, new { @class = "form-control", onchange = "MYChange()" })
+                @Html.DropDownList("Year", (SelectList)ViewBag.Years, new { @class = "form-control", onchange = "MYChange()" })
 
             </div>
         </div>
 
 
 
-        <div class="row" style="margin-top:10px">
+        <div class="row rounded border border-success" style="margin-top:10px;padding-top:5px">
             <div class="col-4">
-                <button class="btn btn-success btn-block " onclick="LoadSVN()">
-                    Загрузить сводную ведомость начислений &raquo;
-                </button>
+                @if (ViewBag.SVN != null)
+                {
+
+                    <button class="btn btn-success btn-block " onclick="LoadSVN()" title="Загружайте файл С-В-Н или С-О-В. Проверьте, что файл XLS или XLSX!">
+                        Перезагрузить сводную ведомость начислений &raquo;
+                    </button>
+                }
+                else
+                {
+                    <button class="btn btn-secondary btn-block " onclick="LoadSVN()" title="Загружайте файл С-В-Н или С-О-В. Проверьте, что файл XLS или XLSX!">
+                        Загрузить сводную ведомость начислений &raquo;
+                    </button>
+                }
             </div>
             <div class="col-4">
                 <form id="svn" name="svn" method="post" enctype="multipart/form-data">
@@ -33,16 +94,207 @@
 
             </div>
             <div class="col-4" style="text-align:left">
-                @ViewBag.SVN
+                @if (ViewBag.SVN != null)
+                {
+                    @ViewBag.SVN
+                }
+                else
+                {
+                    <p>
+                        Сводная ведомость начислений не загружена за этот месяц!
+                    </p>
+                }
+            </div>
+        </div>
+        <div class="row rounded border border-success" style="margin-top:10px;padding-top:5px">
+            <div class="col-4">
+                @if (ViewBag.UEV != null)
+                {
+
+                    <button class="btn btn-success btn-block " onclick="LoadUEV()" title="Загружайте ведомость УЭВ 1830. При ошибках разгруппируйте шапку файла и пересохраните в XLS">
+                        Перезагрузить ведомость УЭВ &raquo;
+                    </button>
+                }
+                else
+                {
+                    <button class="btn btn-secondary btn-block " onclick="LoadUEV()" title="Загружайте ведомость УЭВ 1830. При ошибках разгруппируйте шапку файла и пересохраните в XLS">
+                        Загрузить ведомость УЭВ &raquo;
+                    </button>
+                }
+            </div>
+            <div class="col-4">
+                <form id="uev" name="uev" method="post" enctype="multipart/form-data">
+                    <input id="uevfile" type="file" class="form-control" accept=".xls,.xlsx" />
+                </form>
+                <label>Файл для загрузки</label>
+
+            </div>
+            <div class="col-4" style="text-align:left">
+                @if (ViewBag.UEV != null)
+                {
+                    @ViewBag.UEV
+                }
+                else
+                {
+                    <p>
+                        Ведомость УЭВ не загружена за этот месяц!
+                    </p>
+                }
+            </div>
+        </div>
+        <div class="row rounded border border-success" style="margin-top:10px;padding-top:5px">
+            <div class="col-4">
+                @if (ViewBag.IPU != null)
+                {
+
+                    <button class="btn btn-success btn-block " onclick="Load('ipufile','/IPUs/Upload')" title="Грузите ИПУ прошлого месяца, например если сейчас февраль, грузите ИПУ за январь!">
+                        Перезагрузить показания ИПУ &raquo;
+                    </button>
+                }
+                else
+                {
+                    <button class="btn btn-secondary btn-block " onclick="Load('ipufile','/IPUs/Upload')" title="Грузите ИПУ прошлого месяца, например если сейчас февраль, грузите ИПУ за январь!">
+                        Загрузить показания ИПУ &raquo;
+                    </button>
+                }
+            </div>
+            <div class="col-4">
+                <form id="ipu" name="ipu" method="post" enctype="multipart/form-data">
+                    <input id="ipufile" type="file" class="form-control" accept=".xls,.xlsx" />
+                </form>
+                <label>Файл для загрузки</label>
+
+            </div>
+            <div class="col-4" style="text-align:left">
+                @if (ViewBag.IPU != null)
+                {
+                    @ViewBag.IPU
+                }
+                else
+                {
+                    <p>
+                        Показания ИПУ не загружены за этот месяц!
+                    </p>
+                }
+            </div>
+        </div>
+        <div class="row rounded border border-success" style="margin-top:10px;padding-top:5px">
+            <div class="col-4">
+                @if (ViewBag.OPU != null)
+                {
+
+                    <button class="btn btn-success btn-block " onclick="Load('opufile','/OPUs/Upload')" title="Грузите ОПУ из файла Андрей ОПУ исх. Количество вкладок в файле должно совпадать или быть больше чем номер месяца, в который вы грузите!">
+                        Перезагрузить показания ОПУ &raquo;
+                    </button>
+                }
+                else
+                {
+                    <button class="btn btn-secondary btn-block " onclick="Load('opufile','/OPUs/Upload')" title="Грузите ОПУ из файла Андрей ОПУ исх. Количество вкладок в файле должно совпадать или быть больше чем номер месяца, в который вы грузите!">
+                        Загрузить показания ОПУ &raquo;
+                    </button>
+                }
+            </div>
+            <div class="col-4">
+                <form id="opu" name="ipu" method="post" enctype="multipart/form-data">
+                    <input id="opufile" type="file" class="form-control" accept=".xls,.xlsx" />
+                </form>
+                <label>Файл для загрузки</label>
+
+            </div>
+            <div class="col-4" style="text-align:left">
+                @if (ViewBag.OPU != null)
+                {
+                    @ViewBag.OPU
+                }
+                else
+                {
+                    <p>
+                        Показания ОПУ не загружены за этот месяц!
+                    </p>
+                }
+            </div>
+        </div>
+        <div class="row rounded border border-success" style="margin-top:10px;padding-top:5px">
+            <div class="col-4">
+                @if (ViewBag.Arenda != null)
+                {
+
+                    <button class="btn btn-success btn-block " onclick="Load('arendafile','/Arendators/Upload')" title="Загружайте файл OPU_Аренда от Елесиной">
+                        Перезагрузить файл аренды &raquo;
+                    </button>
+                }
+                else
+                {
+                    <button class="btn btn-secondary btn-block " onclick="Load('arendafile','/Arendators/Upload')" title="Загружайте файл OPU_Аренда от Елесиной">
+                        Загрузить файл аренды &raquo;
+                    </button>
+                }
+            </div>
+            <div class="col-4">
+                <form id="arenda" name="arenda" method="post" enctype="multipart/form-data">
+                    <input id="arendafile" type="file" class="form-control" accept=".xls,.xlsx" />
+                </form>
+                <label>Файл для загрузки</label>
+
+            </div>
+            <div class="col-4" style="text-align:left">
+                @if (ViewBag.Arenda != null)
+                {
+                    @ViewBag.Arenda
+                }
+                else
+                {
+                    <p>
+                        Арендаторы не загружены за этот месяц!
+                    </p>
+                }
+            </div>
+        </div>
+        <div class="row rounded border border-success" style="margin-top:10px;padding-top:5px">
+            <div class="col-4">
+                @if (ViewBag.OBSD != null)
+                {
+
+                    <button class="btn btn-success btn-block " onclick="Load('obsdfile','/OBSDs/Upload')" title="Грузите ОБСД ПО ЛС. Проверьте наличие вкладки 'Общая'. ВНИМАНИЕ загрузка занимает около 30 минут!">
+                        Перезагрузить файл ОБСД &raquo;
+                    </button>
+                }
+                else
+                {
+                    <button class="btn btn-secondary btn-block " onclick="Load('obsdfile','/OBSDs/Upload')" title="Грузите ОБСД ПО ЛС. Проверьте наличие вкладки 'Общая'. ВНИМАНИЕ загрузка занимает около 30 минут!">
+                        Загрузить файл ОБСД &raquo;
+                    </button>
+                }
+            </div>
+            <div class="col-4">
+                <form id="obsd" name="obsd" method="post" enctype="multipart/form-data">
+                    <input id="obsdfile" type="file" class="form-control" accept=".xls,.xlsx" />
+                </form>
+                <label>Файл для загрузки</label>
+
+            </div>
+            <div class="col-4" style="text-align:left">
+                @if (ViewBag.OBSD != null)
+                {
+                    @ViewBag.OBSD
+                }
+                else
+                {
+                    <p>
+                        Файл OBSD не загружен за этот месяц!
+                    </p>
+                }
             </div>
         </div>
 
 
 
 
+
+
     </div>
 </div>
-
+@Html.ActionLink("Назад", "VODAMain", "Home", null, new { @class = "btn btn-success btn-block" })
 @section Scripts
     {
 
@@ -50,16 +302,19 @@
     @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
     @Scripts.Render("~/scripts/nprogress.min.js")
     @Scripts.Render("~/scripts/jquery.signalR-2.4.0.min.js")
+    @Scripts.Render("~/scripts/bootstrap.js")
+    @Scripts.Render("~/scripts/bootstrap.bundle.js")
     @Scripts.Render("~/signalr/hubs")
 
     <script>
         function MYChange() {
             var Year = $("#Year").val();
-            var Month = $("#Month").val();
+            var Month = $("#Month").children("option:selected").val();
+            //var Month = $("#Month").val();
             var fd = new FormData;
             fd.append('Year', Year);
             fd.append('Month', Month);
-            alert("Отправляю");
+            // alert("Отправляю");
             $.ajax({
                 url: '/Home/SpecUpload',
                 data: fd,
@@ -68,7 +323,7 @@
                 type: 'POST',
                 success: function (data) {
                     if (data != 0) {
-                        alert("Отправлено");
+                        // alert("Отправлено");
                         window.location.replace('/Home/SpecUpload');
 
                     }
@@ -86,31 +341,167 @@
             var Year = $("#Year").val();
             var Month = $("#Month").val();
             //var Upload = $("#svn").prop('files')[0];
+
             var data = new FormData();
 
 
+
             var $input = $("#svnfile").prop('files')[0];
-            var fd = new FormData;
+            if ($input != null) {
+                $("#Download").modal("show");
 
-            fd.append('upload', $input);
-            fd.append('Year', Year);
-            fd.append('Month', Month);
-            $.ajax({
-                url: '/SVNs/SpecUpload',
-                data: fd,
-                processData: false,
-                contentType: false,
-                type: 'POST',
-                success: function (data) {
-                    if (data != 0) {
-                        alert(data);
+                var fd = new FormData;
+
+                fd.append('upload', $input);
+                fd.append('Year', Year);
+                fd.append('Month', Month);
+
+                $.ajax({
+                    url: '/SVNs/SpecUpload',
+                    data: fd,
+                    processData: false,
+                    contentType: false,
+                    type: 'POST',
+                    success: function (data) {
+                        if (data != 0) {
+
+                            LoadComplete(data);
+                        }
+                        else {
+
+                        }
+
                     }
-                    else {
+                });
+            }
+            else {
+                alert("Сначала выберите файл, а затем уже грузите:)");
+            }
+
+
+
+
+
+        }
+
+    </script>
+    <script>
+        function LoadComplete(data) {
+            $("#C").append(data);
+            $("#CText").html("Загрузка завершена!");
+            if (data.indexOf("Ошибок загрузки нет!") < 0) {
+                $("#CButton").html("Загрузка завершена с ошибками!");
+                $("#CButton").removeClass("btn-success");
+                $("#CButton").addClass("btn-warning");
+
+
+            }
+            else {
+                $("#CButton").html("Загрузка успешно завершена!");
+                $("#CButton").removeClass("btn-warning");
+                $("#CButton").addClass("btn-success");
+
+
+            }
+            $("#CButton").fadeIn('slow');
+        }
+    </script>
+    <script>
+        function LoadUEV() {
+            //Грузим СВН
+            var Year = $("#Year").val();
+            var Month = $("#Month").val();
+            var DateTime = Month + "/" + "01/" + Year;
+            //var Upload = $("#svn").prop('files')[0];
+            var data = new FormData();
+            var C = $("#content");
+            $("#CButton").hide();
+
+
+            var $input = $("#uevfile").prop('files')[0];
+            if ($input != null) {
+                $("#Download").modal("show");
+                var fd = new FormData;
+
+                fd.append('upload', $input);
+                fd.append('Date', DateTime);
+                fd.append('JQ', true);
+
+
+                $.ajax({
+                    url: '/UEVs/Upload',
+                    data: fd,
+                    processData: false,
+                    contentType: false,
+                    type: 'POST',
+                    success: function (data) {
+                        if (data != 0) {
+                            LoadComplete(data);
+
+
+                        }
+                        else {
+
+                        }
 
                     }
+                });
+            }
+            else {
+                alert("Сначала выберите файл, а затем уже грузите:)");
+            }
 
-                }
-            });
+
+
+
+
+        }
+
+    </script>
+    <script>
+        function Load(text,url) {
+            //Грузим СВН
+            var Year = $("#Year").val();
+            var Month = $("#Month").val();
+            var DateTime = Month + "/" + "01/" + Year;
+            //var Upload = $("#svn").prop('files')[0];
+            var data = new FormData();
+            var C = $("#content");
+            $("#CButton").hide();
+
+
+            var $input = $("#"+text).prop('files')[0];
+            if ($input != null) {
+                $("#Download").modal("show");
+                var fd = new FormData;
+
+                fd.append('upload', $input);
+                fd.append('Date', DateTime);
+                fd.append('JQ', true);
+
+
+                $.ajax({
+                    url: url,
+                    data: fd,
+                    processData: false,
+                    contentType: false,
+                    type: 'POST',
+                    success: function (data) {
+                        if (data != 0) {
+                            LoadComplete(data);
+
+
+                        }
+                        else {
+
+                        }
+
+                    }
+                });
+            }
+            else {
+                alert("Сначала выберите файл, а затем уже грузите:)");
+            }
 
 
 

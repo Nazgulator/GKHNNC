@@ -68,6 +68,9 @@ namespace GKHNNC.Controllers
             List<string> NoAdress = new List<string>();
             //для каждой строки в экселе
             int lastadres = 0;
+            int summ = 0;
+            decimal summnorm = 0;
+            decimal summschetchik = 0;
             foreach (List<string> L in excel)
             {
 
@@ -78,22 +81,29 @@ namespace GKHNNC.Controllers
                 bool ignore = false;
                 try
                 {
-                    Normativ = Convert.ToDecimal(L[1].Replace(".",","));
+                    Normativ = Math.Round(Convert.ToDecimal(L[1].Replace(",",".")),2);
+                    summnorm += Normativ;
 
                 }
                 catch
-                { }
+                {
+                    
+
+                }
                 try
                 {
 
-                    Schetchik = Convert.ToDecimal(L[2].Replace(".", ","));
+                    Schetchik = Math.Round(Convert.ToDecimal(L[2].Replace(",", ".")),2);
+                    summschetchik += Schetchik;
                 }
                 catch
-                { }
+                {
+                }
 
                 if (Normativ + Schetchik == 0)
                 {
                     ignore = true;
+                    summ++;
                 }
 
                
@@ -122,8 +132,6 @@ namespace GKHNNC.Controllers
 
                             using (WorkContext db = new WorkContext())
                             {
-
-
                                 try//сохраняем в БД
                                 {
                                     db.IPUs.Add(IPUKA);
@@ -154,15 +162,17 @@ namespace GKHNNC.Controllers
                                 IPUKA.Normativ = Normativ;
                                 IPUKA.Schetchik = Schetchik;
                                 IPUKA.NomerSchetchika = L[3];
-
-                                try//сохраняем в БД
+                                using (WorkContext db = new WorkContext())
                                 {
-                                    db.IPUs.Add(IPUKA);
-                                    db.SaveChanges();
-                                }
-                                catch (Exception e)
-                                {
-                                    Console.WriteLine("Ошибка записи в базу данных " + e.Message);
+                                    try//сохраняем в БД
+                                    {
+                                        db.IPUs.Add(IPUKA);
+                                        db.SaveChanges();
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        Console.WriteLine("Ошибка записи в базу данных " + e.Message);
+                                    }
                                 }
                                 // IPUKA.Name = "";
                                 break;
@@ -200,7 +210,7 @@ namespace GKHNNC.Controllers
 
 
         [HttpPost]
-        public ActionResult Upload(HttpPostedFileBase upload, DateTime Date)
+        public ActionResult Upload(HttpPostedFileBase upload, DateTime Date, bool JQ = false)
         {
             int progress = 0;
             double pro100 = 0;
@@ -212,24 +222,20 @@ namespace GKHNNC.Controllers
                 //найдем старые данные за этот месяц и заменим их не щадя
                 List<IPU> dbIPU = db.IPUs.Where(x => x.Date.Year == Date.Year && x.Date.Month == Date.Month).ToList();
                 pro100 = dbIPU.Count;
-                foreach (IPU S in dbIPU)
+                try
                 {
-                    try
-                    {
-                        db.IPUs.Remove(S);
-                        db.SaveChanges();
-                        procount++;
-                        progress = Convert.ToInt16(procount / pro100 * 100);
-                        if (procount > pro100) { procount = Convert.ToInt32(pro100); }
-                        ProgressHub.SendMessage("Удаляем старые данные...", progress);
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e.Message);
-                    }
-
-
+                    procount++;
+                    progress = Convert.ToInt16(procount / pro100 * 100);
+                    if (procount > pro100) { procount = Convert.ToInt32(pro100); }
+                    ProgressHub.SendMessage("Удаляем старые данные...", progress);
+                    db.IPUs.RemoveRange(dbIPU);
+                    db.SaveChanges();
                 }
+                catch (Exception e)
+                {
+                   
+                }
+               
 
                 //call this method inside your working action
                 ProgressHub.SendMessage("Инициализация и подготовка...", 0);
@@ -255,7 +261,14 @@ namespace GKHNNC.Controllers
                     ViewBag.Error = Error;
                     ViewBag.Names = Names;
                     Console.WriteLine("Пустой массив значит файл не загрузился!(он уже удалился)");
-                    return View("NotUpload");
+                    if (!JQ)
+                    {
+                        return View("NotUpload");
+                    }
+                    else
+                    {
+                        return Json(Error);
+                    }
                 }
                 else
                 {
@@ -265,16 +278,36 @@ namespace GKHNNC.Controllers
                     {
                         A.Adress = A.Adress.Replace(" ", "");
                     }
-                  
-                    ZapuskPoiska(excel, Date, Adresa);
+
+                    if (!JQ)
+                    {
+                        ZapuskPoiska(excel, Date, Adresa);
+                    }
+                    else
+                    {
+                        Poisk(excel, Date, Adresa);
+                    }
                     ViewBag.date = Date;
                     ViewBag.file = fileName;
-
-                    return View("UploadComplete");
+                    if (!JQ)
+                    {
+                        return View("UploadComplete");
+                    }
+                    else
+                    {
+                        return Json("Ошибок загрузки нет!");
+                    }
 
                 }
             }
-            return RedirectToAction("NotUpload");
+            if (!JQ)
+            {
+                return RedirectToAction("NotUpload");
+            }
+            else
+            {
+                return Json("Файл не выбран или неверный формат файла.");
+            }
         }
         public async void ZapuskPoiska(List<List<string>> excel, DateTime Date, List<Adres> Adresa)
         {
