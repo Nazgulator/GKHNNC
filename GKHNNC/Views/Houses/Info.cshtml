@@ -33,7 +33,7 @@
                 <div class=" row">
                     <div class="col-6">
 
-                        @Html.DropDownList("Year", new SelectList(ViewBag.Years), new { @class = "form-control" })
+                        @Html.DropDownList("Year", new SelectList(ViewBag.Years, "Value", "Text",ViewBag.MaxDate.Year), new { @class = "form-control" })
 
                     </div>
                     <div class="col-6">
@@ -56,11 +56,115 @@
     </h5>
     <table class="table-bordered table-striped col-12">
         <tr>
+            <td title="Данные взяты из ОЭЖФ">
+                Количество этажей
+            </td>
+            <td>
+                @Model.AdresAll.Etagi
+            </td>
+        </tr>
+        <tr>
+            <td title="Данные взяты из ОЭЖФ">
+                Количество подъездов
+            </td>
+            <td>
+                @Model.AdresAll.Podezds
+            </td>
+        </tr>
+        <tr>
+            <td title="Данные взяты из ОЭЖФ">
+                Количество квартир
+            </td>
+            <td>
+                @Model.AdresAll.Kvartirs
+            </td>
+        </tr>
+        <tr>
+            <td title="Данные взяты из ОЭЖФ">
+                Количество проживающих
+            </td>
+            <td>
+                @Model.AdresAll.Peoples
+            </td>
+        </tr>
+        <tr>
             <td title="Данные взяты из файла OPU_Аренда из бухгалтерии.">
-                Общая площадь дома
+                Общая площадь дома (по данным ОПУ_Аренда)
             </td>
             <td>
                 @Html.DisplayFor(model => model.Ploshad, new { htmlAttributes = new { @class = "form-control" } })
+            </td>
+        </tr>
+        <tr>
+            <td title="Данные взяты из ОЭЖФ (Жилая-нежилая)">
+                Активная площадь
+            </td>
+            <td>
+                @Model.AdresAll.ActivePloshad
+            </td>
+        </tr>
+        <tr>
+            <td title="Данные взяты из ОЭЖФ">
+                Жилая площадь
+            </td>
+            <td>
+                @Model.AdresAll.PloshadGilaya
+            </td>
+        </tr>
+        <tr>
+            <td title="Данные взяты из ОЭЖФ">
+                Нежилая площадь
+            </td>
+            <td>
+                @Model.AdresAll.PloshadNegilaya
+            </td>
+        </tr>
+        <tr>
+            <td title="Данные взяты из ОЭЖФ">
+                Площадь подвала
+            </td>
+            <td>
+                @Model.AdresAll.PloshadPodval
+            </td>
+        </tr>
+        <tr>
+            <td title="Данные взяты из ОЭЖФ">
+                Площадь лестничных площадок
+            </td>
+            <td>
+                @Model.AdresAll.PloshadLestnica
+            </td>
+        </tr>
+        <tr>
+            <td title="Данные взяты из ОЭЖФ">
+                Площадь кровли
+            </td>
+            <td>
+                @Model.AdresAll.PloshadKrovlya
+            </td>
+        </tr>
+        <tr>
+            <td title="Данные взяты из ОЭЖФ">
+                Площадь мусорокамер
+            </td>
+            <td>
+                @Model.AdresAll.PloshadMusor
+            </td>
+        </tr>
+        <tr>
+            <td title="Данные взяты из ОЭЖФ">
+                Площадь земельного участка
+            </td>
+            <td>
+                @Model.AdresAll.PloshadZemlya
+            </td>
+        </tr>
+        <tr>
+            <td title="Данные взяты из ОЭЖФ">
+                Подрядчик
+            </td>
+            <td>
+                @Model.AdresAll.IP
             </td>
         </tr>
         <tr>

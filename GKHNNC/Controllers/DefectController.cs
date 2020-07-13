@@ -102,7 +102,7 @@ namespace GKHNNC.Controllers
                 List<Defect> D = new List<Defect>();
                 try
                 {
-                    D = db.Defects.Where(x => x.ElementId == E.Id&&x.Def.Contains("хоро")==false&&x.Def.Contains("удов") == false&& x.Def.Contains("состо") == false).Distinct().ToList();
+                    D = db.Defects.Where(x => x.ElementId == E.Id).Distinct().ToList();
 
                 }
                 catch { }

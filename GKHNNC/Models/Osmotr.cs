@@ -63,17 +63,31 @@ namespace GKHNNC.Models
 
         [Display(Name = "Состояние")]
         public int Sostoyanie { get; set; }
+        [Display(Name = "Описание")]
+        public string Opisanie { get; set; }
+        [Display(Name = "Дата завершения")]
+        public DateTime DateEnd { get; set; }
 
         [Display(Name = "Дата")]
         public DateTime Date { get; set; }
 
+        [Display(Name = "ДатаОЭЖФ")]
+        public DateTime DateOEGF { get; set; }
+
+        [Display(Name = "ДатаПТО")]
+        public DateTime DatePTO { get; set; }
+
         [Display(Name = "Дефекты")]
         public List<ActiveDefect> Defects { get; set; }
+
+        [Display(Name = "Активные работы осмотра")]
+        public List<ActiveOsmotrWork> AOW { get; set; }
 
         [Display(Name = "Элементы ")]
         public List<ActiveElement> Elements;
 
         [Display(Name = "Элементы здания из Сашкиной программы")]
         public List<BuildElement> BE;
+       
     }
 }

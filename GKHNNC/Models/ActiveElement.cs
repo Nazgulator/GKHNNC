@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System;
+using System.Web.Mvc;
 
 namespace GKHNNC.Models
 {
@@ -43,19 +44,28 @@ namespace GKHNNC.Models
         [Display(Name = "Присутствует ли элемент")]
         public bool Est { get; set; }
 
-        //сюда заливаем список дефектов для view и только
-        [Display(Name = "Возможные дефекты")]
-        public List<Defect> Defects;
-        [Display(Name = "Активные дефекты")]
-        public List<ActiveDefect> ActiveDefects;
+
         [Display(Name = "Измерения")]
         public Izmerenie Izmerenie { get; set; }
         [Display(Name = "Материалы")]
         public Material Material { get; set; }
+
+        //сюда заливаем список дефектов для view и только
+        [Display(Name = "АктивныеОсмотрВорк")]
+        public List<ActiveOsmotrWork> ActiveOsmotrWorks;
+        [Display(Name = "ОсмотрВорк")]
+        public SelectList OsmotrWorks;
+        //[Display(Name = "нужно ли показывать работы")]
+        //public bool AddWork  ;
+        [Display(Name = "Возможные дефекты")]
+        public List<Defect> Defects;
+        [Display(Name = "Активные дефекты")]
+        public List<ActiveDefect> ActiveDefects;
+      
         [Display(Name = "Выбранный материал")]
-        public int M;
+        public int M=0;
         [Display(Name = "Выбранная ед. изм.")]
-        public int EI;
+        public int EI=0;
 
 
     }

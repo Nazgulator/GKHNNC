@@ -113,6 +113,7 @@ namespace GKHNNC.Controllers
         public ActionResult RolesAndUsers()
         {
             List<ApplicationUser> SS = UserManager.Users.ToList();
+           
             List<string> Roles = new List<string>();
            foreach (ApplicationUser U in SS)
             {

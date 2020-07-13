@@ -21,7 +21,9 @@
 
     </table>
 }
-    <table  id="@Model.ElementId" class="table-bordered table-striped" style="font-family:Roboto;table-layout:fixed">
+else
+{
+    <table id="@Model.ElementId" class="table-bordered table-striped" style="font-family:Roboto;table-layout:fixed">
         @{string Part2 = Model.Id.ToString() + Model.OsmotrId.ToString();
             string Part = Model.ElementId.ToString();
             string PhotoElement1 = "PhotoElement1" + Part;
@@ -70,63 +72,160 @@
             string Opisanie = "Opisanie" + Model.Id;
 
             string DefectId = "Defect" + Model.Id;
+
         }
-        
-        <tr style="background-color:white">
-            <th width="250px" style="text-align:center">
 
-                <h4> @Model.Element.Name</h4>
-            </th>
+        @if (Model.Photo1 != null && Model.Photo2 != null)
+        {
+            <tr style="background-color:white">
+                <th width="250px" style="text-align:center">
+
+                    <h4> @Model.Element.Name</h4>
+                </th>
 
 
-            <td width="100px" align="center">
-                <a data-fancybox="gallery" id="@PED1" href="@PE1">
-                    <img src="@PE1" id="@PhotoElement1" to="@PE1" class="img-responsive" height="64" width="70" onerror="this.style.display = 'none'">
-                </a>
-            </td>
-            <td width="100px" align="center">
-                <a data-fancybox="gallery" id="@PED2" href="@PE2">
-                    <img src="@PE2" id="@PhotoElement2" to="@PE2" class="img-responsive" height="64" width="70" onerror="this.style.display = 'none'">
-                </a>
-            </td>
-            <th width="100px" style="text-align:center">
-                @Model.Material.Name
-            </th>
-            <th width="100px" style="text-align:center">
-                @Model.Kolichestvo
-            </th>
-            <th width="50px" style="text-align:center">
-                @Model.Izmerenie.Name
-            </th>
-
-            <th width="50px" style="text-align:center">
-                Состояние:
-            </th>
-
-            <td width="180px" align="center">
-                <center>
-                    <div class="rating" align="center" id="@DivSost">
-                        <input id="@SostoyanieElement" type="hidden" name="val" value="@Model.Sostoyanie" />
-                    </div>
-                </center>
-            </td>
-            <td width="150px" align="center">
-                @if (Model.ActiveDefects.Count > 0)
-                {
-                    <a class="btn btn-warning" data-toggle="collapse" href="#@collapse" role="button" aria-expanded="false" aria-controls="collapseExample">
-                        Дефекты элемента
+                <td width="100px" align="center">
+                    <a data-fancybox="gallery" id="@PED1" href="@PE1">
+                        <img src="@PE1" id="@PhotoElement1" to="@PE1" class="img-responsive" height="64" width="70" onerror="this.style.display = 'none'">
                     </a>
-                }
-                else
-                {
-                    <a class="btn btn-outline-success" data-toggle="collapse" role="button">
-                        Дефекты отсутствуют
+                </td>
+                <td width="100px" align="center">
+                    <a data-fancybox="gallery" id="@PED2" href="@PE2">
+                        <img src="@PE2" id="@PhotoElement2" to="@PE2" class="img-responsive" height="64" width="70" onerror="this.style.display = 'none'">
                     </a>
-                }
-            </td>
+                </td>
+                <th width="100px" style="text-align:center">
+                    @Model.Material.Name
+                </th>
+                <th width="100px" style="text-align:center">
+                    @Model.Kolichestvo
+                </th>
+                <th width="50px" style="text-align:center">
+                    @Model.Izmerenie.Name
+                </th>
 
-        </tr>
+                <th width="50px" style="text-align:center">
+                    Состояние:
+                </th>
+
+                <td width="180px" align="center">
+                    <center>
+                        <div class="rating" align="center" id="@DivSost">
+                            <input id="@SostoyanieElement" type="hidden" name="val" value="@Model.Sostoyanie" />
+                        </div>
+                    </center>
+                </td>
+                <td width="150px" align="center">
+                    @if (Model.ActiveDefects.Count > 0)
+                    {
+                        <a class="btn btn-warning" data-toggle="collapse" href="#@collapse" role="button" aria-expanded="false" aria-controls="collapseExample">
+                            Дефекты элемента
+                        </a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-outline-success" data-toggle="collapse" role="button">
+                            Дефекты отсутствуют
+                        </a>
+                    }
+                </td>
+
+            </tr>
+        }
+        else
+        {
+            <tr style="background-color:white">
+                <th width="250px" style="text-align:center">
+
+                    <h4> @Model.Element.Name</h4>
+                </th>
+
+
+
+                <td width="710px" style="text-align:center">
+
+                    <a class="btn btn-warning" width="650px">
+                        Данные не заполнены!
+                    </a>
+
+                </td>
+
+                <td width="150px" align="center">
+                    @if (Model.ActiveDefects.Count > 0)
+                    {
+                        <a class="btn btn-warning" data-toggle="collapse" href="#@collapse" role="button" aria-expanded="false" aria-controls="collapseExample">
+                            Дефекты элемента
+                        </a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-outline-success" data-toggle="collapse" role="button">
+                            Дефекты отсутствуют
+                        </a>
+                    }
+                </td>
+            </tr>
+
+
+        }
+        @if (Model.ActiveOsmotrWorks != null)
+        {
+/*
+
+
+            string Stealth = "display: none";
+            if (Model.ActiveOsmotrWorks != null && Model.ActiveOsmotrWorks.Count > 0)
+            {
+                Stealth = "";
+            }
+            
+            <tr id="AO_@Model.ElementId" class="AO_@Model.ElementId" style="@Stealth">
+                <th style="text-align:center" colspan="3">
+                    Наименование работы
+                </th>
+
+
+                <th style="text-align:center" colspan="4">
+                    Количество
+                </th>
+                <th style="text-align:center">
+                    Измерение
+                </th>
+                <th style="text-align:center">
+                    Стоимость
+                </th>
+            
+
+            </tr>
+
+            for (int i = 0; i < Model.ActiveOsmotrWorks.Count; i++)
+            {
+                <tr id="AO_@Model.ActiveOsmotrWorks[i].Id" class="AO_@Model.ElementId">
+                    <td style="text-align:center" colspan="3">
+                        @Model.ActiveOsmotrWorks[i].OsmotrWork.Name
+                    </td>
+
+
+                    <td style="text-align:center" colspan="4">
+                        @Model.ActiveOsmotrWorks[i].Number
+                    </td>
+                    <td style="text-align:center">
+                        @Model.ActiveOsmotrWorks[i].OsmotrWork.Izmerenie.Name
+                    </td>
+                    <td style="text-align:center">
+                        @Model.ActiveOsmotrWorks[i].TotalCost
+                    </td>
+                    
+
+                </tr>
+            }
+            <tr style="background-color:#ffd800">
+                <td colspan="9" height="6px"></td>
+            </tr>
+            */
+        }
     </table>
+
 
 <div class="collapse" id="@collapse">
     <div class="card card-body">
@@ -234,7 +333,10 @@
         </table>
 
     </div>
+   
 </div>
 
+
+               }
 
 

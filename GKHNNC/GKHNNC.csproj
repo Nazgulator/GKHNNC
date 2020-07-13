@@ -286,6 +286,7 @@
     <Compile Include="Controllers\Opredelenie.cs" />
     <Compile Include="Controllers\OPUsController.cs" />
     <Compile Include="Controllers\OsmotrsController.cs" />
+    <Compile Include="Controllers\OsmotrWorksController.cs" />
     <Compile Include="Controllers\PeriodichnostsController.cs" />
     <Compile Include="Controllers\PoligonsController.cs" />
     <Compile Include="Controllers\RoofFormsController.cs" />
@@ -335,6 +336,7 @@
     <Compile Include="Models\Marshrut.cs" />
     <Compile Include="Models\KontrAgent.cs" />
     <Compile Include="Models\MusorPloshadkaActives.cs" />
+    <Compile Include="Models\ActiveOsmotrWork.cs" />
     <Compile Include="Models\Poligon.cs" />
     <Compile Include="Models\MusorPloshadka.cs" />
     <Compile Include="Models\AllStreet.cs" />
@@ -365,6 +367,7 @@
     <Compile Include="Models\Mechanic.cs" />
     <Compile Include="Models\Material.cs" />
     <Compile Include="Models\Musor.cs" />
+    <Compile Include="Models\OsmotrWork.cs" />
     <Compile Include="Models\Zakazchik.cs" />
     <Compile Include="Models\Voditel.cs" />
     <Compile Include="Models\AS24.cs" />
@@ -1883,6 +1886,14 @@
     <Content Include="Views\MusorPloshadkas\NotUpload.cshtml" />
     <Content Include="Views\Home\SpecUpload.cshtml" />
     <Content Include="Views\Home\Load.cshtml" />
+    <Content Include="Views\OsmotrWorks\Create.cshtml" />
+    <Content Include="Views\OsmotrWorks\Delete.cshtml" />
+    <Content Include="Views\OsmotrWorks\Details.cshtml" />
+    <Content Include="Views\OsmotrWorks\Edit.cshtml" />
+    <Content Include="Views\OsmotrWorks\Index.cshtml" />
+    <Content Include="Views\Adres\APUpload.cshtml" />
+    <Content Include="Views\Houses\OsmotrsProverka1.cshtml" />
+    <Content Include="Views\Houses\OsmotrsProverka2.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

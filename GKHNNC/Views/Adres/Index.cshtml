@@ -14,6 +14,7 @@
             @Html.DisplayNameFor(model => model.Adress)
         </th>
         <th>@Html.DisplayNameFor(model => model.Ploshad)</th>
+        <th>@Html.DisplayNameFor(model => model.ActivePloshad)</th>
         <th>@Html.DisplayNameFor(model => model.GEU)</th>
         <th>@Html.DisplayNameFor(model => model.UEV)</th>
         <th>@Html.DisplayNameFor(model => model.OBSD)</th>
@@ -28,6 +29,9 @@
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Ploshad)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ActivePloshad)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.GEU)
@@ -47,4 +51,5 @@
 
 </table>
 <p><a href="/Adres/Upload" class="btn btn-success btn-block">Загрузить коды УЭВ  &raquo;</a> </p>
+<p><a href="/Adres/APUpload" class="btn btn-success btn-block">Загрузить активные площади  &raquo;</a> </p>
 <p><a href="/Home/Index" class="btn btn-success btn-block">В главное меню &raquo;</a> </p>

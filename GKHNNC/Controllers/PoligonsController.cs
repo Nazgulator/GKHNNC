@@ -442,7 +442,7 @@ namespace GKHNNC.Controllers
             poligon.AvtomobilId = 0;
             poligon.Number = poligon.Number.Replace(" ", "").ToUpper();
             poligon.User = User.Identity.Name;
-
+            
              HttpCookie cookieReq = Request.Cookies["Poligon"];
              if (cookieReq != null)
              {
@@ -454,10 +454,14 @@ namespace GKHNNC.Controllers
             Avtomobil A = new Avtomobil();
             try
             {
-                A = db.Avtomobils.Where(x => x.Number.Replace(" ", "").Equals(poligon.Number)).Include(x => x.Marka).Include(x => x.Type).First();
+                A = db.Avtomobils.Where(x => x.Number.Replace(" ", "").Equals(poligon.Number)).Include(x => x.Marka).Include(x => x.Type).Include(x=>x.KontrAgent).First();
                 poligon.AvtomobilId = A.Id;
                 poligon.MarkaId = A.Marka.Id;
                 poligon.TypeId = A.Type.Id;
+                if (poligon.VibralRab == false)
+                {
+                    if (A.KontrAgent.Id != poligon.KontrAgentId) { poligon.KontrAgentId = A.KontrAgent.Id; }
+            }
                 poligon.KontrAgentName = db.KontrAgents.Where(x => x.Id == poligon.KontrAgentId).Select(x=>x.Name).First();
             }
             catch (Exception e)

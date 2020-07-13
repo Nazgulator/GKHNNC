@@ -52,7 +52,8 @@ namespace GKHNNC.Controllers
             DateTime Date = Opr.MonthMinus(1, DateTime.Now);//берем прошлый месяц
             if (User.Identity.Name.Contains("ЖЭУ"))
             {
-                houses = houses.Where(x=>x.GEU!=null).Where(x => x.GEU.Equals(User.Identity.Name)).ToList();
+                string GEU = "ЖЭУ-"+User.Identity.Name.Remove(0,User.Identity.Name.Length - 1);
+                houses = houses.Where(x=>x.GEU!=null).Where(x => x.GEU.Equals(GEU)).ToList();
             }
             List<string> Primechanie = new List<string>();
            // List<Arendator> Arendators = db.Arendators.Where(c => c.Date.Year == Date.Year && c.Date.Month == Date.Month).ToList();//Берем всех арендаторов за текущий месяц
@@ -86,7 +87,7 @@ namespace GKHNNC.Controllers
                 try
                 {
                     DateTime Dat = DateTime.Now;
-                    ho.Osmotrs = db.Osmotrs.Where(x=>x.AdresId == a.Id ).OrderByDescending(x => x.Date).ToList();//все осмотры дома
+                    ho.Osmotrs = db.Osmotrs.Where(x=>x.AdresId == a.Id ).OrderBy(x => x.Date).ToList();//все осмотры дома
                     ho.NumberOsmotrs = ho.Osmotrs.Count();
                     ho.OsmotrEst = true;
                 }
@@ -109,6 +110,167 @@ namespace GKHNNC.Controllers
                 }
                 procount++;
                 progress = Convert.ToInt16( procount / pro100 * 100);
+                ProgressHub.SendMessage("Загружаем данные домов, подождите немножко...", progress);
+                if (procount > pro100) { procount = Convert.ToInt32(pro100); }
+            }
+            H.AddRange(Y);
+            return View(H);
+        }
+
+        public ActionResult OsmotrsProverka1(string Adres = "")
+        {
+            List<House> H = new List<House>();
+            List<House> Y = new List<House>();
+
+            List<Adres> houses = db.Adres.OrderBy(x => x.Adress).ToList();
+            if (Adres.Equals("") == false)
+            {
+                houses = houses.Where(x => x.Adress.Equals(Adres)).ToList();
+
+            }
+            DateTime Date = Opr.MonthMinus(1, DateTime.Now);//берем прошлый месяц
+         
+            List<string> Primechanie = new List<string>();
+            // List<Arendator> Arendators = db.Arendators.Where(c => c.Date.Year == Date.Year && c.Date.Month == Date.Month).ToList();//Берем всех арендаторов за текущий месяц
+            //List<UEV> Uevs = db.UEVs.Where(c => c.Date.Year == Date.Year && c.Date.Month == Date.Month).ToList();
+            //List<OPU> Opus = db.OPUs.Where(c => c.Date.Year == Date.Year && c.Date.Month == Date.Month).ToList();
+            int progress = 0;
+            double pro100 = 0;
+            int procount = 0;
+            pro100 = houses.Count;
+            foreach (Adres a in houses)
+            {
+
+                House ho = new House();
+
+                // List<Arendator> TekArend = Arendators.Where(d => d.AdresId == a.Id).ToList();//арендаторы в данном доме для ускорения поиска
+                // List<UEV> TekUevs = Uevs.Where(d => d.AdresId == a.Id).ToList();//выставлено в УЭВ применим позже
+                // List<OPU> TekOpus = Opus.Where(d => d.AdresId == a.Id).ToList();//Фактические затраты воды по ОПУ андрей Исх
+                ho.AdresId = a.Id;
+                ho.Adres = a.Adress;
+                // ho.Ploshad = a.Ploshad;//общая площадь
+                // ho.Teplota = TekOpus.Sum(e => e.OtopGkal);//TekUevs.Sum(e => e.OtEnergyGkal);//Сумма теплоты 
+                // ho.Teplota12 = 0;
+                // ho.HotWater = TekOpus.Sum(e => e.GWM3);//Сумма Горводы
+                // ho.ColdWater = TekOpus.Sum(e => e.HWM3);//Сумма Холводы
+                // ho.PloshadArendators = TekArend.Sum(e => e.Ploshad);//Сумма площадей арендаторов
+                // ho.TeplotaArendators = TekArend.Sum(e => e.Teplota);//Сумма теплоты арендаторов
+                // ho.Teplota12Arendators = TekArend.Sum(e => e.Teplota12);//Сумма теплоты 1/12 арендаторов
+                //ho.ColdWaterArendators = TekArend.Sum(e => e.ColdWater);//Сумма Холодной воды арендаторов
+                // ho.HotWaterArendators = TekArend.Sum(e => e.HotWater);//Сумма Горячей воды арендаторов
+                ho.Date = Date;
+                try
+                {
+                    DateTime Dat = DateTime.Now;
+                    ho.Osmotrs = db.Osmotrs.Where(x => x.AdresId == a.Id&&x.Sostoyanie>0).OrderBy(x => x.Date).ToList();//все осмотры дома
+                    if (ho.Osmotrs.Count>0)
+                    {
+
+                    }
+                    ho.NumberOsmotrs = ho.Osmotrs.Count();
+                    ho.OsmotrEst = true;
+                }
+                catch(Exception e) { ho.OsmotrEst = false; }
+                try
+                {
+                    int D = db.DOMCWs.Where(x => x.AdresId == a.Id).OrderByDescending(x => x.Date).Select(x => x.Id).First();
+                    ho.GISGKH = true;
+                }
+                catch
+                {
+                    ho.GISGKH = false;
+                }
+                if (ho.GISGKH == true)
+                {
+                    H.Add(ho);
+                }
+                else
+                {
+                    Y.Add(ho);
+                }
+                procount++;
+                progress = Convert.ToInt16(procount / pro100 * 100);
+                ProgressHub.SendMessage("Загружаем данные домов, подождите немножко...", progress);
+                if (procount > pro100) { procount = Convert.ToInt32(pro100); }
+            }
+            H.AddRange(Y);
+            return View(H);
+        }
+
+
+        public ActionResult OsmotrsProverka2(string Adres = "")
+        {
+            List<House> H = new List<House>();
+            List<House> Y = new List<House>();
+
+            List<Adres> houses = db.Adres.OrderBy(x => x.Adress).ToList();
+            if (Adres.Equals("") == false)
+            {
+                houses = houses.Where(x => x.Adress.Equals(Adres)).ToList();
+
+            }
+            DateTime Date = Opr.MonthMinus(1, DateTime.Now);//берем прошлый месяц
+
+            List<string> Primechanie = new List<string>();
+            // List<Arendator> Arendators = db.Arendators.Where(c => c.Date.Year == Date.Year && c.Date.Month == Date.Month).ToList();//Берем всех арендаторов за текущий месяц
+            //List<UEV> Uevs = db.UEVs.Where(c => c.Date.Year == Date.Year && c.Date.Month == Date.Month).ToList();
+            //List<OPU> Opus = db.OPUs.Where(c => c.Date.Year == Date.Year && c.Date.Month == Date.Month).ToList();
+            int progress = 0;
+            double pro100 = 0;
+            int procount = 0;
+            pro100 = houses.Count;
+            foreach (Adres a in houses)
+            {
+
+                House ho = new House();
+
+                // List<Arendator> TekArend = Arendators.Where(d => d.AdresId == a.Id).ToList();//арендаторы в данном доме для ускорения поиска
+                // List<UEV> TekUevs = Uevs.Where(d => d.AdresId == a.Id).ToList();//выставлено в УЭВ применим позже
+                // List<OPU> TekOpus = Opus.Where(d => d.AdresId == a.Id).ToList();//Фактические затраты воды по ОПУ андрей Исх
+                ho.AdresId = a.Id;
+                ho.Adres = a.Adress;
+                // ho.Ploshad = a.Ploshad;//общая площадь
+                // ho.Teplota = TekOpus.Sum(e => e.OtopGkal);//TekUevs.Sum(e => e.OtEnergyGkal);//Сумма теплоты 
+                // ho.Teplota12 = 0;
+                // ho.HotWater = TekOpus.Sum(e => e.GWM3);//Сумма Горводы
+                // ho.ColdWater = TekOpus.Sum(e => e.HWM3);//Сумма Холводы
+                // ho.PloshadArendators = TekArend.Sum(e => e.Ploshad);//Сумма площадей арендаторов
+                // ho.TeplotaArendators = TekArend.Sum(e => e.Teplota);//Сумма теплоты арендаторов
+                // ho.Teplota12Arendators = TekArend.Sum(e => e.Teplota12);//Сумма теплоты 1/12 арендаторов
+                //ho.ColdWaterArendators = TekArend.Sum(e => e.ColdWater);//Сумма Холодной воды арендаторов
+                // ho.HotWaterArendators = TekArend.Sum(e => e.HotWater);//Сумма Горячей воды арендаторов
+                ho.Date = Date;
+                try
+                {
+                    DateTime Dat = DateTime.Now;
+                    ho.Osmotrs = db.Osmotrs.Where(x => x.AdresId == a.Id && x.Sostoyanie > 1).OrderBy(x => x.Date).ToList();//все осмотры дома
+                    if (ho.Osmotrs.Count > 0)
+                    {
+
+                    }
+                    ho.NumberOsmotrs = ho.Osmotrs.Count();
+                    ho.OsmotrEst = true;
+                }
+                catch (Exception e) { ho.OsmotrEst = false; }
+                try
+                {
+                    int D = db.DOMCWs.Where(x => x.AdresId == a.Id).OrderByDescending(x => x.Date).Select(x => x.Id).First();
+                    ho.GISGKH = true;
+                }
+                catch
+                {
+                    ho.GISGKH = false;
+                }
+                if (ho.GISGKH == true)
+                {
+                    H.Add(ho);
+                }
+                else
+                {
+                    Y.Add(ho);
+                }
+                procount++;
+                progress = Convert.ToInt16(procount / pro100 * 100);
                 ProgressHub.SendMessage("Загружаем данные домов, подождите немножко...", progress);
                 if (procount > pro100) { procount = Convert.ToInt32(pro100); }
             }
@@ -369,6 +531,7 @@ namespace GKHNNC.Controllers
                 return HttpNotFound();
             }
             Adres Adr = db.Adres.Where(c => c.Id == id).Single();
+           
             List<DateTime> SelectDate = new List<DateTime>();//массив для выбора минимальной из максимальных дат по которой все и будем считать
             try { SelectDate.Add(db.CompleteWorks.Where(d => d.WorkDate == db.CompleteWorks.Max(x => x.WorkDate)).Select(c => c.WorkDate).First()); } catch { }//Выбираем макс дату из комплит воркс
             try { SelectDate.Add(db.Arendators.Where(c => c.Date == db.Arendators.Max(x => x.Date) && c.AdresId == id).Select(d => d.Date).First()); } catch { }
@@ -490,6 +653,7 @@ namespace GKHNNC.Controllers
             catch { }
 
             House ho = new House();
+            ho.AdresAll = Adr;
             ho.AdresId = id;
             ho.Adres = adr.Ulica + " " + adr.Dom;
             ho.Ploshad = adr.Ploshad;//пока не знаем общую площадь

@@ -7,6 +7,10 @@
 @{string style = "";}
 @if (Model.Est == false)
 {
+    
+
+
+
     string TableName = "T" + Model.ElementId;
     style = "style=display:none";
     <table width="100%" id="@TableName" class="table-bordered table-striped">
@@ -83,6 +87,73 @@
             string styleOn = "";
             string styleOff = "";
         }
+        @if (Model.ActiveOsmotrWorks != null && ViewBag.AW == true)
+        {
+            <tr>
+                <td colspan="6">
+                    @{
+                        string works = "Добавить необходимые работы"; string workscol = "btn btn-secondary";
+                        if (Model.ActiveOsmotrWorks.Count > 0) { works = "Добавить необходимые работы"; workscol = "btn btn-secondary"; }
+                    }
+                    <button class="@workscol btn-block" onclick="OpenModal(@Model.ElementId)">@works</button>
+                </td>
+            </tr>
+           
+
+                                    string Stealth = "display: none";
+                                    if (Model.ActiveOsmotrWorks != null && Model.ActiveOsmotrWorks.Count > 0)
+                                    {
+                                        Stealth = "";
+                                    }
+                <tr id="AO_@Model.ElementId"  class="AO_@Model.ElementId" style="@Stealth">
+                    <th style="text-align:center">
+                        Наименование работы
+                    </th>
+
+
+                    <th style="text-align:center" colspan="2">
+                        Количество
+                    </th>
+                    <th style="text-align:center">
+                        Измерение
+                    </th>
+                    <th style="text-align:center">
+                        Стоимость
+                    </th>
+                    <th style="text-align:center" colspan="2">
+
+                        Опции
+                    </th>
+                </tr>
+            
+            for (int i = 0; i < Model.ActiveOsmotrWorks.Count; i++)
+            {
+                <tr id="AO_@Model.ActiveOsmotrWorks[i].Id" class="AO_@Model.ElementId">
+                    <td style="text-align:center">
+                        @Model.ActiveOsmotrWorks[i].OsmotrWork.Name
+                    </td>
+
+
+                    <td style="text-align:center" colspan="2">
+                        @Model.ActiveOsmotrWorks[i].Number
+                    </td>
+                    <td style="text-align:center">
+                        @Model.ActiveOsmotrWorks[i].OsmotrWork.Izmerenie.Name
+                    </td>
+                    <td style="text-align:center">
+                        @Model.ActiveOsmotrWorks[i].TotalCost
+                    </td>
+                    <td style="text-align:center" colspan="2">
+
+                        <button type="button" id="RemoveWork" ADId="@Model.ActiveOsmotrWorks[i].Id" onclick="RemoveWork('@Model.ActiveOsmotrWorks[i].Id')" class="btn btn-outline-danger rem">Удалить работу</button>
+                    </td>
+                </tr>
+            }
+            <tr style="background-color:#ffd800">
+                <td colspan="6" height="6px"></td>
+            </tr>
+        }
+
         @if (Model.Photo1 == null && Model.Photo2 == null)
         {
 
@@ -116,7 +187,7 @@
                     </center>
                 </td>
 
-                <td rowspan="3" style="text-align:center"  width="200px">
+                <td rowspan="3" style="text-align:center" width="200px">
                     <button type="button" id="SaveElement" MId="@Model.Id" MElement="@Model.ElementId" MOsmotr="@Model.OsmotrId" class="btn btn-success go" style="text-align:center">
                         Сохранить элемент
                     </button>
@@ -141,11 +212,11 @@
             <tr id="@TR3" style="background-color:lightgray @styleOn">
 
                 <td width="200px" colspan="2" style="text-align:center">
-                    @Html.DropDownList(Material, new SelectList(ViewBag.Materials, "Value", "Text", Model.M), htmlAttributes: new { @class = "form-control", width = "196" })
+                    @Html.DropDownList(Material, new SelectList(ViewBag.Materials, "Value", "Text", ViewBag.M), htmlAttributes: new { @class = "form-control", width = "196" })
 
                 </td>
                 <td style="text-align:center" width="10%">
-                    @Html.DropDownList(EdIzm, new SelectList(ViewBag.Izmerenies, "Value", "Text", Model.EI), htmlAttributes: new { @class = "form-control", width = "196" })
+                    @Html.DropDownList(EdIzm, new SelectList(ViewBag.Izmerenies, "Value", "Text", ViewBag.EI), htmlAttributes: new { @class = "form-control", width = "196" })
 
 
                 </td>
@@ -162,73 +233,80 @@
 
 
 
-        <tr id="@TR4" style="background-color:lightgray @styleOff">
-            <th colspan="1" rowspan="3" style="text-align:center">
+            <tr id="@TR4" style="background-color:lightgray @styleOff">
+                <th colspan="1" rowspan="3" style="text-align:center">
 
-                <h4> @Model.Element.Name</h4>
-            </th>
+                    <h4> @Model.Element.Name</h4>
+                </th>
 
-            <td width="100px">
-                <a data-fancybox="gallery" id="@PED1" href="@PE1">
-                    <img src="@PE1" id="@PhotoElement1" to="@PE1" class="img-responsive" height="32" width="32" onerror="this.style.display = 'none'">
-                </a>
-            </td>
-            <td width="100px">
-                <a data-fancybox="gallery" id="@PED2" href="@PE2">
-                    <img src="@PE2" id="@PhotoElement2" to="@PE2" class="img-responsive" height="32" width="32" onerror="this.style.display = 'none'">
-                </a>
-            </td>
-            <th style="text-align:center">
-                Состояние Элемента:
-            </th>
+                <td width="100px">
+                    <a data-fancybox="gallery" id="@PED1" href="@PE1">
+                        <img src="@PE1" id="@PhotoElement1" to="@PE1" class="img-responsive" height="32" width="32" onerror="this.style.display = 'none'">
+                    </a>
+                </td>
+                <td width="100px">
+                    <a data-fancybox="gallery" id="@PED2" href="@PE2">
+                        <img src="@PE2" id="@PhotoElement2" to="@PE2" class="img-responsive" height="32" width="32" onerror="this.style.display = 'none'">
+                    </a>
+                </td>
+                <th style="text-align:center">
+                    Состояние Элемента:
+                </th>
 
-            <td align="center">
-                <center>
-                    <div class="rating" align="center" id="@DivSost">
-                        <input id="@SostoyanieElement" type="hidden" name="val" value="@Model.Sostoyanie" />
-                    </div>
-                </center>
-            </td>
+                <td align="center">
+                    <center>
+                        <div class="rating" align="center" id="@DivSost">
+                            <input id="@SostoyanieElement" type="hidden" name="val" value="@Model.Sostoyanie" />
+                        </div>
+                    </center>
+                </td>
 
-            <td rowspan="3" style="text-align:center" width="200px">
-                <button type="button" id="EditElement" MId="@Model.Id" MElement="@Model.ElementId" MOsmotr="@Model.OsmotrId" class="btn btn-outline-success go" style="text-align:center">
-                    Изменить элемент
-                </button>
+                <td rowspan="3" style="text-align:center" width="200px">
+                    <button type="button" id="EditElement" MId="@Model.Id" MElement="@Model.ElementId" MOsmotr="@Model.OsmotrId" class="btn btn-outline-success go" style="text-align:center">
+                        Изменить элемент
+                    </button>
 
-                <button style="margin:5px" type="button" id="DeleteElement" MId="@Model.Id" MElement="@Model.ElementId" MOsmotr="@Model.OsmotrId" class="btn btn-outline-danger go" style="text-align:center">
-                    Удалить элемент
-                </button>
-            </td>
-
-        </tr>
-        <tr id="@TR5" style="background-color:lightgray; text-align:center; align-content:center @styleOff">
-
-            <td width="200px" colspan="2">
-                Материал
-            </td>
-            <td width="10%">
-                Единицы измерения
-            </td>
-            <td width="250px">
-                Количество
-            </td>
-        </tr>
-        <tr id="@TR6" style="background-color:lightgray @styleOff">
-
-            <td width="200px" colspan="2" style="text-align:center">
-                @Html.DropDownList(Material, new SelectList(ViewBag.Materials, "Value", "Text", Model.M), htmlAttributes: new { @class = "form-control", width = "196", disabled = "disabled" })
-
-            </td>
-            <td style="text-align:center" width="10%">
-                @Html.DropDownList(EdIzm, new SelectList(ViewBag.Izmerenies, "Value", "Text", Model.EI), htmlAttributes: new { @class = "form-control", width = "196", disabled = "disabled" })
+                    <button style="margin:5px" type="button" id="DeleteElement" MId="@Model.Id" MElement="@Model.ElementId" MOsmotr="@Model.OsmotrId" class="btn btn-outline-danger go" style="text-align:center">
+                        Удалить элемент
+                    </button>
+                </td>
 
 
-            </td>
-            <td style="text-align:center" width="250px">
-                <input id="@Kolvo" value="@Model.Kolichestvo" type="number" disabled="disabled" readonly="readonly" class="form-control" />
 
-            </td>
-        </tr>
+
+
+
+
+
+            </tr>
+            <tr id="@TR5" style="background-color:lightgray; text-align:center; align-content:center @styleOff">
+
+                <td width="200px" colspan="2">
+                    Материал
+                </td>
+                <td width="10%">
+                    Единицы измерения
+                </td>
+                <td width="250px">
+                    Количество
+                </td>
+            </tr>
+            <tr id="@TR6" style="background-color:lightgray @styleOff">
+
+                <td width="200px" colspan="2" style="text-align:center">
+                    @Html.DropDownList(Material, new SelectList(ViewBag.Materials, "Value", "Text", ViewBag.M), htmlAttributes: new { @class = "form-control", width = "196", disabled = "disabled" })
+
+                </td>
+                <td style="text-align:center" width="10%">
+                    @Html.DropDownList(EdIzm, new SelectList(ViewBag.Izmerenies, "Value", "Text", ViewBag.EI), htmlAttributes: new { @class = "form-control", width = "196", disabled = "disabled" })
+
+
+                </td>
+                <td style="text-align:center" width="250px">
+                    <input id="@Kolvo" value="@Model.Kolichestvo" type="number" disabled="disabled" readonly="readonly" class="form-control" />
+
+                </td>
+            </tr>
 
         }
 
@@ -239,7 +317,7 @@
             @{string defects = "Нажмите, чтобы добавить дефекты"; string defcol = "btn btn-warning";
                 if (Model.ActiveDefects.Count > 0) { defects = "Показать дефекты"; defcol = "btn btn-success"; }
             }
-            
+
             <td colspan="6">
                 <button class="@defcol btn-block" onclick="DefectsOn('@Model.ElementId')">@defects</button>
 
@@ -351,43 +429,43 @@
 
 
 
-        <tr id="@Model.ActiveDefects[i].Id" class="@Model.ElementId" style="display:none">
-            <td style="text-align:center">
-                @Model.ActiveDefects[i].Defect.Def
-            </td>
+            <tr id="@Model.ActiveDefects[i].Id" class="@Model.ElementId" style="display:none">
+                <td style="text-align:center">
+                    @Model.ActiveDefects[i].Defect.Def
+                </td>
 
 
-            <td style="text-align:center">
-                <a data-fancybox="gallery" href="@Ph1">
-                    <img src="@Ph1" id="Photo" to="@P2" class="img-responsive" height="32" width="32" onerror="this.style.display = 'none'">
-                </a>
-            </td>
-            <td style="text-align:center">
-                <a data-fancybox="gallery" href="@Ph2">
-                    <img src="@Ph2" id="Photo" to="@P2" class="img-responsive" height="32" width="32" onerror="this.style.display = '/Content/Images/NoDownload.png'">
-                </a>
-            </td>
-            <td style="text-align:center">
-                <div class="ratingRed">
-                    <input type="hidden" name="val" value="@Model.ActiveDefects[i].Sostoyanie" />
+                <td style="text-align:center">
+                    <a data-fancybox="gallery" href="@Ph1">
+                        <img src="@Ph1" id="Photo" to="@P2" class="img-responsive" height="32" width="32" onerror="this.style.display = 'none'">
+                    </a>
+                </td>
+                <td style="text-align:center">
+                    <a data-fancybox="gallery" href="@Ph2">
+                        <img src="@Ph2" id="Photo" to="@P2" class="img-responsive" height="32" width="32" onerror="this.style.display = '/Content/Images/NoDownload.png'">
+                    </a>
+                </td>
+                <td style="text-align:center">
+                    <div class="ratingRed">
+                        <input type="hidden" name="val" value="@Model.ActiveDefects[i].Sostoyanie" />
 
-                </div>
-
-
-            
-               
-            
+                    </div>
 
 
-            </td>
-            <td style="text-align:center">
-                <input onchange="RefreshTextDefect('@Model.ActiveDefects[i].Id',this.value)" value="@Model.ActiveDefects[i].Opisanie" class="form-control" style="width:230px" />
 
-            </td>
-            <td style="text-align:center">
-                <button type="button" id="RemoveDefect" ADId="@Model.ActiveDefects[i].Id" class="btn btn-outline-danger rem">Удалить дефект</button>
-            </td>
-        </tr>
+
+
+
+
+                </td>
+                <td style="text-align:center">
+                    <input onchange="RefreshTextDefect('@Model.ActiveDefects[i].Id',this.value)" value="@Model.ActiveDefects[i].Opisanie" class="form-control" style="width:230px" />
+
+                </td>
+                <td style="text-align:center">
+                    <button type="button" id="RemoveDefect" ADId="@Model.ActiveDefects[i].Id" class="btn btn-outline-danger rem">Удалить дефект</button>
+                </td>
+            </tr>
 
 
         }
@@ -395,10 +473,55 @@
 
 
 
-
     </table>
+
+
 <hr style="color:#28a745;border:none;background-color:#28a745;height:5px;margin:0px" />
 
+@if (ViewBag.AW)
+{
+<!-- Modal -->
+<div class="modal fade" id="Modal_@Model.ElementId" tabindex="-1" role="dialog" aria-labelledby="AddAvtoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content col-12">
+            <div class="modal-header">
+                <h3 class="modal-title" id="AddAvtoModalLabel">Добавить необходимую работу</h3>
+
+            </div>
+            <div class="modal-body">
+                @{ string X = "OW" + Model.ElementId.ToString(); string Y = "N" + Model.ElementId.ToString(); string Z = "OSMOTR" + Model.ElementId.ToString(); }
+
+                <div class="col-6">
+                    Осмотр#
+                </div>
+                <div class="col-6">
+                    <input readonly id="@Z" value="@Model.OsmotrId" class="form-control" />
+                </div>
+                <div class="col-6">
+                    Выберите работу
+                </div>
+                <div class="col-6">
+
+                    @Html.DropDownList(X, new SelectList(Model.OsmotrWorks, "value", "text"), new { @class = "form-control" })
+                </div>
+                <div class="col-6">
+                    Количество
+                </div>
+                <div class="col-6">
+                    @Html.Editor(Y, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+
+
+                <div class="col-6" style="margin:10px">
+                    <button id="AddWorkSubmit" onclick="AddWork(@Model.ElementId)" class="btn btn-success btn-block">Сохранить</button>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+                    }
 
 
 

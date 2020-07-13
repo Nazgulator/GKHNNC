@@ -16,7 +16,35 @@ namespace GKHNNC.Models
         public int BuildId { get; set; }
         [Display(Name = "Площадь")]
         public decimal Ploshad { get; set; }
-        [Display(Name = "Теплота12")]
+        [Display(Name = "Активная Площадь")]
+        public decimal ActivePloshad { get; set; }
+        [Display(Name = "Жилая Площадь")]
+        public decimal PloshadGilaya { get; set; }
+        [Display(Name = "Нежилая Площадь")]
+        public decimal PloshadNegilaya { get; set; }
+        [Display(Name = "Площадь подвала")]
+        public decimal PloshadPodval { get; set; }
+        [Display(Name = "Площадь лестниц")]
+        public decimal PloshadLestnica { get; set; }
+        [Display(Name = "Площадь кровля")]
+        public decimal PloshadKrovlya { get; set; }
+        [Display(Name = "Площадь мусор")]
+        public decimal PloshadMusor { get; set; }
+        [Display(Name = "Площадь земля")]
+        public decimal PloshadZemlya { get; set; }
+        [Display(Name = "Количество этажей")]
+        public int Etagi { get; set; }
+        [Display(Name = "Количество подъездов")]
+        public int Podezds { get; set; }
+        [Display(Name = "Количество квартир")]
+        public int Kvartirs { get; set; }
+        [Display(Name = "Количество лифтов")]
+        public int Lifts { get; set; }
+        [Display(Name = "Количество жильцов")]
+        public int Peoples { get; set; }
+        [Display(Name = "Подрядчик")]
+        public string IP { get; set; }
+        [Display(Name = "Теплота 1/12")]
         public decimal Teplota12 { get; set; }
         [Display(Name = "Улица")]
         public string Ulica { get; set; }

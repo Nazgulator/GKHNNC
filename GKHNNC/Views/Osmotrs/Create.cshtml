@@ -84,7 +84,9 @@
         <p>@ViewBag.Error</p>
     }
 
-
+    <button id="help" class="btn btn-block btn-success" onclick=" alert('Бланк осмотра разделен на части дома (крыша, фундамент, фасад). Каждая часть дома разделена на элементы дома (Фундамент - Цоколь, отмостка...) Вам необходимо загрузить по 2 фотографии на каждую часть дома, указать в звездах состояние элемента дома, выбрать материал, единицы измерения и количество. Если есть дефекты на элементе, то добавить 2 фотографии дефекта, выбрать тип дефекта и указать серьёзность повреждения в восклицательных знаках. На каждой части дома вы можете составить список необходимых работ, выбрав тип и количество необходимой работы. Цена посчитается автоматически.  После заполнения всех данных нажмите СОХРАНИТЬ в самом конце документа. После этого вы не сможете изменять данный осмотр. Он перейдет на проверку в отдел эксплуатации. Вы можете распечатать акт осмотра в формате Ексель. Для этого в правом верхнем углу есть кнопка Сохранить отчет в EXCEL. Спасибо за вашу тяжёлую работу.  ')">
+        Инструкция по заполнению
+    </button>
 
     <hr />
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -101,7 +103,7 @@
             }
             @for (int j = 0; j < ViewBag.DOMParts.Count; j++)
             {
-
+                int DPI = j + 1;
 
 
 
@@ -132,7 +134,9 @@
                             {
                                 string Part = "Partial" + Model.Elements[i].Id.ToString();
 
-                                @Html.Action("ViewActiveDefect", "Osmotrs", new { ElementId = Model.Elements[i].ElementId, OsmotrId = Model.Id, AdresId = Model.AdresId, Date = Model.Date })
+
+                                @Html.Action("ViewActiveDefect", "Osmotrs", new { ElementId = Model.Elements[i].ElementId, OsmotrId = Model.Id, AdresId = Model.AdresId, Date = Model.Date, DOMPartId = DPI })
+                                DPI = 0;
                             }
                         }
 
@@ -152,10 +156,37 @@
             }
         </div>
     </div>
+   
+    
+        <table>
+            <tr>
+                <td width="80%">
+                    <input class="form-control btn-block" id="Primechanie" placeholder="Здесь вы можете добавить свои комментарии к осмотру." value="@Model.Opisanie" />
+                </td>
+                <td width="50%">
+                    <button class="btn btn-success btn-block" id="PrimechanieSave" onclick="PS(@Model.Id)">Сохранить примечание</button>
+                </td>
+            </tr>
+        </table>
+     
+      
+    
     <div class=" col-md-6  ">
+        @if (User.Identity.Name.Contains("ДиректорЖЭУ")||User.IsInRole("Администратор"))
+        {
         <button class="btn btn-block btn-success" id="END" MOsmotr="@Model.Id">Завершить создание осмотра</button>
+        }
+
         @Html.ActionLink("Назад", "Index", "Houses", null, new { @class = "btn btn-success btn-block" })
+        @if (User.Identity.Name.Contains("ЖЭУ") || User.IsInRole("Администратор"))
+        {
+            <button class=" btn btn-danger btn-block" type="button" source="Удалить" readonly onclick="Delete('@Model.Id')">Удалить </button>
+        }
     </div>
+
+    <H5>Конец осмотра.</H5>
+    <H4>Осмотр доступен к редактированию.</H4>
+
 </body>
 
 
@@ -170,7 +201,7 @@
     @Scripts.Render("~/scripts/nprogress.min.js")
     @Scripts.Render("~/scripts/jquery.signalR-2.4.0.js")
     @Scripts.Render("~/signalr/hubs")
-   
+
     @Scripts.Render("~/scripts/jquery.unobtrusive-ajax.js")
     @Scripts.Render("~/scripts/bootstrap.js")
     @Scripts.Render("~/scripts/bootstrap.bundle.js")
@@ -181,7 +212,101 @@
 
     <link href="/scripts/jquery.rating/styles/jquery.rating.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+    <script>
+        function OpenModal(id) {
+            $("#Modal_" + id).modal('show');
+        }
+    </script>
+    <script>
+        function PS(id)
+        {
+           var PRIM =  $('#Primechanie').val();
+              $.post('@Url.Action("SavePrimechanie", "Osmotrs")', { id: id,text:PRIM},
+                 function (data) {
+                     console.log('Контроллер вернул данные ' + data);
+                            var S = data.split(';');
+                     if (S[0] != 'Ошибка') {
+                       
+                                console.log('Примечание сохранено' );
+                            }
+                            else {
+                                alert('Ошибка сохранения файла. '+S[1]);
+                            }
+                            // $('body').append('<ul><li>Java</li><li>JavaScript</li></ul>');
 
+
+
+                        });
+        }
+    </script>
+    <script>
+        function RemoveWork(id)
+        {
+              $.post('@Url.Action("RemoveWork", "Osmotrs")', { id: id},
+                 function (data) {
+                     console.log('Контроллер вернул данные ' + data);
+                            var S = data.split(';');
+                     if (S[0] != 'Ошибка') {
+                         $("#AO_" + id).remove();
+                                console.log('Удалили строку в таблице' );
+                            }
+                            else {
+                                alert('Ошибка сохранения файла. '+S[1]);
+                            }
+                            // $('body').append('<ul><li>Java</li><li>JavaScript</li></ul>');
+
+
+
+                        });
+
+        }
+    </script>
+    <script>
+        function AddWork(id)
+        {
+            console.log('Начинаем добавление работы ' + id);
+            var OW = $("#OW" + id).val();
+            var N = $("#N" + id).val();
+            var O = $("#OSMOTR" + id).val();
+            var Table = $("#AO_" + id);
+            console.log('Приняли такие данные: ' + OW+';'+N+';'+O+';'+Table);
+             $.post('@Url.Action("AddWork", "Osmotrs")', { OsmotrWork: OW, Number: N, OsmotrId:O,ElementId:id},
+                 function (data) {
+                     console.log('Контроллер вернул данные ' + data);
+                            var S = data.split(';');
+                     if (S[0] != 'Ошибка')
+                     {
+                         if (S[5] != 'Modify')
+                         {
+                             //Table.removeAttr('display');
+                             Table.fadeIn('slow');
+                             Table.after('<tr id="AO_' + S[4] + '" class="AO_' + S[4] + '"><td  style="text-align:center">' + S[0] + '</td><td style="text-align:center" colspan="2">' + S[2] + '</td><td style="text-align:center">' + S[1] + '</td><td style="text-align:center">' + S[3] + '</td><td style="text-align:center" colspan="2" ><button type="button" id="RemoveWork" ADId="' + id + '" onclick="RemoveWork(' + S[4] + ')" class="btn btn-outline-danger rem">Удалить работу</button></td></tr>');
+                             // $('#AO_' + id).hide().fadeIn("slow");//появляем медленно строку
+                             console.log('Добавили в таблицу строку' + Table);
+                             $('#Modal_' + id).modal('hide');
+                         }
+                         else
+                         {
+                             console.log('Ищем строку AO_' + S[4]);
+                             var El = $("#AO_" + S[4]);
+                             El.replaceWith('<tr id="AO_' + S[4] + '" class="AO_' + S[4] + '"><td  style="text-align:center">' + S[0] + '</td><td style="text-align:center" colspan="2">' + S[2] + '</td><td style="text-align:center">' + S[1] + '</td><td style="text-align:center">' + S[3] + '</td><td style="text-align:center" colspan="2" ><button type="button" id="RemoveWork" ADId="' + id + '" onclick="RemoveWork(' + S[4] + ')" class="btn btn-outline-danger rem">Удалить работу</button></td></tr>');
+                             // $('#AO_' + id).hide().fadeIn("slow");//появляем медленно строку
+                             console.log('Заменили строку в таблице' + Table);
+                             $('#Modal_' + id).modal('hide');
+                         }
+
+                     }
+                     else
+                     {
+                         alert('Ошибка сохранения файла. ' + S[1]);
+                     }
+                            // $('body').append('<ul><li>Java</li><li>JavaScript</li></ul>');
+
+
+
+                        });
+        }
+    </script>
     <script>
         $(function () {
             var PB = $.connection.progressHub;
@@ -301,7 +426,7 @@
                         function (data) {
                             if (data != null) {
                                  var url = "@Url.Action("Index", "Houses")";
-                                alert('Осмотр успешно сохранён. Спасибо за выполненную работу!');
+                                alert('Осмотр отправлен на проверку в отдел эксплуатации. Ждите их решения. Редактирование осмотра теперь недоступно. Спасибо за выполненную работу!');
                                 $('#wrap_preloader').fadeIn(500);
                                 window.location.replace(url);
 
@@ -334,7 +459,7 @@
 
 
       });
-            
+
         }
     </script>
     <script>
@@ -462,12 +587,15 @@
         });
     </script>
     <script>
-        function DefectsOn(eid)
-        {
+        function DefectsOn(eid) {
             $("." + eid).fadeIn();
             $(".B_" + eid).fadeOut();
-
-
+        }
+    </script>
+    <script>
+        function WorksOn(eid) {
+            $("." + eid).fadeIn();
+            $(".B_" + eid).fadeOut();
         }
     </script>
     <script>
@@ -595,6 +723,25 @@
             url:'@Url.Action("ZvezdaRed", "Osmotrs")'
         });
 
+    </script>
+    <script>
+     function Delete(id)
+     {
+
+                var GO = confirm('Вы действительно хотите удалить осмотр #'+id+'? Это действие нельзя будет отменить! ')
+                if (GO) {
+                    $.post('@Url.Action("DeleteOsmotr", "Osmotrs")', { OsmotrId: id },
+                        function (data) {
+                            if (data != null) {
+                                 var url = "@Url.Action("Index", "Houses")";
+                                alert('Осмотр успешно удален!');
+                                $('#wrap_preloader').fadeIn(500);
+                                window.location.replace(url);
+
+                                }
+                        });
+                }
+            }
     </script>
     <script>
         //рейтинг в звездах

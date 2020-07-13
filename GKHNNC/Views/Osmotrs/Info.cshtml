@@ -61,7 +61,7 @@
 
         </div>
     </div>
-    <br/>
+    <br />
     <h2>Осмотр #@Model.Id</h2>
     <div class="col-md-12" style="background-color:#28a745">
         <table>
@@ -73,12 +73,97 @@
 
         </table>
     </div>
+    <div class="col-md-12">
+        @{
+
+            string status = "Осмотр заполняется ИП";
+
+            if (Model.Sostoyanie == 1) { status = "Осмотр передан на проверку ОЭЖФ " + Model.DateEnd.ToString("MM.dd.yyyy"); }
+            if (Model.Sostoyanie == 2) { status = "Осмотр передан на проверку ПТО " + Model.DateOEGF.ToString("MM.dd.yyyy"); }
+            if (Model.Sostoyanie == 3) { status = "Осмотр передан на голосование " + Model.DatePTO.ToString("MM.dd.yyyy"); }
+        }
+        <h4>Статус осмотра: @status</h4>
+    </div>
     <h4>От @Model.Date.Day @ViewBag.Month @Model.Date.Year</h4>
     @if (ViewBag.Error != "")
     {
         <H5>При загрузке возникла ошибка!!!</H5>
         <p>@ViewBag.Error</p>
     }
+
+
+    @if (Model.AOW != null)
+    {<div class="container">
+            <table class="table-bordered table-striped">
+                <tr>
+                    <td colspan="6">
+                        @{
+                            string works = "Добавить необходимые работы"; string workscol = "btn btn-secondary";
+                            if (Model.AOW.Count > 0) { works = "Добавить необходимые работы"; workscol = "btn btn-secondary"; }
+                        }
+                        <button class="@workscol btn-block" onclick="OpenModal('AddNewActiveWork')">@works</button>
+                    </td>
+                </tr>
+
+
+                @{string Stealth = "display: none";
+                    if (Model.AOW != null && Model.AOW.Count > 0)
+                    {
+                        Stealth = "";
+                    }
+                }
+                <tr id="AO_@Model.Id" class="AO_@Model.Id" style="@Stealth">
+                    <th style="text-align:center">
+                        Наименование работы
+                    </th>
+
+
+                    <th style="text-align:center" colspan="2">
+                        Количество
+                    </th>
+                    <th style="text-align:center">
+                        Измерение
+                    </th>
+                    <th style="text-align:center">
+                        Стоимость
+                    </th>
+                    <th style="text-align:center" colspan="2">
+
+                        Опции
+                    </th>
+                </tr>
+
+                @for (int i = 0; i < Model.AOW.Count; i++)
+                {
+                    <tr id="AO_@Model.AOW[i].Id" class="AO_@Model.Id">
+                        <td style="text-align:center">
+                            @Model.AOW[i].OsmotrWork.Name
+                        </td>
+
+
+                        <td style="text-align:center" colspan="2">
+                            @Model.AOW[i].Number
+                        </td>
+                        <td style="text-align:center">
+                            @Model.AOW[i].OsmotrWork.Izmerenie.Name
+                        </td>
+                        <td style="text-align:center">
+                            @Model.AOW[i].TotalCost
+                        </td>
+                        <td style="text-align:center" colspan="2">
+
+                            <button type="button" id="RemoveWork" ADId="@Model.AOW[i].Id" onclick="RemoveWork('@Model.AOW[i].Id')" class="btn btn-outline-danger">Удалить работу</button>
+                        </td>
+                    </tr>
+                }
+                <tr style="background-color:#ffd800">
+                    <td colspan="6" height="6px"></td>
+                </tr>
+            </table>
+        </div>
+    }
+
+
 
 
 
@@ -98,69 +183,73 @@
             @for (int j = 0; j < ViewBag.DOMParts.Count; j++)
             {
 
+                if (Model.Elements.Count > 0)
+                {
+
+                    <div id="@j" class="row">
+                        <div class="col-md-12" style="background-color:#28a745">
+                            <table style="width:100%">
+                                <tr>
+                                    <td colspan="7" align="center">
+                                        <h3 style="color:white"> @ViewBag.DOMParts[j] </h3>
+                                    </td>
+                                </tr>
+                                <tr style="background-color:#28a745 ; color:white" class="table-bordered">
+                                    <th width="230px" style="text-align:center">
+
+                                        Элемент
+                                    </th>
 
 
-                <div id="@j" class="row">
-                    <div class="col-md-12" style="background-color:#28a745">
-                        <table style="width:100%">
-                            <tr>
-                                <td colspan="7" align="center">
-                                    <h3 style="color:white"> @ViewBag.DOMParts[j] </h3>
-                                </td>
-                            </tr>
-                            <tr style="background-color:#28a745 ; color:white" class="table-bordered">
-                                <th width="230px" style="text-align:center">
+                                    <th width="185px" style="text-align:center">
+                                        Фото
+                                    </th>
 
-                                    Элемент
-                                </th>
+                                    <th width="95px" style="text-align:center">
+                                        Материал
+                                    </th>
+                                    <th width="90px" style="text-align:center">
+                                        Количество
+                                    </th>
+                                    <th width="50px" style="text-align:center">
+                                        Ед.Изм.
+                                    </th>
 
-
-                                <th width="185px" style="text-align:center">
-                                    Фото
-                                </th>
-
-                                <th width="95px" style="text-align:center">
-                                    Материал
-                                </th>
-                                <th width="90px" style="text-align:center">
-                                    Количество
-                                </th>
-                                <th width="50px" style="text-align:center">
-                                    Ед.Изм.
-                                </th>
-
-                                <th width="230px" style="text-align:center">
-                                    Состояние элемента
-                                </th>
+                                    <th width="230px" style="text-align:center">
+                                        Состояние элемента
+                                    </th>
 
 
-                                <th width="150px" style="text-align:center">
-                                    Дефекты
-                                </th>
-                            </tr>
+                                    <th width="150px" style="text-align:center">
+                                        Дефекты
+                                    </th>
+                                </tr>
 
-                        </table>
+                            </table>
 
-                    </div>
+                        </div>
 
 
-                    <div class="col-md-12">
+                        <div class="col-md-12">
 
 
 
-                        @for (int i = 0; i < Model.Elements.Count; i++)
-                        {
-                            if (Model.Elements[i].Element.ElementTypeId == (j + 1))
+                            @for (int i = 0; i < Model.Elements.Count; i++)
                             {
-                                string Part = "Partial" + Model.Elements[i].Id.ToString();
+                                if (Model.Elements[i].Element.ElementTypeId == (j + 1))
+                                {
 
-                                @Html.Action("ViewActiveDefectReadOnly", "Osmotrs", new { ElementId = Model.Elements[i].ElementId, OsmotrId = Model.Id, AdresId = Model.AdresId, Date = Model.Date })
+                                    string Part = "Partial" + Model.Elements[i].Id.ToString();
+
+                                    @Html.Action("ViewActiveDefectReadOnly", "Osmotrs", new { ElementId = Model.Elements[i].ElementId, OsmotrId = Model.Id, AdresId = Model.AdresId, Date = Model.Date })
+                                }
                             }
-                        }
+
+
+                        </div>
 
                     </div>
-                </div>
-
+                }
 
                 <div class="row col-md-12">
                     <p> </p>
@@ -171,11 +260,173 @@
                 ProgressHub.SendMessage("Загружаем данные элементов...", progress);
                 if (procount > pro100) { procount = Convert.ToInt32(pro100); }
             }
+            <div class="col-md-12">
+                <table style="width:100%" class="table-bordered table-striped">
+                    <tr>
+                        <td colspan="7" align="center" style="background-color:#28a745">
+                            <h3 style="color:white"> Работы по непредвиденному неотложному ремонту </h3>
+                        </td>
+                    </tr>
+                    <tr style="background-color:#28a745 ; color:white" class="table-bordered">
+                        <th width="230px" style="text-align:center">
+                            Наименование работы
+                        </th>
+                        <th width="50px" style="text-align:center">
+                            Ед.Изм.
+                        </th>
+                        <th width="90px" style="text-align:center">
+                            Количество
+                        </th>
+
+                        <th width="95px" style="text-align:center">
+                            Сумма
+                        </th>
+                    </tr>
+                    @for (int z = 0; z < Model.AOW.Count; z++)
+                    {
+                        <tr>
+                            <td width="230px" style="text-align:center">
+                                @Model.AOW[z].OsmotrWork.Name
+                            </td>
+                            <td width="50px" style="text-align:center">
+                                @Model.AOW[z].OsmotrWork.Izmerenie.Name
+                            </td>
+                            <td width="90px" style="text-align:center">
+                                @Model.AOW[z].Number
+                            </td>
+
+                            <td width="95px" style="text-align:center">
+                                @Model.AOW[z].TotalCost
+                            </td>
+                        </tr>
+                    }
+
+                </table>
+            </div>
         </div>
     </div>
-    <div class=" col-md-6  ">
-        @Html.ActionLink("Назад", "Index", "Houses", null, new { @class = "btn btn-success btn-block" })
+    @if (User.Identity.Name.Contains("ОЭЖФ") || User.IsInRole("Администратор"))
+    {
+
+        <H3>Оценка осмотра ОЭЖФ</H3>
+
+        <table>
+            <tr>
+                <td width="80%">
+                    <input class="form-control btn-block" id="Primechanie" placeholder="Здесь вы можете добавить свои комментарии к осмотру." value="@Model.Opisanie" />
+                </td>
+                <td width="50%">
+                    <button class="btn btn-success btn-block" id="PrimechanieSave" onclick="PS(@Model.Id)">Сохранить примечание</button>
+                </td>
+            </tr>
+        </table>
+
+
+
+
+        if (Model.Sostoyanie == 1)
+        {
+            <button class=" btn btn-success" onclick="Proverka1('@Model.Id')">Проверка пройдена</button>
+        }
+
+        <button class=" btn btn-warning" onclick="Peredelat('@Model.Id')">Переделать</button>
+        // <button class=" btn btn-warning" onclick="ForAllInGEU('@Model.Id')">Освободтьб ЖЭУ</button>
+
+        <button class=" btn btn-danger" type="button" source="Удалить" readonly onclick="Delete('@Model.Id')">Удалить </button>
+
+
+
+
+
+
+    }
+    @if (User.Identity.Name.Contains("ПТО") || User.IsInRole("Администратор"))
+    {
+
+
+        <H3>Оценка осмотра ПТО</H3>
+        <table>
+            <tr>
+                <td width="80%">
+                    <input class="form-control btn-block" id="Primechanie" placeholder="Здесь вы можете добавить свои комментарии к осмотру." value="@Model.Opisanie" />
+                </td>
+                <td width="50%">
+                    <button class="btn btn-success btn-block" id="PrimechanieSave" onclick="PS(@Model.Id)">Сохранить примечание</button>
+                </td>
+            </tr>
+        </table>
+
+
+
+
+        if (Model.Sostoyanie == 2)
+        {
+            <button class=" btn btn-success" onclick="Proverka2('@Model.Id')">Проверка пройдена</button>
+        }
+
+        <button class=" btn btn-warning" onclick="Peredelat2('@Model.Id')">Переделать</button>
+        // <button class=" btn btn-warning" onclick="ForAllInGEU('@Model.Id')">Освободтьб ЖЭУ</button>
+
+        <button class=" btn btn-danger" type="button" source="Удалить" readonly onclick="Delete('@Model.Id')">Удалить </button>
+
+
+
+
+
+
+    }
+    <H4>Редактирование осмотра завершено @Model.DateEnd.ToString("MM.dd.yyyy")</H4>
+    <H5>Конец осмотра</H5>
+
+    <div>
+
     </div>
+
+   
+        <!-- Modal -->
+        <div class="modal fade" id="AddNewActiveWork" tabindex="-1" role="dialog" aria-labelledby="AddAvtoModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content col-12">
+                    <div class="modal-header">
+                        <h3 class="modal-title" id="AddAvtoModalLabel">Добавить необходимую работу</h3>
+
+                    </div>
+                    <div class="modal-body">
+                        @{ string X = "OW"; string Y = "N"; string Z = "OSMOTR"; }
+
+                        <div class="col-6">
+                            Осмотр#
+                        </div>
+                        <div class="col-6">
+                            <input readonly id="@Z" value="@Model.Id" class="form-control" />
+                        </div>
+                        <div class="col-6">
+                            Выберите работу
+                        </div>
+                        <div class="col-6">
+
+                            @Html.DropDownList(X, new SelectList(ViewBag.OW, "value", "text"), new { @class = "form-control" })
+                        </div>
+                        <div class="col-6">
+                            Количество
+                        </div>
+                        <div class="col-6">
+                            @Html.Editor(Y, new { htmlAttributes = new { @class = "form-control" } })
+                        </div>
+
+
+                        <div class="col-6" style="margin:10px">
+                            <button id="AddWorkSubmit" onclick="AddWork(@Model.Id)" class="btn btn-success btn-block">Сохранить</button>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+
+
 </body>
 
 
@@ -185,12 +436,12 @@
 
 
 @section Scripts{
-    @Scripts.Render("~/scripts/jquery-3.3.1.min.js")
+    
     @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
     @Scripts.Render("~/scripts/nprogress.min.js")
     @Scripts.Render("~/scripts/jquery.signalR-2.4.0.js")
     @Scripts.Render("~/signalr/hubs")
-    @Scripts.Render("~/scripts/jquery-1.7.1.js")
+   
     @Scripts.Render("~/scripts/jquery.unobtrusive-ajax.js")
     @Scripts.Render("~/scripts/bootstrap.js")
     @Scripts.Render("~/scripts/bootstrap.bundle.js")
@@ -201,7 +452,24 @@
 
     <link href="/scripts/jquery.rating/styles/jquery.rating.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
-
+    <script>
+        function PS(id)
+        {
+           var PRIM =  $('#Primechanie').val();
+              $.post('@Url.Action("SavePrimechanie", "Osmotrs")', { id: id,text:PRIM},
+                 function (data) {
+                     console.log('Контроллер вернул данные ' + data);
+                            var S = data.split(';');
+                     if (S[0] != 'Ошибка') {
+                                console.log('Примечание сохранено' );
+                            }
+                            else {
+                                alert('Ошибка сохранения файла. '+S[1]);
+                            }
+                            // $('body').append('<ul><li>Java</li><li>JavaScript</li></ul>');
+                        });
+        }
+    </script>
     <script>
         $(function () {
             var PB = $.connection.progressHub;
@@ -241,25 +509,21 @@
             }
         });
     </script>
-    
+
     <script>
         //изменение размеров текстового поля при фокусе
-        $(function ()
-        {
+        $(function () {
             $("input").focus(function () {
                 if ($(this).attr("name") != "Photo") {
                     $(this).animate({ width: "500px" }, 500);
-                } else
-                {
+                } else {
                     $(this).animate({ width: "250px" }, 500);
                 }
-            }).blur(function ()
-            {
+            }).blur(function () {
                 if ($(this).attr("name") != "Photo") {
                     $(this).animate({ width: "230px" }, 500);
                 }
-                else
-                {
+                else {
                     $(this).animate({ width: "50px" }, 500);
                 }
 
@@ -504,5 +768,189 @@
             readOnly: 'true'
         });
 
+    </script>
+    <script>
+     function Delete(id)
+     {
+
+                var GO = confirm('Вы действительно хотите удалить осмотр? Это действие нельзя будет отменить! ')
+                if (GO) {
+                    $.post('@Url.Action("DeleteOsmotr", "Osmotrs")', { OsmotrId: id },
+                        function (data) {
+                            if (data != null) {
+                                 var url = "@Url.Action("OsmotrsProverka1", "Houses")";
+                                alert('Осмотр успешно удален!');
+                                $('#wrap_preloader').fadeIn(500);
+                                window.location.replace(url);
+
+                                }
+                        });
+                }
+            }
+    </script>
+    <script>
+     function Proverka1(id)
+     {
+
+                var GO = confirm('Вы уверены в правильности данных? Осмотр будет передан в плановый отдел, а ЖЭУ увидит, что осмотр принят! ')
+                if (GO) {
+                    $.post('@Url.Action("Proverka1", "Osmotrs")', { OsmotrId: id },
+                        function (data) {
+                            if (data != null) {
+                                 var url = "@Url.Action("OsmotrsProverka1", "Houses")";
+                                alert('Осмотр успешно передан в плановый отдел! ');
+                                $('#wrap_preloader').fadeIn(500);
+                                window.location.replace(url);
+
+                                }
+                        });
+                }
+            }
+    </script>
+    <script>
+     function Proverka2(id)
+     {
+
+                var GO = confirm('Вы уверены в правильности данных? Осмотр будет передан на голосование! ')
+                if (GO) {
+                    $.post('@Url.Action("Proverka2", "Osmotrs")', { OsmotrId: id },
+                        function (data) {
+                            if (data != null) {
+                                 var url = "@Url.Action("OsmotrsProverka2", "Houses")";
+                                alert('Осмотр успешно передан в отдел голосований! ');
+                                $('#wrap_preloader').fadeIn(500);
+                                window.location.replace(url);
+
+                                }
+                        });
+                }
+            }
+    </script>
+    <script>
+    function ForAllInGEU()
+    {
+
+    var GO = confirm('Очистим состояние ЖЭУ5! ')
+    if (GO) {
+    $.post('@Url.Action("ForAllInGEU", "Osmotrs")',
+    function (data) {
+    if (data != null) {
+    var url = "@Url.Action("OsmotrsProverka1", "Houses")";
+    alert('Обработан! ');
+    $('#wrap_preloader').fadeIn(500);
+    window.location.replace(url);
+
+    }
+    });
+    }
+    }
+    </script>
+    <script>
+     function Peredelat(id)
+     {
+
+                var GO = confirm('Вы уверены что данные неверны? ЖЭУ получит возможность редактирования данного осмотра и не сможет создать новый, пока этот не завершит! ')
+                if (GO) {
+                    $.post('@Url.Action("Peredelat", "Osmotrs")', { OsmotrId: id },
+                        function (data) {
+                            if (data != null) {
+                                 var url = "@Url.Action("OsmotrsProverka1", "Houses")";
+                                alert('Осмотр возвращен в ЖЭУ для редактирования. Сообщите замечания по осмотру в ЖЭУ лично! ');
+                                $('#wrap_preloader').fadeIn(500);
+                                window.location.replace(url);
+
+                                }
+                        });
+                }
+            }
+    </script>
+    <script>
+        function OpenModal(id) {
+            $('#' + id).modal('show');
+        }
+    </script>
+    <script>
+     function Peredelat2(id)
+     {
+
+                var GO = confirm('Вы уверены что данные неверны? ОЭЖФ получит возможность редактирования данного осмотра! ')
+                if (GO) {
+                    $.post('@Url.Action("Peredelat2", "Osmotrs")', { OsmotrId: id },
+                        function (data) {
+                            if (data != null) {
+                                 var url = "@Url.Action("OsmotrsProverka1", "Houses")";
+                                alert('Осмотр возвращен в ОЭЖФ для редактирования. Сообщите замечания по осмотру в ОЭЖФ лично! ');
+                                $('#wrap_preloader').fadeIn(500);
+                                window.location.replace(url);
+
+                                }
+                        });
+                }
+            }
+    </script>
+    <script>
+        function RemoveWork(id)
+        {
+              $.post('@Url.Action("RemoveWork", "Osmotrs")', { id: id},
+                 function (data) {
+                     console.log('Контроллер вернул данные ' + data);
+                            var S = data.split(';');
+                     if (S[0] != 'Ошибка') {
+                         $("#AO_" + id).remove();
+                                console.log('Удалили строку в таблице' );
+                            }
+                            else {
+                                alert('Ошибка сохранения файла. '+S[1]);
+                            }
+                            // $('body').append('<ul><li>Java</li><li>JavaScript</li></ul>');
+
+
+
+                        });
+
+        }
+    </script>
+    <script>
+        function AddWork(id)
+        {
+            console.log('Начинаем добавление работы ' + id);
+            var OW = $("#OW").val();
+            var N = $("#N" ).val();
+            var O = $("#OSMOTR").val();
+            var Table = $("#AO_" + id);
+            console.log('Приняли такие данные: ' + OW+';'+N+';'+O+';'+Table);
+             $.post('@Url.Action("AddWork", "Osmotrs")', { OsmotrWork: OW, Number: N, OsmotrId:O,ElementId:id},
+                 function (data) {
+                     console.log('Контроллер вернул данные ' + data);
+                            var S = data.split(';');
+                     if (S[0] != 'Ошибка')
+                     {
+                         if (S[5] != 'Modify')
+                         {
+                             //Table.removeAttr('display');
+                             Table.fadeIn('slow');
+                             Table.after('<tr id="AO_' + S[4] + '" class="AO_' + S[4] + '"><td  style="text-align:center">' + S[0] + '</td><td style="text-align:center" colspan="2">' + S[2] + '</td><td style="text-align:center">' + S[1] + '</td><td style="text-align:center">' + S[3] + '</td><td style="text-align:center" colspan="2" ><button type="button" id="RemoveWork" ADId="' + id + '" onclick="RemoveWork(' + S[4] + ')" class="btn btn-outline-danger rem">Удалить работу</button></td></tr>');
+                             // $('#AO_' + id).hide().fadeIn("slow");//появляем медленно строку
+                             console.log('Добавили в таблицу строку' + Table);
+                             $('#AddNewActiveWork').modal('hide');
+                         }
+                         else
+                         {
+                             console.log('Ищем строку AO_' + S[4]);
+                             var El = $("#AO_" + S[4]);
+                             El.replaceWith('<tr id="AO_' + S[4] + '" class="AO_' + S[4] + '"><td  style="text-align:center">' + S[0] + '</td><td style="text-align:center" colspan="2">' + S[2] + '</td><td style="text-align:center">' + S[1] + '</td><td style="text-align:center">' + S[3] + '</td><td style="text-align:center" colspan="2" ><button type="button" id="RemoveWork" ADId="' + id + '" onclick="RemoveWork(' + S[4] + ')" class="btn btn-outline-danger rem">Удалить работу</button></td></tr>');
+                             // $('#AO_' + id).hide().fadeIn("slow");//появляем медленно строку
+                             console.log('Заменили строку в таблице' + Table);
+                             $('#AddNewActiveWork').modal('hide');
+                         }
+
+                     }
+                     else
+                     {
+                         alert('Ошибка сохранения файла. ' + S[1]);
+                     }
+                            // $('body').append('<ul><li>Java</li><li>JavaScript</li></ul>');
+                        });
+        }
     </script>
 }

@@ -95,11 +95,13 @@ namespace Opredelenie
             }
             
             range.Font.Size = size;
+            //range.AutoFit();
             range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
             range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
-            range.RowHeight = 50;
+            range.RowHeight = height;
             range.WrapText = true;
-            range.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft].LineStyle = Excel.XlLineStyle.xlContinuous;
+            
+            range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
         }
         public static void EstLiFile (string patch)

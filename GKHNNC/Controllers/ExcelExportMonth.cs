@@ -566,46 +566,54 @@ namespace GKHNNC.Controllers
 
                     for (int j = 0; j < LastCol; j++)
                     {
-
-                        string W = "";
+                        string EXL = "";
                         try
                         {
-                            W = EXX[i, j].ToString().Replace(" ", "").ToUpper();
+                            EXL = EXX[i, j].ToString();
                         }
-                        catch
+                        catch { }
+                        if (EXL.Equals("") == false)
                         {
-
-                        }
-                        for (int n = 0; n < NamesI.Length; n++)
-                        {
-                            if (NamesI[n] < 0)
+                            string W = "";
+                            try
                             {
-                                if (Names[n].Equals(W))
-                                {//Заголовки уже в верхнем регистре и без пробелов поэтому и не приводим.
-                                    startStroka = i;
-                                    NamesI[n] = j;
-                                    bool xx = true;
-                                    foreach (int g in NamesI)
-                                    {
-                                        if (g < 0) { xx = false; break; }
-                                    }
+                                W = EXL.ToString().Replace(" ", "").ToUpper();
+                            }
+                            catch
+                            {
 
-                                    if (xx) { goto ShapkaNaidena; }//если все заголовки нашли то выходим
-                                    else
-                                    {
+                            }
+                            for (int n = 0; n < NamesI.Length; n++)
+                            {
+                                if (NamesI[n] < 0)
+                                {
+                                    if (Names[n].Equals(W))
+                                    {//Заголовки уже в верхнем регистре и без пробелов поэтому и не приводим.
+                                        startStroka = i;
+                                        NamesI[n] = j;
+                                        bool xx = true;
+                                        foreach (int g in NamesI)
+                                        {
+                                            if (g < 0) { xx = false; break; }
+                                        }
 
-                                        //если нашли соответствие то записали и вышли чтобы одинаковые наименования заголовков можно было далее назначить
-                                        break;
+                                        if (xx) {
+                                            goto ShapkaNaidena; }//если все заголовки нашли то выходим
+                                        else
+                                        {
+
+                                            //если нашли соответствие то записали и вышли чтобы одинаковые наименования заголовков можно было далее назначить
+                                            break;
+                                        }
+                                        //если вся шапка найдена то нафиг цикл идем к метке
+
                                     }
-                                    //если вся шапка найдена то нафиг цикл идем к метке
 
                                 }
 
+
                             }
-
-
                         }
-
 
 
                     }
@@ -1901,7 +1909,7 @@ namespace GKHNNC.Controllers
             ApExcel.Visible = false;//невидимо
             ApExcel.ScreenUpdating = false;//и не обновляемо
             ApExcel.StandardFont = "TimesNewRoman";
-
+            WS.Name = "Акт";
 
 
             int from = 1;
@@ -2189,6 +2197,112 @@ namespace GKHNNC.Controllers
             }
 
            
+         
+            //Делаем 2 лист
+
+            // ApExcel.Worksheets.Add();
+            ApExcel.Worksheets.Add(Type.Missing);//Добавляем лист
+            WS = WbExcel.Sheets[1];
+            WS.Name = "Работы по ДТР";
+            
+            startStroka = 1; 
+            WS.Cells[startStroka, 1] = "Работы по дополнительному текущему ремонту, определение их стоимости и размера платы за дополнительный текущий ремонт на "+(O.Date.Year+1).ToString()+" год по адресу "+ O.Adres.Ulica + " " + O.Adres.Dom;
+            range = WS.get_Range("A"+startStroka, "H"+startStroka);
+            Opr.RangeMerge(ApExcel, range, true, true,13,50);
+            startStroka++;
+           
+            range = WS.get_Range("A" + startStroka, "H" + startStroka);
+            WS.Cells[startStroka, 1] = "№ п/п"; WS.Cells[startStroka, 1].ColumnWidth = 5;
+            WS.Cells[startStroka, 2] = "Виды работ"; WS.Cells[startStroka, 2].ColumnWidth = 43;
+            WS.Cells[startStroka, 3] = "Ед. измерения"; WS.Cells[startStroka, 3].ColumnWidth = 20;
+            WS.Cells[startStroka, 4] = "Объёмы работ"; 
+            WS.Cells[startStroka, 5] = "Стоимость работ, руб."; WS.Cells[startStroka, 5].ColumnWidth = 15;
+            WS.Cells[startStroka, 6] = "Вознаграждение УК за выполнение работ по доп. текущему ремонту"; WS.Cells[startStroka, 6].ColumnWidth = 32;
+            WS.Cells[startStroka, 7] = "Стоимость работ на кв.м  в месяц, руб."; WS.Cells[startStroka, 7].ColumnWidth = 15;
+            WS.Cells[startStroka, 8] = "Срок выполнения ***"; WS.Cells[startStroka, 8].ColumnWidth = 12;
+            Opr.RangeMerge(ApExcel, range, false, true, 11,45);
+
+            int counter = 0;
+            decimal ActivePloshad = db.Adres.Where(x => x.Id == O.AdresId).Select(x=>x.ActivePloshad).First();
+            decimal summa = 0;
+            
+
+            List<ActiveOsmotrWork> AOW = new List<ActiveOsmotrWork>();
+            List<int> Elements= new List<int>();
+            try
+            {
+                AOW = db.ActiveOsmotrWorks.Where(x => x.OsmotrId == O.Id).OrderBy(x => x.ElementId).Include(x=>x.OsmotrWork).Include(x=>x.OsmotrWork.Izmerenie).ToList();
+                Elements = AOW.Select(x => x.ElementId).Distinct().ToList();
+            }
+            catch
+            {
+
+            }
+            if (ActivePloshad == 0) { ActivePloshad = 1; }
+            
+            for (int i = 0; i < Elements.Count; i++)
+            {
+                startStroka++;
+                
+                List<ActiveOsmotrWork> AOW2 = AOW.Where(x => x.ElementId == Elements[i]).ToList();
+                int idd = AOW2[0].OsmotrWork.DOMPartId;
+                string DomPart = db.DOMParts.Where(x => x.Id == idd).Select(x=>x.Name).First() ;
+                WS.Cells[startStroka, 1] = DomPart;
+                range = WS.get_Range("A"+startStroka,"H"+startStroka);
+               //range.Merge();
+                Opr.RangeMerge(ApExcel, range, true, true,13,20);
+
+                foreach (ActiveOsmotrWork A in AOW2)
+                {
+                    counter++;
+                    startStroka++;
+                    WS.Cells[startStroka, 1] = counter;
+                    WS.Cells[startStroka, 2] = A.OsmotrWork.Name;
+                    WS.Cells[startStroka, 3] = A.OsmotrWork.Izmerenie.Name;
+                    WS.Cells[startStroka, 4] = A.Number;
+                    WS.Cells[startStroka, 5] = A.TotalCost;
+                    WS.Cells[startStroka, 6] =Math.Round( A.TotalCost/10,2);
+                    WS.Cells[startStroka, 7] = Math.Round(((A.TotalCost+ A.TotalCost/10) / 12)/ActivePloshad, 2);
+                    summa += A.TotalCost;
+                }
+
+            }
+            startStroka++;
+            
+            WS.Cells[startStroka, 2] = "Итого";
+           
+            WS.Cells[startStroka, 5] = summa;
+            WS.Cells[startStroka, 6] = Math.Round(summa / 10, 2);
+
+            WS.Cells[startStroka, 7] = Math.Round(((summa+summa/10) / 12) / ActivePloshad, 2);
+            range = WS.get_Range("A" + startStroka, "H" + startStroka);
+            range.Font.Bold = true;
+            range = WS.get_Range("A1", "H" + startStroka);
+            range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            startStroka++;
+            WS.Cells[startStroka, 1] = "***  - в случае отсутствия срока выполнения, работы выполняются в течение срока действия размера платы (тарифного года).";
+            range = WS.get_Range("A" + startStroka, "H" + startStroka);
+            Opr.RangeMerge(ApExcel, range, true, true, 13, 20);
+
+            startStroka+=2;
+            WS.Cells[startStroka, 1] = "Заместитель директора по эксплуатации жилого фонда___________________________Т.П. Топчиева";
+            range = WS.get_Range("A" + startStroka, "H" + startStroka);
+            Opr.RangeMerge(ApExcel, range, true, false, 13, 20);
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlLineStyleNone;
+            startStroka++;
+            WS.Cells[startStroka, 1] = "Начальник ОЭЖФ                                    ___________________________С.Ю. Конкина";
+            range = WS.get_Range("A" + startStroka, "H" + startStroka);
+            Opr.RangeMerge(ApExcel, range, true, false, 13, 20);
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlLineStyleNone;
+            startStroka++;
+            WS.Cells[startStroka, 1] = "Ведущий инженер ОЭЖФ                              ___________________________Н.Л. Воронков";
+            range = WS.get_Range("A" + startStroka, "H" + startStroka);
+            Opr.RangeMerge(ApExcel, range, true, false, 13, 20);
+            range.Borders.LineStyle = Excel.XlLineStyle.xlLineStyleNone;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
+           
             // Сохранение файла Excel.
             try
             {
@@ -2200,8 +2314,8 @@ namespace GKHNNC.Controllers
 
             }
             //WbExcel.PrintOutEx(1, 1, 1, true, null, null, null, null, null);//печать сразу после сохранения
-            ApExcel.Visible = false;//невидимо
-            ApExcel.ScreenUpdating = false;//и не обновляемо
+            ApExcel.Visible = true;//невидимо
+            ApExcel.ScreenUpdating = true;//и не обновляемо
                                            // Закрытие книги.
             WbExcel.Close(false, "", Type.Missing);
             // Закрытие приложения Excel.

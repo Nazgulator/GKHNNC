@@ -7,25 +7,25 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>Детальные данные по домам</title>
+    <title>Осмотры, отправленные на проверку</title>
 </head>
 <body>
-    <h2>Детальные данные по домам</h2>
+    <h2>Осмотры, отправленные на проверку</h2>
 
     <p><a href="/Home/Index" class="btn btn-success btn-block"><< В главное меню </a> </p>
     <div class="alert-success">
-        <p>03.06 В осмотрах добавлена новая функция "Необходимые работы" !</p>
-        <p>Вы можете добавить необходимые работы на каждую часть дома. Цены считаются автоматически. </p>
+        <p>03.07 В этом разделе видны все осмотры, отправленные на проверку отделом ОЭЖФ !</p>
         <p>Алгоритм действий: </p>
-        <p>1) Нажать кнопку "Добавить необходимую работу". </p>
-        <p>2) Выбрать работу и ввести количество </p>
-        <p>3) Нажать "Сохранить" </p>
-        <p>Работа появится в списке или заменится если такая работа уже была в списке. Она уже будет сохранена в базе. </p>
-        <p>Сейчас "Необходимые работы" работают в тестовом режиме. </p>
+        <p>1) Выберите осмотр. </p>
+        <p>2) Проверьте все данные. </p>
+        <p>3) Если данные не верны, то нажмите кнопку "Переделать" </p>
+        <p>4) Добавьте необходимые работы на дом </p>
+        <p>5) Нажмите кнопку "Проверка пройдена" </p>
+       
     </div>
     <table id="T" class="table table-bordered table-striped">
         <tr>
-            <td colspan="3">
+            <td colspan="2">
                 <input id="Search" class="form-control" placeholder="Начните вводить имя улицы для поиска" />
             </td>
             <td>
@@ -43,11 +43,8 @@
             <th>
                 Осмотр дома
             </th>
-            <th>
-                Создание отчета
-            </th>
-
-
+          
+            
 
         </tr>
         @{bool Y = false; }
@@ -80,52 +77,24 @@
                         </td>
                        
                         <td>
-                            @if (item.Osmotrs.Count > 0)
+                            @if (item.Osmotrs!=null&& item.Osmotrs.Count > 0)
                             {
                                 for (int j = 0; j < item.Osmotrs.Count; j++)
                                 {
-
-
-
-
-                                    if (item.Osmotrs[j].Sostoyanie > 0)
+                                    if (item.Osmotrs[j].Sostoyanie == 2)
                                     {
-                                        string sostoyanie = "btn btn-secondary";
-                                        if (item.Osmotrs[j].Sostoyanie > 1) { sostoyanie ="btn btn-success"; }
-                                    @Html.ActionLink("Осмотр от " + item.Osmotrs[j].Date.ToShortDateString(), "Info", "Osmotrs", new { id = item.Osmotrs[j].AdresId, date = item.Osmotrs[j].Date }, new { @type = "button", @class = sostoyanie });
+                                        
+                                        @Html.ActionLink("Осмотр от " + item.Osmotrs[j].Date.ToString("MM.dd.yyyy"), "Info", "Osmotrs", new { id = item.Osmotrs[j].AdresId, date = item.Osmotrs[j].Date }, new { @type = "button", @class = "btn btn-secondary" });
                                     }
                                     else
                                     {
-                                        @Html.ActionLink("Изменить осмотр от " + item.Osmotrs[j].Date.ToShortDateString(), "Create", "Osmotrs", new { id = item.Osmotrs[j].AdresId, date = item.Osmotrs[j].Date }, new { @type = "button", @class = "btn btn-primary" });
+                                        @Html.ActionLink("Осмотр от " + item.Osmotrs[j].Date.ToString("MM.dd.yyyy"), "Info", "Osmotrs", new { id = item.Osmotrs[j].AdresId, date = item.Osmotrs[j].Date }, new { @type = "button", @class = "btn btn-success" });
                                     }
 
                                 }
-                                if (item.Osmotrs.Where(x => x.Sostoyanie == 0).ToList().Count == 0)
-                                {
-                                <button class="btn btn-success" onclick="NewOsmotr('@item.AdresId','@DateTime.Now')">Добавить осмотр</button>
-                                    }
 
-                                }
-                                else
-                                {
-                                    if (item.GISGKH)
-                                    {
-
-                                    <button class="btn btn-success" onclick="NewOsmotr('@item.AdresId','@DateTime.Now')">Добавить осмотр</button>
-
-                                }
-                                else
-                                {
-                                    @Html.ActionLink("Создать осмотр с нуля", "Create", "Osmotrs", new { id = item.AdresId, date = DateTime.Now }, new { @type = "button", @class = "btn btn-warning" });
-                                }
                             }
                         </td>
-                        <td>
-                            @if (item.Osmotrs.Count > 0)
-                            {
-                                @Html.ActionLink("Выгрузить в Excel", "ExportToExcel", "Osmotrs", new { id = item.Osmotrs[item.Osmotrs.Count - 1].Id }, new { @class = "btn btn-block btn-success" })
-                            }
-                            </td>
                         
                         <!--
 
@@ -179,7 +148,7 @@
         {
 
         var _this = ui.item.label;
-        window.location.replace('/Houses/Index?Adres=' + _this);
+        window.location.replace('/Houses/OsmotrsProverka1?Adres=' + _this);
 
 
         },

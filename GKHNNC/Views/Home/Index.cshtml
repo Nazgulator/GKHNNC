@@ -48,9 +48,10 @@
         {
 
             <div class="alert-success">
-                <p>20.04 Сайт восстановлен после длительного сбоя </p>
-                <p>Возможны ошибки в работе о которых вы можете сообщить в отдел начислений !</p>
-                <p>Мы надеемся, что дальнейшая работа будет стабильной и приятной:) </p>
+                <p>03.06 Обновление осмотров </p>
+                <p>В осмотрах добавлена новая функция "Необходимые работы" !</p>
+                <p>Подробнее в разделе ОСМОТРЫ </p>
+                <p>Добавлена проверка осмотров для ОЭЖФ </p>
             </div>
 
             if (User.Identity.Name.Contains("БухгалтерПоТопливу") == false && User.Identity.Name.Contains("УАТ") == false && User.Identity.Name.Contains("УЭВ") == false && User.Identity.Name.Contains("Асанова") == false)
@@ -75,6 +76,23 @@
                         <span class="glyphicon glyphicon-list-alt"></span> Формирование актов &raquo;
                     </button>
                 </p>
+                if (User.IsInRole("Администратор") || User.Identity.Name.Contains("ОЭЖФ") || User.Identity.Name.Contains("Эксплуатация"))
+                {
+                    <p>
+                        <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("OsmotrsProverka1", "Houses")'">
+                            <i class="glyphicon glyphicon-map-marker"></i> Проверить осмотры (ОЭЖФ) &raquo;
+                        </button>
+                    </p>
+                }
+                if (User.IsInRole("Администратор") || User.Identity.Name.Contains("ПТО") )
+                {
+                    <p>
+                        <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("OsmotrsProverka2", "Houses")'">
+                            <i class="glyphicon glyphicon-map-marker"></i> Проверить осмотры (ПТО) &raquo;
+                        </button>
+                    </p>
+                }
+
                 <p>
                     <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Houses")'">
                         <i class="glyphicon glyphicon-map-marker"></i> Тех. паспорт домов и осмотры &raquo;
@@ -155,6 +173,11 @@
                             <p>
                                 <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Houses")'">
                                     <i class="glyphicon glyphicon-map-marker"></i> Тех. паспорт домов и осмотры &raquo;
+                                </button>
+                            </p>
+                            <p>
+                                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "OsmotrWorks")'">
+                                    <i class="glyphicon glyphicon-star"></i> Работы с ценами для осмотров &raquo;
                                 </button>
                             </p>
                         </div>

@@ -91,6 +91,111 @@ namespace GKHNNC.Controllers
             return View();
         }
 
+       
+        public ActionResult APUpload()
+        {
+            return View();
+        }
+
+
+        [HttpPost]
+        public ActionResult ActivePloshadUpload(HttpPostedFileBase upload)
+        {
+            int progress = 0;
+            double pro100 = 0;
+            int procount = 0;
+            if (upload != null)
+            {
+                //call this method inside your working action
+                ProgressHub.SendMessage("Инициализация и подготовка...", 0);
+
+                // получаем имя файла
+                string fileName = System.IO.Path.GetFileName(upload.FileName);
+                // сохраняем файл в папку Files в проекте
+                if (Directory.Exists(Server.MapPath("~/Files/")) == false)
+                {
+                    Directory.CreateDirectory(Server.MapPath("~/Files/"));
+
+                }
+                upload.SaveAs(Server.MapPath("~/Files/" + fileName));
+                //обрабатываем файл после загрузки
+
+
+                                                // 0       1         2      3                      4         5            6                       7                8                      9                                 10                                            11                      12               13             14                       15                      16
+                string[] Names = new string[] { "№п.п.", "Адрес", "Дом", "Итогожилая+нежилая", "Этажей", "Подъездов", "Количествоквартир", "Количестволифтов", "Количествопроживающих", "Общаяплощадьквартир", "Нежилаяплощадьквартир,собственниковпобазеОРС", "Площадьподвала", "Площадьлестничныхклеток", "Площадькровли", "Площадьмусорокамер", "Площадьземельногоучастка", "Подрядчик" };
+                string Error = "";
+                List<List<string>> excel = ExcelSVNUpload.IMPORT(Server.MapPath("~/Files/" + fileName), Names, out Error);
+                if (excel.Count < 1)
+                {
+                    //если нифига не загрузилось то 
+                    ViewBag.Error = Error;
+                    ViewBag.Names = Names;
+                    Console.WriteLine("Пустой массив значит файл не загрузился!(он уже удалился)");
+                    return View("NotUpload");
+                }
+                else
+                {
+                    pro100 = excel.Count;
+                    procount = 0;
+                    List<Adres> Adresdb = db.Adres.ToList();
+                    foreach (List<string> e in excel)
+                    {
+                        string E = e[1].Replace("ул.", "").ToUpper().Replace(" ", "").Replace("ПРОСПЕКТ","").Replace("ПРОЕЗД", "").Replace("БУЛЬВАР","").Replace(".","");
+                        string D = e[2].Replace(" ", "");
+                        E = E + D;
+                        Adres A = null;
+                             
+                        //чистим от пр ул и т.д.
+                        try
+                        {
+                          A= Adresdb.Where(x => x.Adress.Equals(E)).First();
+                            try
+                            {
+                                A.ActivePloshad = Convert.ToDecimal(e[3]);
+                                A.Etagi = Convert.ToInt16(e[4]);
+                                A.Podezds = Convert.ToInt16(e[5]);
+                                A.Kvartirs = Convert.ToInt16(e[6]);
+                                A.Lifts = Convert.ToInt16(e[7]);
+                                A.Peoples = Convert.ToInt16(e[8]);
+                              
+                                A.PloshadGilaya = Convert.ToDecimal(e[9]);
+                                A.PloshadNegilaya = Convert.ToDecimal(e[10]);
+                                A.PloshadPodval = Convert.ToDecimal(e[11]);
+                                A.PloshadLestnica = Convert.ToDecimal(e[12]);
+                                A.PloshadKrovlya = Convert.ToDecimal(e[13]);
+                                A.PloshadMusor = Convert.ToDecimal(e[14]);
+                                A.PloshadZemlya = Convert.ToDecimal(e[15]);
+                                A.IP = e[16];
+
+                            }
+                            catch (Exception exx)
+                            {
+
+                            }
+                           
+                            db.Entry(A).State = EntityState.Modified;
+                            db.SaveChanges();
+                        }
+                        catch (Exception ex)
+                        {
+
+                        }
+                      
+                        procount++;
+                        progress = Convert.ToInt16(50 + procount / pro100 * 50);
+                        ProgressHub.SendMessage("Обрабатываем файл, подождите чуток ...", progress);
+                        if (procount > pro100) { procount = Convert.ToInt32(pro100); }
+
+                    }
+
+
+                }
+
+            }
+            return View("UploadComplete");
+        }
+
+
         [HttpPost]
         public ActionResult Upload(HttpPostedFileBase upload)
         {
