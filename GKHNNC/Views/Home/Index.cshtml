@@ -84,11 +84,21 @@
                         </button>
                     </p>
                 }
-                if (User.IsInRole("Администратор") || User.Identity.Name.Contains("ПТО") )
+                if (User.IsInRole("Администратор") || User.Identity.Name.Contains("ПТО") && !User.Identity.Name.Contains("ОЭЖФ"))
                 {
                     <p>
                         <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("OsmotrsProverka2", "Houses")'">
                             <i class="glyphicon glyphicon-map-marker"></i> Проверить осмотры (ПТО) &raquo;
+                        </button>
+                    </p>
+                    <p>
+                        <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "OsmotrWorks")'">
+                            <i class="glyphicon glyphicon-star"></i> Непредвиденный ремонт работы &raquo;
+                        </button>
+                    </p>
+                    <p>
+                        <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "OsmotrRecommendWorks")'">
+                            <i class="glyphicon glyphicon-star"></i> Рекомендованные ПТО работы &raquo;
                         </button>
                     </p>
                 }
@@ -414,6 +424,11 @@
                     </button>
                 </p>
                 <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Import", "MusorPloshadkas")'">
+                        <i class="glyphicon glyphicon-trash"></i>  Импорт мусорных площадок &raquo;
+                    </button>
+                </p>
+                <p>
                     <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("AvtoWarnings", "ASControls")'">
                         <i class="glyphicon glyphicon-warning-sign"></i> Автомобили с проблемами связи &raquo;
                     </button>
@@ -474,7 +489,11 @@
                     <i class="glyphicon glyphicon-expand"></i> Управление выездами &raquo;
                 </button>
             </p>
-
+            <p>
+                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Voditels")'">
+                    <i class="glyphicon glyphicon-user"></i> Список водителей &raquo;
+                </button>
+            </p>
             <p>
                 <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "MusorPloshadkas")'">
                     <i class="glyphicon glyphicon-trash"></i>  Мусорные площадки &raquo;

@@ -138,6 +138,7 @@ namespace GKHNNC.DAL
         public DbSet<MusorPloshadkaActive> MusorPloshadkaActives { get; set; }
 
         public System.Data.Entity.DbSet<GKHNNC.Models.OsmotrWork> OsmotrWorks { get; set; }
+        public System.Data.Entity.DbSet<GKHNNC.Models.OsmotrRecommendWork> OsmotrRecommendWorks { get; set; }
         public System.Data.Entity.DbSet<GKHNNC.Models.ActiveOsmotrWork> ActiveOsmotrWorks { get; set; }
 
 

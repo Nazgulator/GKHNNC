@@ -918,7 +918,7 @@ namespace GKHNNC.Controllers
             string Data = "";
             string[] S = selection.Split(';');
             int AvtoId = Convert.ToInt32(S[0]);
-            int VoditelId = 1;
+            int VoditelId = Convert.ToInt32(S[2]);
             //Convert.ToInt32(S[2]);
             int ZakazchikId = 1;
             //Convert.ToInt32(S[3]);
@@ -977,7 +977,7 @@ namespace GKHNNC.Controllers
             ASControl A = null;
             try
             {
-                A = db.ASControls.Where(x => x.AvtoId == AvtoId&&x.Date.Year==D.Year&&x.Date.Month==D.Month&&x.Date.Day==D.Day&&x.Go).First();
+                A = db.ASControls.Where(x => x.AvtoId == AvtoId&&x.Date.Year==D.Year&&x.Date.Month==D.Month&&x.Date.Day==D.Day&&x.Go&&x.DateClose<x.Date).First();
             }
             catch
             {

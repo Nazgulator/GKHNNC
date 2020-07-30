@@ -42,19 +42,32 @@ namespace GKHNNC.Controllers
         {
             List<House> H = new List<House>();
             List<House> Y = new List<House>();
-
-            List<Adres> houses = db.Adres.OrderBy(x=>x.Adress).ToList();
-            if (Adres.Equals("")==false)
-            {
-                    houses = houses.Where(x => x.Adress.Equals(Adres)).ToList();
-                        
-            }
+            List<Adres> houses = new List<Adres>();
             DateTime Date = Opr.MonthMinus(1, DateTime.Now);//берем прошлый месяц
-            if (User.Identity.Name.Contains("ЖЭУ"))
+            if (Adres.Equals("") == false)
             {
-                string GEU = "ЖЭУ-"+User.Identity.Name.Remove(0,User.Identity.Name.Length - 1);
-                houses = houses.Where(x=>x.GEU!=null).Where(x => x.GEU.Equals(GEU)).ToList();
+                houses = db.Adres.Where(x => x.Adress.Equals(Adres)).ToList();
+
+
+             
             }
+            else
+            {
+                if (User.Identity.Name.Contains("ЖЭУ"))
+                {
+                    string GEU = "ЖЭУ-" + User.Identity.Name.Remove(0, User.Identity.Name.Length - 1);
+                    houses = db.Adres.Where(x => x.GEU != null).Where(x => x.GEU.Equals(GEU)).ToList();
+                }
+                else
+                {
+                    houses = db.Adres.ToList();
+
+
+                }
+            }
+           
+          
+         
             List<string> Primechanie = new List<string>();
            // List<Arendator> Arendators = db.Arendators.Where(c => c.Date.Year == Date.Year && c.Date.Month == Date.Month).ToList();//Берем всех арендаторов за текущий месяц
             //List<UEV> Uevs = db.UEVs.Where(c => c.Date.Year == Date.Year && c.Date.Month == Date.Month).ToList();

@@ -92,16 +92,21 @@
     }
 
 
-    @if (Model.AOW != null)
+    @if (Model.AOW != null && (User.Identity.Name.Contains("ПТО") || User.Identity.Name.Contains("ОЭЖФ") || User.IsInRole("Администратор")))
     {<div class="container">
-            <table class="table-bordered table-striped">
+
+
+            <table id="AO" class="table-bordered table-striped">
                 <tr>
-                    <td colspan="6">
+                    <td colspan="7" align="center">
                         @{
                             string works = "Добавить необходимые работы"; string workscol = "btn btn-secondary";
                             if (Model.AOW.Count > 0) { works = "Добавить необходимые работы"; workscol = "btn btn-secondary"; }
                         }
-                        <button class="@workscol btn-block" onclick="OpenModal('AddNewActiveWork')">@works</button>
+                        <button class="@workscol col-8 " onclick="OpenModal('AddNewActiveWork')">@works</button>
+                        <button class="btn btn-success col-3" onclick="location.href='@Url.Action("Index", "OsmotrWorks")'">
+                            <i class="glyphicon glyphicon-map-marker"></i> Справочник работ &raquo;
+                        </button>
                     </td>
                 </tr>
 
@@ -114,6 +119,9 @@
                 }
                 <tr id="AO_@Model.Id" class="AO_@Model.Id" style="@Stealth">
                     <th style="text-align:center">
+                        Часть дома
+                    </th>
+                    <th width="300px" style="text-align:center">
                         Наименование работы
                     </th>
 
@@ -137,6 +145,9 @@
                 {
                     <tr id="AO_@Model.AOW[i].Id" class="AO_@Model.Id">
                         <td style="text-align:center">
+                            @Model.AOW[i].OsmotrWork.DOMPart.Name
+                        </td>
+                        <td style="text-align:center">
                             @Model.AOW[i].OsmotrWork.Name
                         </td>
 
@@ -157,13 +168,85 @@
                     </tr>
                 }
                 <tr style="background-color:#ffd800">
-                    <td colspan="6" height="6px"></td>
+                    <td colspan="7" height="6px"></td>
                 </tr>
             </table>
         </div>
     }
 
+    @if (Model.ORW != null && (User.Identity.Name.Contains("ПТО") || User.Identity.Name.Contains("ОЭЖФ") || User.IsInRole("Администратор")))
+    {<div class="container">
 
+            <table id="RO" class="table-bordered table-striped">
+                <tr>
+                    <td colspan="7">
+                        @{
+                            string works = "Добавить рекомендуемые работы"; string workscol = "btn btn-info";
+                            if (Model.ORW.Count > 0) { works = "Добавить рекомендуемые работы"; workscol = "btn btn-info"; }
+                        }
+                        <button class="@workscol btn-block" onclick="OpenModal('AddNewRecommendWork')">@works</button>
+                    </td>
+                </tr>
+
+
+                @{string Stealth = "display: none";
+                    if (Model.ORW != null && Model.ORW.Count > 0)
+                    {
+                        Stealth = "";
+                    }
+                }
+                <tr id="RO_@Model.Id" class="AO_@Model.Id" style="@Stealth">
+                    <th style="text-align:center">
+                        Часть дома
+                    </th>
+                    <th width="300px" style="text-align:center">
+                        Наименование работы
+                    </th>
+                    <th style="text-align:center" colspan="2">
+                        Количество
+                    </th>
+                    <th style="text-align:center">
+                        Измерение
+                    </th>
+                    <th style="text-align:center">
+                        Стоимость
+                    </th>
+                    <th style="text-align:center" colspan="2">
+                        Опции
+                    </th>
+                </tr>
+
+                @for (int i = 0; i < Model.ORW.Count; i++)
+                {
+                    <tr id="RO_@Model.ORW[i].Id" class="AO_@Model.Id">
+                        <td style="text-align:center">
+                            @Model.ORW[i].DOMPart.Name
+                        </td>
+                        <td width="300px" style="text-align:center">
+                            @Model.ORW[i].Name
+                        </td>
+                        <td style="text-align:center" colspan="2">
+                            @Model.ORW[i].Number
+                        </td>
+                        <td style="text-align:center">
+                            @Model.ORW[i].Izmerenie.Name
+                        </td>
+                        <td style="text-align:center">
+                            @Model.ORW[i].Cost
+                        </td>
+                        <td style="text-align:center" colspan="2">
+
+                            <button type="button" id="RemoveRecommendWork" ADId="@Model.ORW[i].Id" onclick="RemoveRecommendWork('@Model.ORW[i].Id')" class="btn btn-outline-danger">Удалить работу</button>
+                        </td>
+                    </tr>
+                }
+                <tr style="background-color:#00e6ca">
+                    <td colspan="7" height="6px"></td>
+                </tr>
+            </table>
+
+        </div>
+    }
 
 
 
@@ -382,50 +465,108 @@
 
     </div>
 
-   
-        <!-- Modal -->
-        <div class="modal fade" id="AddNewActiveWork" tabindex="-1" role="dialog" aria-labelledby="AddAvtoModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content col-12">
-                    <div class="modal-header">
-                        <h3 class="modal-title" id="AddAvtoModalLabel">Добавить необходимую работу</h3>
 
+    <!-- Modal -->
+    <div class="modal fade" id="AddNewActiveWork" tabindex="-1" role="dialog" aria-labelledby="AddAvtoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content col-12">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="AddAvtoModalLabel">Добавить необходимую работу</h3>
+
+                </div>
+                <div class="modal-body">
+                    @{ string X = "OW"; string Y = "N"; string Z = "OSMOTR"; }
+
+                    <div class="col-6">
+                        Осмотр#
                     </div>
-                    <div class="modal-body">
-                        @{ string X = "OW"; string Y = "N"; string Z = "OSMOTR"; }
-
-                        <div class="col-6">
-                            Осмотр#
-                        </div>
-                        <div class="col-6">
-                            <input readonly id="@Z" value="@Model.Id" class="form-control" />
-                        </div>
-                        <div class="col-6">
-                            Выберите работу
-                        </div>
-                        <div class="col-6">
-
-                            @Html.DropDownList(X, new SelectList(ViewBag.OW, "value", "text"), new { @class = "form-control" })
-                        </div>
-                        <div class="col-6">
-                            Количество
-                        </div>
-                        <div class="col-6">
-                            @Html.Editor(Y, new { htmlAttributes = new { @class = "form-control" } })
-                        </div>
-
-
-                        <div class="col-6" style="margin:10px">
-                            <button id="AddWorkSubmit" onclick="AddWork(@Model.Id)" class="btn btn-success btn-block">Сохранить</button>
-                        </div>
-
-
+                    <div class="col-6">
+                        <input readonly id="@Z" value="@Model.Id" class="form-control" />
                     </div>
+                    <div class="col-6">
+                        Выберите работу
+                    </div>
+                    <div class="col-6">
+
+                        @Html.DropDownList(X, new SelectList(ViewBag.OW, "value", "text"), new { @class = "form-control" })
+                    </div>
+                    <div class="col-6">
+                        Количество
+                    </div>
+                    <div class="col-6">
+                        @Html.Editor(Y, new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+
+
+                    <div class="col-6" style="margin:10px">
+                        <button id="AddWorkSubmit" onclick="AddWork(@Model.Id)" class="btn btn-success btn-block">Сохранить</button>
+                    </div>
+
+
                 </div>
             </div>
         </div>
-    
+    </div>
 
+    <!-- Modal -->
+    <div class="modal fade" id="AddNewRecommendWork" tabindex="-1" role="dialog" aria-labelledby="AddAvtoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content col-12">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="AddAvtoModalLabel">Добавить рекомендуемую работу</h3>
+
+                </div>
+                <div class="modal-body">
+
+
+                    <div class="col-6">
+                        Осмотр#
+                    </div>
+                    <div class="col-6">
+                        <input readonly id="ROsmotr" value="@Model.Id" class="form-control" />
+                    </div>
+                    <div class="col-6">
+                        Выберите часть дома
+                    </div>
+                    <div class="col-6">
+
+                        @Html.DropDownList("RDOMPart", new SelectList(ViewBag.ALLParts, "value", "text"), new { @class = "form-control" })
+                    </div>
+                    <div class="col-6">
+                        Название работы
+                    </div>
+                    <div class="col-6">
+                        <input class="form-control" id="RName" placeholder="Введите название работы" />
+
+                    </div>
+                    <div class="col-6">
+                        Количество
+                    </div>
+                    <div class="col-6">
+                        @Html.Editor("RNumber", new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+                    <div class="col-6">
+                        Измерение
+                    </div>
+                    <div class="col-6">
+                        @Html.DropDownList("RIzmerenie", new SelectList(ViewBag.Izmerenies, "value", "text"), new { @class = "form-control" })
+                    </div>
+                    <div class="col-6">
+                        Стоимость по смете
+                    </div>
+                    <div class="col-6">
+                        @Html.Editor("RCost", new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+
+                    <div class="col-6" style="margin:10px">
+                        <button id="AddWorkSubmit" onclick="AddRecommendWork(@Model.Id)" class="btn btn-success btn-block">Сохранить</button>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
 
 </body>
 
@@ -436,12 +577,12 @@
 
 
 @section Scripts{
-    
+
     @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
     @Scripts.Render("~/scripts/nprogress.min.js")
     @Scripts.Render("~/scripts/jquery.signalR-2.4.0.js")
     @Scripts.Render("~/signalr/hubs")
-   
+
     @Scripts.Render("~/scripts/jquery.unobtrusive-ajax.js")
     @Scripts.Render("~/scripts/bootstrap.js")
     @Scripts.Render("~/scripts/bootstrap.bundle.js")
@@ -917,7 +1058,7 @@
             var OW = $("#OW").val();
             var N = $("#N" ).val();
             var O = $("#OSMOTR").val();
-            var Table = $("#AO_" + id);
+            var Table = $("#AO_"+id);
             console.log('Приняли такие данные: ' + OW+';'+N+';'+O+';'+Table);
              $.post('@Url.Action("AddWork", "Osmotrs")', { OsmotrWork: OW, Number: N, OsmotrId:O,ElementId:id},
                  function (data) {
@@ -929,16 +1070,16 @@
                          {
                              //Table.removeAttr('display');
                              Table.fadeIn('slow');
-                             Table.after('<tr id="AO_' + S[4] + '" class="AO_' + S[4] + '"><td  style="text-align:center">' + S[0] + '</td><td style="text-align:center" colspan="2">' + S[2] + '</td><td style="text-align:center">' + S[1] + '</td><td style="text-align:center">' + S[3] + '</td><td style="text-align:center" colspan="2" ><button type="button" id="RemoveWork" ADId="' + id + '" onclick="RemoveWork(' + S[4] + ')" class="btn btn-outline-danger rem">Удалить работу</button></td></tr>');
+                             Table.after('<tr id="AO_' + S[5] + '" class="AO_' + S[5] + '"><td  style="text-align:center">' + S[0] + '</td><td style="text-align:center" colspan="2">' + S[1] + '</td><td style="text-align:center">' + S[3] + '</td><td style="text-align:center">' + S[2] + '</td><td style="text-align:center">' + S[4] + '</td><td style="text-align:center" colspan="2" ><button type="button" id="RemoveWork" ADId="' + id + '" onclick="RemoveWork(' + S[5] + ')" class="btn btn-outline-danger rem">Удалить работу</button></td></tr>');
                              // $('#AO_' + id).hide().fadeIn("slow");//появляем медленно строку
                              console.log('Добавили в таблицу строку' + Table);
                              $('#AddNewActiveWork').modal('hide');
                          }
                          else
                          {
-                             console.log('Ищем строку AO_' + S[4]);
-                             var El = $("#AO_" + S[4]);
-                             El.replaceWith('<tr id="AO_' + S[4] + '" class="AO_' + S[4] + '"><td  style="text-align:center">' + S[0] + '</td><td style="text-align:center" colspan="2">' + S[2] + '</td><td style="text-align:center">' + S[1] + '</td><td style="text-align:center">' + S[3] + '</td><td style="text-align:center" colspan="2" ><button type="button" id="RemoveWork" ADId="' + id + '" onclick="RemoveWork(' + S[4] + ')" class="btn btn-outline-danger rem">Удалить работу</button></td></tr>');
+                             console.log('Ищем строку AO_' + S[5]);
+                             var El = $("#AO_" + S[5]);
+                             El.replaceWith('<tr id="AO_' + S[5] + '" class="AO_' + S[5] + '"><td  style="text-align:center">' + S[0] + '</td><td style="text-align:center" colspan="2">' + S[1] + '</td><td style="text-align:center">' + S[3] + '</td><td style="text-align:center">' + S[2] + '</td><td style="text-align:center">' + S[4] + '</td><td style="text-align:center" colspan="2" ><button type="button" id="RemoveWork" ADId="' + id + '" onclick="RemoveWork(' + S[5] + ')" class="btn btn-outline-danger rem">Удалить работу</button></td></tr>');
                              // $('#AO_' + id).hide().fadeIn("slow");//появляем медленно строку
                              console.log('Заменили строку в таблице' + Table);
                              $('#AddNewActiveWork').modal('hide');
@@ -951,6 +1092,74 @@
                      }
                             // $('body').append('<ul><li>Java</li><li>JavaScript</li></ul>');
                         });
+        }
+    </script>
+    <script>
+        function AddRecommendWork(id)
+        {
+            console.log('Начинаем добавление работы ' + id);
+            var Part = $("#RDOMPart").val();
+            var Number = $("#RNumber" ).val();
+            var Osmotr = $("#ROsmotr").val();
+            var Cost = $("#RCost").val();
+            var Name = $("#RName").val();
+            var Izmerenie = $("#RIzmerenie").val();
+            var Table = $("#RO_"+id );
+            console.log('Приняли такие данные: ' + Part + ';' + Number + ';' + Osmotr + ';' + Table + ";" + Cost + ";" + Name + ";" + Izmerenie);
+             $.post('@Url.Action("AddRecommendWork", "Osmotrs")', { OsmotrId: Osmotr, Number: Number, PartId:Part,Cost:Cost, Name:Name,IzmerenieId:Izmerenie},
+                 function (data) {
+                     console.log('Контроллер вернул данные ' + data);
+                            var S = data.split(';');
+                     if (S[0] != 'Ошибка')
+                     {
+                         if (S[6] != 'Modify')
+                         {
+                             //Table.removeAttr('display');
+                             Table.fadeIn('slow');
+                             Table.after('<tr id="RO_' + S[5] + '" class="RO_' + S[5] + '"><td  style="text-align:center">' + S[0] + '</td><td style="text-align:center" colspan="2">' + S[1] + '</td><td style="text-align:center">' + S[3] + '</td><td style="text-align:center">' + S[2] + '</td><td style="text-align:center">' + S[4] + '</td><td style="text-align:center" colspan="2" ><button type="button" id="RemoveWork" ADId="' + id + '" onclick="RemoveRecommendWork(' + S[5] + ')" class="btn btn-outline-danger rem">Удалить работу</button></td></tr>');
+                             // $('#RO_' + id).hide().fadeIn("slow");//появляем медленно строку
+                             console.log('Добавили в таблицу строку' + Table);
+                             $('#AddNewRecommendWork').modal('hide');
+                         }
+                         else
+                         {
+                             console.log('Ищем строку RO_' + S[5]);
+                             var El = $("#RO_" + S[4]);
+                             El.replaceWith('<tr id="RO_' + S[5] + '" class="RO_' + S[5] + '"><td  style="text-align:center">' + S[0] + '</td><td style="text-align:center" colspan="2">' + S[1] + '</td><td style="text-align:center">' + S[3] + '</td><td style="text-align:center">' + S[2] + '</td><td style="text-align:center">' + S[4] + '</td><td style="text-align:center" colspan="2" ><button type="button" id="RemoveWork" ADId="' + id + '" onclick="RemoveRecommendWork(' + S[5] + ')" class="btn btn-outline-danger rem">Удалить работу</button></td></tr>');
+                             // $('#RO_' + id).hide().fadeIn("slow");//появляем медленно строку
+                             console.log('Заменили строку в таблице' + Table);
+                             $('#AddNewRecommendWork').modal('hide');
+                         }
+
+                     }
+                     else
+                     {
+                         alert('Ошибка сохранения файла. ' + S[1]);
+                     }
+                            // $('body').append('<ul><li>Java</li><li>JavaScript</li></ul>');
+                        });
+        }
+    </script>
+    <script>
+        function RemoveRecommendWork(id)
+        {
+              $.post('@Url.Action("RemoveRecommendWork", "Osmotrs")', { id: id},
+                 function (data) {
+                     console.log('Контроллер вернул данные ' + data);
+                            var S = data.split(';');
+                     if (S[0] != 'Ошибка') {
+                         $("#RO_" + id).remove();
+                                console.log('Удалили строку в таблице' );
+                            }
+                            else {
+                                alert('Ошибка сохранения файла. '+S[1]);
+                            }
+                            // $('body').append('<ul><li>Java</li><li>JavaScript</li></ul>');
+
+
+
+                        });
+
         }
     </script>
 }

@@ -1,0 +1,56 @@
+﻿@model GKHNNC.Models.OsmotrRecommendWork
+
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+<h2><Удалить></h2>
+
+<h3>Удаление элемента?</h3>
+<div>
+    <h4>OsmotrWork</h4>
+    <hr />
+    <table>
+       
+        <tr>
+            <td>
+                @Html.DisplayNameFor(model => model.Name)
+            </td>
+
+            <td>
+                @Html.DisplayFor(model => model.Name)
+            </td>
+            </tr>
+        <tr>
+            <td>
+                @Html.DisplayNameFor(model => model.Cost)
+            </td>
+
+            <td>
+                @Html.DisplayFor(model => model.Cost)
+            </td>
+        </tr>
+    </table>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+       
+           
+            
+       
+		<div class="row col-md-6 col-md-offset-3">
+           
+                <div class=" col-md-6  ">
+                    @Html.ActionLink("Отмена", "Index", null, new { @class = "btn btn-success btn-block" })
+                </div>
+                <div class=" col-md-6  ">
+                    <input type="submit" value="Delete" class="btn btn-success" /> 
+                </div>
+
+          
+        </div>
+
+    }
+</div>

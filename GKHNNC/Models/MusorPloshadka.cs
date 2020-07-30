@@ -39,6 +39,8 @@ namespace GKHNNC.Models
         public int TypeId { get; set; }
         [Display(Name = "Тип")]
         public ContainersType Type { get; set; }
+        [Display(Name = "Обновлено?")]
+        public bool Obnovleno { get; set; }
 
         //только для вива
         [Display(Name = "Все улицы")]

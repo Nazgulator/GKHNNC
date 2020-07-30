@@ -2090,7 +2090,7 @@ namespace GKHNNC.Controllers
 
 
             range = WS.Cells[startStroka, stoimost];
-            range.ColumnWidth = 10;
+            range.ColumnWidth = 5.5;
             range.Font.Size = 8;
             range.Value = "Кол-во";
             range.Font.Bold = true;
@@ -2101,7 +2101,7 @@ namespace GKHNNC.Controllers
 
 
             range = WS.Cells[startStroka, cena];
-            range.ColumnWidth = 9;
+            range.ColumnWidth = 15.5;
             range.Font.Size = 8;
             range.Value = "Состояние";
             range.Font.Bold = true;
@@ -2341,14 +2341,23 @@ namespace GKHNNC.Controllers
             string sostoyanie = "";
             switch (i)
             {
+                case 1:
+                    sostoyanie = "аварийное тех. сост.";
+                    break;
+                case 2:
+                    sostoyanie = "неудовлетворит. сост.";
+                    break;
+                case 3:
+                    sostoyanie = "ограничено-раб. сост.";
+                    break;
                 case 4:
-                    sostoyanie = "в хор.сост.";
+                    sostoyanie = "работоспособное сост.";
                     break;
                 case 5:
-                    sostoyanie = "в отл.сост.";
+                    sostoyanie = "нормативное сост.";
                     break;
                 default:
-                    sostoyanie = "в удов.сост.";
+                    sostoyanie = "ограничено-раб. сост.";
                     break;
             }
             return sostoyanie;

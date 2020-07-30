@@ -1,0 +1,75 @@
+﻿@model IEnumerable<GKHNNC.Models.MusorPloshadka>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+<h2>Загрузка новых мусорных площадок</h2>
+
+@if(ViewBag.Errors!=null&&ViewBag.Errors.Length>1)
+{
+    if (ViewBag.Errors.Contains(";"))
+    {
+        string[] S = ViewBag.Errors.Split(";");
+    <H3>Ошибки загрузки данных:</H3>
+<table class="table-bordered table-striped">
+    
+    @foreach (string s in S)
+    {
+        <tr>
+            <td>
+                @s
+            </td>
+        </tr>
+    }
+</table>
+    }
+    else
+    {
+<H3>Ошибка: @ViewBag.Errors</H3>
+    }
+}
+@if (ViewBag.Er2!=null)
+{
+    <div class="btn btn-danger btn-block">
+        @ViewBag.Er2
+
+    </div>
+}
+<table id="T" class="table table-bordered table-striped">
+    <tr>
+        @Html.BeginForm("ImportVsePloshadki", "MusorPloshadkas", FormMethod.Post, new { enctype = "multipart/form-data" })
+        <td colspan="3">
+            
+        </td>
+        <td colspan="5">
+            <input id ="file" name="file" type="file" class="form-control" />
+        </td>
+      
+        <td colspan="4">
+<button id="LOAD" type="submit" class="btn btn-success btn-block" onclick="ImportExcel()">Загрузить данные</button>
+        </td>
+    </tr>
+    </table>
+   
+           
+
+<p><a href="/Home/Index" class="btn btn-success btn-block">В главное меню &raquo;</a> </p>
+@section Scripts{
+    @Scripts.Render("~/scripts/jquery-3.4.1.js")
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.js")
+    @Scripts.Render("~/scripts/jquery.unobtrusive-ajax.js")
+    @Scripts.Render("~/scripts/bootstrap.js")
+    @Scripts.Render("~/scripts/bootstrap.bundle.js")
+    @Scripts.Render("/scripts/ExportToExcel/excelexportjs.js")
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.3/themes/ui-lightness/jquery-ui.css" />
+
+   
+
+  
+
+
+
+
+}

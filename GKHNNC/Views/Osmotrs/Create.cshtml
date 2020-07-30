@@ -43,9 +43,9 @@
 
 
     <div id="MENU" style="background:#28a745;z-index:90;position:fixed;top:0px;">
-        @for (int i = 0; i < ViewBag.DOMParts.Count; i++)
+        @for (int i = 0; i < Model.DOMParts.Count; i++)
         {
-            <a href="#@i" style="color:white;font-size:20px">@ViewBag.DOMParts[i] |</a>
+            <a href="#@i" style="color:white;font-size:20px">@Model.DOMParts[i].Name |</a>
         }
         @Html.ActionLink("Сохранить отчет в Excel |", "ExportToExcel", "Osmotrs", null, new { @style = "color:white;font-size:20px" })
         @Html.ActionLink("Назад", "Index", "Houses", null, new { @style = "color:white;font-size:20px" })
@@ -84,7 +84,7 @@
         <p>@ViewBag.Error</p>
     }
 
-    <button id="help" class="btn btn-block btn-success" onclick=" alert('Бланк осмотра разделен на части дома (крыша, фундамент, фасад). Каждая часть дома разделена на элементы дома (Фундамент - Цоколь, отмостка...) Вам необходимо загрузить по 2 фотографии на каждую часть дома, указать в звездах состояние элемента дома, выбрать материал, единицы измерения и количество. Если есть дефекты на элементе, то добавить 2 фотографии дефекта, выбрать тип дефекта и указать серьёзность повреждения в восклицательных знаках. На каждой части дома вы можете составить список необходимых работ, выбрав тип и количество необходимой работы. Цена посчитается автоматически.  После заполнения всех данных нажмите СОХРАНИТЬ в самом конце документа. После этого вы не сможете изменять данный осмотр. Он перейдет на проверку в отдел эксплуатации. Вы можете распечатать акт осмотра в формате Ексель. Для этого в правом верхнем углу есть кнопка Сохранить отчет в EXCEL. Спасибо за вашу тяжёлую работу.  ')">
+    <button id="help" class="btn btn-block btn-success" data-toggle="modal" data-target="#Help" >
         Инструкция по заполнению
     </button>
 
@@ -98,12 +98,12 @@
         <div class="form-horizontal">
 
             @{ int progress = 0;
-                double pro100 = ViewBag.DOMParts.Count;
+                double pro100 = Model.DOMParts.Count;
                 int procount = 0;
             }
-            @for (int j = 0; j < ViewBag.DOMParts.Count; j++)
+            @for (int j = 0; j < Model.DOMParts.Count; j++)
             {
-                int DPI = j + 1;
+                int DPI = Model.DOMParts[j].Id;
 
 
 
@@ -112,7 +112,7 @@
                         <table>
                             <tr>
                                 <td>
-                                    <h3 style="color:white"> @ViewBag.DOMParts[j] </h3>
+                                    <h3 style="color:white"> @Model.DOMParts[j].Name </h3>
                                 </td>
                             </tr>
 
@@ -130,7 +130,7 @@
 
                         @for (int i = 0; i < Model.Elements.Count; i++)
                         {
-                            if (Model.Elements[i].Element.ElementTypeId == (j + 1))
+                            if (Model.Elements[i].Element.ElementTypeId == Model.DOMParts[j].Id)
                             {
                                 string Part = "Partial" + Model.Elements[i].Id.ToString();
 
@@ -156,25 +156,25 @@
             }
         </div>
     </div>
-   
-    
-        <table>
-            <tr>
-                <td width="80%">
-                    <input class="form-control btn-block" id="Primechanie" placeholder="Здесь вы можете добавить свои комментарии к осмотру." value="@Model.Opisanie" />
-                </td>
-                <td width="50%">
-                    <button class="btn btn-success btn-block" id="PrimechanieSave" onclick="PS(@Model.Id)">Сохранить примечание</button>
-                </td>
-            </tr>
-        </table>
-     
-      
-    
+
+
+    <table>
+        <tr>
+            <td width="80%">
+                <input class="form-control btn-block" id="Primechanie" placeholder="Здесь вы можете добавить свои комментарии к осмотру." value="@Model.Opisanie" />
+            </td>
+            <td width="50%">
+                <button class="btn btn-success btn-block" id="PrimechanieSave" onclick="PS(@Model.Id)">Сохранить примечание</button>
+            </td>
+        </tr>
+    </table>
+
+
+
     <div class=" col-md-6  ">
-        @if (User.Identity.Name.Contains("ДиректорЖЭУ")||User.IsInRole("Администратор"))
+        @if (User.Identity.Name.Contains("НачальникЖЭУ") || User.IsInRole("Администратор"))
         {
-        <button class="btn btn-block btn-success" id="END" MOsmotr="@Model.Id">Завершить создание осмотра</button>
+            <button class="btn btn-block btn-success" id="END" MOsmotr="@Model.Id">Завершить создание осмотра</button>
         }
 
         @Html.ActionLink("Назад", "Index", "Houses", null, new { @class = "btn btn-success btn-block" })
@@ -191,6 +191,39 @@
 
 
 </html>
+
+<!-- Modal -->
+<div class="modal fade" id="Help" tabindex="-1" role="dialog" aria-labelledby="AddHelpModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content col-12">
+            <div class="modal-header">
+                <h3 class="modal-title" id="AddHelpModalLabel">Инструкция по заполнению</h3>
+
+            </div>
+            <div class="modal-body" style="text-align:left">
+                <p>Бланк осмотра разделен на части дома (крыша, фундамент, фасад). Каждая часть дома разделена на элементы дома (Фундамент - Цоколь, отмостка...) Вам необходимо загрузить по 2 фотографии на каждый элемент дома, указать в звездах состояние элемента дома, выбрать материал, единицы измерения и количество. Если есть дефекты на элементе, то добавить минимум 1 фотографию дефекта, выбрать тип дефекта и указать серьёзность повреждения в восклицательных знаках. На каждой части дома вы можете составить список необходимых работ, выбрав тип и количество необходимой работы. Цена посчитается автоматически.  Заполнив все данные нажмите СОХРАНИТЬ в самом конце документа. После этого вы не сможете изменять данный осмотр - он перейдет на проверку в отдел эксплуатации. Вы можете распечатать акт осмотра в формате Ексель. Для этого в правом верхнем углу есть кнопка "Сохранить отчет в EXCEL". </p>
+                <p> ***** нормативное техническое состояние: категория технического состояния конструктивных элементов, инженерных систем или здания (сооружения), при котором количественные и качественные значения параметров всех критериев элемента (ов) или системы соответсвует установленным нормативным требованиям.</p>
+                <p>
+                    **** работоспособное техническое состояние: категория технического состояния конструктивных элементов, инженерных систем или здания (сооружения), при котором некоторые,  из числа количественных и качественных значений параметров не отвечают требованиям нормативным требованиям, но имеющиеся нарушения в конкретных условиях эксплуатации не приводят к нарушению работоспособности. (Может требоваться мелкий ремонт отдельных элементов конструкции или инженерной системы).
+                </p>
+                <p>
+                    ***ограниченно-работоспособное техническое состояние: категория технического состояния конструктивных элементов, инженерных систем или здания (сооружения), при котором имеются дефекты приведшие к снижению эксплуатационных характеристик, но отсутствует опасность внезапного разрушения, потеря устойчивости конструкции, инженерной системы. (Требуется текущий ремонт конструкций или инженерных систем; может требоваться усиление конструкций. Может быть рекомендован капитальный ремонт конструктивных элементов, инженерных систем).
+                </p>
+                <p>
+                    **неудовлетворительное техническое состояние: категория технического состояния конструктивных элементов, инженерных систем или здания (сооружения), при котором имеются дефекты, повреждения, деформации приведшие к значительному снижению эксплуатационных характеристик, но отсутствует опасность внезапного разрушения, потеря устойчивости конструкции, инженерной системы, но присутствует риск возникновения локальной аварийной ситуации на конструктивном элеменете, инженерной системе. (Требуется капитальный ремонт конструктивных элементов, инженерных систем.)
+                </p>
+                <p>
+                    *аварийное техническое состояние: категория технического состояния конструктивных элементов, инженерных систем или здания (сооружения), при котором повреждения и деформации свидетельствуют об исчерпании несущей способности и опасности обрушения, которые могут вызвать потерю устойчивости конструкции, работоспособности инженерной системы. (Наличие технического заключения о признании аварийным конструктивно элемента или инженерной системы, здания в целом, разработанной специализированной организацией; дома признанные аварийными)
+                </p>
+
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
 
 
 
@@ -226,7 +259,7 @@
                      console.log('Контроллер вернул данные ' + data);
                             var S = data.split(';');
                      if (S[0] != 'Ошибка') {
-                       
+
                                 console.log('Примечание сохранено' );
                             }
                             else {
@@ -280,16 +313,16 @@
                          {
                              //Table.removeAttr('display');
                              Table.fadeIn('slow');
-                             Table.after('<tr id="AO_' + S[4] + '" class="AO_' + S[4] + '"><td  style="text-align:center">' + S[0] + '</td><td style="text-align:center" colspan="2">' + S[2] + '</td><td style="text-align:center">' + S[1] + '</td><td style="text-align:center">' + S[3] + '</td><td style="text-align:center" colspan="2" ><button type="button" id="RemoveWork" ADId="' + id + '" onclick="RemoveWork(' + S[4] + ')" class="btn btn-outline-danger rem">Удалить работу</button></td></tr>');
+                             Table.after('<tr id="AO_' + S[5] + '" class="AO_' + S[5] + '"><td  style="text-align:center">' + S[1] + '</td><td style="text-align:center" colspan="2">' + S[3] + '</td><td style="text-align:center">' + S[2] + '</td><td style="text-align:center">' + S[4] + '</td><td style="text-align:center" colspan="2" ><button type="button" id="RemoveWork" ADId="' + id + '" onclick="RemoveWork(' + S[5] + ')" class="btn btn-outline-danger rem">Удалить работу</button></td></tr>');
                              // $('#AO_' + id).hide().fadeIn("slow");//появляем медленно строку
                              console.log('Добавили в таблицу строку' + Table);
                              $('#Modal_' + id).modal('hide');
                          }
                          else
                          {
-                             console.log('Ищем строку AO_' + S[4]);
+                             console.log('Ищем строку AO_' + S[5]);
                              var El = $("#AO_" + S[4]);
-                             El.replaceWith('<tr id="AO_' + S[4] + '" class="AO_' + S[4] + '"><td  style="text-align:center">' + S[0] + '</td><td style="text-align:center" colspan="2">' + S[2] + '</td><td style="text-align:center">' + S[1] + '</td><td style="text-align:center">' + S[3] + '</td><td style="text-align:center" colspan="2" ><button type="button" id="RemoveWork" ADId="' + id + '" onclick="RemoveWork(' + S[4] + ')" class="btn btn-outline-danger rem">Удалить работу</button></td></tr>');
+                             El.replaceWith('<tr id="AO_' + S[5] + '" class="AO_' + S[5] + '"><td  style="text-align:center">' + S[1] + '</td><td style="text-align:center" colspan="2">' + S[3] + '</td><td style="text-align:center">' + S[2] + '</td><td style="text-align:center">' + S[4] + '</td><td style="text-align:center" colspan="2" ><button type="button" id="RemoveWork" ADId="' + id + '" onclick="RemoveWork(' + S[5] + ')" class="btn btn-outline-danger rem">Удалить работу</button></td></tr>');
                              // $('#AO_' + id).hide().fadeIn("slow");//появляем медленно строку
                              console.log('Заменили строку в таблице' + Table);
                              $('#Modal_' + id).modal('hide');

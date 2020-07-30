@@ -29,10 +29,11 @@
             <div class="col-md-6">
                 Автомобиль
             </div>
+
+            <div class="col-md-2">
+                Водитель
+            </div>
             <!--
-    <div class="col-md-2">
-        Водитель
-    </div>
     <div class="col-md-2">
         Маршрут/Заказчик
     </div>
@@ -53,11 +54,12 @@
                 @Html.DropDownList("AvtoLB", new SelectList(ViewBag.Avto, "Value", "Text"), new { @class = "form-control" })
                 <small id="AdressHelp" class="form-text text-muted">Выберите Автомобиль из списка</small>
             </div>
+
+            <div class="col-md-2">
+                @Html.DropDownList("VoditelLB", new SelectList(ViewBag.Voditel, "Value", "Text"), new { @class = "form-control" })
+                <small id="AdressHelp" class="form-text text-muted">Выберите Водителя из списка</small>
+            </div>
             <!--
-    <div class="col-md-2">
-        @Html.DropDownList("VoditelLB", new SelectList(ViewBag.Voditel, "Value", "Text"), new { @class = "form-control" })
-        <small id="AdressHelp" class="form-text text-muted">Выберите Водителя из списка</small>
-    </div>
     <div class="col-md-2">
         @Html.DropDownList("ZakazchikLB", new SelectList(ViewBag.Zakazchik, "Value", "Text"), new { @class = "form-control" })
         <small id="AdressHelp" class="form-text text-muted">Выберите Заказчика из списка</small>
@@ -108,13 +110,13 @@
                 </th>
                 @if (User.Identity.Name.Contains("НачальникУАТ") || User.IsInRole("Администратор"))
                 {
-                    <th style="text-align:center">
+                    <th  style="text-align:center">
                         Пробег(GPS)
                     </th>
                     <th style="text-align:center">
                         Датчик ДУТ
                     </th>
-                    <th style="text-align:center" width="120px">
+                    <th style="text-align:center" width="140px">
                         Сравнение ДУТ
                     </th>
                 }
@@ -130,7 +132,7 @@
                     @if (ViewBag.HourSnyatia.Count > 0)
                     {
                         <p>
-                            Движение и пройденные точки с @ViewBag.HourSnyatia[ViewBag.HourSnyatia.Count - 1].Text
+                            Водитель и пройденные точки с @ViewBag.HourSnyatia[ViewBag.HourSnyatia.Count - 1].Text
                         </p>
                     }
                 </th>
@@ -333,14 +335,14 @@
                         <th class=@cl>
                             <center>
                                 @Html.DisplayFor(modelItem => item.Avto.Number)
-
+                                
                             </center>
 
                         </th>
                         <th style="text-align:center" class=@cl>
                             <Center>
                                 <p>
-                                    @item.Date.ToString("HH:mm");
+                                    @item.Date.ToString("HH:mm")
                                     @if (item.Kontrol)
                                     {
                                         <img src="~/Content/Images/star.png" height="12" width="12" title="@Kont" >
@@ -453,59 +455,59 @@
                             <input id="Primech_@item.Id" value="@item.Primech" class="form-control">
                         </td>
                             -->
-                        <td style="text-align:center" class=@cl>
-                            @if (ViewBag.Zagrugeno[counter].Contains("FS"))
-                            {
-                                <center>
-                                    <img src="~/Content/Images/DDD5.png" class="img" height="40" width="256" title="Форт системс не дает данные о движении ТС.">
-                                </center>
-                            }
-                            else
-                            {
-                                if (item.Mesta.Count > 2)
+                            <th style="text-align:center" class=@cl>
+                                @if (ViewBag.Zagrugeno[counter].Contains("FS"))
                                 {
-                                    @Html.DropDownList("Mesta", new MultiSelectList(@item.Mesta), new { @class = "form-control" })
+                                    <center>
+                                        <img src="~/Content/Images/DDD5.png" class="img" height="40" width="256" title="Форт системс не дает данные о движении ТС.">
+                                    </center>
                                 }
                                 else
                                 {
-                                    if (item.Mesta.Contains("На стоянке"))
+                                    if (item.Mesta.Count > 2)
                                     {
-
-                                        <center>
-                                            <img src="~/Content/Images/DDD3.png" class="img" height="40" width="256">
-                                        </center>
-
+                                        @Html.DropDownList("Mesta", new MultiSelectList(@item.Mesta), new { @class = "form-control" })
                                     }
                                     else
                                     {
-                                        if (item.Mesta.Contains("Вернулся на стоянку"))
+                                        if (item.Mesta.Contains("На стоянке"))
                                         {
-                                            <center>
-                                                <img src="~/Content/Images/DDD4.png" class="img" height="40" width="256">
 
+                                            <center>
+                                                <img src="~/Content/Images/DDD3.png" class="img" height="40" width="256">
                                             </center>
+
                                         }
                                         else
                                         {
-                                            if (ViewBag.Nabludenii[counter] > 0)
+                                            if (item.Mesta.Contains("Вернулся на стоянку"))
                                             {
                                                 <center>
-                                                    <img src="~/Content/Images/DDD2.png" class="img" height="40" width="256">
+                                                    <img src="~/Content/Images/DDD4.png" class="img" height="40" width="256">
+
                                                 </center>
                                             }
                                             else
                                             {
-                                                <center>
-                                                    <img src="~/Content/Images/DDD6.png" class="img" height="40" width="256">
+                                                if (ViewBag.Nabludenii[counter] > 0)
+                                                {
+                                                    <center>
+                                                        <img src="~/Content/Images/DDD2.png" class="img" height="40" width="256">
+                                                    </center>
+                                                }
+                                                else
+                                                {
+                                                    <center>
+                                                        <img src="~/Content/Images/DDD6.png" class="img" height="40" width="256">
 
-                                                </center>
+                                                    </center>
+                                                }
                                             }
                                         }
                                     }
                                 }
-                            }
-
-                        </td>
+                                @item.Voditel.Name
+                            </th>
                         <td style="text-align:center" class=@cl>
                             @if (ViewBag.Zagrugeno[counter].Contains("FS"))
                             {

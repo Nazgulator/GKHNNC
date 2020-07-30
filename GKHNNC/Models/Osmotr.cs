@@ -82,12 +82,19 @@ namespace GKHNNC.Models
 
         [Display(Name = "Активные работы осмотра")]
         public List<ActiveOsmotrWork> AOW { get; set; }
+        [Display(Name = "Рекомендованные работы")]
+        public List<OsmotrRecommendWork> ORW { get; set; }
+
+        [Display(Name = "Части дома ")]
+        public List<DOMPart> DOMParts ;
 
         [Display(Name = "Элементы ")]
         public List<ActiveElement> Elements;
 
         [Display(Name = "Элементы здания из Сашкиной программы")]
         public List<BuildElement> BE;
-       
+
+    
+
     }
 }

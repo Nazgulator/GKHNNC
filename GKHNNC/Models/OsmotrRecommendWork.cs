@@ -5,11 +5,13 @@ using System;
 
 namespace GKHNNC.Models
 {
-    public class OsmotrWork
+    public class OsmotrRecommendWork
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Display(Name = "Идентификатор")]
         public int Id { get; set; }
+        [Display(Name = "Осмотр ИД")]
+        public int OsmotrId { get; set; }
         [Display(Name = "Наименование")]
         public string Name { get; set; }
         [Display(Name = "Измерение ID")]
@@ -18,12 +20,16 @@ namespace GKHNNC.Models
         public Izmerenie Izmerenie { get; set; }
         [Display(Name = "Стоимость")]
         public decimal Cost { get; set; }
+        [Display(Name = "Количество")]
+        public decimal Number { get; set; }
         [Display(Name = "Часть дома")]
         public DOMPart DOMPart { get; set; }
         [Display(Name = "Часть дома ид")]
         public int DOMPartId { get; set; }
-        
+        [Display(Name = "Смета?")]
+        public bool Smeta { get; set; }
 
-       // public virtual ICollection<Sopostavlenie> Sopostavlenies { get; set; }
+
+        
     }
 }
