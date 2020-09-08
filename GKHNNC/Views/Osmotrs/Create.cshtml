@@ -84,8 +84,12 @@
         <p>@ViewBag.Error</p>
     }
 
-    <button id="help" class="btn btn-block btn-success" data-toggle="modal" data-target="#Help" >
+    <button id="help" class="btn btn-block btn-success" data-toggle="modal" data-target="#Help">
         Инструкция по заполнению
+    </button>
+
+    <button id="help" class="btn btn-block btn-warning" onclick="RefreshCosts(@Model.Id)">
+        Обновить цены рекомендуемых работ
     </button>
 
     <hr />
@@ -485,6 +489,25 @@
                         TR.fadeOut('slow', function () { TR.remove(); });
                         // TR.fadeOut('slow').remove();
                         console.log('Текст изменен' + ADId);
+                    }
+                    else {
+                        alert(data);
+                    }
+
+
+      });
+
+        }
+    </script>
+    <script>
+        function RefreshCosts(id)
+        {
+           // alert(id+";"+ text);
+  $.post('@Url.Action("RefreshCost", "Osmotrs")', { OsmotrId: id,  },
+      function (data)
+      {
+          if (data == 'Ok') {
+              location.reload();
                     }
                     else {
                         alert(data);

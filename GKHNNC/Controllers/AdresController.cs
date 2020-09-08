@@ -302,6 +302,7 @@ namespace GKHNNC.Controllers
             if (ModelState.IsValid)
             {
                 adres.Adress = adres.Ulica.Replace(" ", "") + adres.Dom.Replace(" ", "");
+                adres.IP = "";
                 db.Entry(adres).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");

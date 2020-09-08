@@ -6,29 +6,36 @@
 }
 
 <h2>Главная</h2>
-
-<p>
-    @Html.ActionLink("Создать", "Create", null, new {@class = "btn btn-success btn-block"})
-</p>
-<table id="T" class="table table-bordered table-striped">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Name)
-        </th>
-        <th></th>
-    </tr>
-
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Name)
-        </td>
-        <td>
-            @Html.ActionLink("Редактировать", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Удалить", "Delete", new { id=item.Id })
-        </td>
-    </tr>
+@if (User.Identity.Name.Equals("Полигон") == false)
+{
+    <p>
+        @Html.ActionLink("Создать", "Create", null, new { @class = "btn btn-success btn-block" })
+    </p>
 }
+    <table id="T" class="table table-bordered table-striped">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th></th>
+        </tr>
 
-</table>
-<p><a href="/Home/Index" class="btn btn-success btn-block">В главное меню &raquo;</a> </p>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                @if (User.Identity.Name.Contains("Полигон") == false)
+                {
+                    <td>
+                        @Html.ActionLink("Редактировать", "Edit", new { id = item.Id }) |
+                        @Html.ActionLink("Удалить", "Delete", new { id = item.Id })
+                    </td>
+                }
+            </tr>
+        }
+
+    </table>
+    <p><a href="/Poligons/Index" class="btn btn-success btn-block">К управлению полигоном &raquo;</a> </p>
+    <p><a href="/Home/Index" class="btn btn-success btn-block">В главное меню &raquo;</a> </p>

@@ -8,8 +8,12 @@
 <h2>Главная</h2>
 <p><a href="/Home/Index" class="btn btn-success btn-block">В главное меню &raquo;</a> </p>
 <p>
-    @Html.ActionLink("Создать", "Create", null, new {@class = "btn btn-success btn-block"})
+    @Html.ActionLink("Создать", "Create", null, new { @class = "btn btn-success btn-block" })
 
+</p>
+<p>
+  
+    <button class="btn btn-block btn-warning" onclick="Refresh()">Обновить стоимость всех работ в текущем году</button>
 </p>
 
 <table id="T" class="table table-bordered table-striped">
@@ -29,27 +33,52 @@
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.DOMPart.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Izmerenie.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Cost)
-        </td>
-        <td>
-           
-            @Html.ActionLink("Редактировать", "Edit", new { id=item.Id }, new { @class = "btn btn-success " }) 
-            @Html.ActionLink("Удалить", "Delete", new { id=item.Id }, new { @class = "btn btn-secondary " })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.DOMPart.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Izmerenie.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Cost)
+            </td>
+            <td>
+
+                @Html.ActionLink("Редактировать", "Edit", new { id = item.Id }, new { @class = "btn btn-success " })
+                @Html.ActionLink("Удалить", "Delete", new { id = item.Id }, new { @class = "btn btn-secondary " })
+            </td>
+        </tr>
+    }
 
 </table>
+@section Scripts {
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+    @Scripts.Render("~/scripts/jquery-3.3.1.js")
+    @Scripts.Render("~/Scripts/chosen.jquery.min.js")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/scripts/validate.js")
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+    @Scripts.Render("~/scripts/jquery.unobtrusive.min.js")
+<script>
+    function Refresh()
+    {
+        $.post('@Url.Action("RefreshAllCost", "Osmotrs")', function (data) {
+            if (data != '') {
+                alert('Цены обновлены в количестве' + data);
+            }
+            else {
+                alert('Цены не нужно обновлять. Они актуальные.');
+            }
 
+        });
+    }
+</script>
+    }

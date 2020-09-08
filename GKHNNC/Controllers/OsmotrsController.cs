@@ -768,6 +768,64 @@ namespace GKHNNC.Controllers
             ViewBag.Izmerenies = new SelectList(db.Izmerenies, "Id", "Name");
             return PartialView ("ViewActiveDefect",AE);
         }
+
+        [HttpPost]
+        public JsonResult RefreshCost(int OsmotrId)
+        {
+            List<ActiveOsmotrWork> AOW = new List<ActiveOsmotrWork>();
+            AOW = db.ActiveOsmotrWorks.Where(x => x.OsmotrId == OsmotrId).ToList();
+            foreach (ActiveOsmotrWork A in AOW)
+            {
+                OsmotrWork OW = new OsmotrWork();
+                try
+                {
+                    OW = db.OsmotrWorks.Where(x => x.Id == A.OsmotrWorkId).First();
+                    A.TotalCost = OW.Cost * A.Number;
+                    db.Entry(A).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+                catch { }
+            }
+          
+          
+            return Json("Ok");
+        }
+
+        [HttpPost]
+        public ActionResult RefreshAllCost()
+        {
+            int count = 0;
+            DateTime StartYear = new DateTime(DateTime.Now.Year, 1, 1);
+            List<Osmotr> O = db.Osmotrs.Where(x => x.Date >= StartYear).ToList();
+            foreach (Osmotr os in O)
+            {
+                List<ActiveOsmotrWork> AOW = new List<ActiveOsmotrWork>();
+                AOW = db.ActiveOsmotrWorks.Where(x => x.OsmotrId == os.Id).ToList();
+                foreach (ActiveOsmotrWork A in AOW)
+                {
+                    OsmotrWork OW = new OsmotrWork();
+                    try
+                    {
+                        OW = db.OsmotrWorks.Where(x => x.Id == A.OsmotrWorkId).First();
+                        decimal c = A.TotalCost;
+
+                        A.TotalCost = OW.Cost * A.Number;
+                        if (c != A.TotalCost)
+                        { 
+                        db.Entry(A).State = EntityState.Modified;
+                        db.SaveChanges();
+                        count++;
+                        };
+
+                    }
+                    catch { }
+                }
+            }
+
+
+            return Json(count);
+        }
+
         [HttpPost]
         public JsonResult AddWork(int OsmotrWork, int Number, int OsmotrId, int ElementId)
         {
