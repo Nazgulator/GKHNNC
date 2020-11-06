@@ -664,7 +664,7 @@ namespace GKHNNC.Controllers
 
             Adres ADRdb = db.Adres.Where(f => f.Adress.Replace(" ", "").Equals(Adres)).Single();
             List<CompleteWork> CWdb = db.CompleteWorks.Where(a => a.WorkAdress.Replace(" ", "").Equals(Adres) && a.WorkDate.Year == Y && a.WorkDate.Month == M).ToList();
-            List<VipolnennieUslugi> VUdb = db.VipolnennieUslugis.Include(a => a.Adres).Include(b => b.Usluga).Include(v=>v.Usluga.Periodichnost).Where(c => c.Adres.Adress.Replace(" ", "").Equals(Adres) && c.Date.Year == Y && c.Date.Month == M).ToList();
+            List<VipolnennieUslugi> VUdb = db.VipolnennieUslugis.Include(a => a.Adres).Include(b => b.Usluga).Include(v=>v.Usluga.Periodichnost).Where(c => c.Adres.Adress.Replace(" ", "").Equals(Adres) && c.Date.Year == Y && c.Date.Month == M).OrderBy(x=>x.Usluga.Poryadok).ToList();
             GEU geudb = db.GEUs.Where(a => a.Name.Contains(GEU)).First();
             decimal summa = 0;
 
@@ -681,11 +681,12 @@ namespace GKHNNC.Controllers
             string AA = "";
             //string ADR = ADRdb.Ulica;
             //int ind = 0;
-           
-           
-            //ADR = ADR.Replace("  ", "").Replace(" ", "-");
-            
 
+
+            //ADR = ADR.Replace("  ", "").Replace(" ", "-");
+
+           // VUdb.Insert(1, VUdb[7]);
+           // VUdb.RemoveAt(8);
             ExcelExportDomVipolnennieUslugi.SFORMIROVATAKT(CWdb, VUdb, Month, VUdb[0].Adres.GEU, Year, ADRdb.Ulica, ADRdb.Dom, geudb.Director, geudb.Doverennost, path, summa.ToString());
 
 

@@ -18,8 +18,8 @@ namespace GKHNNC.Controllers
         // GET: Uslugas
         public ActionResult Index()
         {
-            var uslug = db.Usluga.Include(p => p.Periodichnost);
-            return View(uslug.ToList());
+            var usluga = db.Usluga.Include(u => u.Periodichnost);
+            return View(usluga.ToList());
         }
 
         // GET: Uslugas/Details/5
@@ -40,27 +40,16 @@ namespace GKHNNC.Controllers
         // GET: Uslugas/Create
         public ActionResult Create()
         {
-            List<Periodichnost> Period = db.Periodichnosts.ToList();
-            
-            List<SelectListItem> SL = new List<SelectListItem>();
-            foreach (Periodichnost P in Period)
-            {
-                SelectListItem SLI = new SelectListItem();
-                SLI.Text = P.PeriodichnostName;
-                SLI.Value = P.Id.ToString();
-                SL.Add(SLI);
-            }
-            SelectList SLE = new SelectList(SL, "Value", "Text");
-            ViewBag.Periodichnost = SLE;
+            ViewBag.PeriodichnostId = new SelectList(db.Periodichnosts, "Id", "PeriodichnostName");
             return View();
         }
 
         // POST: Uslugas/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        // Чтобы защититься от атак чрезмерной передачи данных, включите определенные свойства, для которых следует установить привязку. Дополнительные 
+        // сведения см. в статье https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Periodichnost,PeriodichnostId,Name")] Usluga usluga)
+        public ActionResult Create([Bind(Include = "Id,PeriodichnostId,Poryadok,Name")] Usluga usluga)
         {
             if (ModelState.IsValid)
             {
@@ -69,6 +58,7 @@ namespace GKHNNC.Controllers
                 return RedirectToAction("Index");
             }
 
+            ViewBag.PeriodichnostId = new SelectList(db.Periodichnosts, "Id", "PeriodichnostName", usluga.PeriodichnostId);
             return View(usluga);
         }
 
@@ -84,27 +74,16 @@ namespace GKHNNC.Controllers
             {
                 return HttpNotFound();
             }
-            List<Periodichnost> Period = db.Periodichnosts.ToList();
-
-            List<SelectListItem> SL = new List<SelectListItem>();
-            foreach (Periodichnost P in Period)
-            {
-                SelectListItem SLI = new SelectListItem();
-                SLI.Text = P.PeriodichnostName;
-                SLI.Value = P.Id.ToString();
-                SL.Add(SLI);
-            }
-            SelectList SLE = new SelectList(SL, "Value", "Text");
-            ViewBag.Periodichnost = SLE;
+            ViewBag.PeriodichnostId = new SelectList(db.Periodichnosts, "Id", "PeriodichnostName", usluga.PeriodichnostId);
             return View(usluga);
         }
 
         // POST: Uslugas/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        // Чтобы защититься от атак чрезмерной передачи данных, включите определенные свойства, для которых следует установить привязку. Дополнительные 
+        // сведения см. в статье https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Periodichnost,PeriodichnostId,Name")] Usluga usluga)
+        public ActionResult Edit([Bind(Include = "Id,PeriodichnostId,Poryadok,Name")] Usluga usluga)
         {
             if (ModelState.IsValid)
             {
@@ -112,6 +91,7 @@ namespace GKHNNC.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
+            ViewBag.PeriodichnostId = new SelectList(db.Periodichnosts, "Id", "PeriodichnostName", usluga.PeriodichnostId);
             return View(usluga);
         }
 

@@ -2,43 +2,65 @@
 
 @{
     ViewBag.Title = "Edit";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
 }
 
-
+<h2>Редактировать</h2>
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
-<div class="form-horizontal">
-    <h2>Редактировать услугу</h2>
-    <hr />
-    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-    @Html.HiddenFor(model => model.Id)
+   <div class="container">
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.Id)
 
-    <div class="form-group">
-        @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label" })
+        <div class="row col-md-6 col-md-offset-3">
+            <div class="col-md-6">
+            @Html.LabelFor(model => model.PeriodichnostId, "PeriodichnostId", htmlAttributes: new { @class = "control-label col-md-2" })
+            </div>
+            <div class="col-md-6">
+                @Html.DropDownList("PeriodichnostId", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.PeriodichnostId, "", new { @class = "text-danger" })
+            </div>
+         </div>
+       
 
-        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", @style = "width: 365Px" } })
-        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+        <div class="row col-md-6 col-md-offset-3">
+            <div class="col-md-6">
+            @Html.LabelFor(model => model.Poryadok, htmlAttributes: new { @class = "control-label" })
+            </div>
+            <div class="col-md-6">
+                @Html.EditorFor(model => model.Poryadok, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Poryadok, "", new { @class = "text-danger" })
+            </div>
+         </div>
+       
 
+        <div class="row col-md-6 col-md-offset-3">
+            <div class="col-md-6">
+            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label" })
+            </div>
+            <div class="col-md-6">
+                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+            </div>
+         </div>
+       
 
-        @Html.LabelFor(model => model.PeriodichnostId, htmlAttributes: new { @class = "control-label" })
+        <div class="row col-md-6 col-md-offset-3">
+            <div class=" form-group">
+               
+                    @Html.ActionLink("Назад", "Index", null, new { @class = "btn btn-success btn-block" })
+             
+              
+                    <input type="submit" value="Изменить" class="btn btn-success btn-block" />
+        
 
-
-        @Html.DropDownList("PeriodichnostId", new MultiSelectList(ViewBag.Periodichnost, "value", "text"), new { @class = "form-control", @style = "width: 365Px" })
-        @Html.ValidationMessageFor(model => model.PeriodichnostId, "", new { @class = "text-danger" })
-
-    </div>
-
-    <div class="form-group">
-
-        @Html.ActionLink("Назад", "Index", null, new { @class = "btn btn-success", style = "width: 180Px" })
-        <input type="submit" value="Добавить" class="btn btn-success" style="width:180Px" />
-
+            </div>
+        </div>
     </div>
 </div>
 }
-
 

@@ -303,6 +303,7 @@
     <Compile Include="Controllers\TableServicesController.cs" />
     <Compile Include="Controllers\TarifsController.cs" />
     <Compile Include="Controllers\UEVsController.cs" />
+    <Compile Include="Controllers\UslugasController.cs" />
     <Compile Include="Controllers\VoditelsController.cs" />
     <Compile Include="Controllers\ZakazchiksController.cs" />
     <Compile Include="Ezdkas.cs">
@@ -310,7 +311,6 @@
     </Compile>
     <Compile Include="Hubs\ProgressHub.cs" />
     <Compile Include="Controllers\TypeAvtosController.cs" />
-    <Compile Include="Controllers\UslugasController.cs" />
     <Compile Include="Controllers\VipolnennieUslugisController.cs" />
     <Compile Include="Controllers\WorksController.cs" />
     <Compile Include="DAL\WorkContext.cs" />
@@ -1448,11 +1448,6 @@
     <Content Include="Views\Home\Upload.cshtml" />
     <Content Include="Views\Home\Warning.cshtml" />
     <Content Include="Views\Home\UploadComplete.cshtml" />
-    <Content Include="Views\Uslugas\Create.cshtml" />
-    <Content Include="Views\Uslugas\Delete.cshtml" />
-    <Content Include="Views\Uslugas\Details.cshtml" />
-    <Content Include="Views\Uslugas\Edit.cshtml" />
-    <Content Include="Views\Uslugas\Index.cshtml" />
     <Content Include="Views\Periodichnosts\Create.cshtml" />
     <Content Include="Views\Periodichnosts\Delete.cshtml" />
     <Content Include="Views\Periodichnosts\Edit.cshtml" />
@@ -1902,6 +1897,11 @@
     <Content Include="Views\OsmotrRecommendWorks\Edit.cshtml" />
     <Content Include="Views\OsmotrRecommendWorks\Index.cshtml" />
     <Content Include="Views\MusorPloshadkas\Import.cshtml" />
+    <Content Include="Views\Uslugas\Create.cshtml" />
+    <Content Include="Views\Uslugas\Delete.cshtml" />
+    <Content Include="Views\Uslugas\Details.cshtml" />
+    <Content Include="Views\Uslugas\Edit.cshtml" />
+    <Content Include="Views\Uslugas\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

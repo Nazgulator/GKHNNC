@@ -14,6 +14,8 @@ namespace GKHNNC.Models
         public int? PeriodichnostId { get; set; }
         //для подгрузки через айди
         public Periodichnost Periodichnost { get; set; }
+        [Display(Name = "Порядок")]
+        public int Poryadok { get; set; }
 
         [Display(Name = "Наименование услуги")]
         public string Name { get; set; }

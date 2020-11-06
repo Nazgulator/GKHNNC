@@ -16,7 +16,7 @@ namespace GKHNNC.Controllers
     public class OsmotrsController : Controller
     {
         private WorkContext db = new WorkContext();
-
+        
         // GET: Osmotrs
         public ActionResult Index()
         {
@@ -32,6 +32,8 @@ namespace GKHNNC.Controllers
                 DateTime Date = DateTime.Now;
                 Osmotr O = new Osmotr();
                 List<ActiveElement> AE = new List<ActiveElement>();
+            List<ActiveOsmotrWork> AOW = new List<ActiveOsmotrWork>();
+            int geu = 1;
                 List<DOMPart> DP = db.DOMParts.ToList();
                 HttpCookie cookieReq = Request.Cookies["Osmotr"];
                 int AdresId = 0;
@@ -51,6 +53,8 @@ namespace GKHNNC.Controllers
                     {
                         O = db.Osmotrs.Where(x => x.Id == O.Id).Include(x => x.Adres).First();
                         AE = db.ActiveElements.Where(x => x.OsmotrId == O.Id).Include(x => x.Element).Include(x => x.Material).Include(x => x.Izmerenie).OrderBy(x => x.Element.ElementTypeId).ToList();
+                        AOW = db.ActiveOsmotrWorks.Where(x => x.OsmotrId == O.Id).Include(x => x.OsmotrWork).ToList();
+                      
                     }
                     catch { }
 
@@ -62,12 +66,22 @@ namespace GKHNNC.Controllers
                 {
                    O= db.Osmotrs.Where(x => x.Id == id).Include(x => x.Adres).First();
                     AE = db.ActiveElements.Where(x => x.OsmotrId == O.Id).Include(x => x.Element).Include(x => x.Material).Include(x => x.Izmerenie).OrderBy(x => x.Element.ElementTypeId).ToList();
+                    AOW = db.ActiveOsmotrWorks.Where(x => x.OsmotrId == O.Id).Include(x => x.OsmotrWork).ToList();
 
                 }
                 catch
                 {
 
                 }
+            }
+            //ищем номер жэу
+            try
+            {
+                geu = Convert.ToInt16(db.Adres.Where(x => x.Id == O.AdresId).Select(x => x.GEU).First().Replace(" ", "").Replace("ЖЭУ-", ""));
+            }
+            catch
+            {
+                geu = 0;
             }
             if (Directory.Exists(Server.MapPath("~/Files")) == false)
             {
@@ -82,7 +96,7 @@ namespace GKHNNC.Controllers
                     var path = Server.MapPath("~/Files/" + O.Id.ToString() + "/" + fileName);
 
             //экспорт в эксель акта осмотра отправляем все активные элементы и сам осмотр
-            ExcelExportDomVipolnennieUslugi.ActOsmotra(AE,O,DP,path);
+            ExcelExportDomVipolnennieUslugi.ActOsmotra(AE,O,DP,geu,path);
 
 
             // Путь к файлу
@@ -755,7 +769,7 @@ namespace GKHNNC.Controllers
                     }
                     catch
                     {
-
+                        addwork = true;
                     }
                 }
             }

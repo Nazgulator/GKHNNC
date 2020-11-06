@@ -55,7 +55,7 @@ namespace GKHNNC.Controllers
             int data = 6;
            
 
-            WS.Cells[1, 1] = "ФЕДЕРАЛЬНОЕ ГОСУДАРСТВЕННОЕ УНИТАРНОЕ ПРЕДПРИЯТИЕ 'ЖИЛИЩНО-КОММУНАЛЬНОЕ ХОЗЯЙСТВО НОВОСИБИРСКОГО НАУЧНОГО ЦЕНТРА'";
+            WS.Cells[1, 1] = "ФЕДЕРАЛЬНОЕ БЮДЖЕТНОЕ ГОСУДАРСТВЕННОЕ УЧРЕЖДЕНИЕ 'ЖИЛИЩНО-КОММУНАЛЬНОЕ УПРАВЛЕНИЕ НОВОСИБИРСКОГО НАУЧНОГО ЦЕНТРА'";
             range = WS.get_Range("A" + from, "E" + from);
             range.Merge(Type.Missing);
             range.Font.Bold = true;
@@ -1645,7 +1645,7 @@ namespace GKHNNC.Controllers
 
             from++;
             WS.Cells[from, 1] = "являющегося собственником квартиры №_____, находящейся в данном многоквартирном доме*, " +
-                "с одной стороны, и Федеральное государственное унитарное предприятие 'Жилищно-коммунальное хозяйство Новосибирского научного центра' (ФГБУ 'ЖКУ ННЦ')"+
+                "с одной стороны, и Федеральное государственное бюджетное учреждение 'жилищно-коммунальное управление Новосибирского научного центра' (ФГБУ 'ЖКУ ННЦ')" +
 "именуемое в дальнейшем “Исполнитель”,  в лице начальника ЖЭУ-" + GKH + " " + Nachalnik + ", действующего на основании доверенности №" + Prikaz;
             range = WS.get_Range("A" + from, "E" + from);
             range.Merge(Type.Missing);
@@ -1890,7 +1890,7 @@ namespace GKHNNC.Controllers
         }
 
         //Акт осеннего и весеннего осмотра
-        public static void ActOsmotra(List<ActiveElement> ActiveElements,Osmotr O, List<DOMPart> DP,string path)
+        public static void ActOsmotra(List<ActiveElement> ActiveElements, Osmotr O, List<DOMPart> DP,int GEU,string path)
         {
 
             if (ActiveElements.Count == 0)
@@ -2173,6 +2173,16 @@ namespace GKHNNC.Controllers
                 }
             }
 
+            //Определяем жэу
+            GEU G = new GEU();
+            try
+            {
+                G = db.GEUs.Where(x => x.Name.Contains(GEU.ToString())).First();
+            }
+            catch
+            {
+                G = db.GEUs.First();
+            }
 
 
             startStroka++;
@@ -2181,7 +2191,7 @@ namespace GKHNNC.Controllers
             range = WS.get_Range("A" + from, "A" + from);
             range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
             range.RowHeight = 25;//высота строки
-            WS.Cells[startStroka, 5] = "1._______________(___________) Начальник ЖЭУ";
+            WS.Cells[startStroka, 5] = "1._______________(___________) Начальник " + G.Name;
             WS.Cells[startStroka+1, 5] = "2._______________(___________) Управдом";
             WS.Cells[startStroka+2, 5] = "3._______________(___________) Старший по дому";
             WS.Cells[startStroka+3, 5] = "4._______________(___________) Проверил";
@@ -2196,10 +2206,10 @@ namespace GKHNNC.Controllers
                 range.RowHeight = 25;//высота строки
             }
 
-           
-         
-            //Делаем 2 лист
 
+
+            //Делаем 2 лист
+          //  string[] Podpisi = new string[7] { "Пальцев Е.К.", "", "", "", "Полянских Э.В.", "Ширяев С.В.", "Сухов Е.А." };
             // ApExcel.Worksheets.Add();
             ApExcel.Worksheets.Add(Type.Missing);//Добавляем лист
             WS = WbExcel.Sheets[1];
@@ -2229,6 +2239,7 @@ namespace GKHNNC.Controllers
 
             List<ActiveOsmotrWork> AOW = new List<ActiveOsmotrWork>();
             List<int> Elements= new List<int>();
+       
             try
             {
                 AOW = db.ActiveOsmotrWorks.Where(x => x.OsmotrId == O.Id).OrderBy(x => x.ElementId).Include(x=>x.OsmotrWork).Include(x=>x.OsmotrWork.Izmerenie).ToList();
@@ -2238,7 +2249,25 @@ namespace GKHNNC.Controllers
             {
 
             }
+
+
+            List<OsmotrRecommendWork> ORK = new List<OsmotrRecommendWork>();
+   
+            try
+            {
+                ORK = db.OsmotrRecommendWorks.Where(x => x.OsmotrId == O.Id).OrderBy(x => x.Name).Include(x => x.Izmerenie).Include(x => x.DOMPart).ToList();
+              
+            }
+            catch
+            {
+
+            }
             if (ActivePloshad == 0) { ActivePloshad = 1; }
+
+         
+
+
+
             
             for (int i = 0; i < Elements.Count; i++)
             {
@@ -2265,6 +2294,26 @@ namespace GKHNNC.Controllers
                     WS.Cells[startStroka, 7] = Math.Round(((A.TotalCost+ A.TotalCost/10) / 12)/ActivePloshad, 2);
                     summa += A.TotalCost;
                 }
+
+            }
+            startStroka++;
+            WS.Cells[startStroka, 1] = "";
+            range = WS.get_Range("A" + startStroka, "H" + startStroka);
+            //range.Merge();
+            Opr.RangeMerge(ApExcel, range, true, true, 13, 20);
+            //заполняем дополнительные работы
+            for (int i=0;i<ORK.Count;i++)
+            {
+                startStroka++;
+                counter++;
+                WS.Cells[startStroka, 1] = counter;
+                WS.Cells[startStroka, 2] = ORK[i].Name;
+                WS.Cells[startStroka, 3] = ORK[i].Izmerenie.Name;
+                WS.Cells[startStroka, 4] = ORK[i].Number;
+                WS.Cells[startStroka, 5] = ORK[i].Cost;
+                WS.Cells[startStroka, 6] = Math.Round(ORK[i].Cost / 10, 2);
+                WS.Cells[startStroka, 7] = Math.Round(((ORK[i].Cost + ORK[i].Cost / 10) / 12) / ActivePloshad, 2);
+                summa += ORK[i].Cost;
 
             }
             startStroka++;
@@ -2302,7 +2351,13 @@ namespace GKHNNC.Controllers
             Opr.RangeMerge(ApExcel, range, true, false, 13, 20);
             range.Borders.LineStyle = Excel.XlLineStyle.xlLineStyleNone;
             range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
-           
+            startStroka++;
+            WS.Cells[startStroka, 1] = "Инженер ПТО                                       ___________________________"+G.IngenerPTO;
+            range = WS.get_Range("A" + startStroka, "H" + startStroka);
+            Opr.RangeMerge(ApExcel, range, true, false, 13, 20);
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlLineStyleNone;
+
             // Сохранение файла Excel.
             try
             {
@@ -2556,7 +2611,7 @@ namespace GKHNNC.Controllers
 
             from++;
             WS.Cells[from, 1] = "являющегося собственником квартиры №_____, находящейся в данном многоквартирном доме*, " +
-                "с одной стороны, и Федеральное государственное унитарное предприятие 'Жилищно-коммунальное хозяйство Новосибирского научного центра' (ФГБУ 'ЖКУ ННЦ')" +
+                "с одной стороны, и Федеральное государственное бюджетное учреждение 'Жилищно-коммунальное управление Новосибирского научного центра' (ФГБУ 'ЖКУ ННЦ')" +
 "именуемое в дальнейшем “Исполнитель”,  в лице начальника ЖЭУ-" + GKH + " " + Nachalnik + ", действующего на основании доверенности №" + Prikaz;
             range = WS.get_Range("A" + from, "E" + from);
             range.Merge(Type.Missing);
@@ -2658,7 +2713,7 @@ namespace GKHNNC.Controllers
                     WS.Cells[startStroka, naimenovanie] = U.Usluga.Name;
                     if (U.Usluga.Name.Replace(" ", "").Length>50|| U.Usluga.Periodichnost.PeriodichnostName.Replace(" ","").Length > 20)
                     {
-                        WS.Cells[startStroka, naimenovanie].RowHeight = 25;
+                        WS.Cells[startStroka, naimenovanie].RowHeight = 35;
                         WS.Cells[startStroka, naimenovanie].WrapText = true;
                         WS.Cells[startStroka, periodichnost].WrapText = true;
                     }

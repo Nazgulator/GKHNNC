@@ -47,7 +47,7 @@ namespace GKHNNC.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Name,Director,Doverennost")] GEU gEU)
+        public ActionResult Create([Bind(Include = "Id,Name,Director,Doverennost,IngenerPTO")] GEU gEU)
         {
             if (ModelState.IsValid)
             {
@@ -79,7 +79,7 @@ namespace GKHNNC.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Name,Director,Doverennost")] GEU gEU)
+        public ActionResult Edit([Bind(Include = "Id,Name,Director,Doverennost,IngenerPTO")] GEU gEU)
         {
             if (ModelState.IsValid)
             {

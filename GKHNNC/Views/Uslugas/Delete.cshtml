@@ -2,29 +2,30 @@
 
 @{
     ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
 }
 
-<h2>Delete</h2>
+<h2><Удалить></h2>
 
-<h3>Are you sure you want to delete this?</h3>
+<h3>Удаление элемента?</h3>
 <div>
     <h4>Usluga</h4>
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.Periodichnost)
+            @Html.DisplayNameFor(model => model.Periodichnost.PeriodichnostName)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.Periodichnost)
+            @Html.DisplayFor(model => model.Periodichnost.PeriodichnostName)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.PeriodichnostId)
+            @Html.DisplayNameFor(model => model.Poryadok)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.PeriodichnostId)
+            @Html.DisplayFor(model => model.Poryadok)
         </dd>
 
         <dt>
@@ -40,9 +41,21 @@
     @using (Html.BeginForm()) {
         @Html.AntiForgeryToken()
 
-        <div class="form-actions no-color">
-            <input type="submit" value="Delete" class="btn btn-default" /> |
-            @Html.ActionLink("Back to List", "Index")
+       
+           
+            
+       
+		<div class="row col-md-6 col-md-offset-3">
+            <div class=" form-group">
+                <div class=" col-md-6  ">
+                    @Html.ActionLink("Отмена", "Index", null, new { @class = "btn btn-success btn-block" })
+                </div>
+                <div class=" col-md-6  ">
+                    <input type="submit" value="Delete" class="btn btn-success" /> 
+                </div>
+
+            </div>
         </div>
+
     }
 </div>

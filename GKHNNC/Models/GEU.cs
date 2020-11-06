@@ -16,6 +16,8 @@ namespace GKHNNC.Models
         public string Director { get; set; }
         [Display(Name = "Доверенность №")]
         public string Doverennost { get; set; }
-        
+        [Display(Name = "Инженер ПТО")]
+        public string IngenerPTO { get; set; }
+
     }
 }

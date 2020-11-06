@@ -305,7 +305,8 @@
             var OW = $("#OW" + id).val();
             var N = $("#N" + id).val();
             var O = $("#OSMOTR" + id).val();
-            var Table = $("#AO_" + id);
+            var Table= $(".AO_" + id);
+            var Tablica = $("#AO_" + id);
             console.log('Приняли такие данные: ' + OW+';'+N+';'+O+';'+Table);
              $.post('@Url.Action("AddWork", "Osmotrs")', { OsmotrWork: OW, Number: N, OsmotrId:O,ElementId:id},
                  function (data) {
@@ -321,6 +322,7 @@
                              // $('#AO_' + id).hide().fadeIn("slow");//появляем медленно строку
                              console.log('Добавили в таблицу строку' + Table);
                              $('#Modal_' + id).modal('hide');
+                             Tablica.fadeIn('slow');
                          }
                          else
                          {

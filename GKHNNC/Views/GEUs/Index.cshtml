@@ -21,6 +21,9 @@
         <th>
             @Html.DisplayNameFor(model => model.Doverennost)
         </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IngenerPTO)
+        </th>
         <th></th>
     </tr>
 
@@ -36,8 +39,11 @@
             @Html.DisplayFor(modelItem => item.Doverennost)
         </td>
         <td>
-            @Html.ActionLink("Редактировать", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Удалить", "Delete", new { id=item.Id })
+            @Html.DisplayFor(modelItem => item.IngenerPTO)
+        </td>
+        <td>
+            @Html.ActionLink("Редактировать", "Edit", new { id = item.Id }) |
+            @Html.ActionLink("Удалить", "Delete", new { id = item.Id })
         </td>
     </tr>
 }
