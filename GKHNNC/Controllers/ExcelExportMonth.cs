@@ -2242,7 +2242,7 @@ namespace GKHNNC.Controllers
        
             try
             {
-                AOW = db.ActiveOsmotrWorks.Where(x => x.OsmotrId == O.Id).OrderBy(x => x.ElementId).Include(x=>x.OsmotrWork).Include(x=>x.OsmotrWork.Izmerenie).ToList();
+                AOW = db.ActiveOsmotrWorks.Where(x => x.OsmotrId == O.Id&& !x.Gotovo).OrderBy(x => x.ElementId).Include(x=>x.OsmotrWork).Include(x=>x.OsmotrWork.Izmerenie).ToList();
                 Elements = AOW.Select(x => x.ElementId).Distinct().ToList();
             }
             catch
@@ -2255,7 +2255,7 @@ namespace GKHNNC.Controllers
    
             try
             {
-                ORK = db.OsmotrRecommendWorks.Where(x => x.OsmotrId == O.Id).OrderBy(x => x.Name).Include(x => x.Izmerenie).Include(x => x.DOMPart).ToList();
+                ORK = db.OsmotrRecommendWorks.Where(x => x.OsmotrId == O.Id&& !x.Gotovo).OrderBy(x => x.Name).Include(x => x.Izmerenie).Include(x => x.DOMPart).ToList();
               
             }
             catch

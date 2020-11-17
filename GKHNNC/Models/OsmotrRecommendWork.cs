@@ -28,8 +28,14 @@ namespace GKHNNC.Models
         public int DOMPartId { get; set; }
         [Display(Name = "Смета?")]
         public bool Smeta { get; set; }
+        [Display(Name = "Готово?")]
+        public bool Gotovo { get; set; }
+        [Display(Name = "Дата выполнения")]
+        public DateTime DateVipolneniya { get; set; }
+        [Display(Name = "Фотография акта выполненных работ")]
+        public string Photo { get; set; }
 
 
-        
+
     }
 }

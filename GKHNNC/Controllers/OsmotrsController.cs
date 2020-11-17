@@ -20,7 +20,7 @@ namespace GKHNNC.Controllers
         // GET: Osmotrs
         public ActionResult Index()
         {
-            var osmotrs = db.Osmotrs.Where(x=>x.Sostoyanie==0).Include(o => o.Adres).Include(o => o.DOMCW).Include(o => o.DOMElectro).Include(o => o.DOMFasad).Include(o => o.DOMFundament).Include(o => o.DOMHW).Include(o => o.DOMOtoplenie).Include(o => o.DOMRoof).Include(o => o.DOMRoom).Include(o => o.DOMVodootvod);
+            var osmotrs = db.Osmotrs.Where(x=>x.Sostoyanie==0).Include(o => o.Adres);
    
             return View(osmotrs.ToList());
         }
@@ -522,11 +522,82 @@ namespace GKHNNC.Controllers
             return Json(data);
 
         }
+        public JsonResult Gotovo(int Id = 1)
+        {
+            ActiveOsmotrWork AOW = db.ActiveOsmotrWorks.Where(x => x.Id == Id).First();
+            bool Gotovo = AOW.Gotovo;
+            AOW.Gotovo = !AOW.Gotovo;
+            string data = "Готово";
+            if (!Gotovo)
+            {
+                AOW.DateVipolneniya = DateTime.Now;
+                data = "Готово";
+            }
+            else
+            {
+                AOW.DateVipolneniya = new DateTime(2000, 1, 1);
+                data = "Не";
+            }
+            try
+            {
+                db.Entry(AOW).State = EntityState.Modified;
+                db.SaveChanges();
+
+            }
+            catch {
+
+                data = "Ошибка";
+            }
+            return Json(data);
+
+        }
+        public JsonResult GotovoORW(int Id = 1)
+        {
+            OsmotrRecommendWork AOW = db.OsmotrRecommendWorks.Where(x => x.Id == Id).First();
+            bool Gotovo = AOW.Gotovo;
+            AOW.Gotovo = !AOW.Gotovo;
+            string data = "Готово";
+            if (!Gotovo)
+            {
+                AOW.DateVipolneniya = DateTime.Now;
+                data = "Готово";
+            }
+            else
+            {
+                AOW.DateVipolneniya = new DateTime(2000, 1, 1);
+                data = "Не";
+            }
+            try
+            {
+                db.Entry(AOW).State = EntityState.Modified;
+                db.SaveChanges();
+
+            }
+            catch
+            {
+
+                data = "Ошибка";
+            }
+            return Json(data);
+
+        }
+
         public JsonResult Proverka2(int OsmotrId = 1)
         {
             Osmotr O = db.Osmotrs.Where(x => x.Id == OsmotrId).First();
             O.Sostoyanie = 3;
             O.DatePTO = DateTime.Now;
+            db.Entry(O).State = EntityState.Modified;
+            db.SaveChanges();
+            string data = "OK";
+            return Json(data);
+
+        }
+        public JsonResult Proverka3(int OsmotrId = 1)
+        {
+            Osmotr O = db.Osmotrs.Where(x => x.Id == OsmotrId).First();
+            O.Sostoyanie = 4;
+            O.DateEnd = DateTime.Now;
             db.Entry(O).State = EntityState.Modified;
             db.SaveChanges();
             string data = "OK";
@@ -908,6 +979,7 @@ namespace GKHNNC.Controllers
             ROW.DOMPart = db.DOMParts.Find(PartId);
             ROW.Name = Name;
             ROW.Number = Number;
+            ROW.Photo = "Нет";
             try
             {
                 //изменение количества и цены если совпал тип работы
@@ -934,7 +1006,7 @@ namespace GKHNNC.Controllers
                 db.OsmotrRecommendWorks.Add(ROW);
                 db.SaveChanges();
             }
-            catch
+            catch (Exception e)
             {
 
             }
@@ -1193,7 +1265,7 @@ namespace GKHNNC.Controllers
             return View(Materials);
         }
         // GET: Osmotrs/Create
-        public ActionResult Create(DateTime date,int id = 0,bool New=false)
+        public ActionResult Create(DateTime date,int id = 0,bool NewOsmotr=false)
         {
             bool LoadOsmotr = false;
             string error = "";
@@ -1211,26 +1283,32 @@ namespace GKHNNC.Controllers
             Osmotr Result = new Osmotr();
 
             //ищем по базе осмотры, если есть за текущий месяц на данном доме то продолжаем заполнять его.
-            try
+
+           
+            // Если осмотр не новый то грузим старый иначе создаем новый
+            if (!NewOsmotr)
             {
-                Result = db.Osmotrs.Where(x => x.Date.Year == date.Year && x.Date.Month == date.Month && x.AdresId == id&&x.Sostoyanie==0).OrderByDescending(x => x.Date).Include(x=>x.Adres).Include(x => x.DOMCW).Include(x => x.DOMElectro).Include(x => x.DOMFasad).Include(x => x.DOMFundament).Include(x => x.DOMHW).Include(x => x.DOMOtoplenie).Include(x => x.DOMRoof).Include(x => x.DOMRoom).Include(x => x.DOMVodootvod).First();
-                LoadOsmotr = true;//Удалось загрузить осмотр используем уже имеющиеся данные
-                Result.Elements = db.ActiveElements.Where(x => x.OsmotrId == Result.Id).ToList();//берем все активные элементы и кидаем в список
-                Result.DOMParts = Parts;
-
-                if (Result.Elements.Count > 0)
+                try
                 {
-                    foreach (ActiveElement A in Result.Elements)
+
+                    Result = db.Osmotrs.Where(x => x.Date.Year == date.Year && x.Date.Month == date.Month && x.AdresId == id && x.Sostoyanie == 0).OrderByDescending(x => x.Date).Include(x => x.Adres).Include(x => x.DOMCW).Include(x => x.DOMElectro).Include(x => x.DOMFasad).Include(x => x.DOMFundament).Include(x => x.DOMHW).Include(x => x.DOMOtoplenie).Include(x => x.DOMRoof).Include(x => x.DOMRoom).Include(x => x.DOMVodootvod).First();
+                    LoadOsmotr = true;//Удалось загрузить осмотр используем уже имеющиеся данные
+                    Result.Elements = db.ActiveElements.Where(x => x.OsmotrId == Result.Id).ToList();//берем все активные элементы и кидаем в список
+                    Result.DOMParts = Parts;
+
+                    if (Result.Elements.Count > 0)
                     {
-                        A.ActiveDefects = db.ActiveDefects.Where(x => x.OsmotrId == Result.Id && x.ElementId == A.ElementId).ToList();
-                        A.Defects = db.Defects.Where(x => x.ElementId == A.ElementId).ToList();
+                        foreach (ActiveElement A in Result.Elements)
+                        {
+                            A.ActiveDefects = db.ActiveDefects.Where(x => x.OsmotrId == Result.Id && x.ElementId == A.ElementId).ToList();
+                            A.Defects = db.Defects.Where(x => x.ElementId == A.ElementId).ToList();
+                        }
                     }
-                }
-                else
-                {
+                    else
+                    {
 
-                }
-                //сохраняем осмотр
+                    }
+                    //сохраняем осмотр
 
                     //добавляем куки с осмотром
                     HttpCookie cookie = new HttpCookie("Osmotr");
@@ -1242,302 +1320,426 @@ namespace GKHNNC.Controllers
 
 
 
-            }
-            catch (Exception ex)
-            {
-
-                if (id != 0)
+                }
+                catch (Exception ex)
                 {
-                    Result.AdresId = id;
-                    Result.Adres = db.Adres.Where(x => x.Id == id).First();
-                    Result.Date = date;
-                    Build B = new Build();//сашкины данные
-                    List<BuildElement> BE = new List<BuildElement>();
-                    List<Build> Builds = new List<Build>();
-                    int test = 0;
-                    try
-                    {//пробуем грузануть данные по дому
 
-                        Builds = db.Builds.ToList();
-                        foreach (Build b in Builds)
-                        {
-                            test++;
-                            try
-                            {
-                                b.Address = b.Address.ToUpper().Replace("Д.", "").Replace(",", "").Replace(" ", "").Replace("-","").Replace("БУЛЬВ.", "").Replace("ПРОСП.", "");
-                            }
-                            catch { }
-                        }
-                        Result.DOMCW = db.DOMCWs.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
-                        Result.DOMHW = db.DOMHWs.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
-                        Result.DOMElectro = db.DOMElectroes.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
-                        Result.DOMFasad = db.DOMFasads.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
-                        Result.DOMFundament = db.DOMFundaments.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).Include(x => x.Material).Include(x => x.Type).First();
+                    if (id != 0)
+                    {
+                        Result.AdresId = id;
+                        Result.Adres = db.Adres.Where(x => x.Id == id).First();
+                        Result.Date = date;
 
-                        Result.DOMOtoplenie = db.DOMOtoplenies.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
-                        Result.DOMRoof = db.DOMRoofs.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
-                        Result.DOMRoom = db.DOMRooms.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
-                        Result.DOMVodootvod = db.DOMVodootvods.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
 
-                        Result.DOMParts = new List<DOMPart>();
-                        Result.DOMParts = Parts;
-                        //Пробуем грузануть Сашкины поэлементные данные
+                        Build B = new Build();//сашкины данные
+                        List<BuildElement> BE = new List<BuildElement>();
+                        List<Build> Builds = new List<Build>();
+                        int test = 0;
                         try
-                        {
-                            B = Builds.Where(x => x.Address.Equals(Result.Adres.Adress)).First();
-                            BE = db.BuildElements.Where(x => x.BuildId == B.Id).ToList();
-                            
-                        }
-                        catch (Exception e)
-                        {
+                        {//пробуем грузануть данные по дому
 
-                        }
-                       
-                        // BE=db.BuildElements.ToList();
-                        //Тут сохранение материалов
-
-                       /*
-                         foreach (BuildElement El in BE)
-                         {
-                             El.Count = El.Count.Replace(" ", "").Replace("-","").Replace(".","").ToLower();
-                            if (El.Count == "") { El.Count = "0"; }
-                             try
-                             {
-                                    decimal Z = Convert.ToDecimal(El.Count);
-                                 El.Count = Z.ToString();
-                                 db.Entry(El).State = EntityState.Modified;
-                                 db.SaveChanges();
-                                continue;
-
-                             }catch (Exception e)
-                             {
+                            Builds = db.Builds.ToList();
+                            foreach (Build b in Builds)
+                            {
+                                test++;
                                 try
                                 {
-                                    El.Count = "0";
-                                    if (El.Material!=null&&El.Material < 1) {
-                                        El.Material = 1;
-                                    }
-                                    if (El.Material == 50) { El.Material = 1; }
-                                    db.Entry(El).State = EntityState.Modified;
-                                    db.SaveChanges();
+                                    b.Address = b.Address.ToUpper().Replace("Д.", "").Replace(",", "").Replace(" ", "").Replace("-", "").Replace("БУЛЬВ.", "").Replace("ПРОСП.", "");
                                 }
-                                catch
-                                {
+                                catch { }
+                            }
+                            //отключены 11.11.2020 нужно перенести в отдельную таблицу
+                          //  Result.DOMCW = db.DOMCWs.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
+                           // Result.DOMHW = db.DOMHWs.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
+                          //  Result.DOMElectro = db.DOMElectroes.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
+                          //  Result.DOMFasad = db.DOMFasads.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
+                          //  Result.DOMFundament = db.DOMFundaments.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).Include(x => x.Material).Include(x => x.Type).First();
 
-                                }
+                          //  Result.DOMOtoplenie = db.DOMOtoplenies.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
+                         //   Result.DOMRoof = db.DOMRoofs.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
+                         //   Result.DOMRoom = db.DOMRooms.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
+                         //   Result.DOMVodootvod = db.DOMVodootvods.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
+
+                            Result.DOMParts = new List<DOMPart>();
+                            Result.DOMParts = Parts;
+                            //Пробуем грузануть Сашкины поэлементные данные
+                            try
+                            {
+                                B = Builds.Where(x => x.Address.Equals(Result.Adres.Adress)).First();
+                                BE = db.BuildElements.Where(x => x.BuildId == B.Id).ToList();
+
+                            }
+                            catch (Exception e)
+                            {
+
                             }
 
-                         }
-                        */
+                            // BE=db.BuildElements.ToList();
+                            //Тут сохранение материалов
 
-
-                        /*
-                         foreach (BuildElement El in BE)
-                         {
-                             El.EdIzm = El.EdIzm.Replace(" ", "").Replace(",", "").Replace("-","").Replace(".","").ToLower();
-                             if (El.EdIzm.Length>0&&El.EdIzm[0].Equals('/'))
-                             {
-                                 El.EdIzm = El.EdIzm.Remove(0, 1);
-                             }
-                             if (El.EdIzm.Equals(""))
-                             {
-                                 El.EdIzm = "нет";
-                             }
-                             if (El.EdIzm.Equals("мпог")|| El.EdIzm.Equals("мп") || El.EdIzm.Equals("пм") || El.EdIzm.Equals("погм"))
-                             {
-                                 El.EdIzm = "пог.м";
-                             }
-                             try
-                             {
-                                 int Z = Convert.ToInt32(El.EdIzm);
+                            /*
+                              foreach (BuildElement El in BE)
+                              {
+                                  El.Count = El.Count.Replace(" ", "").Replace("-","").Replace(".","").ToLower();
+                                 if (El.Count == "") { El.Count = "0"; }
+                                  try
+                                  {
+                                         decimal Z = Convert.ToDecimal(El.Count);
+                                      El.Count = Z.ToString();
+                                      db.Entry(El).State = EntityState.Modified;
+                                      db.SaveChanges();
                                      continue;
 
-                             }catch
-                             {
+                                  }catch (Exception e)
+                                  {
+                                     try
+                                     {
+                                         El.Count = "0";
+                                         if (El.Material!=null&&El.Material < 1) {
+                                             El.Material = 1;
+                                         }
+                                         if (El.Material == 50) { El.Material = 1; }
+                                         db.Entry(El).State = EntityState.Modified;
+                                         db.SaveChanges();
+                                     }
+                                     catch
+                                     {
 
-                             }
-                             Izmerenie M = null;
-                             try
+                                     }
+                                 }
+
+                              }
+                             */
+
+
+                            /*
+                             foreach (BuildElement El in BE)
                              {
-                                M = db.Izmerenies.Where(x => x.Name.Equals(El.EdIzm)).First();
+                                 El.EdIzm = El.EdIzm.Replace(" ", "").Replace(",", "").Replace("-","").Replace(".","").ToLower();
+                                 if (El.EdIzm.Length>0&&El.EdIzm[0].Equals('/'))
+                                 {
+                                     El.EdIzm = El.EdIzm.Remove(0, 1);
+                                 }
+                                 if (El.EdIzm.Equals(""))
+                                 {
+                                     El.EdIzm = "нет";
+                                 }
+                                 if (El.EdIzm.Equals("мпог")|| El.EdIzm.Equals("мп") || El.EdIzm.Equals("пм") || El.EdIzm.Equals("погм"))
+                                 {
+                                     El.EdIzm = "пог.м";
+                                 }
                                  try
                                  {
-                                     El.EdIzm = M.Id.ToString();
-                                     db.Entry(El).State = EntityState.Modified;
-                                     db.SaveChanges();
-                                 }
-                                 catch
-                                 {
-                                 }
-                             } catch
-                             {
+                                     int Z = Convert.ToInt32(El.EdIzm);
+                                         continue;
 
-                             }
-                             if (M == null)
-                             {
+                                 }catch
+                                 {
+
+                                 }
+                                 Izmerenie M = null;
                                  try
                                  {
-                                     M = new Izmerenie();
-                                     M.Name = El.EdIzm.Replace(" ", "");
-                                     db.Izmerenies.Add(M);
-                                     db.SaveChanges();
-                                     El.EdIzm = M.Id.ToString();
-                                     db.Entry(El).State = EntityState.Modified;
-                                     db.SaveChanges();
-                                 }
-                                 catch
+                                    M = db.Izmerenies.Where(x => x.Name.Equals(El.EdIzm)).First();
+                                     try
+                                     {
+                                         El.EdIzm = M.Id.ToString();
+                                         db.Entry(El).State = EntityState.Modified;
+                                         db.SaveChanges();
+                                     }
+                                     catch
+                                     {
+                                     }
+                                 } catch
                                  {
 
                                  }
+                                 if (M == null)
+                                 {
+                                     try
+                                     {
+                                         M = new Izmerenie();
+                                         M.Name = El.EdIzm.Replace(" ", "");
+                                         db.Izmerenies.Add(M);
+                                         db.SaveChanges();
+                                         El.EdIzm = M.Id.ToString();
+                                         db.Entry(El).State = EntityState.Modified;
+                                         db.SaveChanges();
+                                     }
+                                     catch
+                                     {
+
+                                     }
+                                 }
+
+
                              }
+                             */
 
 
-                         }
-                         */
-                         
-
-                        /*   //Совмещаем адреса и билдингс
-                         *   List<Adres> Ad = db.Adres.ToList();
-                           foreach (Adres A in Ad)
-                           {
-                               if (A.BuildId != 0) { continue; }
-                               try
+                            /*   //Совмещаем адреса и билдингс
+                             *   List<Adres> Ad = db.Adres.ToList();
+                               foreach (Adres A in Ad)
                                {
-                                   B = db.Builds.Where(x => x.Address.Replace("д.", "").Replace(",", "").Replace(" ", "").Replace("БУЛЬВ.", "").ToUpper().Replace("ПРОЕЗД","").Replace("ПРОСПЕКТ", "").Replace("БУЛЬВ", "").Equals(A.Adress.Replace(" ",""))).First();
-                                   A.BuildId = B.Id;
-                                   db.Entry(A).State = EntityState.Modified;
-                                   db.SaveChanges();
-                               }
-                               catch (Exception e)
-                               {
+                                   if (A.BuildId != 0) { continue; }
+                                   try
+                                   {
+                                       B = db.Builds.Where(x => x.Address.Replace("д.", "").Replace(",", "").Replace(" ", "").Replace("БУЛЬВ.", "").ToUpper().Replace("ПРОЕЗД","").Replace("ПРОСПЕКТ", "").Replace("БУЛЬВ", "").Equals(A.Adress.Replace(" ",""))).First();
+                                       A.BuildId = B.Id;
+                                       db.Entry(A).State = EntityState.Modified;
+                                       db.SaveChanges();
+                                   }
+                                   catch (Exception e)
+                                   {
 
+                                   }
                                }
-                           }
-                           */
+                               */
 
-                        Result.BE = BE;
+                            Result.BE = BE;
+                        }
+                        catch (Exception e)
+                        {//если данных нет, значит проблема с загрузкой данных с ГИСЖКХ. Проверьте данные. 
+                            Console.WriteLine(test);
+                        }
+                        if (BE == null || BE.Count == 0)
+                        {
+                            error += "Нет данных дома из ГИСЖКХ! Проверьте данные или заполните с нуля. Созданы нулевые данные.";
+                            Result.DOMCW = new DOMCW(); ;
+                            Result.DOMHW = new DOMHW();
+                            Result.DOMElectro = new DOMElectro();
+                            Result.DOMFasad = new DOMFasad();
+                            Result.DOMFundament = new DOMFundament();
+
+                            Result.DOMOtoplenie = new DOMOtoplenie();
+                            Result.DOMRoof = new DOMRoof();
+                            Result.DOMRoom = new DOMRoom();
+                            Result.DOMVodootvod = new DOMVodootvod();
+                        }
+
+                        Result.Sostoyanie = 0;
+                        Result.Elements = new List<ActiveElement>();
+
+
+                        //сохраняем осмотр
+                        try
+                        {
+                            db.Osmotrs.Add(Result);
+                            db.SaveChanges();
+
+                            //добавляем куки с осмотром
+                            HttpCookie cookie = new HttpCookie("Osmotr");
+                            cookie["Date"] = date.ToString();
+                            cookie["OsmotrId"] = Result.Id.ToString();
+                            cookie["AdresId"] = id.ToString();
+                            // Добавить куки в ответ
+                            Response.Cookies.Add(cookie);
+
+                        }
+                        catch (Exception e) { ViewBag.Id = 0; }
+
+                        try
+                        {//поскольку дефекты фиксируются осмотрами то у всех должна быть одна дата даже на разные элементы
+                            DateTime D = date;
+                            // try
+                            // {
+                            //     db.ActiveDefects.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).Select(x => x.Date).First();
+                            // }
+                            //catch { }
+                            foreach (Element E in Elements)
+                            {
+                                //ищем самый новый по дате и если такого нет то создаем пустой
+
+                                ActiveElement AE = new ActiveElement();
+
+                                try
+                                {
+                                    AE = db.ActiveElements.Where(x => x.ElementId == E.Id && x.AdresId == id).OrderByDescending(x => x.Date).First();
+
+                                    AE.Date = date;
+                                    AE.OsmotrId = Result.Id;
+
+
+                                }
+                                catch (Exception e2)
+                                {
+                                    AE.ElementId = E.Id;
+                                    AE.Element = db.Elements.Where(x => x.Id == E.Id).First();
+                                    AE.OsmotrId = Result.Id;
+                                    AE.AdresId = id;
+                                    AE.Date = date;
+                                    AE.Sostoyanie = 5;
+                                    AE.DateIzmeneniya = date;
+                                    AE.UserName = User.Identity.Name;
+                                    AE.Kolichestvo = 0;
+                                    AE.IzmerenieId = 1;
+                                    AE.MaterialId = 1;
+                                    AE.Izmerenie = db.Izmerenies.Where(x => x.Id == AE.IzmerenieId).First();
+                                    AE.Material = db.Materials.Where(x => x.Id == AE.MaterialId).First();
+                                    AE.Est = true;
+                                    try
+                                    {
+                                        AE.Defects = db.Defects.Where(x => x.ElementId == E.Id).ToList();
+                                        AE.Defects = AE.Defects.OrderBy(x => x.Def).ToList();
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        AE.Defects = new List<Defect>();
+                                    }
+                                    try
+                                    {
+
+                                        AE.ActiveDefects = db.ActiveDefects.Where(x => x.ElementId == E.Id && x.AdresId == id && x.Date == D).OrderByDescending(x => x.Date).Include(x => x.Defect).ToList();
+
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        AE.ActiveDefects = new List<ActiveDefect>();
+                                    }
+                                }
+                                db.ActiveElements.Add(AE);
+                                db.SaveChanges();
+                                Result.Elements.Add(AE);
+
+                            }
+                        }
+                        catch (Exception e) { }
+
+                        try
+                        {
+                            Result.Defects = db.ActiveDefects.Where(x => x.AdresId == id).ToList();
+                        }
+                        catch
+                        {
+
+                        }
                     }
-                    catch (Exception e)
-                    {//если данных нет, значит проблема с загрузкой данных с ГИСЖКХ. Проверьте данные. 
-                        Console.WriteLine(test);
-                    }
-                    if (BE==null||BE.Count==0)
+                    else
                     {
-                        error += "Нет данных дома из ГИСЖКХ! Проверьте данные или заполните с нуля. Созданы нулевые данные.";
-                        Result.DOMCW = new DOMCW(); ;
-                        Result.DOMHW = new DOMHW();
-                        Result.DOMElectro = new DOMElectro();
-                        Result.DOMFasad = new DOMFasad();
-                        Result.DOMFundament = new DOMFundament();
-
-                        Result.DOMOtoplenie = new DOMOtoplenie();
-                        Result.DOMRoof = new DOMRoof();
-                        Result.DOMRoom = new DOMRoom();
-                        Result.DOMVodootvod = new DOMVodootvod();
+                        error += " Не определен ИД дома!!! Не можем создать осмотр. ИД дома =" + id.ToString() + " Дата=" + date.ToString();
+                        return RedirectToAction("Error", error);
                     }
 
-                    Result.Sostoyanie = 0;
-                    Result.Elements = new List<ActiveElement>();
+                }
+            }
+            else
+            {
+                //Создаем новый осмотр.
 
-
-                    //сохраняем осмотр
+                Osmotr LastO = new Osmotr();
+                Osmotr NewO = new Osmotr();
+              
+                try
+                {
+                    //Ищем старый осмотр и берем из него данные
+                    //пробуем загрузить данные предыдущих осмотров
                     try
                     {
-                        db.Osmotrs.Add(Result);
+                        LastO = db.Osmotrs.Where(x => x.AdresId == id).OrderByDescending(x => x.Id).First();
+                        LastO.Adres = db.Adres.Where(x => x.Id == id).First();
+                        LastO.BE = new List<BuildElement>();
+                        LastO.Elements = new List<ActiveElement>();
+                        LastO.Defects = new List<ActiveDefect>();
+                        LastO.DOMParts = new List<DOMPart>();
+                    }
+                    catch { LastO = null; }
+                    //теперь у нас могут быть данные предыдущего осмотра
+
+                    //сохраняем новый осмотр
+                    try
+                    {
+                        NewO = new Osmotr();
+                       NewO.AdresId = id;
+                      
+                        NewO.Date = date;
+                        NewO.DateEnd = date;
+                        NewO.DateOEGF = date;
+                        NewO.DatePTO = date;
+                        NewO.Opisanie = "Повторный осмотр";
+                        db.Osmotrs.Add(NewO);
                         db.SaveChanges();
+
+                        NewO.AOW = new List<ActiveOsmotrWork>();
+                        NewO.ORW = new List<OsmotrRecommendWork>();
+                        NewO.Elements = new List<ActiveElement>();
+                        NewO.Defects = new List<ActiveDefect>();
+                       
+                        NewO.DOMParts = Parts;
 
                         //добавляем куки с осмотром
                         HttpCookie cookie = new HttpCookie("Osmotr");
-                        cookie["Date"] = date.ToString();
-                        cookie["OsmotrId"] = Result.Id.ToString();
+                        cookie["Date"] = LastO.Date.ToString();
+                        cookie["OsmotrId"] = LastO.Id.ToString();
                         cookie["AdresId"] = id.ToString();
                         // Добавить куки в ответ
                         Response.Cookies.Add(cookie);
-
                     }
-                    catch (Exception e) { ViewBag.Id = 0; }
+                    catch (Exception ec) { }
+                    //теперь у нас есть ID нового осмотра
 
-                    try
-                    {//поскольку дефекты фиксируются осмотрами то у всех должна быть одна дата даже на разные элементы
-                        DateTime D = date;
-                       // try
-                       // {
-                       //     db.ActiveDefects.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).Select(x => x.Date).First();
-                       // }
-                        //catch { }
-                        foreach (Element E in Elements)
+                    // работаем со старым осмотром
+                    if (LastO != null)
+                    {
+                        try
                         {
-                            //ищем самый новый по дате и если такого нет то создаем пустой
+                            //пробуем найти активные работы старого осмотра и которые не выполнены
+                            List<ActiveOsmotrWork> LastAOW = db.ActiveOsmotrWorks.Where(x => x.OsmotrId == LastO.Id && !x.Gotovo).ToList();
 
-                            ActiveElement AE = new ActiveElement();
-
-                            try
+                            //Сохраняем их под новыми ID и делаем ссылку на новый осмотр
+                            foreach (ActiveOsmotrWork AOW in LastAOW)
                             {
-                                AE = db.ActiveElements.Where(x => x.ElementId == E.Id && x.AdresId == id).OrderByDescending(x => x.Date).First();
-                                AE.Date = date;
-                                AE.OsmotrId = Result.Id;
-                                
-                                
+                                AOW.OsmotrId = NewO.Id;
+                                db.ActiveOsmotrWorks.Add(AOW);
+                                db.SaveChanges();
+                                NewO.AOW.Add(AOW);
                             }
-                            catch (Exception e2)
-                            {
-                                AE.ElementId = E.Id;
-                                AE.Element = db.Elements.Where(x => x.Id == E.Id).First();
-                                AE.OsmotrId = Result.Id;
-                                AE.AdresId = id;
-                                AE.Date = date;
-                                AE.Sostoyanie = 5;
-                                AE.DateIzmeneniya = date;
-                                AE.UserName = User.Identity.Name;
-                                AE.Kolichestvo = 0;
-                                AE.IzmerenieId = 1;
-                                AE.MaterialId = 1;
-                                AE.Izmerenie = db.Izmerenies.Where(x => x.Id == AE.IzmerenieId).First();
-                                AE.Material = db.Materials.Where(x => x.Id == AE.MaterialId).First();
-                                AE.Est = true;
-                                try
-                                {
-                                    AE.Defects = db.Defects.Where(x => x.ElementId == E.Id).ToList();
-                                    AE.Defects = AE.Defects.OrderBy(x => x.Def).ToList();
-                                }
-                                catch (Exception e)
-                                {
-                                    AE.Defects = new List<Defect>();
-                                }
-                                try
-                                {
-                                    
-                                    AE.ActiveDefects = db.ActiveDefects.Where(x => x.ElementId == E.Id && x.AdresId == id &&x.Date==D).OrderByDescending(x => x.Date).Include(x => x.Defect).ToList();
-                                   
-                                }
-                                catch (Exception e)
-                                {
-                                    AE.ActiveDefects = new List<ActiveDefect>();
-                                }
-                            }
-                            db.ActiveElements.Add(AE);
-                            db.SaveChanges();
-                            Result.Elements.Add(AE);
 
                         }
-                    }
-                    catch (Exception e) { }
+                        catch { }
 
-                    try
-                    {
-                        Result.Defects = db.ActiveDefects.Where(x => x.AdresId == id).ToList();
-                    }
-                    catch
-                    {
+
+                        try
+                        {
+                            // пробуем найти рекомендуемые работы предыдущего осмотра которые еще не выполнены
+                            List<OsmotrRecommendWork> LastORW = db.OsmotrRecommendWorks.Where(x => x.OsmotrId == LastO.Id && !x.Gotovo).ToList();
+
+                            //Сохраняем их под новыми ID и делаем ссылку на новый осмотр
+                            foreach (OsmotrRecommendWork ORW in LastORW)
+                            {
+                                ORW.OsmotrId = NewO.Id;
+                                db.OsmotrRecommendWorks.Add(ORW);
+                                db.SaveChanges();
+
+                            }
+
+                        }
+                        catch { }
+
+                        //Создаем элементы 
+                        CreateElements(Elements, NewO, LastO);
+                       
+
+                        //если нашелся осмотр то отлично
+                        /*  try { LastO.DOMCW = db.DOMCWs.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First(); } catch { LastO.DOMCW = new DOMCW(); LastO.DOMCW.AdresId = id; LastO.DOMCW.Date = DateTime.Now; }
+                          try { LastO.DOMHW = db.DOMHWs.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First(); } catch { LastO.DOMHW = new DOMHW(); LastO.DOMHW.AdresId = id; LastO.DOMHW.Date = DateTime.Now; }
+                          try { LastO.DOMElectro = db.DOMElectroes.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First(); } catch { LastO.DOMElectro = new DOMElectro(); LastO.DOMElectro.AdresId = id; LastO.DOMElectro.Date = DateTime.Now; }
+                          try { LastO.DOMFasad = db.DOMFasads.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First(); } catch { LastO.DOMFasad = new DOMFasad(); LastO.DOMFasad.AdresId = id; LastO.DOMFasad.Date = DateTime.Now;LastO.DOMFasad.Sostoyanie = 1; }
+                          try { LastO.DOMFundament = db.DOMFundaments.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).Include(x => x.Material).Include(x => x.Type).First(); } catch { LastO.DOMFundament = new DOMFundament(); LastO.DOMFundament.Date = DateTime.Now; LastO.DOMFundament.Sostoyanie = 1; LastO.DOMFundament.MaterialId = 1;LastO.DOMFundament.AdresId = id; }
+                          try { LastO.DOMOtoplenie = db.DOMOtoplenies.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First(); } catch { LastO.DOMOtoplenie = new DOMOtoplenie();  LastO.DOMOtoplenie.AdresId = id; LastO.DOMOtoplenie.Date = DateTime.Now; }
+                          try { LastO.DOMRoof = db.DOMRoofs.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First(); } catch { LastO.DOMRoof = new DOMRoof(); LastO.DOMRoof.AdresId = id; LastO.DOMRoof.Date = DateTime.Now; }
+                          try { LastO.DOMRoom = db.DOMRooms.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First(); } catch { LastO.DOMRoom = new DOMRoom(); LastO.DOMRoom.AdresId = id; LastO.DOMRoom.Date = DateTime.Now; }
+                          try { LastO.DOMVodootvod = db.DOMVodootvods.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First(); } catch { LastO.DOMVodootvod = new DOMVodootvod(); LastO.DOMVodootvod.AdresId = id; LastO.DOMVodootvod.Date = DateTime.Now; }
+                        */
 
                     }
+
+                    Result = NewO;//отправляем осмотр в результат
                 }
-                else
-                {
-                    error += " Не определен ИД дома!!! Не можем создать осмотр. ИД дома =" + id.ToString()+" Дата="+date.ToString() ;
-                    return RedirectToAction("Error",error);
+                catch (Exception e3)
+                {//если нет осмотра то возвращаем пустой осмотр с созданными элементами
+                    CreateElements(Elements, NewO, LastO);
+                    Result = NewO;
                 }
-               
             }
             ViewBag.Month = Opredelenie.Opr.MonthToNorm(Opredelenie.Opr.MonthOpred(Result.Date.Month));
             ViewBag.Materials = new SelectList(db.Materials, "Id", "Material");
@@ -1546,6 +1748,96 @@ namespace GKHNNC.Controllers
             return View(Result);
         }
 
+
+        public void CreateElements (List<Element> Elements, Osmotr NewO, Osmotr LastO)
+        {
+            foreach (Element E in Elements)
+            {
+                //Теперь копируем информацию поэлементно в новый осмотр
+
+                ActiveElement AE = new ActiveElement();
+
+                try
+                {
+                    //Загружаем активные элементы прошлого осмотра
+                    AE = db.ActiveElements.Where(x => x.ElementId == E.Id && x.AdresId == NewO.AdresId).OrderByDescending(x => x.Date).First();
+                    //Если элемент есть то сохраняем с новой датой и новым ID осмотра
+                    AE.Date = NewO.Date;
+                    AE.OsmotrId = NewO.Id;
+
+                    db.ActiveElements.Add(AE);
+                    db.SaveChanges();
+                    NewO.Elements.Add(AE);
+
+                    try
+                    {
+                        List<ActiveDefect> ADN = new List<ActiveDefect>();
+                        ADN = db.ActiveDefects.Where(x => x.ElementId == E.Id && x.AdresId == NewO.AdresId && x.Date == LastO.Date).OrderByDescending(x => x.Date).Include(x => x.Defect).ToList();
+                        foreach (ActiveDefect ad in ADN)
+                        {
+                            //Сохраняем каждый дефект из предыдущего осмотра в новый
+
+                            ad.Date = NewO.Date;
+                            ad.OsmotrId = NewO.Id;
+                            db.ActiveDefects.Add(ad);
+                            db.SaveChanges();
+                            NewO.Defects.Add(ad);
+                            AE.Defects = db.Defects.Where(x => x.ElementId == E.Id).ToList();
+                            AE.Defects = AE.Defects.OrderBy(x => x.Def).ToList();
+                        }
+                        AE.ActiveDefects = ADN;
+
+                    }
+                    catch (Exception e)
+                    {
+                        AE.ActiveDefects = new List<ActiveDefect>();
+                    }
+
+
+
+
+                }
+                catch
+                {
+                    //Создаем новые активные элементы если в предыдущем осмотре их нет (на случай ошибки или если добавятся новые элементы дома)
+                    AE.ElementId = E.Id;
+                    AE.Element = db.Elements.Where(x => x.Id == E.Id).First();
+                    AE.OsmotrId = NewO.Id;
+                    AE.AdresId = (int) NewO.AdresId;
+                    AE.Date = NewO.Date;
+                    AE.Sostoyanie = 5;
+                    AE.DateIzmeneniya = NewO.Date;
+                    AE.UserName = User.Identity.Name;
+                    AE.Kolichestvo = 0;
+                    AE.IzmerenieId = 1;
+                    AE.MaterialId = 1;
+                    AE.Izmerenie = db.Izmerenies.Where(x => x.Id == AE.IzmerenieId).First();
+                    AE.Material = db.Materials.Where(x => x.Id == AE.MaterialId).First();
+                    AE.Est = true;
+                    try
+                    {
+                        db.ActiveElements.Add(AE);
+                        db.SaveChanges();
+                        NewO.Elements.Add(AE);
+                    }
+                    catch { }
+                    try
+                    {
+                        AE.Defects = db.Defects.Where(x => x.ElementId == E.Id).ToList();
+                        AE.Defects = AE.Defects.OrderBy(x => x.Def).ToList();
+                     
+                    }
+                    catch (Exception e)
+                    {
+                        AE.Defects = new List<Defect>();
+                    }
+
+                    AE.ActiveDefects = new List<ActiveDefect>();
+
+                }
+
+            }
+        }
 
         public ActionResult Info(DateTime date, int id = 0)
         {

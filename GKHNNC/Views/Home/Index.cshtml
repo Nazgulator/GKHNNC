@@ -97,17 +97,28 @@
                         </button>
                     </p>
                     <p>
-                        <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "OsmotrRecommendWorks")'">
+                        <button class="btn btn-secondary btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "OsmotrRecommendWorks")'">
                             <i class="glyphicon glyphicon-star"></i> Рекомендованные ПТО работы &raquo;
                         </button>
                     </p>
                 }
+                if (User.IsInRole("Администратор") || User.Identity.Name.Contains("Голосований"))
+                {
+                    <p>
+                        <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("OsmotrsProverka3", "Houses")'">
+                            <i class="glyphicon glyphicon-map-marker"></i> Осмотры на голосовании &raquo;
+                        </button>
+                    </p>
 
+                }
+                if (!User.Identity.Name.Contains("Голосований"))
+                {
                 <p>
                     <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Houses")'">
                         <i class="glyphicon glyphicon-map-marker"></i> Тех. паспорт домов и осмотры &raquo;
                     </button>
                 </p>
+                }
 
             }
 

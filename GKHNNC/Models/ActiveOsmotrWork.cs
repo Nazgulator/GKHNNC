@@ -22,7 +22,13 @@ namespace GKHNNC.Models
         public int ElementId { get; set; }
         [Display(Name = "Осмотр ид")]
         public int OsmotrId { get; set; }
-        
+        [Display(Name = "Готово?")]
+        public bool Gotovo { get; set; }
+        [Display(Name = "Дата выполнения")]
+        public DateTime DateVipolneniya { get; set; }
+        [Display(Name = "Фотография акта выполненных работ")]
+        public string Photo { get; set; }
+
 
         public virtual ICollection<Sopostavlenie> Sopostavlenies { get; set; }
     }
