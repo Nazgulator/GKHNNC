@@ -107,6 +107,9 @@ namespace GKHNNC.Models
 
         [Display(Name = "Сколько осмотров")]
         public int NumberOsmotrs { get; set; }
+        [Display(Name = "Сколько выполненных работ")]
+        public int NumberWorks { get; set; }
+
         [Display(Name = "Данные дома")]
         public Adres AdresAll { get; set; }
 

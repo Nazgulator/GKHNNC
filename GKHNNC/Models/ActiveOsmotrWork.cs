@@ -30,6 +30,7 @@ namespace GKHNNC.Models
         public string Photo { get; set; }
 
 
+
         public virtual ICollection<Sopostavlenie> Sopostavlenies { get; set; }
     }
 }

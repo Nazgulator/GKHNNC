@@ -1,0 +1,262 @@
+﻿@model IEnumerable<GKHNNC.Models.House>
+
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Выполненные работы по жилфонду</title>
+</head>
+<body>
+    <h2>Выполненные работы по жилфонду</h2>
+
+    <p><a href="/Home/Index" class="btn btn-success btn-block"><< В главное меню </a> </p>
+    <div class="alert-warning">
+        <p>Модуль работает в тестовом режиме! </p>
+    </div>
+    <table id="T" class="table table-bordered table-striped">
+        <tr>
+            <td colspan="3">
+                <input id="Search" class="form-control" placeholder="Начните вводить улицу для поиска" />
+            </td>
+            <td>
+                <button class="btn btn-block btn-success" onclick="window.location.replace('/Houses/Index')"> Все адреса </button>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Adres)
+            </th>
+            <th>
+                Осмотр дома
+            </th>
+            <th>
+                Создание отчета
+            </th>
+
+
+
+        </tr>
+        @{bool Y = false; }
+        @foreach (var item in Model)
+        {
+
+            <!-- Modal -->
+            <div class="modal fade" id="CW_@item.Id" tabindex="-1" role="dialog" aria-labelledby="AddAvtoModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content col-12">
+                        <div class="modal-header">
+                            <h3 class="modal-title" id="AddAvtoModalLabel">Выполненные работы </h3>
+
+                        </div>
+                        <div class="modal-body">
+
+
+                            <div class="col-6">
+                                Дом
+                            </div>
+                            <div class="col-6">
+                                <input readonly id="Adres" value="@item.Adres" class="form-control" />
+                            </div>
+                            <div class="table">
+                                <div class="row">
+                                    <div class="col-6">
+                                        Работа
+                                    </div>
+                                    <div class="col-6">
+                                        Дата выполнения
+                                    </div>
+                                </div>
+                                @foreach (var work in item.Osmotrs.OrderByDescending(x => x.Id).First().ORW.Where(x => x.Gotovo == true))
+                                {
+                                    <div class="row">
+                                        <div class="col-6">
+                                            @work.Name
+                                        </div>
+                                        <div class="col-6">
+                                            @work.DateVipolneniya
+                                        </div>
+                                    </div>
+                                }
+                                @foreach (var work in item.Osmotrs.OrderByDescending(x => x.Id).First().AOW.Where(x => x.Gotovo == true))
+                                {
+                                    <div class="row">
+                                        <div class="col-6">
+                                            @work.OsmotrWork.Name
+                                        </div>
+                                        <div class="col-6">
+                                            @work.DateVipolneniya
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            string GISGKH = "";
+            if (item.GISGKH == false)
+            {
+                GISGKH = "table-warning";
+
+                if (!Y)
+                {
+                    <tr>
+                        <td colspan="4" style="text-align:center">
+                            <h5>Данные ГИСЖКХ отсутствуют по следующим домам:</h5>
+                        </td>
+
+                    </tr>
+                }
+                Y = true;
+            }
+            <tr class="@GISGKH">
+                <td>
+                    @Html.DisplayFor(modelItem => item.Adres)
+                </td>
+
+
+
+
+                <td>
+                    @if (item.Osmotrs.Count > 0)
+                    {
+                        for (int j = 0; j < item.Osmotrs.Count; j++)
+                        {
+
+
+
+
+                            if (item.Osmotrs[j].Sostoyanie > 0)
+                            {
+                                string sostoyanie = "btn btn-secondary";
+                                if (item.Osmotrs[j].Sostoyanie > 1) { sostoyanie = "btn btn-success"; }
+                                @Html.ActionLink("Осмотр от " + item.Osmotrs[j].Date.ToShortDateString(), "Info", "Osmotrs", new { id = item.Osmotrs[j].AdresId, date = item.Osmotrs[j].Date }, new { @type = "button", @class = sostoyanie });
+                            }
+                            else
+                            {
+                                @Html.ActionLink("Изменить осмотр от " + item.Osmotrs[j].Date.ToShortDateString(), "Create", "Osmotrs", new { id = item.Osmotrs[j].AdresId, date = item.Osmotrs[j].Date }, new { @type = "button", @class = "btn btn-primary" });
+                            }
+
+                        }
+                        if (item.Osmotrs.Where(x => x.Sostoyanie == 0).ToList().Count == 0)
+                        {
+                            <button class="btn btn-success" onclick="NewOsmotr('@item.AdresId','@DateTime.Now')">Добавить осмотр</button>
+                        }
+
+                    }
+                    else
+                    {
+                        if (item.GISGKH)
+                        {
+
+                            <button class="btn btn-success" onclick="NewOsmotr('@item.AdresId','@DateTime.Now')">Добавить осмотр</button>
+
+                        }
+                        else
+                        {
+                            @Html.ActionLink("Создать осмотр с нуля", "Create", "Osmotrs", new { id = item.AdresId, date = DateTime.Now }, new { @type = "button", @class = "btn btn-warning" });
+                        }
+                    }
+                </td>
+                <td>
+                    @if (item.Osmotrs.Count > 0)
+                    {
+                        @Html.ActionLink("Выгрузить в Excel", "ExportToExcel", "Osmotrs", new { id = item.Osmotrs[item.Osmotrs.Count - 1].Id }, new { @class = "btn btn-block btn-success" })
+                    }
+                </td>
+
+                <!--
+
+
+            <td>
+                @Html.ActionLink("Информация", "Edit", new { id = item.AdresId }, new { @type = "button", @class = "form-control" })
+            </td>
+                -->
+            </tr>
+        }
+
+    </table>
+    <p><a href="/Home/Index" class="btn btn-success btn-block"><< В главное меню </a> </p>
+    <!-- Modal -->
+    <div class="modal fade" id="Download" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4>Загрузка данных, пожалуйста подождите...</h4>
+                    <button id="X" type="button" class="close hide" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="progress">
+
+                        <div id="progressBar" class="progress-bar progress-bar-striped bg-success progress-bar-animated" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                        <center>
+                            <label id="nadpis">Загрузка данных...</label>
+                        </center>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+   
+</body>
+
+</html>
+@Scripts.Render("~/scripts/jquery-3.4.1.js")
+@Scripts.Render("~/scripts/jquery-ui-1.12.1.js")
+@Scripts.Render("~/scripts/jquery.unobtrusive-ajax.js")
+@Scripts.Render("~/scripts/bootstrap.js")
+@Scripts.Render("~/scripts/bootstrap.bundle.js")
+@Scripts.Render("/scripts/ExportToExcel/excelexportjs.js")
+<link rel="stylesheet" href="~/Scripts/JqueryThemes/ui-lightness/jquery-ui.css" />
+<script>
+ $("#Search").autocomplete({
+        source: '@Url.Action("SearchAdres", "Houses")',
+        minLength: 1,
+        select: function (event, ui)
+        {
+
+        var _this = ui.item.label;
+        window.location.replace('/Houses/Index?Adres=' + _this);
+
+
+        },
+
+        open: function (event, ui) {
+        $(this).removeClass('ui-autocomplete-loading');
+
+        }
+    });
+
+    $('#Search').on('keypress', function () {
+        var that = this;
+
+        setTimeout(function () {
+            var res = /[^а-я,0-9,А-Я ]/g.exec(that.value);
+            console.log(res);
+            that.value = that.value.replace(res, '');
+        }, 0);
+    });
+</script>
+<script>
+    function NewOsmotr(id, date) {
+        alert(id + ';' + date);
+        var GO = confirm('Вы уверены, что хотите создать новый осмотр? ')
+        if (GO) {
+           
+            /**/
+            window.location.replace('/Osmotrs/Create?id='+id+'&date=' + date+'&NewOsmotr=true');
+    /**/
+
+}
+}
+</script>

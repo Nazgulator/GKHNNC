@@ -10,6 +10,7 @@ using System.Web.Mvc;
 using GKHNNC.DAL;
 using GKHNNC.Models;
 using Opredelenie;
+using System.Collections;
 
 namespace GKHNNC.Controllers
 {
@@ -29,24 +30,48 @@ namespace GKHNNC.Controllers
                 List<string> Num = new List<string>();
                 try
                 {
-                    Num = db.Adres.Where(x => x.Adress.Contains(term)).Select(x => x.Adress.Replace(" ", "")).ToList();
+                    Num = db.Adres.Where(x => x.Ulica.Contains(term)).Select(x => x.Ulica.Replace(" ", "")).Distinct().ToList();
                 }
                 catch
                 {
-                    Num.Add("Нет такой площадки");
+                    Num.Add("Нет такой улицы");
                 }
                 return Json(Num, JsonRequestBehavior.AllowGet);
             
         }
-        public ActionResult Index(string Adres="")
+        public ActionResult Index(string Adres = "", string fromD = "", string toD = "")
         {
             List<House> H = new List<House>();
             List<House> Y = new List<House>();
             List<Adres> houses = new List<Adres>();
             DateTime Date = Opr.MonthMinus(1, DateTime.Now);//берем прошлый месяц
+            DateTime FromDate = DateTime.Now.AddYears(-1);
+            DateTime ToDate = DateTime.Now;
+            if (fromD != "")//если определен диапазон дат
+            {
+                try
+                {
+                    FromDate = Convert.ToDateTime(fromD);
+                    
+                }
+                catch (Exception d)
+                {
+
+                }
+                try
+                {
+                    ToDate = Convert.ToDateTime(toD);
+                }
+                catch (Exception f)
+                {
+
+                }
+            }
+            ViewBag.Adres = Adres;
+  
             if (Adres.Equals("") == false)
             {
-                houses = db.Adres.Where(x => x.Adress.Equals(Adres)).ToList();
+                houses = db.Adres.Where(x => x.Adress.Contains(Adres)).ToList();
 
 
              
@@ -99,11 +124,21 @@ namespace GKHNNC.Controllers
                 try
                 {
                     DateTime Dat = DateTime.Now;
-                    ho.Osmotrs = db.Osmotrs.Where(x=>x.AdresId == a.Id ).OrderBy(x => x.Date).ToList();//все осмотры дома
+                    ho.Osmotrs = db.Osmotrs.Where(x=>x.AdresId == a.Id && x.DateEnd>= FromDate&& x.DateEnd<=ToDate).OrderBy(x => x.Date).ToList();//все осмотры дома
+                    ho.NumberWorks = 0;
+                    foreach (Osmotr O in ho.Osmotrs)
+                    {
+                        O.ORW = db.OsmotrRecommendWorks.Where(x => x.OsmotrId == O.Id && x.Gotovo == true).Include(x=>x.Izmerenie).ToList();
+                        O.AOW = db.ActiveOsmotrWorks.Where(x => x.OsmotrId == O.Id && x.Gotovo == true).Include(x => x.OsmotrWork).ToList();
+                        ho.NumberWorks += O.ORW.Count + O.AOW.Count();
+
+
+                    }
+                   
                     ho.NumberOsmotrs = ho.Osmotrs.Count();
                     ho.OsmotrEst = true;
                 }
-                catch { ho.OsmotrEst = false; }
+                catch (Exception e) { ho.OsmotrEst = false; }
                 try
                 {
                     int D = db.DOMCWs.Where(x => x.AdresId == a.Id).OrderByDescending(x => x.Date).Select(x=>x.Id).First();
@@ -122,6 +157,84 @@ namespace GKHNNC.Controllers
                 }
                 procount++;
                 progress = Convert.ToInt16( procount / pro100 * 100);
+                ProgressHub.SendMessage("Загружаем данные домов, подождите немножко...", progress);
+                if (procount > pro100) { procount = Convert.ToInt32(pro100); }
+            }
+            H.AddRange(Y);
+            ViewBag.FromD = FromDate.ToString("yyyy-MM-dd");
+            ViewBag.ToD = ToDate.ToString("yyyy-MM-dd");
+            return View(H);
+        }
+
+        public ActionResult CompleteWorks(string Adres = "")
+        {
+            List<House> H = new List<House>();
+            List<House> Y = new List<House>();
+            List<Adres> houses = new List<Adres>();
+            DateTime Date = Opr.MonthMinus(1, DateTime.Now);//берем прошлый месяц
+            if (Adres.Equals("") == false)
+            {
+                houses = db.Adres.Where(x => x.Adress.Equals(Adres)).ToList();
+            }
+            else
+            {
+                if (User.Identity.Name.Contains("ЖЭУ"))
+                {
+                    string GEU = "ЖЭУ-" + User.Identity.Name.Remove(0, User.Identity.Name.Length - 1);
+                    houses = db.Adres.Where(x => x.GEU != null).Where(x => x.GEU.Equals(GEU)).ToList();
+                }
+                else
+                {
+                    houses = db.Adres.ToList();
+                }
+            }
+
+
+
+            List<string> Primechanie = new List<string>();
+            // List<Arendator> Arendators = db.Arendators.Where(c => c.Date.Year == Date.Year && c.Date.Month == Date.Month).ToList();//Берем всех арендаторов за текущий месяц
+            //List<UEV> Uevs = db.UEVs.Where(c => c.Date.Year == Date.Year && c.Date.Month == Date.Month).ToList();
+            //List<OPU> Opus = db.OPUs.Where(c => c.Date.Year == Date.Year && c.Date.Month == Date.Month).ToList();
+            int progress = 0;
+            double pro100 = 0;
+            int procount = 0;
+            pro100 = houses.Count;
+            foreach (Adres a in houses)
+            {
+                House ho = new House();
+
+                ho.AdresId = a.Id;
+                ho.Adres = a.Adress;
+                ho.Date = Date;
+                try
+                {
+                    DateTime Dat = DateTime.Now;
+                    ho.Osmotrs = db.Osmotrs.Where(x => x.AdresId == a.Id).OrderBy(x => x.Date).Include(x=>x.ORW).Include(x=>x.AOW).ToList();//все осмотры дома
+                    ho.NumberOsmotrs = ho.Osmotrs.Count();
+                    ho.OsmotrEst = true;
+                }
+                catch { ho.OsmotrEst = false; }
+                //пробуем грузануть последний осмотр
+              
+                try
+                {
+                    int D = db.DOMCWs.Where(x => x.AdresId == a.Id).OrderByDescending(x => x.Date).Select(x => x.Id).First();
+                    ho.GISGKH = true;
+                }
+                catch
+                {
+                    ho.GISGKH = false;
+                }
+                if (ho.GISGKH == true)
+                {
+                    H.Add(ho);
+                }
+                else
+                {
+                    Y.Add(ho);
+                }
+                procount++;
+                progress = Convert.ToInt16(procount / pro100 * 100);
                 ProgressHub.SendMessage("Загружаем данные домов, подождите немножко...", progress);
                 if (procount > pro100) { procount = Convert.ToInt32(pro100); }
             }

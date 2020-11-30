@@ -1903,6 +1903,7 @@
     <Content Include="Views\Uslugas\Edit.cshtml" />
     <Content Include="Views\Uslugas\Index.cshtml" />
     <Content Include="Views\Houses\OsmotrsProverka3.cshtml" />
+    <Content Include="Views\Houses\CompleteWorks.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
