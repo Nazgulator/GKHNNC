@@ -49,6 +49,13 @@
         </div>
     </div>
     <div class="form-group">
+        @Html.LabelFor(model => model.ActivePloshad, htmlAttributes: new { @class = "control-label col-md-1 col-md-push-3" })
+        <div class="col-md-5 col-md-push-3">
+            @Html.EditorFor(model => model.ActivePloshad, new { htmlAttributes = new { @class = "form-control" }, @placeholder = "Активная площадь цифрами через точку" })
+            @Html.ValidationMessageFor(model => model.ActivePloshad, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group">
         @Html.LabelFor(model => model.UEV, htmlAttributes: new { @class = "control-label col-md-1 col-md-push-3" })
         <div class="col-md-5 col-md-push-3">
             @Html.EditorFor(model => model.UEV, new { htmlAttributes = new { @class = "form-control" }, @placeholder = "Вводите код УЭВ только цифры" })
@@ -64,10 +71,12 @@
     </div>
     <div class="form-group">
         <div class="col-md-6 col-md-push-3">
-            <div class="mx-2">
+            <div>
                 @Html.ActionLink("Назад", "Index", null, new { @class = "btn btn-success col-md-6 mx-2" })
             </div>
-            <input type="submit" value="Сохранить" class="btn btn-success col-md-6 mx-2 " />
+            <div>
+                <input type="submit" value="Сохранить" class="btn btn-success col-md-6 mx-2 " />
+            </div>
 
         </div>
     </div>

@@ -56,7 +56,7 @@ namespace GKHNNC.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Ulica,Dom,GEU,UEV,OBSD,Ploshad")] Adres adres)
+        public ActionResult Create([Bind(Include = "Id,Ulica,Dom,GEU,UEV,OBSD,Ploshad,ActivePloshad")] Adres adres)
         {
             if (ModelState.IsValid)
             {
@@ -297,7 +297,7 @@ namespace GKHNNC.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Ulica,Dom,GEU,UEV,OBSD,Ploshad")] Adres adres)
+        public ActionResult Edit([Bind(Include = "Id,Ulica,Dom,GEU,UEV,OBSD,Ploshad,ActivePloshad")] Adres adres)
         {
             if (ModelState.IsValid)
             {

@@ -2213,10 +2213,10 @@ namespace GKHNNC.Controllers
             // ApExcel.Worksheets.Add();
             ApExcel.Worksheets.Add(Type.Missing);//Добавляем лист
             WS = WbExcel.Sheets[1];
-            WS.Name = "Работы по ДТР";
+            WS.Name = "3. Работы по ДТР";
             
             startStroka = 1; 
-            WS.Cells[startStroka, 1] = "Работы по дополнительному текущему ремонту, определение их стоимости и размера платы за дополнительный текущий ремонт на "+(O.Date.Year+1).ToString()+" год по адресу "+ O.Adres.Ulica + " " + O.Adres.Dom;
+            WS.Cells[startStroka, 1] = "3. Работы по дополнительному текущему ремонту, определение их стоимости и размера платы за дополнительный текущий ремонт на "+(O.Date.Year+1).ToString()+" год по адресу "+ O.Adres.Ulica + " " + O.Adres.Dom;
             range = WS.get_Range("A"+startStroka, "H"+startStroka);
             Opr.RangeMerge(ApExcel, range, true, true,13,50);
             startStroka++;
