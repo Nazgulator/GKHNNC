@@ -39,8 +39,12 @@ namespace GKHNNC.Controllers
                 return Json(Num, JsonRequestBehavior.AllowGet);
             
         }
-        public ActionResult Index(string Adres = "", string fromD = "", string toD = "")
+
+
+
+        public ActionResult Index(string Adres = "", string fromD = "", string toD = "", string WorkPoisk = "")
         {
+            ViewBag.WorkPoisk = WorkPoisk;
             List<House> H = new List<House>();
             List<House> Y = new List<House>();
             List<Adres> houses = new List<Adres>();
@@ -126,10 +130,11 @@ namespace GKHNNC.Controllers
                     DateTime Dat = DateTime.Now;
                     ho.Osmotrs = db.Osmotrs.Where(x=>x.AdresId == a.Id && x.DateEnd>= FromDate&& x.DateEnd<=ToDate).OrderBy(x => x.Date).ToList();//все осмотры дома
                     ho.NumberWorks = 0;
+                   
                     foreach (Osmotr O in ho.Osmotrs)
                     {
-                        O.ORW = db.OsmotrRecommendWorks.Where(x => x.OsmotrId == O.Id && x.Gotovo == true).Include(x=>x.Izmerenie).ToList();
-                        O.AOW = db.ActiveOsmotrWorks.Where(x => x.OsmotrId == O.Id && x.Gotovo == true).Include(x => x.OsmotrWork).ToList();
+                        O.ORW = db.OsmotrRecommendWorks.Where(x => x.OsmotrId == O.Id && x.Gotovo == true&& x.Name.Contains(WorkPoisk)).Include(x=>x.Izmerenie).ToList();
+                        O.AOW = db.ActiveOsmotrWorks.Where(x => x.OsmotrId == O.Id && x.Gotovo == true&& x.OsmotrWork.Name.Contains(WorkPoisk)).Include(x => x.OsmotrWork).ToList();
                         ho.NumberWorks += O.ORW.Count + O.AOW.Count();
 
 
@@ -137,6 +142,8 @@ namespace GKHNNC.Controllers
                    
                     ho.NumberOsmotrs = ho.Osmotrs.Count();
                     ho.OsmotrEst = true;
+                 
+                   
                 }
                 catch (Exception e) { ho.OsmotrEst = false; }
                 try
@@ -147,14 +154,21 @@ namespace GKHNNC.Controllers
                 {
                     ho.GISGKH = false;
                 }
-                if (ho.GISGKH==true)
+
+                if ((WorkPoisk != "" && ho.NumberWorks > 0)||WorkPoisk.Equals(""))//Если ищем по наименованию выполненной работы то не выводим дома без этой работы
                 {
-                    H.Add(ho);
+
+
+                    if (ho.GISGKH == true)
+                    {
+                        H.Add(ho);
+                    }
+                    else
+                    {
+                        Y.Add(ho);
+                    }
                 }
-                else
-                {
-                    Y.Add(ho);
-                }
+               
                 procount++;
                 progress = Convert.ToInt16( procount / pro100 * 100);
                 ProgressHub.SendMessage("Загружаем данные домов, подождите немножко...", progress);
