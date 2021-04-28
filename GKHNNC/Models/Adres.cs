@@ -56,6 +56,8 @@ namespace GKHNNC.Models
         public int UEV { get; set; }
         [Display(Name = "Код ОБСД")]
         public int OBSD { get; set; }
+        [Display(Name = "ЭУ")]
+        public int EUId { get; set; }
         //для подгрузки через ID
         public ICollection<VipolnennieUslugi> VipolnennieUslugis { get; set; }
         public Adres()

@@ -1843,54 +1843,200 @@ namespace GKHNNC.Controllers
         {
             bool LoadOsmotr = true;
             string error = "";
-            List<Element> Elements = db.Elements.ToList();
-            ViewBag.FundamentMaterials = new SelectList(db.FundamentMaterials, "Id", "Material");
-            ViewBag.FundamentTypes = new SelectList(db.FundamentTypes, "Id", "Type");
-            List<string> Parts = db.DOMParts.OrderBy(y => y.Id).Select(x => x.Name).ToList();
+            List<Element> Elements = new List<Element>();
+            if (Session["Elements"] == null)
+            {
+                //Получаем все элемнты
+                Elements = db.Elements.ToList();
+
+                //Сохраняем в сессию чтобы все было свеженькое
+                Session["Elements"] = Elements;
+            }
+            else
+            {//Загружаем из сессии
+                Elements = (List<Element>)Session["Elements"];
+
+            }
+
+            List<FundamentMaterial> FM = new List<FundamentMaterial>();
+            if (Session["FundamentMaterials"] == null)
+            {
+                //Получаем все элемнты
+                FM = db.FundamentMaterials.ToList();
+
+                //Сохраняем в сессию чтобы все было свеженькое
+                Session["FundamentMaterials"] = FM;
+            }
+            else
+            {//Загружаем из сессии
+                FM = (List<FundamentMaterial>)Session["FundamentMaterials"];
+
+            }
+            ViewBag.FundamentMaterials = new SelectList(FM, "Id", "Material");
+
+
+
+            List<FundamentType> FT = new List<FundamentType>();
+            if (Session["FundamentTypes"] == null)
+            {
+                //Получаем все элемнты
+                FT = db.FundamentTypes.ToList();
+
+                //Сохраняем в сессию чтобы все было свеженькое
+                Session["FundamentTypes"] = FT;
+            }
+            else
+            {//Загружаем из сессии
+                FT = (List<FundamentType>)Session["FundamentTypes"];
+
+            }
+            ViewBag.FundamentTypes = new SelectList(FT, "Id", "Type");
+
+            List<DOMPart> DOMParts = new List<DOMPart>();
+            if (Session["DOMParts"] == null)
+            {
+                //Получаем все элемнты
+                DOMParts = db.DOMParts.ToList();
+
+                //Сохраняем в сессию чтобы все было свеженькое
+                Session["DOMParts"] = DOMParts;
+            }
+            else
+            {//Загружаем из сессии
+                DOMParts = (List<DOMPart>)Session["DOMParts"];
+
+            }
+            var ALLParts = new SelectList(DOMParts, "Id", "Name");
+            ViewBag.ALLParts = ALLParts;
+
+            List<string> Parts = new List<string>();
+            if (Session["Parts"] == null)
+            {
+                //Получаем все элемнты
+                Parts = DOMParts.OrderBy(y => y.Id).Select(x => x.Name).ToList();
+
+                //Сохраняем в сессию чтобы все было свеженькое
+                Session["Parts"] = Parts;
+            }
+            else
+            {//Загружаем из сессии
+                Parts = (List<string>)Session["Parts"];
+
+            }
             ViewBag.DOMParts = Parts;
-            var OW = new SelectList(db.OsmotrWorks, "Id", "Name");
-            ViewBag.OW = OW;
+
+            List<OsmotrWork> OW = new List<OsmotrWork>();
+            if (Session["OsmotrWorks"] == null)
+            {
+                //Получаем все элемнты
+                OW = db.OsmotrWorks.ToList();
+
+                //Сохраняем в сессию чтобы все было свеженькое
+                Session["OsmotrWorks"] = OW;
+            }
+            else
+            {//Загружаем из сессии
+                OW = (List<OsmotrWork>)Session["OsmotrWorks"];
+
+            }
+            var ow = new SelectList(OW, "Id", "Name");
+            ViewBag.OW = ow;
             // var ORW = new SelectList(db.OsmotrWorks, "Id", "Name");
             //  ViewBag.ORW = ORW;
-            var ALLParts = new SelectList(db.DOMParts, "Id", "Name");
-            ViewBag.Izmerenies = new SelectList(db.Izmerenies, "Id", "Name");
-            ViewBag.ALLParts = ALLParts;
+
+            List<Izmerenie> Izm = new List<Izmerenie>();
+            if (Session["Izmerenies"] == null)
+            {
+                //Получаем все элемнты
+                Izm = db.Izmerenies.ToList();
+
+                //Сохраняем в сессию чтобы все было свеженькое
+                Session["Izmerenies"] = Izm;
+            }
+            else
+            {//Загружаем из сессии
+                Izm = (List<Izmerenie>)Session["Izmerenies"];
+            }
+            ViewBag.Izmerenies = new SelectList(Izm, "Id", "Name");
+       
             if (date == null)
             {
                   date = DateTime.Now;
             }
-            
+
+
+            List<Adres> Adresa = new List<Adres>();
+            if (Session["Adresa"] == null)
+            {
+                //Получаем все элемнты
+                Adresa = db.Adres.ToList();
+
+                //Сохраняем в сессию чтобы все было свеженькое
+                Session["Adresa"] = Adresa;
+            }
+            else
+            {//Загружаем из сессии
+                Adresa = (List<Adres>)Session["Adresa"];
+            }
 
             Osmotr Result = new Osmotr();
             //ищем по базе осмотры, если есть за текущий месяц на данном доме то продолжаем заполнять его.
 
-
+          
             if (id != 0)
             {
                 Result.AdresId = id;
-                Result.Adres = db.Adres.Where(x => x.Id == id).First();
-                
-              //  Result.Date = date;
+
+                //  Result.Date = date;
                 try
                 {//пробуем грузануть данные по дому
-                    Result = db.Osmotrs.Where(x => x.AdresId == id&&x.Date.Year==date.Year&&x.Date.Month==date.Month).OrderByDescending(x => x.Date).Include(x=>x.DOMCW).Include(x=>x.DOMHW).Include(x=>x.DOMElectro).Include(x=>x.DOMFasad).Include(x=>x.DOMFundament).Include(x=>x.DOMOtoplenie).Include(x=>x.DOMRoof).Include(x=>x.DOMRoom).Include(x=>x.DOMVodootvod).First();
-                    //добавляем куки с осмотром
-                    HttpCookie cookie = new HttpCookie("Osmotr");
-                    cookie["Date"] = date.ToString();
-                    cookie["OsmotrId"] = Result.Id.ToString();
-                    cookie["AdresId"] = Result.AdresId.ToString();
 
-                    HttpCookie cookieR = Request.Cookies["Osmotr"];
-                    if (cookieR != null)
+                    Osmotr O = new Osmotr();
+                    if (Session["Osmotr"+id+"Y"+ date.Year+"M"+ date.Month] == null)
                     {
-                        Response.Cookies.Set(cookie);
+
+                        //Получаем все элемнты
+                        try
+                        {
+                            O = db.Osmotrs.Where(x => x.AdresId == id && x.Date.Year == date.Year && x.Date.Month == date.Month).OrderByDescending(x => x.Date).Include(x => x.DOMCW).Include(x => x.DOMHW).Include(x => x.DOMElectro).Include(x => x.DOMFasad).Include(x => x.DOMFundament).Include(x => x.DOMOtoplenie).Include(x => x.DOMRoof).Include(x => x.DOMRoom).Include(x => x.DOMVodootvod).First();
+                            O.Adres = Adresa.Where(x => x.Id == id).First();
+                        }
+                        catch
+                        {
+
+                        }
                        
+
+                        //Сохраняем в сессию чтобы все было свеженькое
+                        Session["Osmotr" + id + "Y" + date.Year + "M" + date.Month] = O;
                     }
                     else
                     {
-                        // Добавить куки в ответ
-                        Response.Cookies.Add(cookie);
+                        O = (Osmotr)Session["Osmotr" + id + "Y" + date.Year + "M" + date.Month];
                     }
+
+                    Result = O;
+                    Result.Adres = O.Adres;
+
+
+
+                    //добавляем куки с осмотром
+                //    HttpCookie cookie = new HttpCookie("Osmotr");
+                //    cookie["Date"] = date.ToString();
+                 //   cookie["OsmotrId"] = Result.Id.ToString();
+                 //   cookie["AdresId"] = Result.AdresId.ToString();
+
+                 //   HttpCookie cookieR = Request.Cookies["Osmotr"];
+                 //   if (cookieR != null)
+                 //   {
+                 //       Response.Cookies.Set(cookie);
+                       
+                 //   }
+                //    else
+                 //   {
+                        // Добавить куки в ответ
+                 //       Response.Cookies.Add(cookie);
+                 //   }
                     
 
                     //Result.DOMCW = db.DOMCWs.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).First();
@@ -1918,9 +2064,9 @@ namespace GKHNNC.Controllers
                 {
 
                 }
+               
 
-
-               // Result.Sostoyanie = 0;
+                // Result.Sostoyanie = 0;
                 Result.Elements = new List<ActiveElement>();
                 
 
@@ -1934,6 +2080,44 @@ namespace GKHNNC.Controllers
                     //     db.ActiveDefects.Where(x => x.AdresId == id).OrderByDescending(x => x.Date).Select(x => x.Date).First();
                     // }
                     //catch { }
+
+                    List<ActiveElement> dbAE = new List<ActiveElement>();
+                    if (Session["ActiveElements" + Result.Id] == null)
+                    {
+                        try
+                        {
+                            dbAE = db.ActiveElements.Where(x => x.OsmotrId == Result.Id).OrderByDescending(x => x.Date).ToList();
+                            Session["ActiveElements" + Result.Id ] = dbAE;
+                        }
+                        catch
+                        {
+
+                        }
+                    }
+                    else
+                    {//Загружаем из сессии
+                        dbAE = (List<ActiveElement>)Session["ActiveElements" + Result.Id];
+                    }
+
+
+                    List<ActiveDefect> dbAD = new List<ActiveDefect>();
+                    if (Session["ActiveDefects" + Result.Id] == null)
+                    {
+                        try
+                        {
+                            dbAD = db.ActiveDefects.Where(x =>  x.OsmotrId == Result.Id).OrderByDescending(x => x.Date).Include(x => x.Defect).ToList();
+                            Session["ActiveDefects" + Result.Id] = dbAD;
+                        }
+                        catch
+                        {
+
+                        }
+                    }
+                    else
+                    {//Загружаем из сессии
+                        dbAD = (List<ActiveDefect>)Session["ActiveDefects" + Result.Id];
+                    }
+
                     foreach (Element E in Elements)
                     {
                         //ищем самый новый по дате и если такого нет то создаем пустой
@@ -1942,15 +2126,30 @@ namespace GKHNNC.Controllers
 
                         try
                         {
-                            AE = db.ActiveElements.Where(x => x.OsmotrId == Result.Id && x.ElementId == E.Id ).OrderByDescending(x => x.Date).First();
-                            try
+                            AE = new ActiveElement();
+                            if (Session["ActiveElement"+Result.Id+"E"+E.Id] == null)
                             {
-                                AE.ActiveDefects = db.ActiveDefects.Where(x => x.ElementId == E.Id && x.OsmotrId == Result.Id).OrderByDescending(x => x.Date).Include(x => x.Defect).ToList();
+                                //Получаем все элемнты
+                                AE = dbAE.Where(x => x.ElementId == E.Id).First();
+                                try
+                                {
+                                    AE.ActiveDefects =dbAD.Where(x => x.ElementId == E.Id).ToList();
+                                    AE.Element = E;
+                                }
+                                catch
+                                {
+                                    AE.ActiveDefects = new List<ActiveDefect>();
+                                }
+                                //Сохраняем в сессию чтобы все было свеженькое
+                                Session["ActiveElement" + Result.Id + "E" + E.Id] = AE;
                             }
-                            catch
-                            {
-                                AE.ActiveDefects = new List<ActiveDefect>();
+                            else
+                            {//Загружаем из сессии
+                               AE = (ActiveElement)Session["ActiveElement" + Result.Id + "E" + E.Id];
                             }
+
+                            //AE = db.ActiveElements.Where(x => x.OsmotrId == Result.Id && x.ElementId == E.Id ).OrderByDescending(x => x.Date).First();
+                           
                             }
                         catch (Exception e)
                         {
@@ -1962,6 +2161,7 @@ namespace GKHNNC.Controllers
                             AE.Sostoyanie = 10;
 
                         }
+                     
                         Result.Elements.Add(AE);
 
                     }

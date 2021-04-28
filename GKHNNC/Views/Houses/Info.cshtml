@@ -33,7 +33,7 @@
                 <div class=" row">
                     <div class="col-6">
 
-                        @Html.DropDownList("Year", new SelectList(ViewBag.Years, "Value", "Text",ViewBag.MaxDate.Year), new { @class = "form-control" })
+                        @Html.DropDownList("Year", new SelectList(ViewBag.Years, "Value", "Text", ViewBag.MaxDate.Year), new { @class = "form-control" })
 
                     </div>
                     <div class="col-6">
@@ -291,7 +291,12 @@
             Платных работ и услуг по содержанию и текущему ремонту общего имущества нет
         </button>
     }
-
+    @if (Model.Osmotrs.Count > 0)
+    {
+        <button type="button" class="btn btn-success btn-block" data-toggle="modal" data-target="#OsmotrsModal">
+            Последние данные по осмотрам
+        </button>
+    }
 
 
     <button class="btn btn-success btn-block" onclick="location.href='@Url.Action("Index", "Houses")'">Назад</button>
@@ -1045,6 +1050,95 @@
             </div>
         </div>
     </div>
+    <div class="modal fade " id="OsmotrsModal" tabindex="-1" role="dialog" aria-labelledby="OsmotrsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content col-12">
+                <div class="modal-header col-12">
+                    <h3 class="modal-title" id="OsmotrsModalLabel">Выполненные услуги по дому</h3>
+                </div>
+                <div class="modal-body col-12">
+                    @if (Model.Osmotrs.Count > 0)
+                    {
+                        int OldType = 0;
+                        <div class="container col-12">
+                            <div class="row row-bottom-margin">
+                                <div class="col">
+                                    <H5>Данные за @Model.Osmotrs[Model.Osmotrs.Count - 1].DateEnd</H5>
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12" style="text-align:left">
+                                    <table id="tableData" class="table table-bordered table-striped col-12">
+                                        <tr>
+                                            <th>
+                                                Элемент
+                                            </th>
+                                            <th>
+                                                Измерение
+                                            </th>
+                                            <th>
+                                                Количество
+                                            </th>
+
+                                        </tr>
+
+                                        @foreach (var elem in Model.Osmotrs[Model.Osmotrs.Count - 1].Elements)
+                                        {
+                                            if (OldType.Equals(elem.DomPart.Id) == false)
+                                            {
+                                                OldType = elem.DomPart.Id;
+                                                <tr>
+                                                    <th colspan="3" style="text-align:center">
+                                                        @elem.DomPart.Name
+                                                    </th>
+
+
+                                                </tr>
+                                            }
+                                            <tr>
+                                                <td>
+                                                    @elem.Element.Name
+
+
+                                                <td>
+                                                    @elem.Izmerenie.Name
+                                                </td>
+                                                <td>
+                                                    @elem.Kolichestvo
+                                                    @if (elem.Element.Name.ToLower().Equals("отмостка"))
+                                                    {
+                                                        <p>По техпаспорту = @Model.Fundament.Ploshad м2</p>
+                                                    }
+                                                    @if (elem.Element.Name.ToLower().Contains("кровельное покрытие"))
+                                                    {
+                                                        <p>По техпаспорту = @Model.RoofPloshad м2</p>
+                                                    }
+
+
+                                                </td>
+
+                                            </tr>
+
+
+                                        }
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success btn-block" onclick="ExportToExcel('tableData')">Экспорт в Excel </button>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success btn-block" data-dismiss="modal">Закрыть</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
 
 
 
@@ -1065,6 +1159,7 @@
 
     @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/scripts/bootstrap.bundle.js")
+    @Scripts.Render("/scripts/ExportToExcel/excelexportjs.js")
 
     <!--SignalR script to update the chat page and send messages.-->
     <script>
@@ -1072,6 +1167,18 @@
         $("#progress").hide();
         $("#warning").hide();
 
+    </script>
+    <script>
+        function ExportToExcel(table) {
+         
+            $("#" + table).excelexportjs(
+                {
+                    
+                    containerid: "tableData",
+                    datatype: 'table'
+                }
+            );
+        }
     </script>
     <script>
         $("#download").click(function () {

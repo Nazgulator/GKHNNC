@@ -61,6 +61,7 @@ namespace GKHNNC.Controllers
             if (ModelState.IsValid)
             {
                 adres.Adress = adres.Ulica.Replace(" ", "")+adres.Dom.Replace(" ","");
+                adres.IP = "";
                 db.Adres.Add(adres);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -280,6 +281,7 @@ namespace GKHNNC.Controllers
             }
             Adres adres = db.Adres.Find(id);
             adres.UEV = Convert.ToInt32(UEV);
+          //  adres.IP = "";
             db.Entry(adres).State = EntityState.Modified;
             db.SaveChanges();
            

@@ -72,24 +72,32 @@ namespace GKHNNC.Controllers
                 }
             }
             ViewBag.Adres = Adres;
-  
+            if (Session["Adresa"] == null)
+            {
+                houses = db.Adres.ToList();
+                //Сохраняем в сессию адреса
+                Session["Adresa"] = houses;
+
+
+            }
+            else
+            {
+               houses = (List<Adres>)Session["Adresa"];
+            }
             if (Adres.Equals("") == false)
             {
-                houses = db.Adres.Where(x => x.Adress.Contains(Adres)).ToList();
-
-
-             
+                houses = houses.Where(x => x.Adress.Contains(Adres)).ToList();
             }
             else
             {
                 if (User.Identity.Name.Contains("ЖЭУ"))
                 {
                     string GEU = "ЖЭУ-" + User.Identity.Name.Remove(0, User.Identity.Name.Length - 1);
-                    houses = db.Adres.Where(x => x.GEU != null).Where(x => x.GEU.Equals(GEU)).ToList();
+                    houses = houses.Where(x => x.GEU != null).Where(x => x.GEU.Equals(GEU)).ToList();
                 }
                 else
                 {
-                    houses = db.Adres.ToList();
+                   // houses = db.Adres.ToList();
 
 
                 }
@@ -105,6 +113,10 @@ namespace GKHNNC.Controllers
             double pro100 = 0;
             int procount = 0;
             pro100 = houses.Count;
+
+            if (Session["Houses"+Adres+fromD+toD+WorkPoisk] == null)
+            {
+
             foreach (Adres a in houses)
             {
                 House ho = new House();
@@ -129,8 +141,8 @@ namespace GKHNNC.Controllers
                 {
                     DateTime Dat = DateTime.Now;
                     ho.Osmotrs = db.Osmotrs.Where(x=>x.AdresId == a.Id && x.DateEnd>= FromDate&& x.DateEnd<=ToDate).OrderBy(x => x.Date).ToList();//все осмотры дома
+                 
                     ho.NumberWorks = 0;
-                   
                     foreach (Osmotr O in ho.Osmotrs)
                     {
                         O.ORW = db.OsmotrRecommendWorks.Where(x => x.OsmotrId == O.Id && x.Gotovo == true&& x.Name.Contains(WorkPoisk)).Include(x=>x.Izmerenie).ToList();
@@ -175,6 +187,15 @@ namespace GKHNNC.Controllers
                 if (procount > pro100) { procount = Convert.ToInt32(pro100); }
             }
             H.AddRange(Y);
+                //Сохраняем в сессию осмотры
+                Session["Houses" + Adres + fromD + toD + WorkPoisk] = H;
+
+            }
+            else
+            {
+                H = (List<House>)Session["Houses" + Adres + fromD + toD + WorkPoisk];
+            }
+
             ViewBag.FromD = FromDate.ToString("yyyy-MM-dd");
             ViewBag.ToD = ToDate.ToString("yyyy-MM-dd");
             return View(H);
@@ -960,6 +981,37 @@ namespace GKHNNC.Controllers
             }
             catch { }
             ViewBag.Primechanie = prim;
+
+            //Ищем осмотры
+            ho.Osmotrs = db.Osmotrs.Where(x => x.AdresId == ho.AdresId && x.Sostoyanie>2).OrderBy(x => x.DateEnd).Include(x => x.Adres).ToList();
+            if (ho.Osmotrs.Count > 0)
+            {
+                int OsmotrId = ho.Osmotrs[ho.Osmotrs.Count - 1].Id;
+                try
+                {
+
+
+                    List<ActiveElement> AE = db.ActiveElements.Where(x => x.OsmotrId == OsmotrId).Include(x => x.Material).Include(x => x.Izmerenie).Include(x => x.Element).ToList();
+                  foreach (ActiveElement A in AE)
+                    {
+                        try
+                        {
+                            A.DomPart = db.DOMParts.Where(x => x.Id == A.Element.ElementTypeId).First();
+                        }
+                        catch
+                        {
+
+                        }
+                    }
+                    ho.Osmotrs[ho.Osmotrs.Count - 1].Elements = AE;
+                    AE = AE.OrderBy(x => x.DomPart.Id).ToList();
+                }
+                catch (Exception e)
+                {
+
+                }
+
+            }
 
 
 

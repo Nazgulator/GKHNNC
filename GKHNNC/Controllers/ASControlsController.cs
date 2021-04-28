@@ -50,7 +50,13 @@ namespace GKHNNC.Controllers
 
             }
             catch { }
-
+            List<string> AutoLog = new List<string>();
+            try
+            {
+                AutoLog = db.LogAutoscans.Where(x => x.DateStart.Year == Date.Year && x.DateStart.Month == Date.Month && x.DateStart.Day == Date.Day).OrderByDescending(x => x.Id).Select(x => x.DateStart.Hour +";"+x.Status+";"+x.Opisanie ).ToList();
+            }
+            catch { }
+            ViewBag.AutoLog = AutoLog;
             ViewBag.HourSnyatia = HourSnyatia;
 
             //пробиваем каждую запись и суммируем километраж и ДУТ

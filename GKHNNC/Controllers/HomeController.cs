@@ -1744,6 +1744,7 @@ namespace GKHNNC.Controllers
         public ActionResult Upload(HttpPostedFileBase upload, DateTime Date)
         {
             string warning = "";
+            string log = "";
             if (upload != null)
             {
                 HttpCookie cookie = new HttpCookie("My localhost cookie");
@@ -1752,35 +1753,44 @@ namespace GKHNNC.Controllers
                 cookie["Download"] = "0";
                 // Добавить куки в ответ
                 Response.Cookies.Add(cookie);
-
-                
-
-
                 //call this method inside your working action
                 ProgressHub.SendMessage("Инициализация и подготовка...", 0);
 
                 // получаем имя файла
                 string fileName = System.IO.Path.GetFileName(upload.FileName);
+                ProgressHub.SendMessage("Загружаем файл "+fileName, 0);
                 // сохраняем файл в папку Files в проекте
                 if (Directory.Exists(Server.MapPath("~/Files/")) == false)
                 {
-                    Directory.CreateDirectory(Server.MapPath("~/Files/"));
-                    warning += "Невозможно создать дирректорию Files";
+                    try
+                    {
+                        Directory.CreateDirectory(Server.MapPath("~/Files/"));
+                    }
+                    catch
+                    {
+                        warning += "Невозможно создать дирректорию Files";
+                        ProgressHub.SendMessage("Невозможно создать дирректорию Files на сервере", 0);
+                    }
 
                 }
+                ProgressHub.SendMessage("Нашли директорию Files на диске", 0);
                 try
                 {
                     upload.SaveAs(Server.MapPath("~/Files/" + fileName));
+                    ProgressHub.SendMessage("Сохранили файл " + fileName, 0);
                 }
                 catch
                 {
                     warning += "Невозможно сохранить в папку Files файл "+fileName;
+                    ProgressHub.SendMessage("Невозможно сохранить файл " + fileName +" на червер", 0);
                 }
                 //обрабатываем файл после загрузки
                 List<HouseToAkt> houses = ExcelUpload.IMPORT(Server.MapPath("~/Files/" + fileName));
-              if (houses.Count < 1)
+                ProgressHub.SendMessage("Файл обработан. Найдено домов" + houses.Count, 0);
+                if (houses.Count < 1)
                 {
                     warning += "Невозможно сохранить в папку Files файл " + fileName;
+                    ProgressHub.SendMessage("Не найдены дома HouseToAkt! ", 0);
                     ViewBag.Warning = warning;
                     return View("Warning");
                     
@@ -1792,9 +1802,12 @@ namespace GKHNNC.Controllers
                     List<string> U = new List<string>();//услуги списком списком
                     List<bool> HTF = new List<bool>();//помечаем адреса, совпавшие с БД
                     List<int> HId = new List<int>();//помечаем адреса, совпавшие с БД
-               
+                    ProgressHub.SendMessage("Найдено соответствий " + houses.Count, 0);
+
                     List<Adres> Adresa = db.Adres.ToList();// грузим все адреса из БД
+                    ProgressHub.SendMessage("Загружены адреса из бд - " + Adresa.Count, 0);
                     List<Usluga> Usl = db.Usluga.ToList();// грузим все услуги из БД
+                    ProgressHub.SendMessage("Загружены услуги из бд - " + Usl.Count, 0);
                     int progress = 0;
                     decimal pro100 = houses.Count;
                     int procount = 0;
@@ -1882,7 +1895,7 @@ namespace GKHNNC.Controllers
                         }
                     }
 
-                   
+                    ProgressHub.SendMessage("Загрузка завершена ", 0);
 
                     //Session["Act2House"] = houses;
                     SessionObjects.HouseToAktsSet(Session, houses);

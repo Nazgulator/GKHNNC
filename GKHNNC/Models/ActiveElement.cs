@@ -16,6 +16,7 @@ namespace GKHNNC.Models
         [Display(Name = "Элемент")]
         public Element Element { get; set; }
         [Display(Name = "Адрес ИД")]
+
         public int AdresId { get; set; }
         [Display(Name = "Адрес")]
         public Adres Adres { get; set; }
@@ -66,6 +67,10 @@ namespace GKHNNC.Models
         public int M=0;
         [Display(Name = "Выбранная ед. изм.")]
         public int EI=0;
+
+        [Display(Name = "Часть дома")]
+        public DOMPart DomPart;
+
 
 
     }

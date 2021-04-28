@@ -140,6 +140,8 @@ namespace GKHNNC.DAL
         public System.Data.Entity.DbSet<GKHNNC.Models.OsmotrWork> OsmotrWorks { get; set; }
         public System.Data.Entity.DbSet<GKHNNC.Models.OsmotrRecommendWork> OsmotrRecommendWorks { get; set; }
         public System.Data.Entity.DbSet<GKHNNC.Models.ActiveOsmotrWork> ActiveOsmotrWorks { get; set; }
+        public System.Data.Entity.DbSet<GKHNNC.Models.LogAutoscan> LogAutoscans { get; set; }
+        public System.Data.Entity.DbSet<GKHNNC.Models.EU> EU { get; set; }
 
 
         //protected override void OnModelCreating(DbModelBuilder modelBuilder)

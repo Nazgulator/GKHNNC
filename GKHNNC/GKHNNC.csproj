@@ -330,6 +330,8 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\ActiveElement.cs" />
+    <Compile Include="Models\EU.cs" />
+    <Compile Include="Models\LogAutoscan.cs" />
     <Compile Include="Models\ContainersType.cs" />
     <Compile Include="Models\MarshrutsALL.cs" />
     <Compile Include="Models\MarshrutsActive.cs" />
@@ -1904,6 +1906,8 @@
     <Content Include="Views\Uslugas\Index.cshtml" />
     <Content Include="Views\Houses\OsmotrsProverka3.cshtml" />
     <Content Include="Views\Houses\CompleteWorks.cshtml" />
+    <Content Include="Views\CompleteWorks\PartialViewMenuEu.cshtml" />
+    <Content Include="Views\CompleteWorks\PartialViewSpisokEu.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

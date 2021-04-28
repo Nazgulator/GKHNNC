@@ -332,6 +332,263 @@ namespace GKHNNC.Controllers
             return View();
            
         }
+
+        public ActionResult PartialViewMenuEu(string Selection)
+        {
+            List<string> GGEU = new List<string>();
+            if (User.Identity.Name.Contains("ЖЭУ"))
+            {
+                //GEU = User.Identity.Name.Replace(" ", "");
+                string eid = db.GEUs.Where(x => x.Name.Contains(User.Identity.Name)).Select(x => x.EU).First().ToString();
+                GGEU.Add(eid);
+
+            }
+            else
+            {
+                foreach (GEU G in db.GEUs.OrderBy(x=>x.EU))
+                {
+                    GGEU.Add(G.EU.ToString());
+                }
+            }
+            ViewBag.GEU = GGEU.Distinct();
+            //создаем список годов
+            ViewBag.Year = new string[DateTime.Now.Year - 2018 + 1];
+            int counter = 0;
+            for (int i = DateTime.Now.Year; i >= 2018; i--)
+            {
+                ViewBag.Year[counter] = i.ToString();
+                counter++;
+            }
+
+            //Делаем список месяцев из них первый тот что в куки записан
+            List<SelectListItem> Month = new List<SelectListItem>();
+            for (int i = 1; i < 13; i++)
+            {
+                string mon = "";
+                mon = Opr.MonthOpred(i);
+                SelectListItem SLI = new SelectListItem();
+                SLI.Text = mon;
+                SLI.Value = mon;//i.ToString();
+                Month.Add(SLI);
+
+            }
+            SelectListItem M = new SelectListItem();
+            //если в куки что-то есть
+            if (HttpContext.Request.Cookies["Month"] != null)
+            {
+                M.Text = HttpContext.Request.Cookies["Month"].Value;
+                M.Value = HttpContext.Request.Cookies["Month"].Value;//Opr.MonthObratno(M.Text).ToString();
+                Month.RemoveAt(Opr.MonthObratno(M.Text) - 1);
+                Month.Insert(0, M);
+            }
+
+            ViewBag.Month = Month;
+
+
+            return View();
+
+        }
+
+        //формируем список для вывода по домам
+        public ActionResult PartialViewSpisokEu(string Selection)
+        {
+            string GEU = "";
+            string Year = "";
+            string Month = "";
+
+            GEU = "1";
+            if (Selection == null)
+            {
+                Year = DateTime.Now.Year.ToString();
+                Month = DateTime.Now.Month.ToString();
+                string g = User.Identity.Name.Replace(" ","");
+                if (Request.Cookies["Month"] != null)
+                {
+                    Month = Request.Cookies["Month"].Value;
+                }
+                try
+                {
+                    GEU = db.GEUs.Where(x => x.Name.Contains(g)).Select(x=>x.EU).First().ToString();
+                }
+                catch
+                {
+
+                }
+
+            }
+            else
+            {
+                string[] s = Selection.Split(';');
+                GEU = s[2];
+                Year = s[0];
+                Month = s[1];
+                // создаем cookie
+                HttpContext.Response.Cookies["Month"].Value = Month;//Opr.MonthOpred(Convert.ToInt16(Month));
+                HttpContext.Response.Cookies["Month"].Name = "Month";
+                HttpContext.Response.Cookies["Month"].Expires = DateTime.Now.AddDays(1);
+            }
+
+              
+
+            if (User.Identity.Name.Contains("ЭУ"))
+            {
+                //GEU = User.Identity.Name.Replace(" ", "");
+                string eid = db.GEUs.Where(x => x.Name.Contains(User.Identity.Name)).Select(x => x.EU).First().ToString();
+                GEU = eid;
+
+            }
+            int EU = Convert.ToInt16(GEU);
+            int M = 0;
+            Obratno(Month, out M);
+            int Y = Convert.ToInt16(Year);
+            Month = M.ToString();
+            List<Adres> Adresadb = db.Adres.Where(a => a.EUId == EU ).ToList();
+            List<CompleteWork> completeWorksDB = db.CompleteWorks.Where(x => x.WorkDate.Year == Y&& x.WorkDate.Month==M).ToList();
+            List<CompleteWork> CWSpisok = new List<CompleteWork>();
+            List<string> CWAdresa = new List<string>();
+            List<int> CWNumber = new List<int>();
+            List<string> CWString = new List<string>();
+            //создаем список всех адресов из выполненных работ
+            int progress = 0;
+            int saveprogress = 0;
+            int cc = 0;
+            foreach (CompleteWork C in completeWorksDB)
+            {
+                cc++;
+                progress = Convert.ToInt16(Convert.ToDecimal(cc) / completeWorksDB.Count * 10);
+                ProgressHub.SendMessage("Загружено...", progress);
+                bool go = false;
+                for (int i = 0; i < CWAdresa.Count; i++)
+                {
+
+                    if (C.WorkAdress.Replace(" ", "").Equals(CWAdresa[i]))
+                    {
+
+
+
+                        go = true;
+                        break;
+                    }
+
+                }
+                if (!go)
+                {
+                    CWAdresa.Add(C.WorkAdress.Replace(" ", ""));
+                    CWNumber.Add(0);
+                    CWString.Add("");
+
+
+                }
+                else
+                {
+
+                }
+            }
+            CWAdresa.Sort();
+            saveprogress = 10;
+            // сверяем адреса с БД по ЖЭУ
+            cc = 0;
+            for (int i = CWAdresa.Count - 1; i >= 0; i--)
+            {
+                cc++;
+                progress = Convert.ToInt16(saveprogress + Convert.ToDecimal(cc) / CWAdresa.Count * 10);
+                ProgressHub.SendMessage("Загружено...", progress);
+                bool go = false;
+                foreach (Adres A in Adresadb)
+                {
+                    if (A.Adress.Replace(" ", "").Equals(CWAdresa[i].Replace(" ", "")))
+                    {
+                        go = true;
+                        break;
+                    }
+                }
+                if (!go)
+                {
+                    CWAdresa.RemoveAt(i);
+                }
+
+            }
+            saveprogress = 20;
+            cc = 0;
+            for (int j = completeWorksDB.Count - 1; j >= 0; j--)//для каждой работы
+            {
+                cc++;
+                progress = Convert.ToInt16(saveprogress + Convert.ToDecimal(cc) / completeWorksDB.Count * 10);
+                ProgressHub.SendMessage("Загружено...", progress);
+                for (int i = 0; i < CWAdresa.Count; i++)//для каждого адреса
+                {
+                    if (completeWorksDB[j].WorkAdress.Replace(" ", "").Equals(CWAdresa[i]))//если адрес работы совпал с адресом дома
+                    {
+                        if (CWString[i].Replace(" ", "").Contains(completeWorksDB[j].WorkName.Replace(" ", "")) == false)//проверка на типы услуг
+                        {
+                            CWNumber[i]++;
+                            CWString[i] += completeWorksDB[j].WorkName + ";";
+
+                        }
+                        break;
+                    }
+
+                }
+            }
+
+
+            ViewBag.CWString = CWString;//названия услуг через ;
+            ViewBag.CWNumber = CWNumber;//количество услуг
+            ViewBag.CWAdresa = CWAdresa;
+            ViewBag.GEU = GEU;
+            List<VipolnennieUslugi> VUAll = new List<VipolnennieUslugi>();
+            List<string> VUString = new List<string>();
+            List<int> VUNumber = new List<int>();
+            int counter = 0;
+            saveprogress = 30;
+            cc = 0;
+            foreach (string Adres in CWAdresa)
+            {
+                cc++;
+                progress = Convert.ToInt16(saveprogress + Convert.ToDecimal(cc) / CWAdresa.Count * 70);
+                ProgressHub.SendMessage("Загружено...", progress);
+
+                VUString.Add("");
+                VUNumber.Add(0);
+                List<VipolnennieUslugi> VUDB = db.VipolnennieUslugis.Include(z => z.Adres).Include(f => f.Usluga).Where(x => x.Adres.Adress.Replace(" ", "").Equals(Adres.Replace(" ", "")) && x.Date.Year == Y && x.Date.Month == M).ToList();
+                VipolnennieUslugi V = new VipolnennieUslugi();
+
+                foreach (VipolnennieUslugi VU in VUDB)
+                {
+
+                    if (VUString[counter].Contains(VU.Usluga.Name) == false)
+                    {
+                        if (VU.StoimostNaM2 + VU.StoimostNaMonth != 0)
+                        {
+                            VUString[counter] += VU.Usluga.Name + ";";
+                            VUNumber[counter]++;
+                        }
+
+                    }
+
+                }
+                if (VUDB.Count > 0)
+                {
+                    VUAll.Add(VUDB.First());
+                }
+                else
+                {
+                    VipolnennieUslugi F = new VipolnennieUslugi();
+                    Adres FF = new Adres();
+                    DateTime FFF = new DateTime(Y, M, 1);
+                    FF.Adress = Adres;
+                    F.Adres = FF;
+                    F.Date = FFF;
+                    VUAll.Add(F);
+                }
+                counter++;
+            }
+            ViewBag.VUNumber = VUNumber;
+            ViewBag.VUString = VUString;
+            return View(VUAll);
+        }
+  
+
         //формируем список для вывода по домам
         public ActionResult PartialViewSpisok(string Selection)
         {
@@ -681,13 +938,13 @@ namespace GKHNNC.Controllers
             string AA = "";
             //string ADR = ADRdb.Ulica;
             //int ind = 0;
-
+          
 
             //ADR = ADR.Replace("  ", "").Replace(" ", "-");
 
            // VUdb.Insert(1, VUdb[7]);
            // VUdb.RemoveAt(8);
-            ExcelExportDomVipolnennieUslugi.SFORMIROVATAKT(CWdb, VUdb, Month, VUdb[0].Adres.GEU, Year, ADRdb.Ulica, ADRdb.Dom, geudb.Director, geudb.Doverennost, path, summa.ToString());
+            ExcelExportDomVipolnennieUslugi.SFORMIROVATAKT(CWdb, VUdb, Month, VUdb[0].Adres.GEU, Year, ADRdb.Ulica, ADRdb.Dom, geudb.Director, geudb.Doverennost, path, summa.ToString(),geudb.EU.ToString());
 
 
             string path2 = Url.Content("~/Content/ASP" +Adres.Replace(" ","").Replace("/", " к.") + "_"+ Year.Remove(0, 2) + "_" + Month + ".xlsx");
@@ -698,6 +955,55 @@ namespace GKHNNC.Controllers
             //return File(path2, contentType, filename);
 
              return Json(data);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public ActionResult SformirovatAktYear(string Year, string AdresId,string GEU)
+        {
+           // string[] s = Selection.Split(';');
+           
+            //   string AdresAll = s[0];
+            //   string Month = s[2];
+            int AId = Convert.ToInt16(AdresId);
+         //   string GEU = "";
+          
+                GEU = db.Adres.Where(h => h.Id==AId).Select(g => g.GEU).First();
+           
+       //     int M = Convert.ToInt16(Month);
+            int Y = Convert.ToInt16(Year);
+
+            Adres ADRdb = db.Adres.Where(f => f.Id == AId).Single();
+            string Adres = ADRdb.Adress;
+            List<CompleteWork> CWdb = db.CompleteWorks.Where(a => a.WorkAdress.Replace(" ", "").Equals(Adres) && a.WorkDate.Year == Y).ToList();
+            List<VipolnennieUslugi> VUdb = db.VipolnennieUslugis.Include(a => a.Adres).Include(b => b.Usluga).Include(v => v.Usluga.Periodichnost).Where(c => c.Adres.Adress.Replace(" ", "").Equals(Adres) && c.Date.Year == Y ).OrderBy(x => x.Usluga.Poryadok).ToList();
+            GEU geudb = db.GEUs.Where(a => a.Name.Contains(GEU)).First();
+            decimal summa = 0;
+            foreach (VipolnennieUslugi VU in VUdb)
+            {
+                summa += VU.StoimostNaMonth;
+            }
+
+            string path = Server.MapPath("~/Content/ASP" + Adres.Replace(" ", "").Replace("/", " к.") + "_" + Year.Remove(0, 2) + ".xlsx"); //@"C:\inetpub\Otchets\ASP" + "X" + Year.Remove(0, 2) + "X" + Month + ".xlsx";//Server.MapPath("~\\ASP" +"X"+ Year.Remove(0,2) +"X"+ Month + ".xlsx");
+            string filename = "ASP" + Adres.Replace(" ", "").Replace("/", " к.") + "_" + Year.Remove(0, 2) + ".xlsx";
+            //формируем удобочитаемый адрес 
+            string AA = "";
+            //string ADR = ADRdb.Ulica;
+            //int ind = 0;
+          
+
+            //ADR = ADR.Replace("  ", "").Replace(" ", "-");
+
+            // VUdb.Insert(1, VUdb[7]);
+            // VUdb.RemoveAt(8);
+            ExcelExportDomVipolnennieUslugi.SFORMIROVATAKTYEAR(CWdb, VUdb, VUdb[0].Adres.GEU, Year, ADRdb.Ulica, ADRdb.Dom, geudb.Director, geudb.Doverennost, path, summa.ToString(), geudb.EU.ToString());
+            string path2 = Url.Content("~/Content/ASP" + Adres.Replace(" ", "").Replace("/", " к.") + "_" + Year.Remove(0, 2) + ".xlsx");
+            // RedirectToAction("DownloadPS", new {path,filename});
+            string data = path2; //+ filename;
+            string contentType = "application/vnd.ms-excel";
+            //return File(path2, contentType, filename);
+
+            return Json(data);
         }
 
         [Authorize]
@@ -744,8 +1050,8 @@ namespace GKHNNC.Controllers
                 //если админ возвращаем все данные
 
             }
-
-            ExcelExportMonth.EXPORT(ww,Month,GEU,Year);
+                string eu = db.GEUs.Where(x => x.Name.Equals("ЖЭУ-" + GEU.ToString())).Select(x=>x.EU).First().ToString();
+            ExcelExportMonth.EXPORT(ww,Month,GEU,Year,eu);
                 ViewBag.patch = GEU;
             return View();
             }
@@ -789,8 +1095,8 @@ namespace GKHNNC.Controllers
 
                 }
                 Month = "год";
-
-                ExcelExportMonth.EXPORT(ww, Month, GEU, Year);
+                string eu = db.GEUs.Where(x => x.Name.Equals("ЖЭУ-" + GEU.ToString())).Select(x => x.EU).First().ToString();
+                ExcelExportMonth.EXPORT(ww, Month, GEU, Year,eu);
                 ViewBag.patch = GEU;
                 return View();
             }
@@ -837,6 +1143,7 @@ namespace GKHNNC.Controllers
 
                 }
                 if (ww.Count == 0) { ViewBag.Adres = Adres; ViewBag.GEU = GEU; ViewBag.Month = Month; ViewBag.Year = Year; return View("Error"); }
+                string eu = db.GEUs.Where(x => x.Name.Equals("ЖЭУ-" + GEU.ToString())).Select(x => x.EU).First().ToString();
                 ExcelExportDom.EXPORT(ww, Month, GEU, Year,Adres);
                 ViewBag.patch = GEU;
                 return View();
