@@ -40,9 +40,29 @@ namespace GKHNNC.Controllers
             
         }
 
+        public JsonResult CloseAll()
+        {
+            List<Osmotr> Osmotrs = new List<Osmotr>();
 
 
-        public ActionResult Index(string Adres = "", string fromD = "", string toD = "", string WorkPoisk = "")
+            try
+            {
+                Osmotrs = db.Osmotrs.Where(x => x.Sostoyanie == 0).ToList();
+                foreach (Osmotr O in Osmotrs)
+                {
+                    O.Sostoyanie = 1;
+                    db.Entry(O).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
+            catch
+            {
+              return Json("error");
+            }
+            return Json("ok");
+        }
+
+        public ActionResult Index(string Adres = "", string fromD = "", string toD = "", string WorkPoisk = "", bool obnovit = false)
         {
             ViewBag.WorkPoisk = WorkPoisk;
             List<House> H = new List<House>();
@@ -92,8 +112,19 @@ namespace GKHNNC.Controllers
             {
                 if (User.Identity.Name.Contains("ЖЭУ"))
                 {
+
                     string GEU = "ЖЭУ-" + User.Identity.Name.Remove(0, User.Identity.Name.Length - 1);
-                    houses = houses.Where(x => x.GEU != null).Where(x => x.GEU.Equals(GEU)).ToList();
+                    
+                    try
+                    {
+                        int EuId = db.GEUs.Where(x => x.Name.Equals(GEU)).Select(x=>x.EU).First();
+                        houses = houses.Where(x => x.GEU != null).Where(x => x.EUId == EuId).ToList();
+                    }
+                    catch
+                    {
+                        houses = houses.Where(x => x.GEU != null).Where(x => x.GEU.Equals(GEU)).ToList();
+                    }
+                    
                 }
                 else
                 {
@@ -114,87 +145,94 @@ namespace GKHNNC.Controllers
             int procount = 0;
             pro100 = houses.Count;
 
-            if (Session["Houses"+Adres+fromD+toD+WorkPoisk] == null)
-            {
+          
 
             foreach (Adres a in houses)
             {
-                House ho = new House();
-               
-              // List<Arendator> TekArend = Arendators.Where(d => d.AdresId == a.Id).ToList();//арендаторы в данном доме для ускорения поиска
-               // List<UEV> TekUevs = Uevs.Where(d => d.AdresId == a.Id).ToList();//выставлено в УЭВ применим позже
-               // List<OPU> TekOpus = Opus.Where(d => d.AdresId == a.Id).ToList();//Фактические затраты воды по ОПУ андрей Исх
-                ho.AdresId = a.Id;
-                ho.Adres = a.Adress;
-               // ho.Ploshad = a.Ploshad;//общая площадь
-               // ho.Teplota = TekOpus.Sum(e => e.OtopGkal);//TekUevs.Sum(e => e.OtEnergyGkal);//Сумма теплоты 
-               // ho.Teplota12 = 0;
-               // ho.HotWater = TekOpus.Sum(e => e.GWM3);//Сумма Горводы
-               // ho.ColdWater = TekOpus.Sum(e => e.HWM3);//Сумма Холводы
-               // ho.PloshadArendators = TekArend.Sum(e => e.Ploshad);//Сумма площадей арендаторов
-               // ho.TeplotaArendators = TekArend.Sum(e => e.Teplota);//Сумма теплоты арендаторов
-               // ho.Teplota12Arendators = TekArend.Sum(e => e.Teplota12);//Сумма теплоты 1/12 арендаторов
-                //ho.ColdWaterArendators = TekArend.Sum(e => e.ColdWater);//Сумма Холодной воды арендаторов
-               // ho.HotWaterArendators = TekArend.Sum(e => e.HotWater);//Сумма Горячей воды арендаторов
-                ho.Date = Date;
-                try
+                if (Session["Houses" + a.Adress] == null || obnovit==true)
                 {
-                    DateTime Dat = DateTime.Now;
-                    ho.Osmotrs = db.Osmotrs.Where(x=>x.AdresId == a.Id && x.DateEnd>= FromDate&& x.DateEnd<=ToDate).OrderBy(x => x.Date).ToList();//все осмотры дома
-                 
-                    ho.NumberWorks = 0;
-                    foreach (Osmotr O in ho.Osmotrs)
+                    House ho = new House();
+
+                    // List<Arendator> TekArend = Arendators.Where(d => d.AdresId == a.Id).ToList();//арендаторы в данном доме для ускорения поиска
+                    // List<UEV> TekUevs = Uevs.Where(d => d.AdresId == a.Id).ToList();//выставлено в УЭВ применим позже
+                    // List<OPU> TekOpus = Opus.Where(d => d.AdresId == a.Id).ToList();//Фактические затраты воды по ОПУ андрей Исх
+                    ho.AdresId = a.Id;
+                    ho.Adres = a.Adress;
+                    // ho.Ploshad = a.Ploshad;//общая площадь
+                    // ho.Teplota = TekOpus.Sum(e => e.OtopGkal);//TekUevs.Sum(e => e.OtEnergyGkal);//Сумма теплоты 
+                    // ho.Teplota12 = 0;
+                    // ho.HotWater = TekOpus.Sum(e => e.GWM3);//Сумма Горводы
+                    // ho.ColdWater = TekOpus.Sum(e => e.HWM3);//Сумма Холводы
+                    // ho.PloshadArendators = TekArend.Sum(e => e.Ploshad);//Сумма площадей арендаторов
+                    // ho.TeplotaArendators = TekArend.Sum(e => e.Teplota);//Сумма теплоты арендаторов
+                    // ho.Teplota12Arendators = TekArend.Sum(e => e.Teplota12);//Сумма теплоты 1/12 арендаторов
+                    //ho.ColdWaterArendators = TekArend.Sum(e => e.ColdWater);//Сумма Холодной воды арендаторов
+                    // ho.HotWaterArendators = TekArend.Sum(e => e.HotWater);//Сумма Горячей воды арендаторов
+                    ho.Date = Date;
+                    try
                     {
-                        O.ORW = db.OsmotrRecommendWorks.Where(x => x.OsmotrId == O.Id && x.Gotovo == true&& x.Name.Contains(WorkPoisk)).Include(x=>x.Izmerenie).ToList();
-                        O.AOW = db.ActiveOsmotrWorks.Where(x => x.OsmotrId == O.Id && x.Gotovo == true&& x.OsmotrWork.Name.Contains(WorkPoisk)).Include(x => x.OsmotrWork).ToList();
-                        ho.NumberWorks += O.ORW.Count + O.AOW.Count();
+                        DateTime Dat = DateTime.Now;
+                        ho.Osmotrs = db.Osmotrs.Where(x => x.AdresId == a.Id && x.DateEnd >= FromDate && x.DateEnd <= ToDate).OrderBy(x => x.Date).ToList();//все осмотры дома
+
+                        ho.NumberWorks = 0;
+                        foreach (Osmotr O in ho.Osmotrs)
+                        {
+                            O.ORW = db.OsmotrRecommendWorks.Where(x => x.OsmotrId == O.Id && x.Gotovo == true && x.Name.Contains(WorkPoisk)).Include(x => x.Izmerenie).ToList();
+                            O.AOW = db.ActiveOsmotrWorks.Where(x => x.OsmotrId == O.Id && x.Gotovo == true && x.OsmotrWork.Name.Contains(WorkPoisk)).Include(x => x.OsmotrWork).ToList();
+                            ho.NumberWorks += O.ORW.Count + O.AOW.Count();
+
+
+                        }
+
+                        ho.NumberOsmotrs = ho.Osmotrs.Count();
+                        ho.OsmotrEst = true;
 
 
                     }
-                   
-                    ho.NumberOsmotrs = ho.Osmotrs.Count();
-                    ho.OsmotrEst = true;
-                 
-                   
-                }
-                catch (Exception e) { ho.OsmotrEst = false; }
-                try
-                {
-                    int D = db.DOMCWs.Where(x => x.AdresId == a.Id).OrderByDescending(x => x.Date).Select(x=>x.Id).First();
-                    ho.GISGKH = true;
-                }catch
-                {
-                    ho.GISGKH = false;
-                }
-
-                if ((WorkPoisk != "" && ho.NumberWorks > 0)||WorkPoisk.Equals(""))//Если ищем по наименованию выполненной работы то не выводим дома без этой работы
-                {
-
-
-                    if (ho.GISGKH == true)
+                    catch (Exception e) { ho.OsmotrEst = false; }
+                    try
                     {
-                        H.Add(ho);
+                        int D = db.DOMCWs.Where(x => x.AdresId == a.Id).OrderByDescending(x => x.Date).Select(x => x.Id).First();
+                        ho.GISGKH = true;
                     }
-                    else
+                    catch
                     {
-                        Y.Add(ho);
+                        ho.GISGKH = false;
                     }
+
+                    if ((WorkPoisk != "" && ho.NumberWorks > 0) || WorkPoisk.Equals(""))//Если ищем по наименованию выполненной работы то не выводим дома без этой работы
+                    {
+
+
+                        if (ho.GISGKH == true)
+                        {
+                            H.Add(ho);
+                        }
+                        else
+                        {
+                            Y.Add(ho);
+                        }
+                    }
+
+                    procount++;
+                    progress = Convert.ToInt16(procount / pro100 * 100);
+                    ProgressHub.SendMessage("Загружаем данные домов, подождите немножко...", progress);
+                    if (procount > pro100) { procount = Convert.ToInt32(pro100); }
+
+                    //Сохраняем в сессию осмотры
+                    Session["Houses" + a.Adress] = ho;
                 }
-               
-                procount++;
-                progress = Convert.ToInt16( procount / pro100 * 100);
-                ProgressHub.SendMessage("Загружаем данные домов, подождите немножко...", progress);
-                if (procount > pro100) { procount = Convert.ToInt32(pro100); }
+                else
+                {
+                    H.Add((House)Session["Houses" + a.Adress]);
+                }
+                
             }
             H.AddRange(Y);
-                //Сохраняем в сессию осмотры
-                Session["Houses" + Adres + fromD + toD + WorkPoisk] = H;
 
-            }
-            else
-            {
-                H = (List<House>)Session["Houses" + Adres + fromD + toD + WorkPoisk];
-            }
+
+
+
 
             ViewBag.FromD = FromDate.ToString("yyyy-MM-dd");
             ViewBag.ToD = ToDate.ToString("yyyy-MM-dd");

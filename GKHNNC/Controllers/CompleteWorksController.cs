@@ -908,6 +908,8 @@ namespace GKHNNC.Controllers
             string Month = s[2];
             string Year = s[1];
             string GEU = "";
+            int G = 0;
+
             if (s.Length < 4)
             {
                 GEU = db.Adres.Where(h => h.Adress.Replace(" ", "").Equals(Adres)).Select(g => g.GEU).First();
@@ -918,6 +920,19 @@ namespace GKHNNC.Controllers
             }
             int M = Convert.ToInt16(Month);
             int Y = Convert.ToInt16(Year);
+            bool GG = false;
+            GEU = db.Adres.Where(h => h.Adress.Replace(" ", "").Equals(Adres)).Select(g => g.GEU).First();
+           //GEU = G.ToString();
+            if (Y<2021 )
+            {
+              
+                GG = false;
+
+            }
+            else
+            {
+                GG = true;
+            }
 
             Adres ADRdb = db.Adres.Where(f => f.Adress.Replace(" ", "").Equals(Adres)).Single();
             List<CompleteWork> CWdb = db.CompleteWorks.Where(a => a.WorkAdress.Replace(" ", "").Equals(Adres) && a.WorkDate.Year == Y && a.WorkDate.Month == M).ToList();
@@ -938,13 +953,20 @@ namespace GKHNNC.Controllers
             string AA = "";
             //string ADR = ADRdb.Ulica;
             //int ind = 0;
-          
+
 
             //ADR = ADR.Replace("  ", "").Replace(" ", "-");
 
-           // VUdb.Insert(1, VUdb[7]);
-           // VUdb.RemoveAt(8);
-            ExcelExportDomVipolnennieUslugi.SFORMIROVATAKT(CWdb, VUdb, Month, VUdb[0].Adres.GEU, Year, ADRdb.Ulica, ADRdb.Dom, geudb.Director, geudb.Doverennost, path, summa.ToString(),geudb.EU.ToString());
+            // VUdb.Insert(1, VUdb[7]);
+            // VUdb.RemoveAt(8);
+            string Director = geudb.Director;
+            string Doverennost = geudb.Doverennost;
+            string GEUEU = geudb.EU.ToString();
+            if (!GG)
+            {
+                GEUEU = GEU.Replace("ЖЭУ-","");
+            }
+            ExcelExportDomVipolnennieUslugi.SFORMIROVATAKT(CWdb, VUdb, Month, VUdb[0].Adres.GEU, Year, ADRdb.Ulica, ADRdb.Dom, Director, Doverennost, path, summa.ToString(),GEUEU,GG);
 
 
             string path2 = Url.Content("~/Content/ASP" +Adres.Replace(" ","").Replace("/", " к.") + "_"+ Year.Remove(0, 2) + "_" + Month + ".xlsx");

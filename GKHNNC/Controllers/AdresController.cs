@@ -25,9 +25,40 @@ namespace GKHNNC.Controllers
 
         // GET: Adres
        
-        public ActionResult Index()
+        public ActionResult Index(int geu = 0)
         {
-            return View(db.Adres.ToList());
+            List<Adres> A = new List<Adres>();
+            if (geu == 0 )
+            {
+                A = db.Adres.ToList();
+            }
+            else
+            {
+                A = db.Adres.Where(x => x.EUId == geu).ToList();
+            }
+            List<SelectListItem> L = new List<SelectListItem>();
+            for (int i=-1;i<4; i++)
+            {
+                SelectListItem Sli = new SelectListItem();
+                Sli.Text = "ЭУ-" + i.ToString();
+                if (i == 0) { Sli.Text = "Все дома"; }
+                if (i == -1)
+                {
+                    if (geu == 0)
+                    {
+                        Sli.Text = "Все дома";
+                    }
+                    else
+                    {
+                        Sli.Text = "ЭУ-" + geu.ToString();
+                    }
+                }
+
+                Sli.Value = i.ToString();
+                L.Add(Sli);
+            }
+            ViewBag.GEU = L;
+            return View(A);
         }
 
         // GET: Adres/Details/5
@@ -305,7 +336,25 @@ namespace GKHNNC.Controllers
             {
                 adres.Adress = adres.Ulica.Replace(" ", "") + adres.Dom.Replace(" ", "");
                 adres.IP = "";
-                db.Entry(adres).State = EntityState.Modified;
+                Adres A = new Adres();
+                try
+                {
+                    A = db.Adres.Where(x => x.Id == adres.Id).First(); 
+                }
+                catch
+                {
+
+                }
+                A.Ulica = adres.Ulica;
+                A.Adress = adres.Adress;
+                A.Dom = adres.Dom;
+                A.Ploshad = adres.Ploshad;
+                A.ActivePloshad = adres.ActivePloshad;
+                A.GEU = adres.GEU;
+                A.UEV = adres.UEV;
+                A.OBSD = adres.OBSD;
+                A.EUId = db.GEUs.Where(x => x.Name.Equals(A.GEU)).Select(x => x.EU).First();
+                db.Entry(A).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }

@@ -35,10 +35,10 @@
 
 
 <Center>
-    <h1><b>ФГУП "ЖКХ ННЦ"</b></h1>
+    <h1><b>ФГБУ "ЖКУ ННЦ"</b></h1>
 
     <p class="lead">
-        Федеральное государственное бюджетное учреждение <br /> «Жилищно коммунальное хозяйство Новосибирского научного центра»
+        Федеральное государственное бюджетное учреждение <br /> «Жилищно коммунальное управление Новосибирского научного центра»
     </p>
 
 
@@ -48,11 +48,11 @@
         {
 
     <div class="alert-success">
-        <p>28.04.2021 Добавлена сортировка домов по ЭУ</p>
-        <p>Сортировка по ЭУ сделана в формировании актов (проверьте правильность занесения)</p>
+        <p>26.04.2021 В ежемесячных актах автоматически заполняется исполнитель.</p>
+        <p>Проверьте правильность.</p>
         <p>Ускорена загрузка раздела "Технический паспорт домов и осмотры" </p>
         <p>Ускорена загрузка выполненных и утвержденных осмотров </p>
-        <p>В плане ускорение загрузки на (10-20%) текущих осмотров </p>
+        <p>В ускорение загрузки текущих осмотров на (10-20%)</p>
     </div>
 
             if (User.Identity.Name.Contains("БухгалтерПоТопливу") == false && User.Identity.Name.Contains("УАТ") == false && User.Identity.Name.Contains("УЭВ") == false && User.Identity.Name.Contains("Асанова") == false)
@@ -77,6 +77,12 @@
                         <span class="glyphicon glyphicon-list-alt"></span> Формирование актов &raquo;
                     </button>
                 </p>
+                <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='http://10.0.1.73/workplan'">
+                        <span class="glyphicon glyphicon-list-alt"></span> Работы ППР &raquo;
+                    </button>
+                </p>
+
                 if (User.IsInRole("Администратор") || User.Identity.Name.Contains("ОЭЖФ") || User.Identity.Name.Contains("Эксплуатация"))
                 {
                     <p>
@@ -114,11 +120,11 @@
                 }
                 if (!User.Identity.Name.Contains("Голосований"))
                 {
-                <p>
-                    <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Houses")'">
-                        <i class="glyphicon glyphicon-map-marker"></i> Тех. паспорт домов и осмотры &raquo;
-                    </button>
-                </p>
+                    <p>
+                        <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Houses")'">
+                            <i class="glyphicon glyphicon-map-marker"></i> Тех. паспорт домов и осмотры &raquo;
+                        </button>
+                    </p>
                 }
 
             }

@@ -1,0 +1,809 @@
+﻿@model GKHNNC.Models.Osmotr
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+
+
+<html>
+
+
+<body>
+
+    <script type='text/javascript' src='http://code.jquery.com/jquery-1.10.1.min.js'></script>
+    <script type='text/javascript'>
+
+    </script>
+    <script type='text/javascript'>
+        $('#MENU').hide(500);
+        $(window).on('load', function () {
+
+            $('#wrap_preloader').delay(500).fadeToggle(500);
+            $('#MENU').show(500);
+        });
+    </script>
+
+    <div id='wrap_preloader' style=" width: 100%;height: 100%;position: fixed;top:0px;margin: 0px auto;background: #1C1C1C;z-index: 99;text-align: center;color: #fff;font-size: 15px;padding-top: 260px;color:limegreen">
+
+        <p>
+            <img src="~/Content/Images/Download/D1.gif" align="middle" class="rounded mr-2" alt="Идёт загрузка...">
+        </p>
+        <p>
+            Загружаем осмотр...
+        </p>
+
+
+    </div>
+
+
+
+
+
+
+    <div id="MENU" style="background:#28a745;z-index:90;position:fixed;top:0px;">
+        @for (int i = 0; i < Model.DOMParts.Count; i++)
+        {
+            <a href="#@i" style="color:white;font-size:20px">@Model.DOMParts[i].Name |</a>
+        }
+        @Html.ActionLink("Сохранить отчет в Excel |", "ExportToExcel", "Osmotrs", null, new { @style = "color:white;font-size:20px" })
+        @Html.ActionLink("Назад", "Index", "Houses", null, new { @style = "color:white;font-size:20px" })
+
+    </div>
+    <div class="fixed-bottom">
+        <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="3000">
+            <div class="toast-header">
+                <img src="~/Content/Images/Download/galkaRepeat.gif" class="rounded mr-2" alt="Файл загружен">
+                <strong class="mr-auto">Фотография загружена на сервер!</strong>
+
+
+            </div>
+
+        </div>
+    </div>
+    <br />
+    <h2>Создание осмотра #@Model.Id</h2>
+    <div class="col-md-12" style="background-color:#28a745">
+        <table>
+            <tr>
+                <td>
+                    <h3>@Model.Adres.Ulica @Model.Adres.Dom</h3>
+                </td>
+            </tr>
+
+        </table>
+
+
+    </div>
+
+    <h4>От @Model.Date.Day @ViewBag.Month @Model.Date.Year</h4>
+    @if (ViewBag.Error != "")
+    {
+        <H5>При загрузке возникла ошибка!!!</H5>
+        <p>@ViewBag.Error</p>
+    }
+
+    <button id="help" class="btn btn-block btn-success" data-toggle="modal" data-target="#Help">
+        Инструкция по заполнению
+    </button>
+
+    <button id="help" class="btn btn-block btn-warning" onclick="RefreshCosts(@Model.Id)">
+        Обновить цены рекомендуемых работ
+    </button>
+
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="container">
+        <div class="form-horizontal">
+
+            @{ int progress = 0;
+                double pro100 = Model.DOMParts.Count;
+                int procount = 0;
+            }
+            @for (int j = 0; j < Model.DOMParts.Count; j++)
+            {
+                int DPI = Model.DOMParts[j].Id;
+
+
+
+                <div id="@j" class="row">
+                    <div class="col-md-12" style="background-color:#28a745">
+                        <table>
+                            <tr>
+                                <td>
+                                    <h3 style="color:white"> @Model.DOMParts[j].Name </h3>
+                                </td>
+                            </tr>
+
+                        </table>
+
+
+                    </div>
+
+
+
+
+                    <div class="col-md-12">
+
+
+
+                        @for (int i = 0; i < Model.Elements.Count; i++)
+                        {
+                            if (Model.Elements[i].Element.ElementTypeId == Model.DOMParts[j].Id)
+                            {
+                                string Part = "Partial" + Model.Elements[i].Id.ToString();
+
+
+                                @Html.Action("ViewMobile", "Osmotrs", new { ElementId = Model.Elements[i].ElementId, OsmotrId = Model.Id, AdresId = Model.AdresId, Date = Model.Date, DOMPartId = DPI })
+                                DPI = 0;
+                            }
+                        }
+
+                    </div>
+
+                </div>
+
+
+                <div class="row col-md-12">
+                    <p> </p>
+                </div>
+
+                procount++;
+                progress = Convert.ToInt16(procount / pro100 * 100);
+                ProgressHub.SendMessage("Загружаем данные элементов...", progress);
+                if (procount > pro100) { procount = Convert.ToInt32(pro100); }
+            }
+        </div>
+    </div>
+
+
+    <table>
+        <tr>
+            <td width="80%">
+                <input class="form-control btn-block" id="Primechanie" placeholder="Здесь вы можете добавить свои комментарии к осмотру." value="@Model.Opisanie" />
+            </td>
+            <td width="50%">
+                <button class="btn btn-success btn-block" id="PrimechanieSave" onclick="PS(@Model.Id)">Сохранить примечание</button>
+            </td>
+        </tr>
+    </table>
+
+
+
+    <div class=" col-md-6  ">
+        @if (User.Identity.Name.Contains("НачальникЖЭУ") || User.IsInRole("Администратор"))
+        {
+            <button class="btn btn-block btn-success" id="END" MOsmotr="@Model.Id">Завершить создание осмотра</button>
+        }
+
+        @Html.ActionLink("Назад", "Index", "Houses", null, new { @class = "btn btn-success btn-block" })
+        @if (User.Identity.Name.Contains("ЖЭУ") || User.IsInRole("Администратор"))
+        {
+            <button class=" btn btn-danger btn-block" type="button" source="Удалить" readonly onclick="Delete('@Model.Id')">Удалить </button>
+        }
+    </div>
+
+    <H5>Конец осмотра.</H5>
+    <H4>Осмотр доступен к редактированию.</H4>
+
+</body>
+
+
+</html>
+
+<!-- Modal -->
+<div class="modal fade" id="Help" tabindex="-1" role="dialog" aria-labelledby="AddHelpModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content col-12">
+            <div class="modal-header">
+                <h3 class="modal-title" id="AddHelpModalLabel">Инструкция по заполнению</h3>
+
+            </div>
+            <div class="modal-body" style="text-align:left">
+                <p>Бланк осмотра разделен на части дома (крыша, фундамент, фасад). Каждая часть дома разделена на элементы дома (Фундамент - Цоколь, отмостка...) Вам необходимо загрузить по 2 фотографии на каждый элемент дома, указать в звездах состояние элемента дома, выбрать материал, единицы измерения и количество. Если есть дефекты на элементе, то добавить минимум 1 фотографию дефекта, выбрать тип дефекта и указать серьёзность повреждения в восклицательных знаках. На каждой части дома вы можете составить список необходимых работ, выбрав тип и количество необходимой работы. Цена посчитается автоматически.  Заполнив все данные нажмите СОХРАНИТЬ в самом конце документа. После этого вы не сможете изменять данный осмотр - он перейдет на проверку в отдел эксплуатации. Вы можете распечатать акт осмотра в формате Ексель. Для этого в правом верхнем углу есть кнопка "Сохранить отчет в EXCEL". </p>
+                <p> ***** нормативное техническое состояние: категория технического состояния конструктивных элементов, инженерных систем или здания (сооружения), при котором количественные и качественные значения параметров всех критериев элемента (ов) или системы соответсвует установленным нормативным требованиям.</p>
+                <p>
+                    **** работоспособное техническое состояние: категория технического состояния конструктивных элементов, инженерных систем или здания (сооружения), при котором некоторые,  из числа количественных и качественных значений параметров не отвечают требованиям нормативным требованиям, но имеющиеся нарушения в конкретных условиях эксплуатации не приводят к нарушению работоспособности. (Может требоваться мелкий ремонт отдельных элементов конструкции или инженерной системы).
+                </p>
+                <p>
+                    ***ограниченно-работоспособное техническое состояние: категория технического состояния конструктивных элементов, инженерных систем или здания (сооружения), при котором имеются дефекты приведшие к снижению эксплуатационных характеристик, но отсутствует опасность внезапного разрушения, потеря устойчивости конструкции, инженерной системы. (Требуется текущий ремонт конструкций или инженерных систем; может требоваться усиление конструкций. Может быть рекомендован капитальный ремонт конструктивных элементов, инженерных систем).
+                </p>
+                <p>
+                    **неудовлетворительное техническое состояние: категория технического состояния конструктивных элементов, инженерных систем или здания (сооружения), при котором имеются дефекты, повреждения, деформации приведшие к значительному снижению эксплуатационных характеристик, но отсутствует опасность внезапного разрушения, потеря устойчивости конструкции, инженерной системы, но присутствует риск возникновения локальной аварийной ситуации на конструктивном элеменете, инженерной системе. (Требуется капитальный ремонт конструктивных элементов, инженерных систем.)
+                </p>
+                <p>
+                    *аварийное техническое состояние: категория технического состояния конструктивных элементов, инженерных систем или здания (сооружения), при котором повреждения и деформации свидетельствуют об исчерпании несущей способности и опасности обрушения, которые могут вызвать потерю устойчивости конструкции, работоспособности инженерной системы. (Наличие технического заключения о признании аварийным конструктивно элемента или инженерной системы, здания в целом, разработанной специализированной организацией; дома признанные аварийными)
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+@section Scripts{
+    @Scripts.Render("~/scripts/jquery-3.4.1.min.js")
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+    @Scripts.Render("~/scripts/nprogress.min.js")
+    @Scripts.Render("~/scripts/jquery.signalR-2.4.0.js")
+    @Scripts.Render("~/signalr/hubs")
+
+    @Scripts.Render("~/scripts/jquery.unobtrusive-ajax.js")
+    @Scripts.Render("~/scripts/bootstrap.js")
+    @Scripts.Render("~/scripts/bootstrap.bundle.js")
+    @Scripts.Render("https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js")
+    @Scripts.Render("~/scripts/jquery.rating/js/jquery.rating-2.0.js")
+    @Scripts.Render("~/scripts/jquery.rating/js/jquery.rating-2.0Red.js")
+
+
+    <link href="/scripts/jquery.rating/styles/jquery.rating.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+    <script>
+        function OpenModal(id) {
+            $("#Modal_" + id).modal('show');
+        }
+    </script>
+    <script>
+        function PS(id)
+        {
+           var PRIM =  $('#Primechanie').val();
+              $.post('@Url.Action("SavePrimechanie", "Osmotrs")', { id: id,text:PRIM},
+                 function (data) {
+                     console.log('Контроллер вернул данные ' + data);
+                            var S = data.split(';');
+                     if (S[0] != 'Ошибка') {
+
+                                console.log('Примечание сохранено' );
+                            }
+                            else {
+                                alert('Ошибка сохранения файла. '+S[1]);
+                            }
+                            // $('body').append('<ul><li>Java</li><li>JavaScript</li></ul>');
+
+
+
+                        });
+        }
+    </script>
+    <script>
+        function RemoveWork(id)
+        {
+              $.post('@Url.Action("RemoveWork", "Osmotrs")', { id: id},
+                 function (data) {
+                     console.log('Контроллер вернул данные ' + data);
+                            var S = data.split(';');
+                     if (S[0] != 'Ошибка') {
+                         $("#AO_" + id).remove();
+                                console.log('Удалили строку в таблице' );
+                            }
+                            else {
+                                alert('Ошибка сохранения файла. '+S[1]);
+                            }
+                            // $('body').append('<ul><li>Java</li><li>JavaScript</li></ul>');
+
+
+
+                        });
+
+        }
+    </script>
+    <script>
+        function AddWork(id)
+        {
+            console.log('Начинаем добавление работы ' + id);
+            var OW = $("#OW" + id).val();
+            var N = $("#N" + id).val();
+            var O = $("#OSMOTR" + id).val();
+            var Table= $(".AO_" + id);
+            var Tablica = $("#AO_" + id);
+            console.log('Приняли такие данные: ' + OW+';'+N+';'+O+';'+Table);
+             $.post('@Url.Action("AddWork", "Osmotrs")', { OsmotrWork: OW, Number: N, OsmotrId:O,ElementId:id},
+                 function (data) {
+                     console.log('Контроллер вернул данные ' + data);
+                            var S = data.split(';');
+                     if (S[0] != 'Ошибка')
+                     {
+                         if (S[5] != 'Modify')
+                         {
+                             //Table.removeAttr('display');
+                             Table.fadeIn('slow');
+                             Table.after('<tr id="AO_' + S[5] + '" class="AO_' + S[5] + '"><td  style="text-align:center">' + S[1] + '</td><td style="text-align:center" colspan="2">' + S[3] + '</td><td style="text-align:center">' + S[2] + '</td><td style="text-align:center">' + S[4] + '</td><td style="text-align:center" colspan="2" ><button type="button" id="RemoveWork" ADId="' + id + '" onclick="RemoveWork(' + S[5] + ')" class="btn btn-outline-danger rem">Удалить работу</button></td></tr>');
+                             // $('#AO_' + id).hide().fadeIn("slow");//появляем медленно строку
+                             console.log('Добавили в таблицу строку' + Table);
+                             $('#Modal_' + id).modal('hide');
+                             Tablica.fadeIn('slow');
+                         }
+                         else
+                         {
+                             console.log('Ищем строку AO_' + S[5]);
+                             var El = $("#AO_" + S[4]);
+                             El.replaceWith('<tr id="AO_' + S[5] + '" class="AO_' + S[5] + '"><td  style="text-align:center">' + S[1] + '</td><td style="text-align:center" colspan="2">' + S[3] + '</td><td style="text-align:center">' + S[2] + '</td><td style="text-align:center">' + S[4] + '</td><td style="text-align:center" colspan="2" ><button type="button" id="RemoveWork" ADId="' + id + '" onclick="RemoveWork(' + S[5] + ')" class="btn btn-outline-danger rem">Удалить работу</button></td></tr>');
+                             // $('#AO_' + id).hide().fadeIn("slow");//появляем медленно строку
+                             console.log('Заменили строку в таблице' + Table);
+                             $('#Modal_' + id).modal('hide');
+                         }
+
+                     }
+                     else
+                     {
+                         alert('Ошибка сохранения файла. ' + S[1]);
+                     }
+                            // $('body').append('<ul><li>Java</li><li>JavaScript</li></ul>');
+
+
+
+                        });
+        }
+    </script>
+    <script>
+        $(function () {
+            var PB = $.connection.progressHub;
+            console.log("Loading...");
+            PB.client.sendMessage = function (message, count) {
+                // update progress
+                console.log(count);
+                UpdateProgress(message, count);
+                //alert(message);
+            };
+
+            $.connection.hub.start().done(function () {
+                console.log("Приконнектились");
+                // call the method CallLongOperation defined in the Hub
+                PB.server.getCountAndMessage();
+                //$("#progressBar").hide();
+
+
+
+            });
+
+
+            // Update the progress bar
+            function UpdateProgress(message, count) {
+                // $("#progressBar").fadeIn("slow");
+                var result = $("#result");
+                if (count >= 100) { $("#X").click(); }
+                result.html(message);
+
+                //$("#progressBar").data("progressbar").value(count);
+
+                $("#progressBar").attr("aria-valuenow", count);
+                $("#progressBar").width(count + '%');
+                $("#progressBar").text(count + '%');
+                $("#nadpis").text(message);
+                // $("#progressBar").css("width", count);
+            }
+        });
+    </script>
+
+    <script>
+        //изменение размеров текстового поля при фокусе
+        $(function () {
+            $("input").focus(function () {
+                if ($(this).attr("name") != "Photo") {
+                    $(this).animate({ width: "500px" }, 500);
+                } else {
+                    $(this).animate({ width: "250px" }, 500);
+                }
+            }).blur(function () {
+                if ($(this).attr("name") != "Photo") {
+                    $(this).animate({ width: "230px" }, 500);
+                }
+                else {
+                    $(this).animate({ width: "50px" }, 500);
+                }
+
+            });
+
+
+
+        });
+    </script>
+    <script>
+
+
+
+        $('button').on('click', function ()
+        {
+            var _this = $(this);
+            var Id = _this.attr('id');
+            var Element = _this.attr("MElement");
+            var Defect = $("#D" + Element).val();
+            var Opisanie = $("#O" + Element).val();
+            var Sostoyanie = $("#S" + Element).val();
+            var Photo1 = $("#P1" + Element).val();
+            var Photo2 = $("#P2" + Element).val();
+            var Osmotr = _this.attr("MOsmotr");
+            //var Number = $("#N" + Element).val();
+            if (Id=='AddDefect')
+            {
+                console.log('Была нажата кнопка' + Element);
+                console.log('Нашли вот такие данные Defect=' + Defect + 'Opisanie=' + Opisanie + 'Sostoyanie=' + Sostoyanie);
+                var AddDiv = $('table#' + Element);
+                if (Photo1 != "" && Defect != 0) {
+                    $.post('@Url.Action("AddAD", "Osmotrs")', { DefectId: Defect, Opisanie: Opisanie, Sostoyanie: Sostoyanie, ElementId: Element, Photo1: Photo1, Photo2: Photo2 },
+                        function (data) {
+                            var S = data.split(';');
+                            if (S[0] != 'Ошибка') {
+                                AddDiv.append('<tr id=' + S[4] + ' style="text-align:center">' + '<td>' + S[0] + '</td>' + '<td><a data-fancybox="gallery" href="/Files/' + S[7] + '/' + S[5] + '"><img src = "/Files/' + S[7] + '/' + S[5] + '" class= "img-responsive " width="32Px" height="32Px"></a></td ><td><a data-fancybox="gallery" href="/Files/' + S[7] + '/' + S[6] + '"><img src = "/Files/' + S[7] + '/' + S[6] + '" class= "img-responsive"  width="32Px" height="32Px"></a></td><td><div class="ratingnew"><input type="hidden" name="val"  value="' + S[1] + '" /></div></td>' + '<td><input onchange="RefreshTextDefect("'+Id+'",this.value)" value="' + S[2]+'" class="form-control" style="width:230px" /></td>' + '<td><button type="button" id="RemoveDefect" ADId="' + S[4] + '" class="btn btn-outline-danger rem">Удалить дефект</button></td>' + '</tr>');
+                                $('div.ratingnew').red({
+                                    fx: 'full',
+                                    readOnly: 'true'
+                                });
+                                $('#' + S[4]).hide().fadeIn("slow");//появляем медленно строку
+                                console.log('Добавили в таблицу строку' + Element);
+                            }
+                            else {
+                                alert('Ошибка сохранения файла. '+S[1]);
+                            }
+                            // $('body').append('<ul><li>Java</li><li>JavaScript</li></ul>');
+
+
+
+                        });
+                }
+                else
+                {
+                    alert('Пожалуйста загрузите хоть одну фотографию дефекта и выберите дефект');
+                }
+            }
+            if (Id == 'END')
+            {
+                var GO = confirm('После этого действия вы не сможете вносить изменения в осмотр! Вы уверены, что хотите завершить редактирование осмотра? ')
+                if (GO) {
+                    $.post('@Url.Action("SaveOsmotr", "Osmotrs")', { OsmotrId: Osmotr },
+                        function (data) {
+                            if (data != null) {
+                                 var url = "@Url.Action("Index", "Houses")";
+                                alert('Осмотр отправлен на проверку в отдел эксплуатации. Ждите их решения. Редактирование осмотра теперь недоступно. Спасибо за выполненную работу!');
+                                $('#wrap_preloader').fadeIn(500);
+                                window.location.replace(url);
+
+                                }
+                        });
+                }
+            }
+
+        });
+
+
+
+
+    </script>
+    <script>
+        function RefreshTextDefect(id,text)
+        {
+            alert(id+";"+ text);
+  $.post('@Url.Action("RefreshTextAD", "Osmotrs")', { Id: id, text:text },
+      function (data)
+      {
+                    if (data == '') {
+                        TR.fadeOut('slow', function () { TR.remove(); });
+                        // TR.fadeOut('slow').remove();
+                        console.log('Текст изменен' + ADId);
+                    }
+                    else {
+                        alert(data);
+                    }
+
+
+      });
+
+        }
+    </script>
+    <script>
+        function RefreshCosts(id)
+        {
+           // alert(id+";"+ text);
+  $.post('@Url.Action("RefreshCost", "Osmotrs")', { OsmotrId: id,  },
+      function (data)
+      {
+          if (data == 'Ok') {
+              location.reload();
+                    }
+                    else {
+                        alert(data);
+                    }
+
+
+      });
+
+        }
+    </script>
+    <script>
+        $(document).on('click', '#RemoveDefect', function (e) {
+            console.log("Нажата кнопка удалить дефект!");
+            var _this = $(this);
+            var Id = _this.attr('id');
+            var isDelete = confirm("Вы уверены, что хотите удалить данный дефект?");
+
+            if (isDelete)
+            {
+            console.log('Нажата кнопка удалить активный дефект. Начинаем удаление.' + Id);
+            var ADId = _this.attr('ADId');
+            var TR = $('#' + ADId);
+            $.post('@Url.Action("RemoveAD", "Osmotrs")', { ADId: ADId },
+                function (data) {
+                    if (data == '') {
+                        TR.fadeOut('slow', function () { TR.remove(); });
+                        // TR.fadeOut('slow').remove();
+                        console.log('Данные удалены, строка почищена' + ADId);
+                    }
+                    else {
+                        console.log(data);
+                    }
+
+                });
+            }
+        });
+    </script>
+    <script>
+        $(document).on('click', '#SaveElement', function (e)
+        {
+            console.log("Нажата кнопка сохранить элемент");
+            var _this = $(this);
+            var Id = _this.attr('MId');
+            var OsmotrId = _this.attr('MOsmotr');
+            console.log('Нажата кнопка сохранить активный элемент. Начинаем сохранение.' + Id);
+            var MElementId = _this.attr('MElement');
+            var Photo1 = $('#PhotoElement1' + MElementId).val();
+            var Photo2 = $('#PhotoElement2' + MElementId).val();
+            var Material = $('#Mat' + MElementId).val();
+            var EdIzm = $('#EdIzm' + MElementId).val();
+            var Kolvo = $('#Kolvo' + MElementId).val();
+            var TR1 = $('#TR1' + MElementId);
+            var TR2 = $('#TR2' + MElementId);
+            var TR3 = $('#TR3' + MElementId);
+            var TR4 = $('#TR4' + MElementId);
+            var TR5 = $('#TR5' + MElementId);
+            var TR6 = $('#TR6' + MElementId);
+            var Sostoyanie = $('#SostoyanieElement' + MElementId).val();
+           // if (Photo1 == "" || Photo2 == "") { alert('Пожалуйста загрузите обе фотографии!'); }
+            console.log('Начинаем действие.' + Id + ' Photo1=' + Photo1 + ' Photo2=' + Photo2 );
+                $.post('@Url.Action("SaveElement", "Osmotrs")', { Id: Id, Photo1: Photo1, Photo2: Photo2, Sostoyanie:Sostoyanie,Kolvo:Kolvo,EdIzm:EdIzm,Material:Material},
+                    function (data)
+                    {
+                        var S = data.split(';');
+                        if (S[0] != 'Ошибка'&&S[0]!='') {
+
+
+                           // console.log('Начинаем исчезновение' + MElementId);
+                           //TR1.hide();
+                           // TR2.hide();
+                           // TR3.fadeOut(500, function ()
+                           // {
+                           //     TR4.fadeIn(500);
+                           //     TR5.fadeIn(500);
+                           //     TR6.fadeIn(500);
+                            //});
+                            console.log('Данные сохранены' + MElementId);
+                            $('#PhotoElement1' + MElementId).replaceWith(' <a data-fancybox="gallery" href="/Files/' + OsmotrId + '/' + S[0] + '" id= "PED1' + MElementId+'"><img src=" /Files/' + OsmotrId + '/' + S[0] + '" id = "PhotoElement1' + MElementId +'" class= "img - responsive" height = "32" width = "32" onerror = "this.style.display = "none"" ></a> ');
+                            $('#PhotoElement2' + MElementId).replaceWith(' <a data-fancybox="gallery" href="/Files/' + OsmotrId + '/' + S[1] + '" id= "PED2' + MElementId+'"><img src="/Files/' + OsmotrId + '/' + S[1] + '" id = "PhotoElement2' + MElementId +'" class= "img-responsive" height = "32" width = "32" onerror = "this.style.display = "none"" ></a> ');
+                            $('#DivSost' + MElementId).replaceWith('<div class="rating" id="DivSost' + MElementId+'"> <input id=SostoyanieElement"' + MElementId + '" type="hidden" name="val" value="' + S[2] + '" /> </div> ');
+                            $('div.rating').rating({
+                                fx: 'full',
+                                readOnly: 'true'
+                            });
+                            $('#EdIzm' + MElementId).attr('disabled', 'disabled');
+                            $('#Mat' + MElementId).attr('disabled', 'disabled');
+                            $('#Kolvo' + MElementId).attr('disabled', 'disabled');
+                            _this.replaceWith('<button type="button" id="EditElement" MId="' + Id + '" MElement="' + MElementId + '" MOsmotr="' + OsmotrId + '" class="btn btn-outline-success go">Изменить элемент </button>');
+
+                        }
+                        else
+                        {
+                            alert("Ошибка! "+S[1]);
+                        }
+
+                    });
+        });
+    </script>
+
+    <script>
+        $(document).on('click', '#EditElement', function (e) {
+            console.log("Нажата кнопка изменить элемент");
+            var _this = $(this);
+            var Id = _this.attr('MId');
+            var OsmotrId = _this.attr('MOsmotr');
+            console.log('Нажата кнопка изменить активный элемент. Начинаем сохранение.' + Id);
+            var MElementId = _this.attr('MElement');
+            var Photo1 = $('#PhotoElement1' + MElementId).val();
+            var Photo2 = $('#PhotoElement2' + MElementId).val();
+            var Sostoyanie = $('#SostoyanieElement' + MElementId).val();
+            console.log('Возвращаем строку для редактирования.' + Id + ' Photo1=' + Photo1 + ' Photo2=' + Photo2);
+            $('#PED1' + MElementId).replaceWith(' <input type="file" name="Photo" onchange="InputChange(this)" id="PhotoElement1' + MElementId + '" class="form-control-file" /> ');//заменяем блоки галереи инпутом
+            $('#PED2' + MElementId).replaceWith(' <input type="file" name="Photo" onchange="InputChange(this)" id="PhotoElement2' + MElementId + '" class="form-control-file" /> ');
+            $('#PhotoElement1' + MElementId).replaceWith(' <input type="file" name="Photo" onchange="InputChange(this)" id="PhotoElement1' + MElementId + '" class="form-control-file" /> ');//если нет блоков галереи то просто заменяем инпут инпутом
+            $('#PhotoElement2' + MElementId).replaceWith(' <input type="file" name="Photo" onchange="InputChange(this)" id="PhotoElement2' + MElementId + '" class="form-control-file" /> ');
+            $('#EdIzm' + MElementId).prop("disabled", false).prop("readonly", false);
+            console.log('Ед изм изменены.' + Id);
+            $('#Mat' + MElementId).prop("disabled", false).prop("readonly",false);
+            $('#Kolvo' + MElementId).prop("disabled", false).prop("readonly", false);
+            $('#DivSost' + MElementId).replaceWith('<div class="ratingElement" id="DivSost' + MElementId + '> <input id="SostoyanieElement' + MElementId + '" type="number" name="val" value="5" /> <input type="hidden" name="vote-id" value="SostoyanieElement' + MElementId + '" /> </div>');
+             $('div.ratingElement').rating({
+                 fx: 'full',
+            url:'@Url.Action("Zvezda", "Osmotrs")'
+            });
+
+
+
+            _this.replaceWith('<button type="button" id="SaveElement" MId="' + Id + '" MElement="' + MElementId + '" MOsmotr="' + OsmotrId + '" class="btn btn-success go">Сохранить элемент </button>');
+
+
+
+
+        });
+    </script>
+    <script>
+        function DefectsOn(eid) {
+            $("." + eid).fadeIn();
+            $(".B_" + eid).fadeOut();
+        }
+    </script>
+    <script>
+        function WorksOn(eid) {
+            $("." + eid).fadeIn();
+            $(".B_" + eid).fadeOut();
+        }
+    </script>
+    <script>
+        $(document).on('click', '#DeleteElement', function (e) {
+            console.log("Нажата кнопка удалить элемент");
+            var _this = $(this);
+            var Id = _this.attr('MId');
+            var OsmotrId = _this.attr('MOsmotr');
+            console.log('Нажата кнопка изменить активный элемент. Начинаем сохранение.' + Id);
+            var MElementId = _this.attr('MElement');
+            var Photo1 = $('#PhotoElement1' + MElementId).val();
+            var Photo2 = $('#PhotoElement2' + MElementId).val();
+            var Sostoyanie = $('#SostoyanieElement' + MElementId).val();
+            console.log('Скрываем таблицу.' + MElementId);
+            $.post('@Url.Action("DeleteElement", "Osmotrs")', { Id: Id },
+                function () {
+
+                    Tablica = $('#' + MElementId).fadeOut(500, function () {
+                        Tablica.after("<table id='T" + MElementId + "' width='100%' class='table-bordered table-striped'><tr width='100%' style='background-color:lightgray'><td width='80%' style='text-align:center'><h4>" + Tablica.attr("Name") + " (отсутствует)" + "</h4></td><td width='20%' style='text-align:center' ><button type='button' id='ReturnElement' class='btn btn-outline-success go' style='text-align:center' MOsmotr='" + OsmotrId + "' MElement='" + MElementId + "' MId='" + Id + "'>Вернуть элемент</button></td></tr></table>");
+                $('#T' + MElementId).hide().fadeIn(500);
+                    });
+                });
+        });
+    </script>
+    <script>
+        $(document).on('click', '#ReturnElement', function (e) {
+            console.log("Нажата кнопка вернуть элемент");
+            var _this = $(this);
+            var OsmotrId = _this.attr('MOsmotr');
+            var Id = _this.attr('MId');
+            console.log('Нажата кнопка изменить активный элемент. Начинаем сохранение.');
+            var MElementId = _this.attr('MElement');
+            console.log('Открываем таблицу. T' + MElementId);
+            var Tablica = $('#' + MElementId);
+            $.post('@Url.Action("ReturnElement", "Osmotrs")', { Id: Id },
+                function () {
+                    $('#T' + MElementId).fadeOut(500, function () {
+                        Tablica.fadeIn(500);
+                        $('#T' + MElementId).remove();
+                    });
+                });
+
+
+
+
+        });
+    </script>
+
+
+
+    <script>
+         function InputChange(e)
+        {
+             console.log("Нажата кнопка фото!");
+             console.log("Объект "+e);
+            var _this = $(e);
+            var Id = _this.attr('id');
+            var Name = _this.attr('name');
+            if (Name == 'Photo') {
+                console.log('Нажата кнопка добавить фото.' + Id);
+               // e.preventDefault();
+                var files = $(e)[0].files;
+                console.log('Файлы.' + files);
+                if (files.length > 0) {
+                    if (window.FormData !== undefined) {
+                        var data = new FormData();
+
+                        for (var x = 0; x < files.length; x++) {
+                            data.append("file" + x, files[x]);
+                        }
+
+
+                        $.ajax({
+                            type: "POST",
+                            url: '@Url.Action("Upload", "Osmotrs")',
+                            contentType: false,
+                            processData: false,
+                            data: data,
+                            success: function (result) {
+                                $('.toast').toast('show');
+
+
+                            },
+                            error: function (xhr, status, p3) {
+
+                                alert(xhr.responseText);
+                            }
+                        });
+                    } else {
+                        alert("Браузер не поддерживает загрузку файлов HTML5!");
+                    }
+                }
+
+
+            }
+
+        }
+    </script>
+    <script>
+        //Загрузка файлов (клик на картинке)
+        $('input').on('change', InputChange());
+    </script>
+    <script>
+        //рейтинг в звездах
+        $('div.rating').rating({
+            fx: 'full',
+            readOnly: 'true'
+        });
+
+    </script>
+    <script>
+        //рейтинг в звездах
+        $('div.ratingElement').rating({
+
+            fx: 'full',
+            url:'@Url.Action("Zvezda", "Osmotrs")'
+        });
+
+    </script>
+    <script>
+        //рейтинг в звездах
+        $('div.ratingElementRed').red({
+
+            fx: 'full',
+            url:'@Url.Action("ZvezdaRed", "Osmotrs")'
+        });
+
+    </script>
+    <script>
+     function Delete(id)
+     {
+
+                var GO = confirm('Вы действительно хотите удалить осмотр #'+id+'? Это действие нельзя будет отменить! ')
+                if (GO) {
+                    $.post('@Url.Action("DeleteOsmotr", "Osmotrs")', { OsmotrId: id },
+                        function (data) {
+                            if (data != null) {
+                                 var url = "@Url.Action("Index", "Houses")";
+                                alert('Осмотр успешно удален!');
+                                $('#wrap_preloader').fadeIn(500);
+                                window.location.replace(url);
+
+                                }
+                        });
+                }
+            }
+    </script>
+    <script>
+        //рейтинг в звездах
+        $('div.ratingRed').red({
+            fx: 'full',
+            readOnly: 'true'
+        }).attr("style='align:center'");
+
+    </script>
+}

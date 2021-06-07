@@ -2456,7 +2456,7 @@ namespace GKHNNC.Controllers
             return sostoyanie;
         }
 
-        public static void SFORMIROVATAKT(List<CompleteWork> CompleteWorks, List<VipolnennieUslugi> VipolnennieUslugi, string Month, string GEU, string Year, string Ulica,string Dom, string Nachalnik, string Prikaz, string patch, string Summa, string EU)
+        public static void SFORMIROVATAKT(List<CompleteWork> CompleteWorks, List<VipolnennieUslugi> VipolnennieUslugi, string Month, string GEU, string Year, string Ulica,string Dom, string Nachalnik, string Prikaz, string patch, string Summa, string EU, bool GG = true)
         {
 
             if (VipolnennieUslugi.Count == 0)
@@ -2476,7 +2476,11 @@ namespace GKHNNC.Controllers
             ApExcel.ScreenUpdating = false;//и не обновляемо
             ApExcel.StandardFont = "TimesNewRoman";
 
-
+            string GEUEU = "ЭУ-";
+            if (!GG)
+            {
+                GEUEU = "ЖЭУ-";
+            }
 
             int from = 1;
 
@@ -2650,7 +2654,7 @@ namespace GKHNNC.Controllers
             from++;
             WS.Cells[from, 1] = "являющегося собственником квартиры №_____, находящейся в данном многоквартирном доме*, " +
                 "с одной стороны, и Федеральное государственное бюджетное учреждение 'Жилищно-коммунальное управление Новосибирского научного центра' (ФГБУ 'ЖКУ ННЦ')" +
-"именуемое в дальнейшем “Исполнитель”,  в лице начальника ЭУ-" + EU + " " + Nachalnik + ", действующего на основании доверенности №" + Prikaz;
+"именуемое в дальнейшем “Исполнитель”,  в лице начальника "+GEUEU + EU + " " + Nachalnik + ", действующего на основании доверенности №" + Prikaz;
             range = WS.get_Range("A" + from, "E" + from);
             range.Merge(Type.Missing);
             range.Font.Bold = false;
@@ -2857,7 +2861,7 @@ namespace GKHNNC.Controllers
 
             startStroka++;
             from++;
-            WS.Cells[startStroka, 1] = "Исполнитель _________________________________________     ____________________";
+            WS.Cells[startStroka, 1] = "Исполнитель в лице начальника "+GEUEU + EU + " " + Nachalnik +"    ____________________";
             range = WS.get_Range("A" + from, "E" + from);
             range.Merge(Type.Missing);
             range.Font.Bold = true;
@@ -3174,7 +3178,7 @@ namespace GKHNNC.Controllers
 
             startStroka++;
             from++;
-            WS.Cells[startStroka, 1] = "Исполнитель _________________________________________     ____________________";
+            WS.Cells[startStroka, 1] = "Исполнитель в лице начальника "+GEUEU + EU + " " + Nachalnik +"    ____________________";
             range = WS.get_Range("A" + from, "D" + from);
             range.Merge(Type.Missing);
             range.Font.Bold = true;

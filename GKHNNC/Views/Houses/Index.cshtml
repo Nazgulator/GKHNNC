@@ -14,9 +14,17 @@
 
     <p><a href="/Home/Index" class="btn btn-success btn-block"><< В главное меню </a> </p>
     <div class="alert-success">
-        <p>С 30.11.2020 Добавлена возможность фиксировать выполнение работ отделом голосований.</p>
-        <p>Выполненная работа отображается зелёным в осмотре. </p>
+        <p>20.05 Исправлен глюк по добавлению необходимых работ</p>
+        <p>Если созданный осмотр не отображается, нажмите кнопку "Сбросить" ниже. </p>
     </div>
+    <div class="alert-danger">
+        <p>После заполнения всех данных по осмотру</p>
+        <p>Нажмите кнопку "Завершить осмотр" </p>
+    </div>
+    @if (User.IsInRole("Администратор"))
+    {
+        <button class="btn btn-block btn-success" onclick="Closeall()"> Закрыть все текущие осмотры </button>
+    }
     @if (ViewBag.WorkPoisk == "")
     {
         <table class="table table-bordered table-striped">
@@ -29,7 +37,7 @@
                     <input id="toD" type="date" class="form-control" value="@ViewBag.ToD" title="Дата конца интервала" />
                 </td>
                 <td>
-                    <button class="btn btn-block btn-success" onclick="window.location.replace('/Houses/Index')"> Сбросить </button>
+                    <button class="btn btn-block btn-success" onclick="window.location.replace('/Houses/Index?obnovit=true')"> Сбросить </button>
                 </td>
             </tr>
 
@@ -124,11 +132,11 @@
                                 {
                                     string sostoyanie = "btn btn-secondary";
                                     if (item.Osmotrs[j].Sostoyanie > 1) { sostoyanie = "btn btn-success"; }
-                                    @Html.ActionLink("Осмотр от " + item.Osmotrs[j].Date.ToShortDateString(), "Info", "Osmotrs", new { id = item.Osmotrs[j].AdresId, date = item.Osmotrs[j].Date }, new { @type = "button", @class = sostoyanie });
+                                    @Html.ActionLink("Осмотр от " + item.Osmotrs[j].Date.ToString("dd.MM.yyyy"), "Info", "Osmotrs", new { id = item.Osmotrs[j].AdresId, date = item.Osmotrs[j].Date }, new { @type = "button", @class = sostoyanie });
                                 }
                                 else
                                 {
-                                    @Html.ActionLink("Изменить осмотр от " + item.Osmotrs[j].Date.ToShortDateString(), "Create", "Osmotrs", new { id = item.Osmotrs[j].AdresId, date = item.Osmotrs[j].Date }, new { @type = "button", @class = "btn btn-primary" });
+                                    @Html.ActionLink("Изменить осмотр от " + item.Osmotrs[j].Date.ToString("dd.MM.yyyy"), "Create", "Osmotrs", new { id = item.Osmotrs[j].AdresId, date = item.Osmotrs[j].Date }, new { @type = "button", @class = "btn btn-primary" });
                                 }
 
                             }
@@ -414,8 +422,8 @@
             }
         </table>
     }
-    <br/>
-        <p><button class="btn btn-block btn-success" onclick="Export()"> Экспорт в Эксель </button></p>
+    <br />
+    <p><button class="btn btn-block btn-success" onclick="Export()"> Экспорт в Эксель </button></p>
     <p><a href="/Home/Index" class="btn btn-success btn-block"><< В главное меню </a> </p>
     <!-- Modal -->
     <div class="modal fade" id="Download" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -453,6 +461,28 @@
     @Scripts.Render("~/scripts/bootstrap.bundle.js")
     @Scripts.Render("/scripts/ExportToExcel/excelexportjs.js")
     <link rel="stylesheet" href="~/Scripts/JqueryThemes/ui-lightness/jquery-ui.css" />
+    <script>
+        function Closeall ()
+        {
+            var GO = confirm('Вы уверены, что хотите закрыть все текущие осмотры? ')
+            if (GO) {
+                var GO2 = confirm('Осмотры будут переданы в отдел ОЭЖФ и недоступны для редактирования ЭУ. Закрытие осмотров должно быть санкционировано администрацией. Закрыть все текущие осмотры? ')
+                if (GO2)
+                {
+                      $.post('@Url.Action("CloseAll", "Houses")', 
+                    function (data) {
+                   
+                      
+                        window.location.replace('/Houses/Index?obnovit=true');
+                          }
+                      );
+
+                }
+
+
+            }
+        }
+    </script>
     <script>
  $("#Search").autocomplete({
         source: '@Url.Action("SearchAdres", "Houses")',
@@ -509,6 +539,7 @@
             that.value = "";
         });
     </script>
+
     <script>
 
 
@@ -557,7 +588,7 @@
             var to = $('#toD').val().split('-');
             var t = to[0] + "/" + to[1] + "/" + to[2];
             var WP = $('#WorkPoisk').val();
-          
+
 
             var images = $("img");
             for (var i = 0; i < images.length; i++) {

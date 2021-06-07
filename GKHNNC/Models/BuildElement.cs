@@ -21,7 +21,8 @@ namespace GKHNNC.Models
         public int EdIzm { get; set; }
         [Display(Name = "Количество")]
         public string Count { get; set; }
-
+        [Display(Name = "АдресИД")]
+        public int AdresId { get; set; }
 
 
 

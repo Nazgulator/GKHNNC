@@ -6,7 +6,7 @@
 
 <h2><Center><b>Адреса</b></Center></h2>
 
-
+@Html.DropDownList("GEU", new SelectList(ViewBag.GEU, "value", "text"), new { @class = "form-control btn btn-outline-success" })
 <p><a href="/Adres/Create" class="btn btn-success btn-default" style="width:100%">Добавить новый адрес &raquo;</a> </p>
 <table class="table">
     <tr>
@@ -16,40 +16,57 @@
         <th>@Html.DisplayNameFor(model => model.Ploshad)</th>
         <th>@Html.DisplayNameFor(model => model.ActivePloshad)</th>
         <th>@Html.DisplayNameFor(model => model.GEU)</th>
-        <th>@Html.DisplayNameFor(model => model.UEV)</th>
-        <th>@Html.DisplayNameFor(model => model.OBSD)</th>
+        <th>@Html.DisplayNameFor(model => model.EUId)</th>
         <th>Опции</th>
     </tr>
 
     @foreach (var item in Model)
     {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Adress)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Ploshad)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ActivePloshad)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.GEU)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.UEV)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.OBSD)
-        </td>
-        <td>
-            @Html.ActionLink("Редактировать", "Edit", new { id = item.Id }) |
-            @Html.ActionLink("Удалить", "Delete", new { id = item.Id })
-        </td>
-    </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Adress)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Ploshad)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ActivePloshad)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GEU)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EUId)
+            </td>
+            <td>
+                @Html.ActionLink("Редактировать", "Edit", new { id = item.Id }) |
+                @Html.ActionLink("Удалить", "Delete", new { id = item.Id })
+            </td>
+        </tr>
     }
 
 </table>
 <p><a href="/Adres/Upload" class="btn btn-success btn-block">Загрузить коды УЭВ  &raquo;</a> </p>
 <p><a href="/Adres/APUpload" class="btn btn-success btn-block">Загрузить активные площади  &raquo;</a> </p>
 <p><a href="/Home/Index" class="btn btn-success btn-block">В главное меню &raquo;</a> </p>
+
+@section Scripts {
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+    @Scripts.Render("~/scripts/jquery-3.3.1.js")
+    @Scripts.Render("~/Scripts/chosen.jquery.min.js")
+<script>
+    $('#GEU').change(function () {
+       
+    var G = $('#GEU').val();//выбраное значение в селекте
+       // alert("Чушь");
+        window.location.replace('/Adres/Index?geu=' + parseInt(G));
+        
+
+
+    //идем в комплит воркс контроллер и там действие поиск по жэу отправляем выбранное значение в селекте, получаем дату список всех домов по жэу из БД перекинутых в лист стринг
+
+    // alert("PING!");
+
+    });
+</script>
+}

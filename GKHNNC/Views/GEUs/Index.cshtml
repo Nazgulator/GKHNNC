@@ -24,6 +24,9 @@
         <th>
             @Html.DisplayNameFor(model => model.IngenerPTO)
         </th>
+        <th>
+            @Html.DisplayNameFor(model => model.EU)
+        </th>
         <th></th>
     </tr>
 
@@ -40,6 +43,9 @@
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.IngenerPTO)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.EU)
         </td>
         <td>
             @Html.ActionLink("Редактировать", "Edit", new { id = item.Id }) |
