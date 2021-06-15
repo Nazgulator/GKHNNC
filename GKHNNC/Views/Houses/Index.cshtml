@@ -24,7 +24,9 @@
     @if (User.IsInRole("Администратор"))
     {
         <button class="btn btn-block btn-success" onclick="Closeall()"> Закрыть все текущие осмотры </button>
+
     }
+    <button class="btn btn-block btn-success" onclick="location.href='@Url.Action("OtchetAll", "Houses")'"> Сформировать отчет по необходимым работам </button>
     @if (ViewBag.WorkPoisk == "")
     {
         <table class="table table-bordered table-striped">
@@ -469,10 +471,10 @@
                 var GO2 = confirm('Осмотры будут переданы в отдел ОЭЖФ и недоступны для редактирования ЭУ. Закрытие осмотров должно быть санкционировано администрацией. Закрыть все текущие осмотры? ')
                 if (GO2)
                 {
-                      $.post('@Url.Action("CloseAll", "Houses")', 
+                      $.post('@Url.Action("CloseAll", "Houses")',
                     function (data) {
-                   
-                      
+
+
                         window.location.replace('/Houses/Index?obnovit=true');
                           }
                       );
@@ -481,6 +483,24 @@
 
 
             }
+        }
+    </script>
+    <script>
+        function OtchetAll ()
+        {
+           
+                      $.post('@Url.Action("OtchetAll", "Houses")',
+                    function (data) {
+
+
+                        window.location.replace('/Houses/Index?obnovit=true');
+                          }
+                      );
+
+                
+
+
+            
         }
     </script>
     <script>

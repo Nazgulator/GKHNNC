@@ -53,7 +53,7 @@ namespace GKHNNC.Controllers
                     {
                         O = db.Osmotrs.Where(x => x.Id == O.Id).Include(x => x.Adres).First();
                         AE = db.ActiveElements.Where(x => x.OsmotrId == O.Id).Include(x => x.Element).Include(x => x.Material).Include(x => x.Izmerenie).OrderBy(x => x.Element.ElementTypeId).ToList();
-                        AOW = db.ActiveOsmotrWorks.Where(x => x.OsmotrId == O.Id).Include(x => x.OsmotrWork).ToList();
+                        AOW = db.ActiveOsmotrWorks.Where(x => x.OsmotrId == O.Id && x.OsmotrWork.OtchetId == 0).Include(x => x.OsmotrWork).ToList();
                       
                     }
                     catch { }
@@ -66,7 +66,7 @@ namespace GKHNNC.Controllers
                 {
                    O= db.Osmotrs.Where(x => x.Id == id).Include(x => x.Adres).First();
                     AE = db.ActiveElements.Where(x => x.OsmotrId == O.Id).Include(x => x.Element).Include(x => x.Material).Include(x => x.Izmerenie).OrderBy(x => x.Element.ElementTypeId).ToList();
-                    AOW = db.ActiveOsmotrWorks.Where(x => x.OsmotrId == O.Id).Include(x => x.OsmotrWork).ToList();
+                    AOW = db.ActiveOsmotrWorks.Where(x => x.OsmotrId == O.Id&&x.OsmotrWork.OtchetId==0).Include(x => x.OsmotrWork).ToList();
 
                 }
                 catch

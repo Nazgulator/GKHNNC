@@ -22,8 +22,10 @@ namespace GKHNNC.Models
         public DOMPart DOMPart { get; set; }
         [Display(Name = "Часть дома ид")]
         public int DOMPartId { get; set; }
-        
+        [Display(Name = "Отчет ИД")]
+        public int OtchetId { get; set; }
 
-       // public virtual ICollection<Sopostavlenie> Sopostavlenies { get; set; }
+
+        // public virtual ICollection<Sopostavlenie> Sopostavlenies { get; set; }
     }
 }

@@ -1,0 +1,410 @@
+﻿@model IEnumerable<GKHNNC.Models.OtchetNeobhodimieRaboti>
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Отчет по всем домам</title>
+</head>
+<body>
+    <h2>Отчет по всем домам</h2>
+
+    <p><a href="/Home/Index" class="btn btn-success btn-block"><< В главное меню </a> </p>
+
+    <table id="tableData" class="table table-bordered table-striped">
+        <tr>
+            <th></th>
+            <th></th>
+            <th colspan="2">Бордюры</th>
+            <th colspan="2">Контейнерная площадка</th>
+            <th colspan="2">Малые формы</th>
+            <th colspan="2">Ограждения</th>
+            <th colspan="8"></th>
+          
+          
+        </tr>
+        <tr>
+            <th>
+                ЭУ
+            </th>
+
+            <th>
+                Адрес
+            </th>
+            <th>
+                Покраска м2
+            </th>
+            <th>
+                Мелкий ремонт м2
+            </th>
+            <th>
+                Покраска м2
+            </th>
+            <th>
+                Мелкий ремонт м2
+            </th>
+            <th>
+                Покраска м2
+            </th>
+            <th>
+                Мелкий ремонт м2
+            </th>
+            <th>
+                Покраска м2
+            </th>
+            <th>
+                Мелкий ремонт м2
+            </th>
+            <th>
+                Таблички шт
+            </th>
+            <th>
+                Стенды шт
+            </th>
+            <th>
+                Песок тонн
+            </th>
+            <th>
+                Грунт тонн
+            </th>
+            <th>
+                Щебень тонн
+            </th>
+            <th>
+                Отсев тонн
+            </th>
+            <th>
+                Вывоз снега м3
+            </th>
+            <th>
+                Мех. уборка машиночас.
+            </th>
+
+
+
+
+
+        </tr>
+        @{bool Y = false; }
+        @foreach (var item in Model)
+        {
+            decimal Bordurs = item.AE.Where(x => x.ElementId == 1217).First().Kolichestvo;
+            decimal Ploshadkas = 0;
+            decimal Malie = 0;
+            decimal Tablichki = 0;
+            decimal Stendi = 0;
+            decimal Pesok = 0;
+            decimal Grunt = 0;
+            decimal Sheben = 0;
+            decimal Otsev = 0;
+            decimal Sneg = 0;
+            decimal Mehuborka = 0;
+
+            try   { Tablichki = item.AOW.Where(x => x.OsmotrWorkId == 162).First().Number; }
+            catch { }
+            try { Stendi = item.AOW.Where(x => x.OsmotrWorkId == 163).First().Number; }
+            catch { }
+            try { Pesok = item.AOW.Where(x => x.OsmotrWorkId == 154).First().Number; }
+            catch { }
+            try { Grunt = item.AOW.Where(x => x.OsmotrWorkId == 155).First().Number; }
+            catch { }
+            try { Sheben = item.AOW.Where(x => x.OsmotrWorkId == 156).First().Number; }
+            catch { }
+            try { Otsev = item.AOW.Where(x => x.OsmotrWorkId == 157).First().Number; }
+            catch { }
+            try { Tablichki = item.AOW.Where(x => x.OsmotrWorkId == 162).First().Number; }
+            catch { }
+            try { Sneg = item.AOW.Where(x => x.OsmotrWorkId == 158).First().Number; }
+            catch { }
+            try { Mehuborka = item.AOW.Where(x => x.OsmotrWorkId == 159).First().Number; }
+            catch { }
+            try
+            { Ploshadkas =item.AOW.Where(x => x.OsmotrWorkId == 160).First().Number; }
+            catch { }
+            try
+            { Malie = item.AOW.Where(x => x.OsmotrWorkId == 161).First().Number; }
+            catch
+            {
+
+            }
+            decimal Ogragdenia = 0;
+            try
+            { Ogragdenia = item.AE.Where(x => x.ElementId == 1218).First().Kolichestvo; }
+            catch
+            {
+
+            }
+
+            string Cl1 = "table-warning";
+            string Cl2 = "table-warning";
+            string Cl3 = "table-warning";
+            string Cl4 = "table-warning";
+            string P = "table-warning";
+            string O = "table-warning";
+            string G = "table-warning";
+            string S = "table-warning";
+            string Sn = "table-warning";
+            string M = "table-warning";
+            if (Bordurs > 0) { Cl1 = ""; }
+            if (Ploshadkas > 0) { Cl2 = ""; }
+            if (Malie > 0) { Cl3 = ""; }
+            if (Ogragdenia > 0) { Cl4 = ""; }
+            if (Pesok >0) { P = ""; }
+            if (Otsev > 0) { O = ""; }
+            if (Grunt > 0) { G = ""; }
+            if (Sheben > 0) { S = ""; }
+            if (Sneg > 0) { Sn = ""; }
+            if (Mehuborka > 0) { M = ""; }
+
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Adres.EUId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Adres.Adress)
+            </td>
+            <td class="@Cl1">
+
+                @Bordurs
+            </td>
+            <td class="@Cl1">
+
+                @Math.Round(Bordurs * 0.05m, 2)
+            </td>
+
+            <td class="@Cl2">
+                @Ploshadkas
+            </td>
+            <td class="@Cl2">
+                @Math.Round(Ploshadkas * 0.05m, 2)
+            </td>
+            <td class="@Cl3">
+                @Malie
+            </td>
+            <td class="@Cl3">
+                @Math.Round(Malie * 0.05m, 2)
+            </td>
+            <td class="@Cl4">
+                @Ogragdenia
+            </td>
+            <td class="@Cl4">
+                @Math.Round(Ogragdenia * 0.05m, 2)
+            </td>
+            <td>
+                @Tablichki
+            </td>
+            <td>
+                @Stendi
+            </td>
+            <td class="@P">
+                @Pesok
+            </td>
+            <td class="@G">
+                @Grunt
+            </td>
+            <td class="@S">
+                @Sheben
+            </td>
+            <td class="@O">
+                @Otsev
+            </td>
+            <td>
+                @Sneg
+            </td>
+            <td>
+                @Mehuborka
+            </td>
+        </tr>
+        }
+
+    </table>
+
+
+    <br />
+    <p><button class="btn btn-block btn-success" onclick="Export()"> Экспорт в Эксель </button></p>
+    <p><a href="/Home/Index" class="btn btn-success btn-block"><< В главное меню </a> </p>
+    <!-- Modal -->
+    <div class="modal fade" id="Download" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4>Загрузка данных, пожалуйста подождите...</h4>
+                    <button id="X" type="button" class="close hide" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="progress">
+
+                        <div id="progressBar" class="progress-bar progress-bar-striped bg-success progress-bar-animated" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                        <center>
+                            <label id="nadpis">Загрузка данных...</label>
+                        </center>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+@section Scripts
+    {
+
+        @Scripts.Render("~/scripts/bootstrap.bundle.js")
+        @Scripts.Render("https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js")
+
+        @Scripts.Render("~/scripts/jquery-3.4.1.js")
+        @Scripts.Render("~/scripts/jquery-ui-1.12.1.js")
+        @Scripts.Render("~/scripts/jquery.unobtrusive-ajax.js")
+        @Scripts.Render("~/scripts/bootstrap.js")
+        @Scripts.Render("~/scripts/bootstrap.bundle.js")
+        @Scripts.Render("/scripts/ExportToExcel/excelexportjs.js")
+        <link rel="stylesheet" href="~/Scripts/JqueryThemes/ui-lightness/jquery-ui.css" />
+        <script>
+        function Closeall ()
+        {
+            var GO = confirm('Вы уверены, что хотите закрыть все текущие осмотры? ')
+            if (GO) {
+                var GO2 = confirm('Осмотры будут переданы в отдел ОЭЖФ и недоступны для редактирования ЭУ. Закрытие осмотров должно быть санкционировано администрацией. Закрыть все текущие осмотры? ')
+                if (GO2)
+                {
+                      $.post('@Url.Action("CloseAll", "Houses")',
+                    function (data) {
+
+
+                        window.location.replace('/Houses/Index?obnovit=true');
+                          }
+                      );
+
+                }
+
+
+            }
+        }
+        </script>
+        <script>
+        function OtchetAll ()
+        {
+
+                      $.post('@Url.Action("OtchetAll", "Houses")',
+                    function (data) {
+
+
+                        window.location.replace('/Houses/Index?obnovit=true');
+                          }
+                      );
+
+
+
+
+
+        }
+        </script>
+        <script>
+ $("#Search").autocomplete({
+        source: '@Url.Action("SearchAdres", "Houses")',
+        minLength: 1,
+        select: function (event, ui)
+        {
+
+            var _this = ui.item.label;
+            var from = $('#fromD').val().split('-');
+
+            var f = from[0] + "/" + from[1] + "/" + from[2];
+
+            var to = $('#toD').val().split('-');
+            var t = to[0] + "/" + to[1] + "/" + to[2];
+            var WP = $('#WorkPoisk').val();
+            window.location.replace('/Houses/Index?Adres=' + _this + '&fromD=' + f+'&toD='+t+'&WorkPoisk='+WP);
+
+
+        },
+
+        open: function (event, ui) {
+        $(this).removeClass('ui-autocomplete-loading');
+
+        }
+    });
+
+
+         function GoHome () {
+
+             var _this = $('#Search').val();
+            var from = $('#fromD').val().split('-');
+
+            var f = from[0] + "/" + from[1] + "/" + from[2];
+
+            var to = $('#toD').val().split('-');
+            var t = to[0] + "/" + to[1] + "/" + to[2];
+            var WP = $('#WorkPoisk').val();
+            window.location.replace('/Houses/Index?Adres=' + _this + '&fromD=' + f + '&toD=' + t + '&WorkPoisk=' + WP);
+
+
+        }
+
+    $('#Search').on('keypress', function () {
+        var that = this;
+
+        setTimeout(function () {
+            var res = /[^а-я,0-9,А-Я ]/g.exec(that.value);
+            console.log(res);
+            that.value = that.value.replace(res, '');
+        }, 0);
+        });
+        $('#Search').click(function () {
+            var that = this;
+            that.value = "";
+        });
+        </script>
+
+        <script>
+
+
+            $('#WorkPoisk').on('keypress', function () {
+                var that = this;
+
+                setTimeout(function () {
+                    var res = /[^а-я,0-9,А-Я ]/g.exec(that.value);
+                    console.log(res);
+                    that.value = that.value.replace(res, '');
+                }, 0);
+            });
+            $('#WorkPoisk').click(function () {
+                var that = this;
+                that.value = "";
+            });
+        </script>
+
+        <script>
+            function NewOsmotr(id, date) {
+                alert(id + ';' + date);
+                var GO = confirm('Вы уверены, что хотите создать новый осмотр? ')
+                if (GO) {
+
+                    /**/
+                    window.location.replace('/Osmotrs/Create?id=' + id + '&date=' + date + '&NewOsmotr=true');
+                    /**/
+
+                }
+            }
+        </script>
+        <script>
+            function OpenModal(id) {
+                $('#' + id).modal('show');
+            }
+        </script>
+
+        <script>
+            function Export() {
+
+                $("#tableData").excelexportjs({
+                    containerid: "tableData",
+                    datatype: 'table'
+                });
+
+            };
+        </script>
+    }

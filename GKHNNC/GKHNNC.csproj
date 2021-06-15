@@ -330,6 +330,7 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\ActiveElement.cs" />
+    <Compile Include="Models\OtchetNeobhodimieRaboti.cs" />
     <Compile Include="Models\WebUser.cs" />
     <Compile Include="Models\EU.cs" />
     <Compile Include="Models\LogAutoscan.cs" />
@@ -1911,6 +1912,7 @@
     <Content Include="Views\CompleteWorks\PartialViewSpisokEu.cshtml" />
     <Content Include="Views\Osmotrs\OsmotrMobile.cshtml" />
     <Content Include="Views\Osmotrs\ViewMobile.cshtml" />
+    <Content Include="Views\Houses\OtchetAll.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

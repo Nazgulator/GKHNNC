@@ -62,6 +62,44 @@ namespace GKHNNC.Controllers
             return Json("ok");
         }
 
+        public ActionResult OtchetAll()
+        {
+            List<OtchetNeobhodimieRaboti> Result = new List<OtchetNeobhodimieRaboti>();
+         
+
+            DateTime D = DateTime.Now;
+            try
+            {
+                List<int> Adresa = db.Adres.Select(x=>x.Id).ToList();
+                foreach (int A in Adresa)
+                {
+                    try
+                    {
+                        OtchetNeobhodimieRaboti X = new OtchetNeobhodimieRaboti();
+                        X.Osmotr = db.Osmotrs.Where(x => x.AdresId == A).OrderByDescending(x=>x.Id).Include(x => x.Adres).First();
+                        X.Adres = X.Osmotr.Adres;
+                        X.AE = db.ActiveElements.Where(x => x.OsmotrId == X.Osmotr.Id && (x.ElementId == 1217 || x.ElementId == 1218)).Include(x => x.Element).ToList();
+                        X.AOW = db.ActiveOsmotrWorks.Where(x => x.OsmotrId == X.Osmotr.Id && x.OsmotrWork.OtchetId == 1).Include(x => x.OsmotrWork).ToList();
+                        if (X.AE.Count > 0)
+                        {
+                            Result.Add(X);
+                        }
+                    }
+                    catch
+                    {
+
+                    }
+
+                   
+                }
+            }
+            catch (Exception ex)
+            {
+              //  return Json("error");
+            }
+            return View(Result.OrderBy(x=>x.Adres.Adress).ToList());
+        }
+
         public ActionResult Index(string Adres = "", string fromD = "", string toD = "", string WorkPoisk = "", bool obnovit = false)
         {
             ViewBag.WorkPoisk = WorkPoisk;

@@ -30,7 +30,6 @@ namespace GKHNNC.Controllers
 
             if (CompleteWorks.Count == 0)
             {
-               
                 return;
             } 
             Excel.Application ApExcel = new Excel.Application();
@@ -2280,7 +2279,7 @@ namespace GKHNNC.Controllers
        
             try
             {
-                AOW = db.ActiveOsmotrWorks.Where(x => x.OsmotrId == O.Id&& !x.Gotovo).OrderBy(x => x.ElementId).Include(x=>x.OsmotrWork).Include(x=>x.OsmotrWork.Izmerenie).ToList();
+                AOW = db.ActiveOsmotrWorks.Where(x => x.OsmotrId == O.Id&& !x.Gotovo && x.OsmotrWork.OtchetId==0).OrderBy(x => x.ElementId).Include(x=>x.OsmotrWork).Include(x=>x.OsmotrWork.Izmerenie).ToList();
                 Elements = AOW.Select(x => x.ElementId).Distinct().ToList();
             }
             catch
