@@ -58,6 +58,12 @@ namespace GKHNNC.Models
         public int OBSD { get; set; }
         [Display(Name = "ЭУ")]
         public int EUId { get; set; }
+        [Display(Name = "МКД")]
+        public bool MKD { get; set; }
+        [Display(Name = "Тип ИД")]
+        public int TypeId { get; set; }
+        [Display(Name = "Type")]
+        public AdresType Type { get; set; }
         //для подгрузки через ID
         public ICollection<VipolnennieUslugi> VipolnennieUslugis { get; set; }
         public Adres()

@@ -70,7 +70,7 @@ namespace GKHNNC.Controllers
             DateTime D = DateTime.Now;
             try
             {
-                List<int> Adresa = db.Adres.Select(x=>x.Id).ToList();
+                List<int> Adresa = db.Adres.Where(x=>x.MKD).Select(x=>x.Id).ToList();
                 foreach (int A in Adresa)
                 {
                     try
@@ -80,14 +80,16 @@ namespace GKHNNC.Controllers
                         X.Adres = X.Osmotr.Adres;
                         X.AE = db.ActiveElements.Where(x => x.OsmotrId == X.Osmotr.Id && (x.ElementId == 1217 || x.ElementId == 1218)).Include(x => x.Element).ToList();
                         X.AOW = db.ActiveOsmotrWorks.Where(x => x.OsmotrId == X.Osmotr.Id && x.OsmotrWork.OtchetId == 1).Include(x => x.OsmotrWork).ToList();
-                        if (X.AE.Count > 0)
-                        {
+                      //  if (X.AE.Count > 0)
+                      //  {
                             Result.Add(X);
-                        }
+                      //  }
                     }
                     catch
                     {
-
+                        OtchetNeobhodimieRaboti X = new OtchetNeobhodimieRaboti();
+                        X.Adres = db.Adres.Where(x=>x.Id == A).First();
+                        Result.Add(X);
                     }
 
                    

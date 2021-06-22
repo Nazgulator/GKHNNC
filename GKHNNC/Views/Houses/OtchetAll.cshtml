@@ -90,7 +90,8 @@
         @{bool Y = false; }
         @foreach (var item in Model)
         {
-            decimal Bordurs = item.AE.Where(x => x.ElementId == 1217).First().Kolichestvo;
+            decimal Bordurs = 0;
+
             decimal Ploshadkas = 0;
             decimal Malie = 0;
             decimal Tablichki = 0;
@@ -136,6 +137,11 @@
             {
 
             }
+            try
+            {
+                Bordurs = item.AE.Where(x => x.ElementId == 1217).First().Kolichestvo;
+            }
+            catch { }
 
             string Cl1 = "table-warning";
             string Cl2 = "table-warning";

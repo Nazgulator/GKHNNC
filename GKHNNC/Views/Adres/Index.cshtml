@@ -15,6 +15,8 @@
         </th>
         <th>@Html.DisplayNameFor(model => model.Ploshad)</th>
         <th>@Html.DisplayNameFor(model => model.ActivePloshad)</th>
+        <th>@Html.DisplayNameFor(model => model.MKD)</th>
+        <th>@Html.DisplayNameFor(model => model.Type.Name)</th>
         <th>@Html.DisplayNameFor(model => model.GEU)</th>
         <th>@Html.DisplayNameFor(model => model.EUId)</th>
         <th>Опции</th>
@@ -22,27 +24,33 @@
 
     @foreach (var item in Model)
     {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Adress)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Ploshad)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ActivePloshad)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.GEU)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EUId)
-            </td>
-            <td>
-                @Html.ActionLink("Редактировать", "Edit", new { id = item.Id }) |
-                @Html.ActionLink("Удалить", "Delete", new { id = item.Id })
-            </td>
-        </tr>
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Adress)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Ploshad)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ActivePloshad)
+        </td>
+        <td>
+            @Html.CheckBoxFor(modelItem => item.MKD, new { @class = "form-control" ,@disabled = "disabled" })
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Type.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.GEU)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.EUId)
+        </td>
+        <td>
+            @Html.ActionLink("Редактировать", "Edit", new { id = item.Id }) |
+            @Html.ActionLink("Удалить", "Delete", new { id = item.Id })
+        </td>
+    </tr>
     }
 
 </table>

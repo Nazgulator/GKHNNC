@@ -137,8 +137,6 @@
                             if (Model.Elements[i].Element.ElementTypeId == Model.DOMParts[j].Id)
                             {
                                 string Part = "Partial" + Model.Elements[i].Id.ToString();
-
-
                                 @Html.Action("ViewActiveDefect", "Osmotrs", new { ElementId = Model.Elements[i].ElementId, OsmotrId = Model.Id, AdresId = Model.AdresId, Date = Model.Date, DOMPartId = DPI })
                                 DPI = 0;
                             }

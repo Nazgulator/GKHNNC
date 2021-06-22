@@ -330,6 +330,7 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\ActiveElement.cs" />
+    <Compile Include="Models\AdresType.cs" />
     <Compile Include="Models\OtchetNeobhodimieRaboti.cs" />
     <Compile Include="Models\WebUser.cs" />
     <Compile Include="Models\EU.cs" />

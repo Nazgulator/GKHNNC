@@ -18,6 +18,8 @@ namespace GKHNNC.Models
         public string Doverennost { get; set; }
         [Display(Name = "Инженер ПТО")]
         public string IngenerPTO { get; set; }
+        [Display(Name = "Инженер ОЭЖФ")]
+        public string IngenerOEGF { get; set; }
         [Display(Name = "ЭУ")]
         public int EU { get; set; }
 

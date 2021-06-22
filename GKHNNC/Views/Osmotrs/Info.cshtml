@@ -149,6 +149,15 @@
                 {
                     string CS = "table-success";
                     if (@Model.AOW[i].Gotovo == false) { CS = ""; }
+                    string WC = "btn btn-outline-danger";
+                    string WCC = "Не выполнена";
+                    bool Got = false;
+                    if (Model.AOW[i].Gotovo)
+                    {
+                        WC = "btn btn-outline-success";
+                        WCC = "Выполнена";
+                        Got = true;
+                    }
                 <tr id="AO_@Model.AOW[i].Id" class="@CS">
                     <td style="text-align:center">
                         @Model.AOW[i].OsmotrWork.DOMPart.Name
@@ -169,35 +178,36 @@
                     </td>
                     @if ((User.Identity.Name.Contains("ПТО") || User.Identity.Name.Contains("ОЭЖФ") || User.IsInRole("Администратор")))
                     {
+
                         if (@Model.AOW[i].Gotovo == false)
                         {
                             <td style="text-align:center" colspan="2">
 
                                 <button type="button" id="RemoveWork" ADId="@Model.AOW[i].Id" onclick="RemoveWork('@Model.AOW[i].Id')" class="btn btn-outline-danger">Удалить работу</button>
+                                @if (User.Identity.Name.Contains("ПТО"))
+                                {
+                         
+                                <button type="button" id="Gotovo_@Model.AOW[i].Id" ready="@Got" ADId="@Model.AOW[i].Id" onclick="Gotov('@Model.AOW[i].Id ')" class="@WC">@WCC</button>
+
+                            }
                             </td>
+
                         }
                         else
                         {
                             <td style="text-align:center" colspan="2">
 
-                                <button type="button" ADId="@Model.AOW[i].Id"  class="btn btn-outline-success">Работа выполнена</button>
+                                <button type="button" ADId="@Model.AOW[i].Id" class="btn btn-outline-success">Работа выполнена</button>
                             </td>
                         }
                     }
                     else
                     {
-                        string WC = "btn btn-outline-danger";
-                        string WCC = "Работа не выполнена";
-                        bool Got = false;
+
 
                         if (User.Identity.Name.Contains("Голосований") || User.IsInRole("Администратор"))
                         {
-                            if (Model.AOW[i].Gotovo)
-                            {
-                                WC = "btn btn-outline-success";
-                                WCC = "Работа выполнена";
-                                Got = true;
-                            }
+
 
                             <td style="text-align:center" colspan="2">
                                 <button type="button" id="Gotovo_@Model.AOW[i].Id" ready="@Got" ADId="@Model.AOW[i].Id" onclick="Gotov('@Model.AOW[i].Id ')" class="@WC">@WCC</button>
@@ -267,66 +277,73 @@
                 @for (int i = 0; i < Model.ORW.Count; i++)
                 {
                     string CS = "";
+                    string WC = "btn btn-outline-danger";
+                    string WCC = "Не выполнена";
+                    bool Got = false;
+                    if (Model.ORW[i].Gotovo)
+                    {
+                        WC = "btn btn-outline-success";
+                        WCC = "Выполнена";
+                        Got = true;
+                    }
                     if (@Model.ORW[i].Gotovo) { CS = " table-success"; }
-                    <tr id="RO_@Model.ORW[i].Id" class="@CS">
-                        <td style="text-align:center">
-                            @Model.ORW[i].DOMPart.Name
-                        </td>
-                        <td width="300px" style="text-align:center">
-                            @Model.ORW[i].Name
-                        </td>
-                        <td style="text-align:center" colspan="2">
-                            @Model.ORW[i].Number
-                        </td>
-                        <td style="text-align:center">
-                            @Model.ORW[i].Izmerenie.Name
-                        </td>
-                        <td style="text-align:center">
-                            @Model.ORW[i].Cost
-                        </td>
-                        @if (User.Identity.Name.Contains("ПТО") || User.Identity.Name.Contains("ОЭЖФ") || User.IsInRole("Администратор"))
+                <tr id="RO_@Model.ORW[i].Id" class="@CS">
+                    <td style="text-align:center">
+                        @Model.ORW[i].DOMPart.Name
+                    </td>
+                    <td width="300px" style="text-align:center">
+                        @Model.ORW[i].Name
+                    </td>
+                    <td style="text-align:center" colspan="2">
+                        @Model.ORW[i].Number
+                    </td>
+                    <td style="text-align:center">
+                        @Model.ORW[i].Izmerenie.Name
+                    </td>
+                    <td style="text-align:center">
+                        @Model.ORW[i].Cost
+                    </td>
+                    @if (User.Identity.Name.Contains("ПТО") || User.Identity.Name.Contains("ОЭЖФ") || User.IsInRole("Администратор"))
+                    {
+                        if (Model.ORW[i].Gotovo == false)
                         {
-                            if (Model.ORW[i].Gotovo == false)
-                            {
-                            <td style="text-align:center" colspan="2">
+                    <td style="text-align:center" colspan="2">
 
-                                <button type="button" id="RemoveRecommendWork" ADId="@Model.ORW[i].Id" onclick="RemoveRecommendWork('@Model.ORW[i].Id')" class="btn btn-outline-danger">Удалить работу</button>
-                            </td>
+                        <button type="button" id="RemoveRecommendWork" ADId="@Model.ORW[i].Id" onclick="RemoveRecommendWork('@Model.ORW[i].Id')" class="btn btn-outline-danger">Удалить работу</button>
+                        @if (User.Identity.Name.Contains("ПТО") || User.IsInRole("Администратор"))
+                        {
+                        <button type="button" id="GotovoORW_@Model.ORW[i].Id" ready="@Got" ADId="@Model.ORW[i].Id" onclick="GotovORW('@Model.ORW[i].Id ')" class="@WC">@WCC</button>
+                        }
+                    </td>
+                        
 
-                            }
-                            else
-                            {
-                            <td style = "text-align:center" colspan = "2" >
-                                   <button type = "button"   class="btn btn-outline-success">Работа выполнена</button>
-                            </td>
-
-                            }
                         }
                         else
                         {
-                            string WC = "btn btn-outline-danger";
-                            string WCC = "Работа не выполнена";
-                            bool Got = false;
+                            <td style="text-align:center" colspan="2">
+                                <button type="button" class="btn btn-outline-success">Работа выполнена</button>
+                            </td>
 
-                            if (User.Identity.Name.Contains("Голосований")||User.IsInRole("Администратор"))
-                            {
-                                if (Model.ORW[i].Gotovo)
-                                {
-                                    WC = "btn btn-outline-success";
-                                    WCC = "Работа выполнена";
-                                    Got = true;
-                                }
-
-                                <td style="text-align:center" colspan="2">
-                                    <button type="button" id="GotovoORW_@Model.ORW[i].Id" ready="@Got" ADId="@Model.ORW[i].Id" onclick="GotovORW('@Model.ORW[i].Id ')" class="@WC">@WCC</button>
-
-                                </td>
-
-
-                            }
                         }
+                    }
+                    else
+                    {
 
-                    </tr>
+
+                        if (User.Identity.Name.Contains("Голосований") || User.IsInRole("Администратор"))
+                        {
+
+
+                            <td style="text-align:center" colspan="2">
+                                <button type="button" id="GotovoORW_@Model.ORW[i].Id" ready="@Got" ADId="@Model.ORW[i].Id" onclick="GotovORW('@Model.ORW[i].Id ')" class="@WC">@WCC</button>
+
+                            </td>
+
+
+                        }
+                    }
+
+                </tr>
                 }
                 <tr style="background-color:#00e6ca">
                     <td colspan="7" height="6px"></td>
@@ -533,12 +550,11 @@
         {
             <button class=" btn btn-success" onclick="Proverka3('@Model.Id')">Завершить голосование.</button>
         }
-        if (Model.Sostoyanie == 2 && User.Identity.Name.Contains("ПТО"))
+        if (Model.Sostoyanie == 2 && User.Identity.Name.Contains("ПТО") || User.IsInRole("Администратор"))
         {
             <button class=" btn btn-success" onclick="Proverka2('@Model.Id')">Проверка пройдена</button>
-        }
-
         <button class=" btn btn-warning" onclick="Peredelat2('@Model.Id')">Переделать</button>
+        }
         // <button class=" btn btn-warning" onclick="ForAllInGEU('@Model.Id')">Освободтьб ЖЭУ</button>
         if (Model.Sostoyanie < 2)
         {
@@ -1177,7 +1193,7 @@
                          if (S[0] == 'Готово') {
                              $("#Gotovo_" + id).removeClass("btn btn-outline-danger");
                              $("#Gotovo_" + id).addClass("btn btn-outline-success");
-                             $("#Gotovo_" + id).text("Работа выполнена");
+                             $("#Gotovo_" + id).text("Выполнена");
                              $("#Gotovo_" + id).attr('ready', 'true');
                              $("#AO_" + id).addClass('table-success');
                              console.log('Кнопка стала заленой');
@@ -1186,7 +1202,7 @@
                          {
                              $("#Gotovo_" + id).removeClass("btn btn-outline-success");
                              $("#Gotovo_" + id).addClass("btn btn-outline-danger");
-                             $("#Gotovo_" + id).text("Работа не выполнена");
+                             $("#Gotovo_" + id).text("Не выполнена");
                              $("#Gotovo_" + id).attr('ready', 'false');
                              $("#AO_" + id).removeClass('table-success');
                              console.log('Кнопка стала красной');
@@ -1217,7 +1233,7 @@
                          if (S[0] == 'Готово') {
                              But.removeClass("btn btn-outline-danger");
                              But.addClass("btn btn-outline-success");
-                             But.text("Работа выполнена");
+                             But.text("Выполнена");
                              But.attr('ready', 'true');
                              $("#RO_" + id).addClass('table-success');
                              console.log('Кнопка стала заленой');
@@ -1226,7 +1242,7 @@
                          {
                              But.removeClass("btn btn-outline-success");
                              But.addClass("btn btn-outline-danger");
-                             But.text("Работа не выполнена");
+                             But.text("Не выполнена");
                              But.attr('ready', 'false');
                              $("#RO_" + id).removeClass('table-success');
                              console.log('Кнопка стала красной');

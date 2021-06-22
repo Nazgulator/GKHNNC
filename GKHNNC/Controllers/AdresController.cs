@@ -30,12 +30,13 @@ namespace GKHNNC.Controllers
             List<Adres> A = new List<Adres>();
             if (geu == 0 )
             {
-                A = db.Adres.ToList();
+                A = db.Adres.Include(x=>x.Type).ToList();
             }
             else
             {
-                A = db.Adres.Where(x => x.EUId == geu).ToList();
+                A = db.Adres.Where(x => x.EUId == geu).Include(x=>x.Type).ToList();
             }
+            ViewBag.Types =  db.AdresTypes.Select(a => new SelectListItem { Value = a.Id.ToString(), Text = a.Name, }).ToList();
             List<SelectListItem> L = new List<SelectListItem>();
             for (int i=-1;i<4; i++)
             {
@@ -108,7 +109,8 @@ namespace GKHNNC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Adres adres = db.Adres.Find(id);
+            Adres adres = db.Adres.Where(x=>x.Id == id).Include(x => x.Type).First();
+            ViewBag.Types = db.AdresTypes.Select(a => new SelectListItem { Value = a.Id.ToString(), Text = a.Name, }).ToList();
             if (adres == null)
             {
                 return HttpNotFound();
@@ -330,7 +332,7 @@ namespace GKHNNC.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Ulica,Dom,GEU,UEV,OBSD,Ploshad,ActivePloshad")] Adres adres)
+        public ActionResult Edit([Bind(Include = "Id,Ulica,Dom,GEU,UEV,OBSD,Ploshad,ActivePloshad,MKD,TypeId")] Adres adres)
         {
             if (ModelState.IsValid)
             {
@@ -354,6 +356,9 @@ namespace GKHNNC.Controllers
                 A.UEV = adres.UEV;
                 A.OBSD = adres.OBSD;
                 A.EUId = db.GEUs.Where(x => x.Name.Equals(A.GEU)).Select(x => x.EU).First();
+                A.MKD = adres.MKD;
+                A.TypeId = adres.TypeId;
+           
                 db.Entry(A).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");

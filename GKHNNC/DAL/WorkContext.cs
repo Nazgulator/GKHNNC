@@ -142,6 +142,7 @@ namespace GKHNNC.DAL
         public System.Data.Entity.DbSet<GKHNNC.Models.ActiveOsmotrWork> ActiveOsmotrWorks { get; set; }
         public System.Data.Entity.DbSet<GKHNNC.Models.LogAutoscan> LogAutoscans { get; set; }
         public System.Data.Entity.DbSet<GKHNNC.Models.EU> EU { get; set; }
+        public System.Data.Entity.DbSet<GKHNNC.Models.AdresType> AdresTypes { get; set; }
 
 
         //protected override void OnModelCreating(DbModelBuilder modelBuilder)

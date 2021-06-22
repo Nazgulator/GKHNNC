@@ -2358,8 +2358,18 @@ namespace GKHNNC.Controllers
             WS.Cells[startStroka, 2] = "Итого";
            
             WS.Cells[startStroka, 5] = summa + Math.Round(summa / 10, 2);
-         //   WS.Cells[startStroka, 6] = Math.Round(summa / 10, 2);
+            //   WS.Cells[startStroka, 6] = Math.Round(summa / 10, 2);
+            String IngOEGF = "";
+            String IngPTO = "";
+            try
+            {
+                IngOEGF = G.IngenerOEGF;
+            }
+            catch
+            {
 
+            }
+            try { IngPTO = G.IngenerPTO; } catch { }
             WS.Cells[startStroka, 6] = Math.Round(((summa+summa/10) / 12) / ActivePloshad, 2);
             range = WS.get_Range("A" + startStroka, "G" + startStroka);
             range.Font.Bold = true;
@@ -2383,13 +2393,13 @@ namespace GKHNNC.Controllers
             range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
             range.Borders.LineStyle = Excel.XlLineStyle.xlLineStyleNone;
             startStroka++;
-            WS.Cells[startStroka, 1] = "Ведущий инженер ОЭЖФ                              ___________________________Н.Л. Воронков";
+            WS.Cells[startStroka, 1] = "Ведущий инженер ОЭЖФ                              ___________________________"+IngOEGF;
             range = WS.get_Range("A" + startStroka, "G" + startStroka);
             Opr.RangeMerge(ApExcel, range, true, false, 13, 20);
             range.Borders.LineStyle = Excel.XlLineStyle.xlLineStyleNone;
             range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
             startStroka++;
-            WS.Cells[startStroka, 1] = "Инженер ПТО                                       ___________________________"+G.IngenerPTO;
+            WS.Cells[startStroka, 1] = "Инженер ПТО                                       ___________________________"+IngPTO;
             range = WS.get_Range("A" + startStroka, "G" + startStroka);
             Opr.RangeMerge(ApExcel, range, true, false, 13, 20);
             range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
