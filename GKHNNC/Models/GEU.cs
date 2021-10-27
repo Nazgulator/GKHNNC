@@ -22,6 +22,8 @@ namespace GKHNNC.Models
         public string IngenerOEGF { get; set; }
         [Display(Name = "ЭУ")]
         public int EU { get; set; }
+        [Display(Name = "Номер ЖЭУ")]
+        public int GEUN { get; set; }
 
     }
 }

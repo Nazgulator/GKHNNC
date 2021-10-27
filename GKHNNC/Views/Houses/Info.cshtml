@@ -1106,7 +1106,7 @@
                                                 </td>
                                                 <td>
                                                     @elem.Kolichestvo
-                                                    @if (elem.Element.Name.ToLower().Equals("отмостка"))
+                                                    @if (elem.Element.Name.ToLower().Equals("отмостка")&&Model.Fundament!=null)
                                                     {
                                                         <p>По техпаспорту = @Model.Fundament.Ploshad м2</p>
                                                     }

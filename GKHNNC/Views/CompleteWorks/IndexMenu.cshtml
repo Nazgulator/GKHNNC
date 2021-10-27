@@ -33,8 +33,8 @@
 
                 <td>
 
-                   
-                    @Html.DropDownList("Month",new SelectList(ViewBag.Month,"value","text"), new { @class = "form-control" })
+
+                    @Html.DropDownList("Month", new SelectList(ViewBag.Month, "value", "text"), new { @class = "form-control" })
                 </td>
 
                 <td>
@@ -46,8 +46,36 @@
                 </td>
 
             </tr>
+            <tr>
+                <td>
+                    @{
+                        SelectList CE = new SelectList(new string[] { "ТО конструктивных элементов", "ТО внутридомового инженерного оборудования" });
+                    }
+                    @Html.DropDownList("WorkGroup", @CE, new { @class = "form-control" })
+                </td>
+                <td>
+
+                    @Html.DropDownList("Work", new SelectList(ViewBag.Works, "value", "text"), new { @class = "form-control" })
+                </td>
+                <td>
+
+                    <input readonly id="izmerenie" class="form-control" />
+
+                </td>
+                <td>
+
+                    <input id="kolvo" type="number" placeholder="Количество" class="form-control" />
+
+                </td>
+            </tr>
+
 
         }
+        <tr>
+            <td colspan="4">
+                <button class="btn btn-success btn-block" onclick="AddNewWork()">  Добавить работу   </button>
+            </td>
+        </tr>
     </tbody>
 </table>
 @section Scripts {
@@ -70,6 +98,73 @@
     });
 
     </script>
+    <script>
+            //скрипт для поиска работ по группе
+        $("#WorkGroup").change(function () {
+            var S = $("#WorkGroup").val();
+            $.post('@Url.Action("PoiskRabotPoGruppe", "CompleteWorks")', { selection: S }, function (data) {
+
+                var WA = $("#Work");
+                WA.empty();
+
+
+                for (var i = 0; i < data.length; i++) {
+                    var str = data[i];
+                    var res = str.split(";");
+
+                WA.append('<option value="'+res[1]+'">'+res[0]+'</option>');
+                }
+                var F = $("#WorkWorkId").val();
+
+            });
+        });
+    </script>
+    <script>
+        $("#Work").change(function () {
+            var F = $("#Work").val();
+
+            //теперь ищем измерение
+            $.post('@Url.Action("PoiskIzmereniaPoRabote", "CompleteWorks")', { selection: F }, function (data2) {
+               
+                var WA = $("#izmerenie");
+                WA.text(data2);
+                WA.val(data2);
+                WA.prop('readonly', true);
+
+
+            });
+        });
+    </script>
+
+    <script>
+        function AddNewWork()
+        {
+            var Year = $("#Year").val();
+            var Month = $("#Month").val();
+            var Adres = $("#WorkAdress").val();
+            var GEU = $("#GEU").val();
+            var Work = $("#Work").val();
+            var Izmerenie = $("#izmerenie").val();
+            var Kolvo = $("#kolvo").val();
+            var WG = $("#WorkGroup").val();
+            alert("Y:"+ parseInt(Year)+", M:"+ Month+", A:"+ Adres+", G:"+ GEU+", W:"+ parseInt(Work)+", I:" +Izmerenie+", K:"+ Kolvo+", WG:"+WG);
+            //отправляем работу на добавление
+            $.post('@Url.Action("AddNewWork", "CompleteWorks")', { Y: parseInt(Year), M: Month, A: Adres, G: GEU, W: parseInt(Work), I: Izmerenie, K: Kolvo, WG:WG }, function (data2)
+            {
+                var S = data2.split(';');
+                var Tabl = $("#T");
+                $('#T tr:last').after('<tr><td>'+S[0] +'</td><td>'+S[1]+'</td><td>'+S[2]+'</td><td>'+S[3]+'</td><td>'+S[4]+'</td><td>'+S[5]+'</td></tr>');
+                var WA = $("#izmerenie");
+                WA.text(data2);
+                WA.val(data2);
+                WA.prop('readonly', true);
+            });
+
+        }
+    
+            
+    
+    </script>
 
 
 
@@ -86,9 +181,9 @@
                             $("#Spisok").fadeOut('fast', function () {
                                 $("#Spisok").load('@Url.Action("IndexSpisok", "CompleteWorks")', { Selection: SV });
                                 $("#Spisok").fadeIn('slow');
-                            }); 
-                           
-                          
+                            });
+
+
 
                            //идем в комплит воркс контроллер и там действие поиск по жэу отправляем выбранное значение в селекте, получаем дату список всех домов по жэу из БД перекинутых в лист стринг
 

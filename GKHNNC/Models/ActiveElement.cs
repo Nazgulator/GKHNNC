@@ -45,7 +45,15 @@ namespace GKHNNC.Models
         [Display(Name = "Присутствует ли элемент")]
         public bool Est { get; set; }
 
+        [Display(Name = "ИзмерениеИД")]
+        public int Izmerenie2Id { get; set; }
+       
+        [Display(Name = "Количество")]
+        public decimal Kolichestvo2 { get; set; }
 
+
+        [Display(Name = "Измерения")]
+        public Izmerenie Izmerenie2 { get; set; }
         [Display(Name = "Измерения")]
         public Izmerenie Izmerenie { get; set; }
         [Display(Name = "Материалы")]

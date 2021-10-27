@@ -30,6 +30,9 @@
         <th>
             @Html.DisplayNameFor(model => model.EU)
         </th>
+        <th>
+            @Html.DisplayNameFor(model => model.GEUN)
+        </th>
         <th></th>
     </tr>
 
@@ -52,6 +55,9 @@
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.EU)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.GEUN)
         </td>
         <td>
             @Html.ActionLink("Редактировать", "Edit", new { id = item.Id }) |

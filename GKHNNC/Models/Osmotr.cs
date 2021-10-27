@@ -94,7 +94,19 @@ namespace GKHNNC.Models
         [Display(Name = "Элементы здания из Сашкиной программы")]
         public List<BuildElement> BE;
 
-    
+        [Display(Name = "Технические элементы дома")]
+        public List<TechElement> TE;
+
+        [Display(Name = "Типы конструктивных элементов дома")]
+        public List<TypeElement> TypeE ;
+
+        [Display(Name = "Плановые работы по содержанию дома")]
+        public List<WorkSoderganie> WS;
+
+        [Display(Name = "Список материалов")]
+        public List<Material> Materials;
+
+
 
     }
 }

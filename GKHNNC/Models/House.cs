@@ -116,6 +116,8 @@ namespace GKHNNC.Models
 
         [Display(Name = "Осмотры")]
         public List<Osmotr> Osmotrs;
+        [Display(Name = "События")]
+        public List<EventLog> Events;
 
 
 

@@ -25,7 +25,7 @@
     </div>
     <table id="T" class="table table-bordered table-striped">
         <tr>
-            <td colspan="2">
+            <td >
                 <input id="Search" class="form-control" placeholder="Начните вводить имя улицы для поиска" />
             </td>
             <td>
@@ -35,10 +35,6 @@
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.Adres)
-            </th>
-
-            <th>
-                Технический паспорт дома
             </th>
             <th>
                 Осмотр дома
@@ -66,24 +62,21 @@
                 }
                 Y = true;
             }
+            if (item.OsmotrEst && item.Osmotrs.Count > 0)
+            {
                     <tr class="@GISGKH">
                         <td>
                             @Html.DisplayFor(modelItem => item.Adres)
                         </td>
-
-
-                        <td>
-                            @Html.ActionLink("Технический паспорт дома", "Info", new { id = item.AdresId }, new { @type = "button", @class = "btn btn-success" })
-                        </td>
                        
                         <td>
-                            @if (item.Osmotrs!=null&& item.Osmotrs.Count > 0)
+                            @if (item.Osmotrs != null && item.Osmotrs.Count > 0)
                             {
                                 for (int j = 0; j < item.Osmotrs.Count; j++)
                                 {
                                     if (item.Osmotrs[j].Sostoyanie == 1)
                                     {
-                                        
+
                                         @Html.ActionLink("Осмотр от " + item.Osmotrs[j].Date.ToShortDateString(), "Info", "Osmotrs", new { id = item.Osmotrs[j].AdresId, date = item.Osmotrs[j].Date }, new { @type = "button", @class = "btn btn-secondary" });
                                     }
                                     else
@@ -104,6 +97,7 @@
     </td>
         -->
                     </tr>
+            }
         }
 
     </table>

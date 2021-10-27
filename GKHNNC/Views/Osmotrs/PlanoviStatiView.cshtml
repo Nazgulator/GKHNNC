@@ -1,0 +1,607 @@
+﻿@model GKHNNC.Models.PlanoviStatiView
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+
+
+<html>
+
+
+<body>
+
+    <script type='text/javascript' src='http://code.jquery.com/jquery-1.10.1.min.js'></script>
+    <script type='text/javascript'>
+
+    </script>
+
+
+
+
+
+
+
+
+
+    <br />
+
+
+
+
+
+    @if (Model.ORW != null)
+    {
+
+        <table id="RO" class="table-bordered table-striped">
+            <tr>
+                <td colspan="15">
+                    <button class="btn btn-success btn-block" onclick="location.href='@Url.Action("Index", "Home")'">
+                        <span class="glyphicon glyphicon-list-alt"></span> В главное меню &raquo;
+                    </button>
+
+                </td>
+            </tr>
+            <tr>
+                <td colspan="15">
+                    @{
+                        string works = "Выполненные в этом году рекомендуемые ПТО работы"; string workscol = "btn btn-info";
+
+                    }
+                    <button class="@workscol btn-block" onclick="OpenModal('AddNewRecommendWork')">@works</button>
+                </td>
+            </tr>
+
+
+
+
+            @{string Stealth = "display: none";
+                if (Model.ORW != null && Model.ORW.Count > 0)
+                {
+                    Stealth = "";
+                }
+
+
+            }
+            <tr id="Zagolovok" style="@Stealth">
+                <th style="text-align:center">
+                    <button class="btn btn-info" onclick="sort_name(1)">Адрес</button>
+                </th>
+                <th style="text-align:center">
+                    <button class="btn btn-info" onclick="sort_name(2)">Часть дома</button>  
+                </th>
+                <th width="300px" style="text-align:center">
+                    <button class="btn btn-info btn-block" onclick="sort_name(3)">Наименование</button> 
+                </th>
+                <th style="text-align:center" colspan="2">
+                    <button class="btn btn-info"  style="width:100px" onclick="sort_name(4)">Кол.План</button>  
+                </th>
+                <th style="text-align:center" colspan="2">
+                    <button class="btn btn-info"  style="width:100px" onclick="sort_name(5)">Кол.Факт</button>   
+                </th>
+                <th style="text-align:center">
+                    <button class="btn btn-info"  style="width:100px" onclick="sort_name(6)">Измерение</button>   
+                </th>
+                <th style="text-align:center">
+                    <button class="btn btn-info"  style="width:100px" onclick="sort_name(7)">Стоим.План</button>   
+                </th>
+                <th style="text-align:center">
+                    <button class="btn btn-info"   style="width:100px" onclick="sort_name(8)">Стоим.Факт</button>  
+                </th>
+                <th style="text-align:center">
+                    <button class="btn btn-info"  style="width:100px" onclick="sort_name(9)">С комм.</button>   
+                </th>
+                <th style="text-align:center">
+                    <button class="btn btn-info"  style="width:100px" onclick="sort_name(10)">Коммисия</button>   
+                </th>
+                <th style="text-align:center">
+                    <button class="btn btn-info"  style="width:50px">Акт</button>   
+                </th>
+                <th style="text-align:center">
+                    <button class="btn btn-info"  style="width:200px" >Статус</button>  
+                </th>
+                <th style="text-align:center" width="300px">
+                    <button class="btn btn-info btn-block"   >Статья</button>    
+                </th>
+            </tr>
+            <tbody id="RObody">
+                @for (int i = 0; i < Model.ORW.Count; i++)
+                {
+                    string CS = "";
+                    string WC = "btn btn-success";
+                    string WCC = "Выполнена";
+                    string CK = "Ставка рассчитана автоматически";
+                    string href = "/Files/" + Model.ORW[i].OsmotrId + "/" + Model.ORW[i].Photo;
+                    string titleCK = "";
+                    bool Got = false;
+                    if (Model.ORW[i].Kommisia > 0)
+                    {
+                        CK = "btn btn-success";
+                        titleCK = "Ставка выбрана человеком";
+                    }
+
+                    if (Model.ORW[i].Kommisia < 0)
+                    {
+                        int stavka = 10;
+                        if (Model.ORW[i].FinalCost >= 50000)
+                        {
+                            stavka = 5;
+                        }
+                        if (Model.ORW[i].FinalCost >= 100000)
+                        {
+                            stavka = 3;
+                        }
+                        Model.ORW[i].Kommisia = stavka;
+                    }
+                    decimal fifi = Model.ORW[i].FinalCost * (1.00m + Convert.ToDecimal(Model.ORW[i].Kommisia) * 0.01m);
+
+
+                    if (Model.ORW[i].StatiId > 1) { CS = " table-info"; }
+                    <tr id="RO_@Model.ORW[i].Id" class="@CS">
+                        <td style="text-align:center">
+                            @Model.ORW[i].Osmotr.Adres.Adress
+                        </td>
+                        <td style="text-align:center">
+                            @Model.ORW[i].DOMPart.Name
+                        </td>
+                        <td width="300px" style="text-align:center">
+                            @Model.ORW[i].Name
+                        </td>
+                        <td style="text-align:center" colspan="2">
+                            @Model.ORW[i].Number
+                        </td>
+                        <td style="text-align:center" id="FinNumORW_@Model.ORW[i].Id" colspan="2">
+                            @Model.ORW[i].FinalNumber
+                        </td>
+                        <td style="text-align:center">
+                            @Model.ORW[i].Izmerenie.Name
+                        </td>
+                        <td style="text-align:center">
+                            @Model.ORW[i].Cost
+                        </td>
+                        <td style="text-align:center" summ="@Model.ORW[i].FinalCost" id="FinCostORW_@Model.ORW[i].Id">
+                            @Model.ORW[i].FinalCost
+                        </td>
+                        <td style="text-align:center" id="SKommisieiORW_@Model.ORW[i].Id">
+                            @fifi
+
+                        </td>
+                        <td style="text-align:center" id="KommisiaORW_@Model.ORW[i].Id">
+                            <input value="@Model.ORW[i].Kommisia" type="number" step="1" id="KommValORW_@Model.ORW[i].Id" title="@titleCK" class="form-control @CK" onchange="ChangeKomm(@Model.ORW[i].Id)" />
+                        </td>
+                        <td style="text-align:center">
+                            <a href="@href" id="ActORW_@Model.ORW[i].Id" class="@WC">Акт</a>
+                        </td>
+
+
+
+                        <td style="text-align:center">
+                            <button type="button" id="GotovoORW_@Model.ORW[i].Id" ready="@Got" ADId="@Model.ORW[i].Id" onclick="GotovORW('@Model.ORW[i].Id ','@Model.ORW[i].Name')" class="@WC">@WCC</button>
+
+                        </td>
+
+
+
+                        <td style="text-align:center">
+
+                            @Html.DropDownList("Statis", new SelectList(Model.Statis, "Id", "Name", Model.ORW[i].StatiId), new { @class = "form-control", @id = "DDL_" + Model.ORW[i].Id, onchange = "ChangeStatis('" + @Model.ORW[i].Id + "')", style = "border:3px solid #000000;font-size:20px;font-weight:bold" })
+                        </td>
+
+
+
+                    </tr>
+                }
+            </tbody>
+            <tr style="background-color:#00e6ca">
+                <td colspan="15" height="6px"></td>
+            </tr>
+        </table>
+        <input type="hidden" id="name_order" value="asc">
+        <input type="hidden" id="age_order" value="asc">
+
+    }
+
+    @if (Model.AOW != null)
+    {
+
+        <table id="AO" class="table-bordered table-striped">
+
+            <tr>
+                <td colspan="15">
+                    @{
+                        string works = "Выполненные в этом году работы ОЭЖФ "; string workscol = "btn btn-secondary";
+
+                    }
+                    <button class="@workscol btn-block">@works</button>
+                </td>
+            </tr>
+
+
+
+
+            @{string Stealth = "display: none";
+                if (Model.AOW != null && Model.AOW.Count > 0)
+                {
+                    Stealth = "";
+                }
+
+
+            }
+            <tr id="Zagolovok" style="@Stealth">
+                <th style="text-align:center">
+                    <button class="btn btn-secondary" onclick="sort_nameAOW(1)">Адрес</button>
+                </th>
+                <th style="text-align:center">
+                    <button class="btn btn-secondary" onclick="sort_nameAOW(2)">Часть дома</button>
+                </th>
+                <th width="300px" style="text-align:center">
+                    <button class="btn btn-secondary btn-block"  onclick="sort_nameAOW(3)">Наименование</button>
+
+                </th>
+                <th style="text-align:center" colspan="2">
+                    <button class="btn btn-secondary" style="width:100px" onclick="sort_numAOW(4)"> Кол.План</button>
+                </th>
+                <th style="text-align:center" colspan="2">
+                    <button class="btn btn-secondary" style="width:100px" onclick="sort_numAOW(5)"> Кол.Факт</button>
+                </th>
+                <th style="text-align:center">
+                    <button class="btn btn-secondary" style="width:100px" onclick="sort_nameAOW(6)">Измерение</button> 
+                </th>
+                <th style="text-align:center">
+                    <button class="btn btn-secondary" style="width:100px" onclick="sort_numAOW(7)"> Стоим.План</button>  
+                </th>
+                <th style="text-align:center">
+                    <button class="btn btn-secondary" style="width:100px" onclick="sort_numAOW(8)"> Стоим.Факт</button> 
+                </th>
+                <th style="text-align:center">
+                    <button class="btn btn-secondary" style="width:100px" onclick="sort_numAOW(9)">С комм.</button> 
+                </th>
+                <th style="text-align:center">
+                    <button class="btn btn-secondary" style="width:100px" onclick="sort_numAOW(10)"> Коммисия</button> 
+                </th>
+                <th style="text-align:center">
+                    <button class="btn btn-secondary" style="width:50px" > Акт</button>  
+                </th>
+                <th style="text-align:center">
+                    <button class="btn btn-secondary" style="width:200px"> Статус</button>  
+                </th>
+                <th style="text-align:center" width="300px">
+                    <button class="btn btn-secondary btn-block"  onclick="sort_nameAOW(13)"> Статья</button>   
+                </th>
+            </tr>
+            <tbody id="AObody">
+                @for (int i = 0; i < Model.AOW.Count; i++)
+                {
+                    string CS = "";
+                    string WC = "btn btn-success";
+                    string WCC = "Выполнена";
+                    string CK = "Ставка рассчитана автоматически";
+                    string href = "/Files/" + Model.AOW[i].OsmotrId + "/" + Model.AOW[i].Photo;
+                    string titleCK = "";
+                    bool Got = false;
+                    if (Model.AOW[i].Kommisia > 0)
+                    {
+                        CK = "btn btn-success";
+                        titleCK = "Ставка выбрана человеком";
+                    }
+
+                    if (Model.AOW[i].Kommisia < 0)
+                    {
+                        int stavka = 10;
+                        if (Model.AOW[i].FinalCost >= 50000)
+                        {
+                            stavka = 5;
+                        }
+                        if (Model.AOW[i].FinalCost >= 100000)
+                        {
+                            stavka = 3;
+                        }
+                        Model.AOW[i].Kommisia = stavka;
+                    }
+                    decimal fifi = Model.AOW[i].FinalCost * (1.00m + Convert.ToDecimal(Model.AOW[i].Kommisia) * 0.01m);
+
+
+                    if (Model.AOW[i].StatiId > 1) { CS = " table-success"; }
+                    <tr id="AO_@Model.AOW[i].Id" class="@CS">
+                        <td style="text-align:center">
+                            @Model.AOW[i].Osmotr.Adres.Adress
+                        </td>
+                        <td style="text-align:center">
+                            @Model.AOW[i].OsmotrWork.DOMPart.Name
+                        </td>
+                        <td width="300px" style="text-align:center">
+                            @Model.AOW[i].OsmotrWork.Name
+                        </td>
+                        <td style="text-align:center" colspan="2">
+                            @Model.AOW[i].Number
+                        </td>
+                        <td style="text-align:center" id="FinNumAOW_@Model.AOW[i].Id" colspan="2">
+                            @Model.AOW[i].FinalNumber
+                        </td>
+                        <td style="text-align:center">
+                            @Model.AOW[i].OsmotrWork.Izmerenie.Name
+                        </td>
+                        <td style="text-align:center">
+                            @Model.AOW[i].TotalCost
+                        </td>
+                        <td style="text-align:center" summ="@Model.AOW[i].FinalCost" id="FinCostAOW_@Model.AOW[i].Id">
+                            @Model.AOW[i].FinalCost
+                        </td>
+                        <td style="text-align:center" id="SKommisieiAOW_@Model.AOW[i].Id">
+                            @fifi
+
+                        </td>
+                        <td style="text-align:center" id="KommisiaAOW_@Model.AOW[i].Id">
+                            <input value="@Model.AOW[i].Kommisia" type="number" step="1" id="KommValAOW_@Model.AOW[i].Id" title="@titleCK" class="form-control @CK" onchange="ChangeKommAOW(@Model.AOW[i].Id)" />
+                        </td>
+                        <td style="text-align:center">
+                            <a href="@href" id="ActAOW_@Model.AOW[i].Id" class="@WC">Акт</a>
+                        </td>
+
+                        <td style="text-align:center">
+                            <button type="button" id="GotovoAOW_@Model.AOW[i].Id" ready="@Got" ADId="@Model.AOW[i].Id" onclick="GotovAOW('@Model.AOW[i].Id ','@Model.AOW[i].OsmotrWork.Name')" class="@WC">@WCC</button>
+
+                        </td>
+
+                        <td style="text-align:center">
+
+                            @Html.DropDownList("Statis", new SelectList(Model.Statis, "Id", "Name", Model.AOW[i].StatiId), new { @class = "form-control", @id = "DDLAOW_" + Model.AOW[i].Id, onchange = "ChangeStatisAOW('" + @Model.AOW[i].Id + "')", style = "border:3px solid #000000;font-size:20px;font-weight:bold" })
+                        </td>
+
+
+
+                    </tr>
+                }
+            </tbody>
+            <tr style="background-color:#ffd800">
+                <td colspan="15" height="6px"></td>
+            </tr>
+        </table>
+
+
+    }
+
+
+
+</body>
+
+
+</html>
+
+
+
+
+@section Scripts{
+
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+    @Scripts.Render("~/scripts/nprogress.min.js")
+    @Scripts.Render("~/signalr/hubs")
+
+    @Scripts.Render("~/scripts/jquery.unobtrusive-ajax.js")
+    @Scripts.Render("~/scripts/bootstrap.js")
+    @Scripts.Render("~/scripts/bootstrap.bundle.js")
+    @Scripts.Render("https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js")
+    @Scripts.Render("~/scripts/jquery.rating/js/jquery.rating-2.0.js")
+    @Scripts.Render("~/scripts/jquery.rating/js/jquery.rating-2.0Red.js")
+
+
+    <link href="/scripts/jquery.rating/styles/jquery.rating.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+    <script>
+        function sort_name(level) {
+            var table = $('#RO');
+            var tbody = $('#RObody');
+
+            tbody.find('tr').sort(function (a, b) {
+                if ($('#name_order').val() == 'asc') {
+                    return $('td:nth-child(' + level + ')', a).text().localeCompare($('td:nth-child(' + level + ')', b).text());
+                }
+                else {
+                    return $('td:nth-child(' + level + ')', b).text().localeCompare($('td:nth-child(' + level + ')', a).text());
+                }
+
+            }).appendTo(tbody);
+
+            var sort_order = $('#name_order').val();
+            if (sort_order == "asc") {
+                document.getElementById("name_order").value = "desc";
+            }
+            if (sort_order == "desc") {
+                document.getElementById("name_order").value = "asc";
+            }
+        }
+    </script>
+    <script>
+        function sort_nameAOW(level) {
+            var table = $('#AO');
+            var tbody = $('#AObody');
+
+            tbody.find('tr').sort(function (a, b) {
+                if ($('#name_order').val() == 'asc') {
+                    return $('td:nth-child(' + level + ')', a).text().localeCompare($('td:nth-child('+level+')', b).text());
+                }
+                else {
+                    return $('td:nth-child(' + level + ')', b).text().localeCompare($('td:nth-child(' + level + ')', a).text());
+                }
+
+            }).appendTo(tbody);
+
+            var sort_order = $('#name_order').val();
+            if (sort_order == "asc") {
+                document.getElementById("name_order").value = "desc";
+            }
+            if (sort_order == "desc") {
+                document.getElementById("name_order").value = "asc";
+            }
+        }
+    </script>
+    <script>
+        function sort_numAOW(level) {
+            var table = $('#AO');
+            var tbody = $('#AObody');
+            tbody.find('tr').sort(function (a, b) {
+            if ($('#age_order').val() == 'asc') {
+                return $('td:nth-child(' + level + ')', a).text().localeCompare($('td:nth-child(' + level + ')', b).text());
+            }
+            else {
+                return $('td:nth-child(' + level + ')', b).text().localeCompare($('td:nth-child(' + level + ')', a).text());
+            }
+
+        }).appendTo(tbody);
+
+        var sort_order = $('#age_order').val();
+        if (sort_order == "asc") {
+            document.getElementById("age_order").value = "desc";
+        }
+        if (sort_order == "desc") {
+            document.getElementById("age_order").value = "asc";
+        }
+        }
+    </script>
+    <script>
+        function ChangeStatis(id) {
+            var v = $('#DDL_' + id);
+            var ro = $('#RO_' + id);
+              $.post('@Url.Action("ChangeStati", "Osmotrs")', { id: id,stati:v.val()},
+                 function (data) {
+                     console.log('Контроллер вернул данные ' + data);
+
+                     if (data != 'Ошибка') {
+                         console.log('Статья сохранена');
+                         ro.addClass('table-info');
+                            }
+                            else {
+                                alert('Ошибка изменения статьи. ');
+                            }
+                            // $('body').append('<ul><li>Java</li><li>JavaScript</li></ul>');
+                        });
+
+        }
+    </script>
+    <script>
+        function ChangeStatisAOW(id) {
+            var v = $('#DDLAOW_' + id);
+            var ro = $('#AO_' + id);
+              $.post('@Url.Action("ChangeStatiAOW", "Osmotrs")', { id: id,stati:v.val()},
+                 function (data) {
+                     console.log('Контроллер вернул данные ' + data);
+
+                     if (data != 'Ошибка') {
+                         console.log('Статья сохранена');
+                         ro.addClass('table-success');
+                            }
+                            else {
+                                alert('Ошибка изменения статьи. ');
+                            }
+                            // $('body').append('<ul><li>Java</li><li>JavaScript</li></ul>');
+                        });
+
+        }
+    </script>
+    <script>
+        function ChangeKommAOW(id) {
+            var v = $('#KommValAOW_' + id);
+            var scom = $('#SKommisieiAOW_' + id);
+            var fcost = $("#FinCostAOW_" + id).attr('summ');
+              $.post('@Url.Action("ChangeKommAOW", "Osmotrs")', { id: id,komm:v.val()},
+                 function (data) {
+                     console.log('Контроллер вернул данные ' + data);
+
+                     if (data != 'Ошибка') {
+                         console.log('Статья сохранена');
+                         //  alert(fcost );
+                         scom.html(Math.round(fcost * (1 + v.val() * 0.01)));
+                        // ro.addClass('table-success');
+                            }
+                            else {
+                                alert('Ошибка сохранения коммисии. ');
+                            }
+                            // $('body').append('<ul><li>Java</li><li>JavaScript</li></ul>');
+                        });
+
+        }
+    </script>
+    <script>
+        function ChangeKomm(id) {
+            var v = $('#KommValORW_' + id);
+            var scom = $('#SKommisieiORW_' + id);
+            var fcost = $("#FinCostORW_" + id).attr('summ');
+              $.post('@Url.Action("ChangeKomm", "Osmotrs")', { id: id,komm:v.val()},
+                 function (data) {
+                     console.log('Контроллер вернул данные ' + data);
+
+                     if (data != 'Ошибка') {
+                         console.log('Статья сохранена');
+                         //  alert(fcost );
+                         scom.html(Math.round(fcost * (1 + v.val() * 0.01)));
+                        // ro.addClass('table-success');
+                            }
+                            else {
+                                alert('Ошибка сохранения коммисии. ');
+                            }
+                            // $('body').append('<ul><li>Java</li><li>JavaScript</li></ul>');
+                        });
+
+        }
+    </script>
+    <script>
+        function PS(id)
+        {
+           var PRIM =  $('#Primechanie').val();
+              $.post('@Url.Action("SavePrimechanie", "Osmotrs")', { id: id,text:PRIM},
+                 function (data) {
+                     console.log('Контроллер вернул данные ' + data);
+                            var S = data.split(';');
+                     if (S[0] != 'Ошибка') {
+                                console.log('Примечание сохранено' );
+                            }
+                            else {
+                                alert('Ошибка сохранения файла. '+S[1]);
+                            }
+                            // $('body').append('<ul><li>Java</li><li>JavaScript</li></ul>');
+                        });
+        }
+    </script>
+    <script>
+        $(function () {
+            var PB = $.connection.progressHub;
+            console.log("Loading...");
+            PB.client.sendMessage = function (message, count) {
+                // update progress
+                console.log(count);
+                UpdateProgress(message, count);
+                //alert(message);
+            };
+
+            $.connection.hub.start().done(function () {
+                console.log("Приконнектились");
+                // call the method CallLongOperation defined in the Hub
+                PB.server.getCountAndMessage();
+                //$("#progressBar").hide();
+
+
+
+            });
+
+
+            // Update the progress bar
+            function UpdateProgress(message, count) {
+                // $("#progressBar").fadeIn("slow");
+                var result = $("#result");
+                if (count >= 100) { $("#X").click(); }
+                result.html(message);
+
+                //$("#progressBar").data("progressbar").value(count);
+
+                $("#progressBar").attr("aria-valuenow", count);
+                $("#progressBar").width(count + '%');
+                $("#progressBar").text(count + '%');
+                $("#nadpis").text(message);
+                // $("#progressBar").css("width", count);
+            }
+        });
+    </script>
+
+
+}

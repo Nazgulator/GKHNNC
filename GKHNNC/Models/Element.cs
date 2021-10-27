@@ -14,11 +14,15 @@ namespace GKHNNC.Models
         public string Name { get; set; }
         [Display(Name = "Элемент ИД")]
         public int ElementId { get; set; }
-        [Display(Name = "Тип")]
-        public string ElementType { get; set; }
+
         [Display(Name = "Тип элемента ИД")]
         public int ElementTypeId { get; set; }
-
+        [Display(Name = "Тип элемента ИД")]
+        public DOMPart ElementType { get; set; }
+        [Display(Name = "Требуются фото")]
+        public bool PhotoNeeded { get; set; }
+        [Display(Name = "Подсветить?")]
+        public bool Podsvetit { get; set; }
 
     }
 }

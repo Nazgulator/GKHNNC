@@ -58,7 +58,7 @@ namespace GKHNNC.Models
         public int OBSD { get; set; }
         [Display(Name = "ЭУ")]
         public int EUId { get; set; }
-        [Display(Name = "МКД")]
+        [Display(Name = "Обслуживается?")]
         public bool MKD { get; set; }
         [Display(Name = "Тип ИД")]
         public int TypeId { get; set; }

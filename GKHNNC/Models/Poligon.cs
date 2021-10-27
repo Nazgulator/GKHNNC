@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using System;
 using GKHNNC.Models;
 
+
 namespace GKHNNC.Models
 {
     public class Poligon
@@ -60,6 +61,18 @@ namespace GKHNNC.Models
 
         [Display(Name = "Контрагента выбрал человек?")]
         public bool VibralRab { get; set; }
+
+        [Display(Name = "Камера подтвердила?")]
+        public bool CameraFix { get; set; }
+
+        [Display(Name = "Изображение")]
+        public string Picture;
+
+        [Display(Name = "Изображение номера")]
+        public string PlateShot;
+
+        [Display(Name = "Камера ид")]
+        public long IdCam;
 
 
 

@@ -18,6 +18,10 @@ namespace GKHNNC.Models
         public decimal TotalCost { get; set; }
         [Display(Name = "Количество")]
         public decimal Number { get; set; }
+        [Display(Name = "Итоговая Стоимость")]
+        public decimal FinalCost { get; set; }
+        [Display(Name = "Итоговое Количество")]
+        public decimal FinalNumber { get; set; }
         [Display(Name = "Активный элемент")]
         public int ElementId { get; set; }
         [Display(Name = "Осмотр ид")]
@@ -28,9 +32,20 @@ namespace GKHNNC.Models
         public DateTime DateVipolneniya { get; set; }
         [Display(Name = "Фотография акта выполненных работ")]
         public string Photo { get; set; }
+        [Display(Name = "Пользователь")]
+        public string User { get; set; }
+        [Display(Name = "статья")]
+        public int StatiId { get; set; }
+        [Display(Name = "статья")]
+        public Stati Stati { get; set; }
+        [Display(Name = "Контрагент")]
+        public int KontragentId { get; set; }
+        [Display(Name = "Коммисия")]
+        public int Kommisia { get; set; }
+        [Display(Name = "осмотр")]
+        public Osmotr Osmotr;
 
 
-
-        public virtual ICollection<Sopostavlenie> Sopostavlenies { get; set; }
+        // public virtual ICollection<Sopostavlenie> Sopostavlenies { get; set; }
     }
 }

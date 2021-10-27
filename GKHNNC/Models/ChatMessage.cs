@@ -16,6 +16,10 @@ namespace GKHNNC.Models
         public string To { get; set; }
         [Display(Name = "Текст сообщения")]
         public string Text { get; set; }
+        [Display(Name = "Прочитано")]
+        public bool Read { get; set; }
+        [Display(Name = "Ссылка")]
+        public string  Path { get; set; }
 
     }
 }

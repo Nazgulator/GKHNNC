@@ -1,0 +1,34 @@
+﻿@model IEnumerable<GKHNNC.Models.Osmotr>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+<h2>Осенние технические осмотры</h2>
+
+
+
+
+<table id="T" class="table table-bordered table-striped">
+    <tr>
+        <th>
+            Осмотры в этом году
+        </th>
+
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        string Dat = "Осмотр " + item.Adres.Adress + " " + item.Date.ToString("dd.MM.yyyy");
+        <tr>
+
+            <td>
+                @Html.ActionLink(Dat, "OsmotrsTechById", new { id = item.Id }, new { @class = "btn btn-success btn-block" })
+
+            </td>
+        </tr>
+    }
+
+</table>
+<p><a href="/Home/Index" class="btn btn-success btn-block">В главное меню &raquo;</a> </p>

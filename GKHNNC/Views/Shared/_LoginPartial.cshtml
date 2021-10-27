@@ -14,10 +14,13 @@
     {
 
         <ul class="nav nav nav-pills nav-fill">
-            <li >@Html.ActionLink("Главная", "Index", "Home", routeValues: null, htmlAttributes: new { @class = "nav-link", @style = "color:white" })</li>
+            <li>@Html.ActionLink("Главная", "Index", "Home", routeValues: null, htmlAttributes: new { @class = "nav-link", @style = "color:white" })</li>
             @if (User.IsInRole("Администратор"))
             {
-                <li>@Html.ActionLink("Пользователи", "RolesAndUsers", "Manage", routeValues: null, htmlAttributes: new { @class = "nav-link", @style = "color:white" })</li>}
+                <li>@Html.ActionLink("Пользователи", "RolesAndUsers", "Manage", routeValues: null, htmlAttributes: new { @class = "nav-link", @style = "color:white" })</li>
+
+            }
+            <li>@Html.ActionLink("Учетная запись", "Index", "Manage", routeValues: null, htmlAttributes: new { @class = "nav-link", @style = "color:white" })</li>
 
         </ul>
 

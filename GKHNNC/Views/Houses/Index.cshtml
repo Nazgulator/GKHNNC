@@ -26,6 +26,27 @@
         <button class="btn btn-block btn-success" onclick="Closeall()"> Закрыть все текущие осмотры </button>
 
     }
+
+    @if (User.Identity.Name.Contains("ПТО")|| User.Identity.Name.Contains("ОЭЖФ")|| User.IsInRole("Администратор"))
+    {
+        if (ViewBag.Events != null)
+        {
+       
+            <table class="table-block" style="width:100%">
+                @for (int i = 0; i < ViewBag.Events.Count; i++)
+                {
+                    <tr class=" @ViewBag.Events[i].Class " style="text-align:center">
+                        <td> @ViewBag.Events[i].Date.ToString("HH:mm")  </td>
+                        <td> @ViewBag.Events[i].Text </td>
+                    </tr>
+                }
+            </table>
+       
+        }
+
+    }
+
+
     <button class="btn btn-block btn-success" onclick="location.href='@Url.Action("OtchetAll", "Houses")'"> Сформировать отчет по необходимым работам </button>
     @if (ViewBag.WorkPoisk == "")
     {
@@ -101,82 +122,90 @@
                     }
                     Y = true;
                 }
-                <tr class="@GISGKH">
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Adres)
-                    </td>
+                        <tr class="@GISGKH">
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Adres)
+                            </td>
 
 
-                    <td>
-                        @Html.ActionLink("Технический паспорт дома", "Info", new { id = item.AdresId }, new { @type = "button", @class = "btn btn-success" })
-                    </td>
-                    <td>
-                        @{string CL = "btn btn-success";
-
-                            if (item.NumberWorks == 0)
-                            { CL = "btn btn-secondary"; }
-                        }
-
-                        <button class="@CL" onclick="OpenModal('CW_@item.AdresId')">Выполненные работы</button>
-
-                    </td>
-
-                    <td>
-                        @if (item.Osmotrs != null && item.Osmotrs.Count > 0)
-                        {
-                            for (int j = 0; j < item.Osmotrs.Count; j++)
-                            {
-
-
-
-
-                                if (item.Osmotrs[j].Sostoyanie > 0)
+                            <td>
+                                @Html.ActionLink("Старый паспорт", "Info", new { id = item.AdresId }, new { @type = "button", @class = "btn btn-success" })
+                                @if (item.Osmotrs != null && item.Osmotrs.Count > 0)
                                 {
-                                    string sostoyanie = "btn btn-secondary";
-                                    if (item.Osmotrs[j].Sostoyanie > 1) { sostoyanie = "btn btn-success"; }
-                                    @Html.ActionLink("Осмотр от " + item.Osmotrs[j].Date.ToString("dd.MM.yyyy"), "Info", "Osmotrs", new { id = item.Osmotrs[j].AdresId, date = item.Osmotrs[j].Date }, new { @type = "button", @class = sostoyanie });
+                                    @Html.ActionLink("Технический паспорт", "OsmotrsTechById", "Osmotrs", new { Id = item.Osmotrs.OrderByDescending(x => x.Date).First().Id }, new { @type = "button", @class = "btn btn-success" })
+                                    if (User.IsInRole("Администратор") || User.Identity.Name.Contains("ОЭЖФ") || User.Identity.Name.Contains("ПТО"))
+                                    {
+                                    @Html.ActionLink("Плановый отчет", "PlanoviOtchet", "Osmotrs", new { AdresId = item.AdresId }, new { @type = "button", @class = "btn btn-success" })
+                                    }
+                                }
+                            </td>
+                            <td>
+                                @{string CL = "btn btn-success";
+
+                                    if (item.NumberWorks == 0)
+                                    { CL = "btn btn-secondary"; }
+                                }
+
+                                <button class="@CL" onclick="OpenModal('CW_@item.AdresId')">Выполненные работы</button>
+
+                            </td>
+
+                            <td>
+                                @if (item.Osmotrs != null && item.Osmotrs.Count > 0)
+                                {
+                                    for (int j = 0; j < item.Osmotrs.Count; j++)
+                                    {
+
+
+
+
+                                        if (item.Osmotrs[j].Sostoyanie > 0)
+                                        {
+                                            string sostoyanie = "btn btn-secondary";
+                                            if (item.Osmotrs[j].Sostoyanie > 1) { sostoyanie = "btn btn-success"; }
+                                            @Html.ActionLink("Осмотр от " + item.Osmotrs[j].Date.ToString("dd.MM.yyyy"), "Info", "Osmotrs", new { id = item.Osmotrs[j].AdresId, date = item.Osmotrs[j].Date }, new { @type = "button", @class = sostoyanie });
+                                        }
+                                        else
+                                        {
+                                            @Html.ActionLink("Изменить осмотр от " + item.Osmotrs[j].Date.ToString("dd.MM.yyyy"), "Create", "Osmotrs", new { id = item.Osmotrs[j].AdresId, date = item.Osmotrs[j].Date }, new { @type = "button", @class = "btn btn-primary" });
+                                        }
+
+                                    }
+                                    if (item.Osmotrs.Where(x => x.Sostoyanie == 0).ToList().Count == 0)
+                                    {
+                                        <button class="btn btn-success" onclick="NewOsmotr('@item.AdresId','@DateTime.Now')">Добавить осмотр</button>
+                                    }
+
                                 }
                                 else
                                 {
-                                    @Html.ActionLink("Изменить осмотр от " + item.Osmotrs[j].Date.ToString("dd.MM.yyyy"), "Create", "Osmotrs", new { id = item.Osmotrs[j].AdresId, date = item.Osmotrs[j].Date }, new { @type = "button", @class = "btn btn-primary" });
+                                    if (item.GISGKH)
+                                    {
+
+                                        <button class="btn btn-success" onclick="NewOsmotr('@item.AdresId','@DateTime.Now')">Добавить осмотр</button>
+
+                                    }
+                                    else
+                                    {
+                                        @Html.ActionLink("Создать осмотр с нуля", "Create", "Osmotrs", new { id = item.AdresId, date = DateTime.Now, NewOsmotr = true }, new { @type = "button", @class = "btn btn-warning" });
+                                    }
                                 }
+                            </td>
+                            <td>
+                                @if (item.Osmotrs != null && item.Osmotrs.Count > 0)
+                                {
+                                    @Html.ActionLink("Выгрузить в Excel", "ExportToExcel", "Osmotrs", new { id = item.Osmotrs[item.Osmotrs.Count - 1].Id }, new { @class = "btn btn-block btn-success" })
+                                }
+                            </td>
 
-                            }
-                            if (item.Osmotrs.Where(x => x.Sostoyanie == 0).ToList().Count == 0)
-                            {
-                                <button class="btn btn-success" onclick="NewOsmotr('@item.AdresId','@DateTime.Now')">Добавить осмотр</button>
-                            }
-
-                        }
-                        else
-                        {
-                            if (item.GISGKH)
-                            {
-
-                                <button class="btn btn-success" onclick="NewOsmotr('@item.AdresId','@DateTime.Now')">Добавить осмотр</button>
-
-                            }
-                            else
-                            {
-                                @Html.ActionLink("Создать осмотр с нуля", "Create", "Osmotrs", new { id = item.AdresId, date = DateTime.Now }, new { @type = "button", @class = "btn btn-warning" });
-                            }
-                        }
-                    </td>
-                    <td>
-                        @if (item.Osmotrs != null && item.Osmotrs.Count > 0)
-                        {
-                            @Html.ActionLink("Выгрузить в Excel", "ExportToExcel", "Osmotrs", new { id = item.Osmotrs[item.Osmotrs.Count - 1].Id }, new { @class = "btn btn-block btn-success" })
-                        }
-                    </td>
-
-                    <!--
+                            <!--
 
 
-                    <td>
-                        @Html.ActionLink("Информация", "Edit", new { id = item.AdresId }, new { @type = "button", @class = "form-control" })
-                    </td>
-                        -->
-                </tr>
+    <td>
+        @Html.ActionLink("Информация", "Edit", new { id = item.AdresId }, new { @type = "button", @class = "form-control" })
+    </td>
+        -->
+                        </tr>
             }
 
         </table>

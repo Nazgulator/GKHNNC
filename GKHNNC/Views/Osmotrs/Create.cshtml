@@ -95,9 +95,131 @@
     <hr />
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
+ 
 
-    <hr />
-    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+
+    @if (Model.ORW != null)
+    {
+        Console.WriteLine("Модель Рекомендованные работы = " + Model.ORW.Count().ToString());
+        <div class="container">
+
+            <table id="RO" class="table-bordered table-striped">
+                @if (!User.Identity.Name.Contains("Голосований") || User.IsInRole("Администратор"))
+                {
+                    <tr>
+                        <td colspan="7">
+                            @{
+                                string works = "Добавить рекомендуемые работы"; string workscol = "btn btn-info";
+                                if (Model.ORW.Count > 0) { works = "Добавить рекомендуемые работы"; workscol = "btn btn-info"; }
+                            }
+                            <button class="@workscol btn-block" onclick="AddRecommendWorkNew('@Model.Id','0')">@works</button>
+                        </td>
+                    </tr>
+
+                }
+
+
+                @{string Stealth = "display: none";
+                    if (Model.ORW != null && Model.ORW.Count > 0)
+                    {
+                        Stealth = "";
+                    }
+
+
+                }
+                    <tr id="RO_@Model.Id" class="AO_@Model.Id" style="@Stealth">
+                        <th style="text-align:center">
+                            Часть дома
+                        </th>
+                        <th width="300px" style="text-align:center">
+                            Наименование работы
+                        </th>
+                        <th style="text-align:center" colspan="2">
+                            Количество
+                        </th>
+                        <th style="text-align:center">
+                            Измерение
+                        </th>
+                        <th style="text-align:center">
+                            Стоимость
+                        </th>
+                     
+                        <th style="text-align:center" colspan="2">
+                            Опции
+                        </th>
+                    </tr>
+
+                @for (int i = 0; i < Model.ORW.Count; i++)
+                {
+                    string CS = "";
+                    string WC = "btn btn-outline-danger";
+                    string WCC = "Не выполнена";
+                    bool Got = false;
+                    if (Model.ORW[i].Gotovo)
+                    {
+                        WC = "btn btn-outline-success";
+                        WCC = "Выполнена";
+                        Got = true;
+                    }
+                    if (@Model.ORW[i].Gotovo) { CS = " table-success"; }
+                    <tr id="RO_@Model.ORW[i].Id" class="@CS">
+                        <td id="DP_@Model.ORW[i].Id"style="text-align:center">
+                            @Model.ORW[i].DOMPart.Name
+                        </td>
+                        <td id="Nam_@Model.ORW[i].Id" width="300px" style="text-align:center">
+                            @Model.ORW[i].Name
+                        </td>
+                        <td id="Num_@Model.ORW[i].Id"style="text-align:center" colspan="2">
+                            @Model.ORW[i].Number
+                        </td>
+                        <td id="Izm_@Model.ORW[i].Id" style="text-align:center">
+                            @Model.ORW[i].Izmerenie.Name
+                        </td>
+                        <td id="Cost_@Model.ORW[i].Id" style="text-align:center">
+                            @Model.ORW[i].Cost
+                        </td>
+                        @if (User.Identity.Name.Contains("ПТО") || User.Identity.Name.Contains("ОЭЖФ") || User.IsInRole("Администратор"))
+                        {
+                            if (Model.ORW[i].Gotovo == false)
+                            {
+                        <td style="text-align:center" colspan="2">
+
+                            <button type="button" id="RemoveRecommendWork" ADId="@Model.ORW[i].Id" onclick="RemoveRecommendWork('@Model.ORW[i].Id')" class="btn btn-outline-danger">Удалить работу</button>
+
+                            <button type="button" id="GotovoORW_@Model.ORW[i].Id" ready="@Got" ADId="@Model.ORW[i].Id" onclick="GotovORW('@Model.ORW[i].Id ')" class="@WC">@WCC</button>
+                            <button type="button" id="EditRecommendWork_@Model.ORW[i].Id" ready="@Got" ADId="@Model.ORW[i].Id" onclick="EditRecommendWork('@Model.ORW[i].Id','@Model.ORW[i].DOMPart.Id','@Model.ORW[i].Name','@Model.ORW[i].Number','@Model.ORW[i].Izmerenie.Id','@Model.ORW[i].Cost','@Model.Id')" class="btn btn-outline-success">Редактировать работу</button>
+
+                        </td>
+
+
+                            }
+                            else
+                            {
+                                <td style="text-align:center" colspan="2">
+                                    <button type="button" class="btn btn-outline-success">Работа выполнена</button>
+                                </td>
+
+                            }
+                        }
+
+                    </tr>
+                }
+                <tr style="background-color:#00e6ca">
+                    <td colspan="7" height="6px"></td>
+                </tr>
+            </table>
+
+        </div>
+    }
+    else
+    {
+        Console.WriteLine("Модель не содержит рекомендованных работ ");
+    }
+
+
+
+
     <div class="container">
         <div class="form-horizontal">
 
@@ -224,7 +346,73 @@
         </div>
     </div>
 </div>
+<!-- Modal -->
+<div class="modal fade" id="Modal_AddNewRecommendWork" tabindex="-1" role="dialog" aria-labelledby="AddRECModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content col-12">
+            <div class="modal-header">
+                <h3 class="modal-title" id="AddRECModalLabel">Добавить или редактировать рекомендуемую работу</h3>
 
+            </div>
+            <div class="modal-body">
+
+
+                <div class="col-6">
+                    Осмотр#
+                </div>
+                <div class="col-6">
+                    <input readonly id="ROsmotr" type="number" value="@Model.Id" class="form-control" />
+                </div>
+                <div class="col-6">
+                    Id работы
+                </div>
+                <div class="col-6">
+
+                    <input readonly id="RWork" type="number" value="@Model.Id" class="form-control" />
+                </div>
+                <div class="col-6">
+                    Выберите часть дома
+                </div>
+                <div class="col-6">
+
+                    @Html.DropDownList("RDOMPart", new SelectList(ViewBag.ALLParts, "value", "text"), new { @class = "form-control" })
+                </div>
+                <div class="col-6">
+                    Название работы
+                </div>
+                <div class="col-6">
+                    <input class="form-control" id="RName" placeholder="Введите название работы" />
+
+                </div>
+                <div class="col-6">
+                    Количество
+                </div>
+                <div class="col-6">
+                    @Html.Editor("RNumber", new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+                <div class="col-6">
+                    Измерение
+                </div>
+                <div class="col-6">
+                    @Html.DropDownList("RIzmerenie", new SelectList(ViewBag.Izmerenies, "value", "text"), new { @class = "form-control" })
+                </div>
+                <div class="col-6">
+                    Стоимость по смете
+                </div>
+                <div class="col-6">
+                    @Html.Editor("RCost", new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+
+                <div class="col-6" style="margin:10px">
+                    <button id="AddWorkSubmit" onclick="AddRecommendWork(@Model.Id)" class="btn btn-outline-success btn-block">Сохранить</button>
+
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
 
 
 
@@ -252,6 +440,7 @@
             $("#Modal_" + id).modal('show');
         }
     </script>
+
     <script>
         function PS(id)
         {
@@ -344,45 +533,7 @@
                         });
         }
     </script>
-    <script>
-        $(function () {
-            var PB = $.connection.progressHub;
-            console.log("Loading...");
-            PB.client.sendMessage = function (message, count) {
-                // update progress
-                console.log(count);
-                UpdateProgress(message, count);
-                //alert(message);
-            };
 
-            $.connection.hub.start().done(function () {
-                console.log("Приконнектились");
-                // call the method CallLongOperation defined in the Hub
-                PB.server.getCountAndMessage();
-                //$("#progressBar").hide();
-
-
-
-            });
-
-
-            // Update the progress bar
-            function UpdateProgress(message, count) {
-                // $("#progressBar").fadeIn("slow");
-                var result = $("#result");
-                if (count >= 100) { $("#X").click(); }
-                result.html(message);
-
-                //$("#progressBar").data("progressbar").value(count);
-
-                $("#progressBar").attr("aria-valuenow", count);
-                $("#progressBar").width(count + '%');
-                $("#progressBar").text(count + '%');
-                $("#nadpis").text(message);
-                // $("#progressBar").css("width", count);
-            }
-        });
-    </script>
 
     <script>
         //изменение размеров текстового поля при фокусе
@@ -806,5 +957,141 @@
             readOnly: 'true'
         }).attr("style='align:center'");
 
+    </script>
+    <script>
+        function EditRecommendWork(id,Part,Name,Number,Izmerenie,Cost,OsmotrId)
+        {
+          
+            OpenModal("AddNewRecommendWork");
+           // console.log('Начинаем редактирование работы ' + id);
+            $("#ROsmotr").val(OsmotrId);
+            $("#RWork").val(id);
+
+            $("#RDOMPart").val(Part);
+            $("#RNumber").val(parseInt(Number));
+       
+            $("#RCost").val(parseFloat(Cost));
+            $("#RName").val(Name);
+            $("#RIzmerenie").val(parseInt(Izmerenie));
+            var Table = $("#RO_"+id );
+          
+        }
+    </script>
+    <script>
+        function AddRecommendWorkNew(OsmotrId,id) {
+            OpenModal('AddNewRecommendWork');
+            $("#ROsmotr").val(OsmotrId);
+            $("#RWork").val(0);
+        }
+    </script>
+    <script>
+        function AddRecommendWork(id)
+        {
+            if (WorkId == undefined) WorkId =0;
+            console.log('Начинаем добавление работы ' + id);
+            var Part = $("#RDOMPart").val();
+            var Number = $("#RNumber").val();
+            var WorkId = $("#RWork").val();
+            var Osmotr = $("#ROsmotr").val();
+            var Cost = $("#RCost").val();
+            var Name = $("#RName").val();
+            var Izmerenie = $("#RIzmerenie").val();
+            var Table = $("#RO_"+id );
+            console.log('Приняли такие данные: ' + Part + ';' + Number + ';' + Osmotr + ';' + Table + ";" + Cost + ";" + Name + ";" + Izmerenie);
+            $.post('@Url.Action("AddRecommendWork", "Osmotrs")', { OsmotrId: parseInt(Osmotr), Number: parseFloat(Number), PartId: parseInt(Part), Cost: parseFloat(Cost), Name:Name,IzmerenieId:Izmerenie,WorkId:parseInt(WorkId)},
+                 function (data) {
+                     console.log('Контроллер вернул данные ' + data);
+                            var S = data.split(';');
+                     if (S[0] != 'Ошибка')
+                     {
+                         if (S[6] != 'Modify')
+                         {
+                             //Table.removeAttr('display');
+                             Table.fadeIn('slow');
+                             Table.after('<tr id="RO_' + S[5] + '" class="RO_' + S[5] + '"><td  style="text-align:center">' + S[0] + '</td><td style="text-align:center" colspan="2">' + S[1] + '</td><td style="text-align:center">' + S[3] + '</td><td style="text-align:center">' + S[2] + '</td><td style="text-align:center">' + S[4] + '</td><td style="text-align:center" colspan="2" ><button type="button" id="RemoveWork" ADId="' + id + '" onclick="RemoveRecommendWork(' + S[5] + ')" class="btn btn-outline-danger rem">Удалить работу</button></td></tr>');
+                             // $('#RO_' + id).hide().fadeIn("slow");//появляем медленно строку
+                             console.log('Добавили в таблицу строку' + Table);
+                             $('#Modal_AddNewRecommendWork').modal('hide');
+                         }
+                         else
+                         {
+                             console.log('Ищем строку RO_' + S[5]);
+                             var El = $("#RO_" + S[5]);
+                             El.replaceWith('<tr id="RO_' + S[5] + '><td style="text-align:center">' + S[0] + '</td><td style="text-align:center">' + S[0] + '</td><td style="text-align:center" colspan="2">' + S[1] + '</td><td style="text-align:center">' + S[3] + '</td><td style="text-align:center">' + S[2] + '</td><td style="text-align:center">' + S[4] + '</td><td style="text-align:center" colspan="2" ><button type="button" id="RemoveWork" ADId="' + id + '" onclick="RemoveRecommendWork(' + S[5] + ')" class="btn btn-outline-danger rem">Удалить работу</button></td></tr>');
+                             // $('#RO_' + id).hide().fadeIn("slow");//появляем медленно строку
+                             console.log('Заменили строку в таблице' + Table);
+                             $('#Modal_AddNewRecommendWork').modal('hide');
+                         }
+
+                     }
+                     else
+                     {
+                         alert('Ошибка сохранения файла. ' + S[1]);
+                     }
+                            // $('body').append('<ul><li>Java</li><li>JavaScript</li></ul>');
+                        });
+        }
+    </script>
+    <script>
+        function RemoveRecommendWork(id)
+        {
+              $.post('@Url.Action("RemoveRecommendWork", "Osmotrs")', { id: id},
+                 function (data) {
+                     console.log('Контроллер вернул данные ' + data);
+                            var S = data.split(';');
+                     if (S[0] != 'Ошибка') {
+                         $("#RO_" + id).remove();
+                                console.log('Удалили строку в таблице' );
+                            }
+                            else {
+                                alert('Ошибка сохранения файла. '+S[1]);
+                            }
+                            // $('body').append('<ul><li>Java</li><li>JavaScript</li></ul>');
+
+
+
+                        });
+
+        }
+    </script>
+    <script>
+        function GotovORW(id)
+        {
+            var gotov = $("#GotovoORW_" + id).attr('ready');
+              $.post('@Url.Action("GotovoORW", "Osmotrs")', { id: id},
+                 function (data) {
+                     console.log('Контроллер вернул данные ' + data);
+                            var S = data.split(';');
+                     if (S[0] != 'Ошибка')
+                     {
+                         var But = $("#GotovoORW_" + id);
+                         if (S[0] == 'Готово') {
+                             But.removeClass("btn btn-outline-danger");
+                             But.addClass("btn btn-outline-success");
+                             But.text("Выполнена");
+                             But.attr('ready', 'true');
+                             $("#RO_" + id).addClass('table-success');
+                             console.log('Кнопка стала заленой');
+                         }
+                         else
+                         {
+                             But.removeClass("btn btn-outline-success");
+                             But.addClass("btn btn-outline-danger");
+                             But.text("Не выполнена");
+                             But.attr('ready', 'false');
+                             $("#RO_" + id).removeClass('table-success');
+                             console.log('Кнопка стала красной');
+                         }
+                            }
+                            else {
+                                alert('Ошибка сохранения файла. '+S[1]);
+                            }
+                            // $('body').append('<ul><li>Java</li><li>JavaScript</li></ul>');
+
+
+
+                        });
+
+        }
     </script>
 }

@@ -1,0 +1,67 @@
+﻿@model GKHNNC.Models.TypeElement
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>TypeElement</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Adres.Adress)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Adres.Adress)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ConstructiveType.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ConstructiveType.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DOMPart.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DOMPart.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Material.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Material.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Date)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Date)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.UserName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UserName)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

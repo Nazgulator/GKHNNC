@@ -14,6 +14,7 @@ namespace GKHNNC.Controllers
     public class PoligonsController : Controller
     {
         private WorkContext db = new WorkContext();
+        private AutomarshallContext adb = new AutomarshallContext();
 
         // GET: Poligons
         public ActionResult Index(string Number, int Poisk = 0, int PoiskKontr = 0, int result = 0, int Vesi = 0, int Avtosort = 0,string TekDate="")
@@ -115,13 +116,18 @@ namespace GKHNNC.Controllers
 
             List<Poligon> Poligons = new List<Poligon>();
             ViewBag.Date = Date;//сохраняем дату для передачи
+
+
+
+            string NumberPoisk = "";
             try
             {
                 DateTime D = Date;
                 if (Poisk != 0)
                 {
                     Poligons = db.Poligons.Where(x => x.Date.Year == D.Year && x.Date.Month == D.Month && x.Date.Day == D.Day && x.AvtomobilId == Poisk).Include(z => z.Avtomobil).Include(z => z.Avtomobil.Marka).Include(z => z.Avtomobil.Type).Include(x => x.Marka).Include(x => x.Type).Include(x => x.Avtomobil.KontrAgent).ToList();
-                    ViewBag.Poisk = db.Avtomobils.Where(x => x.Id == Poisk).Select(x => x.Number).First();
+                    NumberPoisk = db.Avtomobils.Where(x => x.Id == Poisk).Select(x => x.Number).First();
+                    ViewBag.Poisk = NumberPoisk;
                     ViewBag.PoiskId = Poisk;
 
                 }
@@ -155,11 +161,201 @@ namespace GKHNNC.Controllers
                         ViewBag.PoiskKontrId = 0;
                     }
                 }
-            }
-            catch (Exception e)
-            {
 
             }
+            catch
+            { }
+
+            Dictionary<char, char> DicVer = new Dictionary<char, char>()
+                {
+                    {'A','А'},
+                    {'E','Е'},
+                    {'Y','У'},
+                    {'P','Р'},
+                    {'M','М'},
+                    {'K','К'},
+                    {'Z','З'},
+                    {'X','Х'},
+                    {'C','С'},
+                    {'O','О'},
+                    {'L','Л'},
+                    {'B','В'},
+                    {'H','Н'},
+                    {'T','Т'}
+                };
+
+
+
+
+
+
+            // List<Poligon> P2 = Poligons;
+            //сверяем камеру с людьми
+           
+
+            if (User.IsInRole("Администратор")|| User.Identity.Name.Equals("НачальникПолигона")||User.Identity.Name.Equals("Полигон"))
+            {
+                List<AutomarshallView> AW = new List<AutomarshallView>();
+              
+                try
+                {
+                    if (User.IsInRole("Администратор") || User.Identity.Name.Equals("НачальникПолигона"))
+                    {
+                        AW = adb.AutomarshallViews.Where(x => x.TimeStamp.Year == Date.Year && x.TimeStamp.Month == Date.Month && x.TimeStamp.Day == Date.Day).ToList();
+                    }
+                    else
+                    {
+                        AW = adb.AutomarshallViews.Where(x => x.TimeStamp.Year == Date.Year && x.TimeStamp.Month == Date.Month && x.TimeStamp.Day == Date.Day&&x.TimeStamp.Hour>=Date.Hour-8).ToList();
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    ViewBag.ERROR = e.Message;
+                   // return Json(e.Message);
+                }
+                if (Poisk != 0)
+                {
+                    try
+                    {
+                        AW = AW.Where(x => x.Plate.Contains(NumberPoisk)).ToList();
+}
+                    catch
+                    {
+
+                    }
+                }
+                if (PoiskKontr != 0)
+                {
+                    AW = new List<AutomarshallView>();
+                }
+
+                    List<Avtomobil> Avtomobils = db.Avtomobils.Include(x => x.Marka).Include(x => x.KontrAgent).Include(x => x.Type).ToList();
+                TypeAvto Typ = db.TypeAvtos.Where(x => x.Id == 16).First();
+                foreach (AutomarshallView V in AW)
+                {
+                    Avtomobil Avto = new Avtomobil();
+                    foreach (char ch in V.Plate)
+                    {
+                        V.Plate = V.Plate.Replace(ch, DicVer.ContainsKey(ch) ? DicVer[ch] : ch);
+                    }
+                    V.Plate = V.Plate.Replace(" ", "").Replace("#","");
+                    string NumRe = V.Plate.Remove(0, V.Plate.Length - 3);
+                    int count = 0;
+                    string N54 = "";
+                    foreach (char s in NumRe)
+                    {
+
+
+                        if (Char.IsNumber(s))
+                        {
+                            N54 += s;
+                            count++;
+                        }
+                       else
+                        {
+                            N54 = "";
+                            count = 0;
+                        }
+                    }
+
+
+                    if (count > 0)
+                    {
+                        if (N54.Contains("154") == false && N54.Contains("15"))
+                        {
+                            V.Plate = V.Plate.Replace("15", "154");
+                        }
+                        else
+                        {
+                           
+                            if (count < 3&&N54.Equals("54")==false)
+                            {
+                                V.Plate = V.Plate.Remove(V.Plate.Length - count, count);
+                                try
+                                {
+                                    
+                                    V.Plate = Avtomobils.Where(x => x.Number.Contains(V.Plate)).Where(x => x.Number.Equals(V.Plate)).Select(x=>x.Number).First();
+
+                                  
+                                }
+                                catch
+                                {
+                                    V.Plate += "154";
+                                }
+                             //   V.Plate = V.Plate.Remove(0, V.Plate.Length - 3);
+                              //  V.Plate += "154";
+                            }
+                        }
+                    }
+                    Poligon P = new Poligon();
+                    try
+                    {
+                        P = Poligons.Where(x => x.Number.Equals(V.Plate)&&x.KontrAgentName.Equals("Камера")==false&& V.TimeStamp.AddHours(7) <= x.Date.AddMinutes(40) && V.TimeStamp.AddHours(7) >= x.Date.AddMinutes(-40)).First();
+                        P.CameraFix = true;
+                        var base64 = Convert.ToBase64String(V.Picture);
+                        P.Picture = String.Format("data:image/jpg;base64,{0}", base64);
+                        var plate64 = Convert.ToBase64String(V.PlateShot);
+                        P.PlateShot = String.Format("data:image/jpg;base64,{0}", plate64);
+                        P.IdCam = V.LogId;
+                    }
+                    catch (Exception e)
+                    {
+                    
+                        try
+                        {
+                            Avto = Avtomobils.Where(x => x.Number.Equals(V.Plate)).First();
+                            P.Avtomobil = Avto;
+                            P.User = "Камера";
+                            P.VibralRab = false;
+                            P.Number = V.Plate;
+                            P.MassIn = Math.Round(Avto.ObiemBunkera * Avto.KoefficientSgatiya * 165.1M, 2); ;
+                            P.MassOut = 0;
+                            P.MassMusor = P.MassIn;
+                            P.KontrAgentId = 103;
+                            P.Date = V.TimeStamp.AddHours(7);
+                            P.KontrAgentName = "Камера";
+                            P.Type = Avto.Type;
+                           
+                        }
+                        catch
+                        {
+                            Avto = Avtomobils.Where(x => x.Id == 3).First();
+                            P.AvtomobilId = Avto.Id;
+                            P.Avtomobil = Avto;
+                            P.User = "Камера";
+                            P.VibralRab = false;
+                            P.Number = V.Plate;
+                            P.MassIn = 0;
+                            P.MassOut = 0;
+                            P.MassMusor = 0.0m;
+                            P.KontrAgentId = 103;
+                            P.Avtomobil.GKHNNC = false;
+                            P.TypeId = 16;
+                            P.Date = V.TimeStamp.AddHours(7);
+                            P.KontrAgentName = "Камера";
+                            P.Type = Typ;
+
+
+
+
+
+
+
+                        }
+                        var base64 = Convert.ToBase64String(V.Picture);
+                        P.Picture = String.Format("data:image/jpg;base64,{0}", base64);
+                        var plate64 = Convert.ToBase64String(V.PlateShot);
+                        P.PlateShot = String.Format("data:image/jpg;base64,{0}", plate64);
+                        P.IdCam = V.LogId;
+                        P.Description = "В пределах нормы.";
+                        Poligons.Add(P);
+
+                    }
+                }
+
+            }
+
             if (Vesi!=0)
             {
                 //Только с целыми весами
@@ -296,6 +492,30 @@ namespace GKHNNC.Controllers
             ViewBag.MarkaAvtomobils = new SelectList(db.MarkaAvtomobils.OrderBy(x => x.Name), "Id", "Name");
             ViewBag.AvtoType = db.TypeAvtos.Where(x => x.Id == 16).Select(x => x.Type).First();
             ViewBag.AvtoImage = db.TypeAvtos.Where(x => x.Id == 16).Select(x => x.Ico).First();
+            return RedirectToAction("Index");
+
+        }
+
+        public ActionResult DeleteCamera(int id)
+        {
+            VehicleRegistrationLog P = new VehicleRegistrationLog();
+    
+            try
+            {
+                P = adb.VehicleRegistrationLog.Where(x => x.Id == id).First();
+                P.IsDeleted = true;
+                adb.Entry(P).State = EntityState.Modified;
+                adb.SaveChanges();
+
+            }
+            catch
+            {
+
+            }
+          //  ViewBag.TypeAvtos = new SelectList(db.TypeAvtos, "Id", "Type");
+          //  ViewBag.MarkaAvtomobils = new SelectList(db.MarkaAvtomobils.OrderBy(x => x.Name), "Id", "Name");
+           // ViewBag.AvtoType = db.TypeAvtos.Where(x => x.Id == 16).Select(x => x.Type).First();
+          //  ViewBag.AvtoImage = db.TypeAvtos.Where(x => x.Id == 16).Select(x => x.Ico).First();
             return RedirectToAction("Index");
 
         }
@@ -724,6 +944,143 @@ namespace GKHNNC.Controllers
 
             return View("Index", new { number = A.Number });
         }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CameraToPoligon([Bind(Include = "Number,TypeId,MarkaId,ObiemBunkera,Id,Description,KontrAgentId")] CameraToPoligon C)
+        {
+            string numb = C.Number.ToUpper().Replace(" ", "");
+            Dictionary<char, char> DicVer = new Dictionary<char, char>()
+                {
+                    {'A','А'},
+                    {'E','Е'},
+                    {'Y','У'},
+                    {'P','Р'},
+                    {'M','М'},
+                    {'K','К'},
+                    {'Z','З'},
+                    {'X','Х'},
+                    {'C','С'},
+                    {'O','О'},
+                    {'L','Л'},
+                    {'B','В'},
+                    {'H','Н'},
+                    {'T','Т'}
+                };
+            //Заменяем английские символы в номере на русские
+            foreach (char ch in numb)
+            {
+                numb =numb.Replace(ch, DicVer.ContainsKey(ch) ? DicVer[ch] : ch);
+            }
+
+
+            DateTime Date = DateTime.Now;
+            //Разбираемся с камерой
+            try
+            {
+                VehicleRegistrationLog L = adb.VehicleRegistrationLog.Where(x => x.Id == C.Id).First();
+                Date = L.TimeStamp.AddHours(7);
+                L.Plate = numb;
+                adb.Entry(L).State = EntityState.Modified;
+                adb.SaveChanges();
+                    }
+            catch(Exception e)
+            {
+
+            }
+
+
+            //Разбираемся с автомобилем
+            Avtomobil A = null;
+            try
+            {
+                A = db.Avtomobils.Where(x => x.Number.Equals(numb)).Include(x=>x.KontrAgent).First();
+            }
+            catch
+            {
+
+            }
+            if (A == null)
+            {
+                try
+                {
+                    A = new Avtomobil();
+                    A.Date = Date.Year;
+                    A.Glonass = false;
+                    A.Garage = 0;
+                    A.GKHNNC = false;
+                    A.Number = numb;
+                    A.TypeId = C.TypeId;
+                    A.MarkaId = C.MarkaId;
+                    A.KontrAgentId = 104;
+                    A.KontrAgent = db.KontrAgents.Where(x => x.Id == 104).First();
+                    A.KoefficientSgatiya = 0;
+                    A.ObiemBunkera = 0;
+                    db.Avtomobils.Add(A);
+                    db.SaveChanges();
+                }
+                catch (Exception e)
+                {
+
+                }
+            }
+
+            //Разбираемся с полигоном
+            if (A != null)
+            {
+                try
+                {
+                    Poligon P = new Poligon();
+                    P.AvtomobilId = A.Id;
+                   
+                    if (C.KontrAgentId==104)
+                    {
+                        P.KontrAgentId = A.KontrAgentId.Value;
+                     
+                    }
+                    else
+                    {
+                        P.KontrAgentId = C.KontrAgentId;
+                    }
+                  
+                   
+                    P.KontrAgentName = db.KontrAgents.Where(x=>x.Id == P.KontrAgentId).Select(x=>x.Name).First();
+                    P.MarkaId = A.MarkaId;
+                    
+                    if (P.KontrAgentId != 105)
+                    {
+                        P.MassMusor = Math.Round(A.ObiemBunkera * A.KoefficientSgatiya * 165.1M, 2);
+                        P.MassIn = Math.Round(A.ObiemBunkera * A.KoefficientSgatiya * 165.1M, 2); 
+                    }
+                    else
+                    {
+                        P.MassMusor = 0;
+                        P.MassIn = 0;
+
+                    }
+                    P.MassOut = 0;
+                    P.Number = numb;
+                    P.TypeId = A.TypeId;
+                    P.Date = Date;
+                    P.User = "Создано пользователем "+User.Identity.Name+" на основании камеры "+ C.Id;
+                    P.VibralRab = false;
+                    P.CameraFix = true;
+                    P.Description = C.Description;
+                    db.Poligons.Add(P);
+                    db.SaveChanges();
+               
+                }
+                catch (Exception e)
+                {
+
+                }
+            }
+
+            return RedirectToAction("Index");
+         
+        }
+
 
         // GET: Poligons/Edit/5
         public ActionResult Edit(int? id)

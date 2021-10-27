@@ -59,6 +59,13 @@
             @Html.ValidationMessageFor(model => model.EU, "", new { @class = "text-danger" })
 
         </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.GEUN, htmlAttributes: new { @class = "control-label ", @style = "width:365Px" })
+
+            @Html.EditorFor(model => model.GEUN, new { htmlAttributes = new { @class = "form-control", @style = "width:365Px" } })
+            @Html.ValidationMessageFor(model => model.GEUN, "", new { @class = "text-danger" })
+
+        </div>
 
         <div class="form-group">
             @Html.ActionLink("Назад", "Index", null, new { @class = "btn btn-success", @style = "width: 180Px" })

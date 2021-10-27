@@ -16,7 +16,7 @@
         <th>@Html.DisplayNameFor(model => model.Ploshad)</th>
         <th>@Html.DisplayNameFor(model => model.ActivePloshad)</th>
         <th>@Html.DisplayNameFor(model => model.MKD)</th>
-        <th>@Html.DisplayNameFor(model => model.Type.Name)</th>
+        <th>Тип дома</th>
         <th>@Html.DisplayNameFor(model => model.GEU)</th>
         <th>@Html.DisplayNameFor(model => model.EUId)</th>
         <th>Опции</th>
@@ -24,57 +24,156 @@
 
     @foreach (var item in Model)
     {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Adress)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Ploshad)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ActivePloshad)
-        </td>
-        <td>
-            @Html.CheckBoxFor(modelItem => item.MKD, new { @class = "form-control" ,@disabled = "disabled" })
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Type.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.GEU)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.EUId)
-        </td>
-        <td>
-            @Html.ActionLink("Редактировать", "Edit", new { id = item.Id }) |
-            @Html.ActionLink("Удалить", "Delete", new { id = item.Id })
-        </td>
-    </tr>
+        string CH = "checked";
+        if (!item.MKD)
+        {
+            CH = "";
+        }
+
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Adress)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Ploshad)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ActivePloshad)
+            </td>
+            <td>
+                <input data-val="true"
+                       id="Checkbox_@item.Id"
+                       name="Checkbox_@item.Id"
+                       type="checkbox"
+                       value="@item.MKD"
+                       @CH
+                       onchange="MKDChange('@item.Id',this)"
+                       class="form-control" />
+            </td>
+            <td>
+
+                @Html.DropDownList("TypeId", new SelectList(@ViewBag.Types, "Value", "Text", item.TypeId), new { @class = "form-control", @onchange = "TypeChange('" + item.Id + "',this)" })
+
+            </td>
+            <td>
+                <select class="form-control" id="GEU_@item.Id" name="GEU" onchange="GEUChange('@item.Id',this)">
+                    @foreach (SelectListItem I in ViewBag.G)
+                    {
+                        string Sel = "";
+                        if (item.GEU.Equals(I.Text))
+                        {
+                            Sel = "Selected='Selected'";
+                        }
+                    <option value="@I.Value" @Sel>@I.Text</option>
+             
+                    }
+                </select>
+              
+            </td>
+            <td>
+                <input value="@item.EUId" readonly id="EU_@item.Id" class="form-control" style="width:40px" />
+               
+            </td>
+            <td>
+                @Html.ActionLink("Редактировать", "Edit", new { id = item.Id }) |
+                @Html.ActionLink("Удалить", "Delete", new { id = item.Id })
+            </td>
+        </tr>
     }
 
 </table>
 <p><a href="/Adres/Upload" class="btn btn-success btn-block">Загрузить коды УЭВ  &raquo;</a> </p>
 <p><a href="/Adres/APUpload" class="btn btn-success btn-block">Загрузить активные площади  &raquo;</a> </p>
+
 <p><a href="/Home/Index" class="btn btn-success btn-block">В главное меню &raquo;</a> </p>
 
 @section Scripts {
     @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
     @Scripts.Render("~/scripts/jquery-3.3.1.js")
     @Scripts.Render("~/Scripts/chosen.jquery.min.js")
-<script>
-    $('#GEU').change(function () {
-       
-    var G = $('#GEU').val();//выбраное значение в селекте
-       // alert("Чушь");
-        window.location.replace('/Adres/Index?geu=' + parseInt(G));
-        
+    <script>
+        $('#GEU').change(function () {
+
+            var G = $('#GEU').val();//выбраное значение в селекте
+            // alert("Чушь");
+            window.location.replace('/Adres/Index?geu=' + parseInt(G));
 
 
-    //идем в комплит воркс контроллер и там действие поиск по жэу отправляем выбранное значение в селекте, получаем дату список всех домов по жэу из БД перекинутых в лист стринг
 
-    // alert("PING!");
+            //идем в комплит воркс контроллер и там действие поиск по жэу отправляем выбранное значение в селекте, получаем дату список всех домов по жэу из БД перекинутых в лист стринг
 
-    });
-</script>
+            // alert("PING!");
+
+        });
+    </script>
+    <script>
+        function MKDChange(Id, Val)
+        {
+            _val = $(Val).prop('checked');
+           // alert(Id + _val);
+             $.post('@Url.Action("Obslug", "Adres")', { AdresId:Id, MKD: _val},
+                 function (data) {
+                     console.log('Контроллер вернул данные ' + data);
+
+                     if (data == 'Ok')
+                     {
+                        // alert('Не смогли сохранить изменения... Попробуйте через редактирование');
+
+                     }
+                     else
+                     {
+                         alert('Не смогли сохранить изменения... Попробуйте через редактирование' );
+                     }
+                            // $('body').append('<ul><li>Java</li><li>JavaScript</li></ul>');
+                        });
+        }
+
+    </script>
+    <script>
+        function TypeChange(Id, th)
+        {
+            _val = $(th).val();
+            alert(Id + _val);
+            $.post('@Url.Action("TypeChange", "Adres")', { AdresId: parseInt(Id), TypeId: parseInt(_val)},
+                 function (data) {
+                     console.log('Контроллер вернул данные ' + data);
+
+                     if (data == 'Ok')
+                     {
+                        // alert('Не смогли сохранить изменения... Попробуйте через редактирование');
+
+                     }
+                     else
+                     {
+                         alert('Не смогли сохранить изменения... Попробуйте через редактирование' );
+                     }
+                            // $('body').append('<ul><li>Java</li><li>JavaScript</li></ul>');
+                        });
+        }
+
+    </script>
+    <script>
+        function GEUChange(Id, th)
+        {
+            _val = $(th).val();
+           // alert(Id + _val);
+            $.post('@Url.Action("GEUChange", "Adres")', { AdresId: parseInt(Id), GEU: _val},
+                 function (data) {
+                     console.log('Контроллер вернул данные ' + data);
+
+                     if (data != 'Error')
+                    {
+                         $('#EU_' + Id).val(data);
+                        // alert('Не смогли сохранить изменения... Попробуйте через редактирование');
+
+                     }
+                     else
+                     {
+                         alert('Не смогли сохранить изменения... Попробуйте через редактирование' );
+                     }
+                            // $('body').append('<ul><li>Java</li><li>JavaScript</li></ul>');
+                        });
+        }
+
+    </script>
 }

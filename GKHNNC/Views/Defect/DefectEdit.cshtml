@@ -9,10 +9,10 @@
 <h4> Удалить все содержащее </h4>
 <input id="Tex" />
 <button id="Del" class="btn btn-success "> Удалить </button>
-<div class="container col-md-12">
+<div class="table">
     
         <div class="row">
-            <div class="col-sm-6">
+            <div class="col-6">
                 <h2> Список дефектов:</h2>
                 <table class="table table-striped">
                     <tr>
@@ -27,7 +27,7 @@
                     {
                         <tr>
                             <td>
-                                @Html.DisplayFor(Model => Model.Defect[i].Def);
+                               @Model.Defect[i].Def;
                             </td>
                             <td>
                                 @Html.ActionLink("X", "DefectEdit", new { xd = Model.Defect[i].Id, selection = ViewBag.Name })
@@ -37,7 +37,7 @@
 
                 </table>
             </div>
-            <div class="col-sm-6">
+            <div class="col-6">
                 <h2> Список работ:</h2>
                 <table class="table table-striped">
                     <tr>
@@ -52,7 +52,7 @@
                     {
                         <tr>
                             <td>
-                                @Html.DisplayFor(Model => Model.DefWork[i].Work)
+                                @Model.DefWork[i].Work
                             </td>
                             <td>
                                 @Html.ActionLink("X", "DefectEdit", new { xw = Model.DefWork[i].Id, selection = ViewBag.Name })

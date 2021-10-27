@@ -12,7 +12,7 @@
 
 </p>
 <p>
-  
+
     <button class="btn btn-block btn-warning" onclick="Refresh()">Обновить стоимость всех работ в текущем году</button>
 </p>
 
@@ -27,36 +27,82 @@
         <th>
             @Html.DisplayNameFor(model => model.Name)
         </th>
+
         <th>
             Стоимость на единицу
+        </th>
+        <th>
+            Попадает в отчет?
         </th>
         <th></th>
     </tr>
 
     @foreach (var item in Model)
     {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.DOMPart.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Izmerenie.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Cost)
-            </td>
-            <td>
+      
 
-                @Html.ActionLink("Редактировать", "Edit", new { id = item.Id }, new { @class = "btn btn-success " })
-                @Html.ActionLink("Удалить", "Delete", new { id = item.Id }, new { @class = "btn btn-secondary " })
-            </td>
-        </tr>
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.DOMPart.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Izmerenie.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Cost)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.OtchetId)
+        </td>
+        <td>
+            <button class="btn btn-success" onclick="ShowZam(@item.Id)">Заменить</button>
+            <button class="btn btn-success" onclick="Colvo(@item.Id)">Количество</button>
+            @Html.ActionLink("Редактировать", "Edit", new { id = item.Id }, new { @class = "btn btn-success " })
+            @Html.ActionLink("Удалить", "Delete", new { id = item.Id }, new { @class = "btn btn-secondary " })
+        </td>
+    </tr>
     }
 
 </table>
+
+<!-- Modal -->
+<div class="modal fade" id="ZamenaWork" tabindex="-1" role="dialog" aria-labelledby="AddAvtoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content col-12">
+            <div class="modal-header">
+                <h3 class="modal-title" id="AddAvtoModalLabel">Заменить активные работы</h3>
+
+            </div>
+            <div class="modal-body">
+                @{ string X = "OW"; string Y = "N"; string Z = "OSMOTR"; }
+
+                <div class="col-6">
+                    Какую работу заменить?
+                </div>
+                <div class="col-6">
+                    <input readonly id="FromZ" value="0" class="form-control" />
+                </div>
+                <div class="col-6">
+                    На какую заменить?
+                </div>
+                <div class="col-6">
+
+                    @Html.DropDownList("ToZ", new SelectList(ViewBag.OW, "value", "text"), new { @class = "form-control" })
+                </div>
+
+                <div class="col-6" style="margin:10px">
+                    <button id="AddWorkSubmit" onclick="Zamena()" class="btn btn-success btn-block">Сохранить</button>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
     @Scripts.Render("~/scripts/jquery-3.3.1.js")
@@ -67,7 +113,7 @@
     @Scripts.Render("~/scripts/validate.js")
     @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
     @Scripts.Render("~/scripts/jquery.unobtrusive.min.js")
-<script>
+    <script>
     function Refresh()
     {
         $.post('@Url.Action("RefreshAllCost", "Osmotrs")', function (data) {
@@ -80,5 +126,67 @@
 
         });
     }
-</script>
-    }
+    </script>
+    <script>
+        function Colvo(id)
+        {
+            $.post('@Url.Action("Count", "OsmotrWorks")', { id:id}, function (data) {
+            if (data != '') {
+                alert(data);
+            }
+            else {
+                alert('Ошибка!');
+            }
+
+        });
+        }
+    </script>
+    <script>
+        function ShowZam(id) {
+            $('#FromZ').val(id);
+
+            $('#ZamenaWork').modal('show');
+
+
+        }
+    </script>
+    <script>
+        function Zamena()
+        {
+            FromId = $('#FromZ').val();
+            ToId = $('#ToZ').val();
+            $.post('@Url.Action("Replace", "OsmotrWorks")', { FromId: parseInt(FromId),ToId:parseInt(ToId)}, function (data) {
+            if (data != '') {
+                alert(data);
+            }
+            else {
+                alert('Ошибка!');
+            }
+
+        });
+        }
+    </script>
+    <script>
+        function OtchetChange(Id, Val)
+        {
+            _val = $(Val).prop('checked');
+           // alert(Id + _val);
+             $.post('@Url.Action("Obslug", "Adres")', { AdresId:Id, MKD: _val},
+                 function (data) {
+                     console.log('Контроллер вернул данные ' + data);
+
+                     if (data == 'Ok')
+                     {
+                        // alert('Не смогли сохранить изменения... Попробуйте через редактирование');
+
+                     }
+                     else
+                     {
+                         alert('Не смогли сохранить изменения... Попробуйте через редактирование' );
+                     }
+                            // $('body').append('<ul><li>Java</li><li>JavaScript</li></ul>');
+                        });
+        }
+
+    </script>
+}

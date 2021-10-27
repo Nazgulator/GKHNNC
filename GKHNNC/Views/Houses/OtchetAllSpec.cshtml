@@ -1,0 +1,329 @@
+﻿@model IEnumerable<GKHNNC.Models.OtchetNeobhodimieRaboti>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Отчет по всем домам</title>
+</head>
+<body>
+    <h2>Отчет по всем домам</h2>
+
+    <p><a href="/Home/Index" class="btn btn-success btn-block"><< В главное меню </a> </p>
+
+    <table id="tableData" class="table table-bordered table-striped">
+      
+        <tr>
+            <th>
+                ЭУ
+            </th>
+
+            <th>
+                Адрес
+            </th>
+            <th>
+                Смена тамбурных дверей
+            </th>
+            <th>
+                Замена тамбурной перегородки с дверным блоком (алюминий)
+            </th>
+            <th>
+                Замена тамбурной перегородки с дверным блоком (металл)
+            </th>
+            <th>
+                Смена входных дверей
+            </th>
+            <th>
+                Замена почтовых ящиков
+            </th>
+            <th>
+                Установка лавочек
+            </th>
+            <th>
+                Установка урн
+            </th>
+
+
+
+        </tr>
+   
+        @foreach (var item in Model)
+        {
+
+
+            int Tambur2 = 0;
+            int Tambur = 0;
+            int Vhod = 0;
+            int Pochta = 0;
+            int Tambur3 = 0;
+            int Lavki = 0;
+            int Urni = 0;
+
+
+            try {
+                Pochta = Convert.ToInt32(item.AOW.Where(x => x.OsmotrWorkId == 71).First().Number);
+            }
+            catch { }
+            try { Tambur = Convert.ToInt32(item.AOW.Where(x => x.OsmotrWorkId == 34).First().Number); }
+            catch { }
+            try { Vhod = Convert.ToInt32(item.AOW.Where(x => x.OsmotrWorkId == 133).First().Number); }
+            catch { }
+            try { Tambur2 = Convert.ToInt32(item.AOW.Where(x => x.OsmotrWorkId == 187).First().Number); }
+            catch { }
+            try { Tambur3 = Convert.ToInt32(item.AOW.Where(x => x.OsmotrWorkId == 188).First().Number); }
+            catch { }
+            try { Lavki = Convert.ToInt32(item.AOW.Where(x => x.OsmotrWorkId == 64 || x.OsmotrWorkId == 111).Sum(x => x.Number)); }
+            catch { }
+
+            try { Urni = Convert.ToInt32(item.AOW.Where(x => x.OsmotrWorkId == 66|| x.OsmotrWorkId ==112).Sum(x=>x.Number)); }
+            catch { }
+
+
+
+
+            string Cl1 = "table-warning";
+            string Cl2 = "table-warning";
+            string Cl3 = "table-warning";
+            string L = "table-warning";
+            string P = "table-warning";
+            string V = "table-warning";
+            string U = "table-warning";
+
+            if (Tambur > 0) { Cl1 = ""; }
+            if (Tambur2 > 0) { Cl2 = ""; }
+            if (Tambur3 > 0) { Cl3 = ""; }
+            if (Vhod > 0) { V = ""; }
+            if (Pochta > 0) { P = ""; }
+            if (Lavki > 0) { L = ""; }
+            if (Urni > 0) { U = ""; }
+
+
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Adres.EUId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Adres.Adress)
+                </td>
+                <td class="@Cl1">
+
+                    @Tambur
+                </td>
+                <td class="@Cl2">
+
+                   @Tambur2
+                </td>
+
+                <td class="@Cl3">
+                 @Tambur3
+                </td>
+                <td class="@V">
+                @Vhod
+                </td>
+                <td class="@P">
+                @Pochta
+                </td>
+                <td class="@L">
+                   @Lavki
+                </td>
+                <td class="@U">
+                  @Urni
+                </td>
+               
+            </tr>
+        }
+
+    </table>
+
+
+    <br />
+    <p><button class="btn btn-block btn-success" onclick="Export()"> Экспорт в Эксель </button></p>
+    <p><a href="/Home/Index" class="btn btn-success btn-block"><< В главное меню </a> </p>
+    <!-- Modal -->
+    <div class="modal fade" id="Download" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4>Загрузка данных, пожалуйста подождите...</h4>
+                    <button id="X" type="button" class="close hide" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="progress">
+
+                        <div id="progressBar" class="progress-bar progress-bar-striped bg-success progress-bar-animated" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                        <center>
+                            <label id="nadpis">Загрузка данных...</label>
+                        </center>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+@section Scripts
+    {
+
+    @Scripts.Render("~/scripts/bootstrap.bundle.js")
+    @Scripts.Render("https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js")
+
+    @Scripts.Render("~/scripts/jquery-3.4.1.js")
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.js")
+    @Scripts.Render("~/scripts/jquery.unobtrusive-ajax.js")
+    @Scripts.Render("~/scripts/bootstrap.js")
+    @Scripts.Render("~/scripts/bootstrap.bundle.js")
+    @Scripts.Render("/scripts/ExportToExcel/excelexportjs.js")
+    <link rel="stylesheet" href="~/Scripts/JqueryThemes/ui-lightness/jquery-ui.css" />
+    <script>
+        function Closeall ()
+        {
+            var GO = confirm('Вы уверены, что хотите закрыть все текущие осмотры? ')
+            if (GO) {
+                var GO2 = confirm('Осмотры будут переданы в отдел ОЭЖФ и недоступны для редактирования ЭУ. Закрытие осмотров должно быть санкционировано администрацией. Закрыть все текущие осмотры? ')
+                if (GO2)
+                {
+                      $.post('@Url.Action("CloseAll", "Houses")',
+                    function (data) {
+
+
+                        window.location.replace('/Houses/Index?obnovit=true');
+                          }
+                      );
+
+                }
+
+
+            }
+        }
+    </script>
+    <script>
+        function OtchetAll ()
+        {
+
+                      $.post('@Url.Action("OtchetAll", "Houses")',
+                    function (data) {
+
+
+                        window.location.replace('/Houses/Index?obnovit=true');
+                          }
+                      );
+
+
+
+
+
+        }
+    </script>
+    <script>
+ $("#Search").autocomplete({
+        source: '@Url.Action("SearchAdres", "Houses")',
+        minLength: 1,
+        select: function (event, ui)
+        {
+
+            var _this = ui.item.label;
+            var from = $('#fromD').val().split('-');
+
+            var f = from[0] + "/" + from[1] + "/" + from[2];
+
+            var to = $('#toD').val().split('-');
+            var t = to[0] + "/" + to[1] + "/" + to[2];
+            var WP = $('#WorkPoisk').val();
+            window.location.replace('/Houses/Index?Adres=' + _this + '&fromD=' + f+'&toD='+t+'&WorkPoisk='+WP);
+
+
+        },
+
+        open: function (event, ui) {
+        $(this).removeClass('ui-autocomplete-loading');
+
+        }
+    });
+
+
+         function GoHome () {
+
+             var _this = $('#Search').val();
+            var from = $('#fromD').val().split('-');
+
+            var f = from[0] + "/" + from[1] + "/" + from[2];
+
+            var to = $('#toD').val().split('-');
+            var t = to[0] + "/" + to[1] + "/" + to[2];
+            var WP = $('#WorkPoisk').val();
+            window.location.replace('/Houses/Index?Adres=' + _this + '&fromD=' + f + '&toD=' + t + '&WorkPoisk=' + WP);
+
+
+        }
+
+    $('#Search').on('keypress', function () {
+        var that = this;
+
+        setTimeout(function () {
+            var res = /[^а-я,0-9,А-Я ]/g.exec(that.value);
+            console.log(res);
+            that.value = that.value.replace(res, '');
+        }, 0);
+        });
+        $('#Search').click(function () {
+            var that = this;
+            that.value = "";
+        });
+    </script>
+
+    <script>
+
+
+        $('#WorkPoisk').on('keypress', function () {
+            var that = this;
+
+            setTimeout(function () {
+                var res = /[^а-я,0-9,А-Я ]/g.exec(that.value);
+                console.log(res);
+                that.value = that.value.replace(res, '');
+            }, 0);
+        });
+        $('#WorkPoisk').click(function () {
+            var that = this;
+            that.value = "";
+        });
+    </script>
+
+    <script>
+        function NewOsmotr(id, date) {
+            alert(id + ';' + date);
+            var GO = confirm('Вы уверены, что хотите создать новый осмотр? ')
+            if (GO) {
+
+                /**/
+                window.location.replace('/Osmotrs/Create?id=' + id + '&date=' + date + '&NewOsmotr=true');
+                /**/
+
+            }
+        }
+    </script>
+    <script>
+        function OpenModal(id) {
+            $('#' + id).modal('show');
+        }
+    </script>
+
+    <script>
+        function Export() {
+
+            $("#tableData").excelexportjs({
+                containerid: "tableData",
+                datatype: 'table'
+            });
+
+        };
+    </script>
+}

@@ -45,8 +45,15 @@ namespace GKHNNC.Controllers
         }
         public ActionResult MenuPoiskAdresaPoGeu(string GEU)
         {
-            
-            List<string> Adresadb = db.Adres.Where(x => x.GEU.Contains(GEU.Replace(" ", ""))).Select(y=>y.Adress).ToList();
+
+            int EUId = 0;
+         
+               EUId = Convert.ToInt16(GEU.Replace("ЭУ-", ""));
+
+               
+           
+
+            List<string> Adresadb = db.Adres.Where(x => x.EUId==EUId&&x.MKD).Select(y=>y.Adress).ToList();
 
             Adresadb.Sort();
             Adresadb.Insert(0, "Все адреса");
@@ -101,14 +108,25 @@ namespace GKHNNC.Controllers
             }
             int Y = Convert.ToInt16(Year);
             int M = 0;
+            int EU = Convert.ToInt16(Agent.Remove(0, Agent.Length - 1));
+           
+            List<string> GEUS = new List<string>();
+            GEUS = db.GEUs.Where(x => x.EU == EU).Select(x => x.Name).ToList();
             Obratno(Month, out M);
             List<CompleteWork> CWdb = new List<CompleteWork>();
             if (Adres.Equals("Всеадреса"))
             {
-                CWdb = db.CompleteWorks.Where(p => p.Agent.Contains(Agent)).Where(g => g.WorkDate.Year == Y && g.WorkDate.Month == M).ToList();
+                foreach (string S in GEUS)
+                {
+                    CWdb.AddRange( db.CompleteWorks.Where(p => p.Agent.Equals(S)).Where(g => g.WorkDate.Year == Y && g.WorkDate.Month == M).ToList());
+                }
             }
             else
-            { CWdb = db.CompleteWorks.Where(p => p.Agent.Contains(Agent)).Where(f => f.WorkAdress.Replace(" ", "").Equals(Adres)).Where(g => g.WorkDate.Year == Y && g.WorkDate.Month == M).ToList();
+            {
+               
+                    CWdb = db.CompleteWorks.Where(x=> x.WorkDate.Year == Y && x.WorkDate.Month == M&&x.WorkAdress.Equals(Adres)).ToList();
+               
+                //CWdb = db.CompleteWorks.Where(p => p.Agent.Contains(Agent)).Where(f => f.WorkAdress.Replace(" ", "").Equals(Adres)).Where(g => g.WorkDate.Year == Y && g.WorkDate.Month == M).ToList();
             }
 
                 return View(CWdb);
@@ -121,26 +139,50 @@ namespace GKHNNC.Controllers
         {
             string xxx = User.Identity.Name.Replace(" ", "");
             List<string> GEUAll = new List<string>();
+            int EUId = 0;
             if (xxx.Contains("ЖЭУ"))
             {
+                int GeuId = Convert.ToInt16(xxx.Replace("ЖЭУ-", ""));
+            
+                try
+                {
+                    EUId = db.GEUs.Where(x => x.GEUN == GeuId).Select(x => x.EU).First();
+                }
+                catch
+                {
+
+                }
                 //имя пользователя если содержит жэу то только его в список
-                GEUAll.Add(xxx);
+                GEUAll.Add("ЭУ-"+EUId);
             }
             else
             {
                 //иначе список всех жэу
-                GEUAll = db.GEUs.Select(x => x.Name).ToList();
+                GEUAll = db.GEUs.Select(x =>"ЭУ-"+ x.EU.ToString()).Distinct().ToList();
+          
             }
             GEUAll.Sort();
             
             ViewBag.GEU = GEUAll;
             string G = GEUAll[0];
-          
 
-            List<string> Adresadb = db.Adres.Where(x => x.GEU.Contains(G.Replace(" ", ""))).Select(y => y.Adress).ToList();
+
+            List<string> Adresadb = new List<string>();
+            if (EUId ==0)
+            {
+              Adresadb =  db.Adres.Where(x=>x.MKD).Select(y => y.Adress).ToList();
+            }
+            else
+            {
+               Adresadb = db.Adres.Where(x => x.MKD&&x.EUId == EUId).Select(y => y.Adress).ToList();
+            }
+                
+                
             Adresadb.Sort();
             Adresadb.Insert(0, "Все адреса");
             ViewBag.Adres = Adresadb;
+            ViewBag.Works = db.Works.Where(x => x.Group.Contains("ТО конструктивных элементов")).OrderBy(x=>x.Name).Select(a => new SelectListItem { Value = a.WorkId.ToString(), Text = a.Name }).ToList();
+        //    ViewBag.Works = new SelectList( db.Works.Where(x => x.Code.Contains("01-")).Select(x=>x.Name).ToList());
 
             //ищем год
             ViewBag.Year = new string[DateTime.Now.Year - 2018 + 1];
@@ -176,8 +218,11 @@ namespace GKHNNC.Controllers
 
             ViewBag.Month = Month;
 
-               // SelectList MSL = new SelectList(new string[] { "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь" }, new string[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" });
-            
+          
+            ViewBag.Month = Month;
+
+            // SelectList MSL = new SelectList(new string[] { "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь" }, new string[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" });
+
 
             return View();
                 
@@ -1338,8 +1383,8 @@ namespace GKHNNC.Controllers
                 GEUAll = db.GEUs.Select(b => b.Name).ToList();
             }
             GEUAll.Sort();
-
-            List<string> Adresadb = db.Adres.Where(a => a.GEU.Contains(GEU)).Select(c => c.Adress).ToList();
+            int EUId = db.GEUs.Where(x => x.Name.Equals(GEU)).Select(x => x.EU).First();
+            List<string> Adresadb = db.Adres.Where(a => a.EUId == EUId&&a.MKD).Select(c => c.Adress).ToList();
             Adresadb.Sort();
             Adresadb.Insert(0, "Все адреса");
             ViewBag.Adresa = Adresadb;
@@ -1391,6 +1436,55 @@ namespace GKHNNC.Controllers
             string Worksdb = db.Works.Where(a => a.WorkId==ID).Select(b => b.Izmerenie).First();
             return Json(Worksdb);
         }
+
+        //Y: Year, M: Month, A: Adres, G: GEU, W: Work, I: Izmerenie, K: Kolvo 
+        public ActionResult AddNewWork(int Y,string M,string A, string G, int W, string I, string K, string WG)
+        {
+
+            //адрес дата группа измерение ИД номер 
+            string data = "";
+            Random R = new Random();
+
+          
+            int Mon = 0;
+            Obratno(M, out Mon);
+            //   MonthOpred(M, out M);
+            if (I.Equals("") == false)
+            {
+                try
+                {
+                    // string[] s = selection.Split(';');
+                    CompleteWork CW = new CompleteWork();
+                    CW.WorkAdress = A;
+
+                    int Day = R.Next(29) + 1;
+                    CW.WorkDate = new DateTime(Y, Mon, Day);
+                    CW.WorkGroup = WG;
+                    CW.WorkIzmerenie = I;
+                    CW.WorkWorkId = W;
+                    CW.WorkNumber = Convert.ToDecimal(K);
+                    CW.Date = DateTime.Now;
+                    CW.Agent = G;
+                    CW.KtoSohranil = User.Identity.Name.Replace(" ", "");
+                    Work Work = db.Works.Find(CW.WorkWorkId);
+                    CW.WorkCode = Work.Code;
+                    CW.WorkName = Work.Name;
+                    db.CompleteWorks.Add(CW);
+                    db.SaveChanges();
+                    string Month = "";
+                    MonthOpred(CW.WorkDate.Month, out Month);
+                    // < p > Адрес </ p >           < p > Наименование </ p >            < p > Количество </ p >            < p > Измерение </ p >            < p > Дата </ p >           < p > Агент </ p >
+                    data = CW.WorkAdress + ";" + Work.Name + ";" + CW.WorkNumber + ";" + CW.WorkIzmerenie + ";" + CW.WorkDate + ";" + CW.Agent;
+                }
+                catch
+                {
+                    data = "0;alert-danger;Ошибка в добавлении работы!";
+                }
+            }
+
+            return Json(data);
+        }
+
 
         public ActionResult SaveCompleteWork (string selection)
         {

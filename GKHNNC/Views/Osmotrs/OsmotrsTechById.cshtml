@@ -1,0 +1,1028 @@
+﻿@model GKHNNC.Models.Osmotr
+
+@{
+    ViewBag.Title = "TechOsmotr";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+
+
+<html>
+
+
+<body>
+
+    <script type='text/javascript' src='http://code.jquery.com/jquery-1.10.1.min.js'></script>
+    <script type='text/javascript'>
+
+    </script>
+    <script type='text/javascript'>
+        $('#MENU').hide(500);
+        $(window).on('load', function () {
+
+            $('#wrap_preloader').delay(500).fadeToggle(500);
+            $('#MENU').show(500);
+        });
+    </script>
+
+    <div id='wrap_preloader' style=" width: 100%;height: 100%;position: fixed;top:0px;margin: 0px auto;background: #1C1C1C;z-index: 99;text-align: center;color: #fff;font-size: 15px;padding-top: 260px;color:limegreen">
+
+        <p>
+            <img src="~/Content/Images/Download/D1.gif" align="middle" class="rounded mr-2" alt="Идёт загрузка...">
+        </p>
+        <p>
+            Загружаем осмотр...
+        </p>
+
+
+    </div>
+
+
+
+
+
+
+    <div id="MENU" style="background:#28a745;z-index:90;position:fixed;top:0px;">
+        @for (int i = 0; i < Model.DOMParts.Count; i++)
+        {
+            <a href="#@i" style="color:white;font-size:20px">@Model.DOMParts[i].Name |</a>
+        }
+        @Html.ActionLink("Сохранить отчет в Excel |", "ExportToExcel", "Osmotrs", null, new { @style = "color:white;font-size:20px" })
+        @Html.ActionLink("Назад", "Index", "Houses", null, new { @style = "color:white;font-size:20px" })
+    </div>
+    <div class="fixed-bottom">
+        <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="3000">
+            <div class="toast-header">
+                <img src="~/Content/Images/Download/galkaRepeat.gif" class="rounded mr-2" alt="Файл загружен">
+                <strong class="mr-auto">Фотография загружена на сервер!</strong>
+
+
+            </div>
+
+        </div>
+    </div>
+    <br />
+    <h2>Технические характеристики дома по адресу #@Model.Adres.Adress</h2>
+    <div class="col-md-12" style="background-color:#28a745">
+        <table>
+            <tr>
+                <td>
+                    <h3>@Model.Adres.Ulica @Model.Adres.Dom</h3>
+                </td>
+            </tr>
+
+        </table>
+    </div>
+
+    <h4>От @Model.Date.Day @ViewBag.Month @Model.Date.Year</h4>
+    @if (ViewBag.Error != "")
+    {
+        <H5>При загрузке возникла ошибка!!!</H5>
+        <p>@ViewBag.Error</p>
+    }
+
+
+
+
+    @if (User.IsInRole("Администратор") || User.Identity.Name.Contains("ИнженерОЭЖФ") || User.Identity.Name.Contains("Эксплуатация") || User.Identity.Name.Contains("ПТО") || User.Identity.Name.Contains("СлужбаГЭ"))
+    {
+
+        <div class="container">
+            <div class="form-horizontal">
+
+
+
+
+
+                <div id="XXX" class="row">
+                    <div class="col-md-12" style="background-color:#00520e">
+                        <table style="width:100%">
+                            <tr>
+                                <td colspan="7" align="center">
+                                    <h3 style="color:white"> Типы конструктивных элементов дома </h3>
+                                </td>
+                            </tr>
+                            <tr style="background-color:#00520e ; color:white" class="table-bordered">
+                                <th width="230px" style="text-align:center">
+                                    Элемент
+                                </th>
+                                <th width="100px" style="text-align:center">
+                                    Тип элемента
+                                </th>
+                                <th width="50px" style="text-align:center">
+                                    Материал
+                                </th>
+
+                            </tr>
+                            @foreach (var b in Model.TypeE)
+                            {
+
+
+                                <tr style="background-color:#fff ; color:black" class="table-bordered">
+                                    <th style="text-align:left">
+                                        @b.DOMPart.Name
+
+
+                                    </th>
+                                    <th style="text-align:center">
+                                        @Html.DropDownList("TypeE_CT" + b.Id, new SelectList(b.CT, "Value", "Text", b.ConstructiveTypeId), new { @class = "form-control", onchange = "ChangeType(" + b.Id + ",this.value)" })
+                                    </th>
+                                    <th style="text-align:center">
+                                        @Html.DropDownList("TypeE_M" + b.Id, new SelectList(ViewBag.Materials, "Value", "Text", b.MaterialId), new { @class = "form-control", onchange = "ChangeMaterial(" + b.Id + ",this.value)" })
+                                    </th>
+
+                                </tr>
+
+
+
+                            }
+                            <tr>
+                                <td>
+                                    <p></p>
+                                </td>
+                            </tr>
+
+                        </table>
+
+                    </div>
+
+
+
+
+                </div>
+
+
+
+
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="form-horizontal">
+
+
+
+
+
+                <div id="XXX" class="row">
+                    <div class="col-md-12" style="background-color:#006400">
+                        <table style="width:100%">
+                            <tr>
+                                <td colspan="7" align="center">
+                                    <h3 style="color:white"> Технические характеристики дома </h3>
+                                </td>
+                            </tr>
+                            <tr style="background-color:#28a745 ; color:white" class="table-bordered">
+                                <th width="230px" style="text-align:center">
+                                    Элемент
+                                </th>
+                                <th width="100px" style="text-align:center">
+                                    Количество
+                                </th>
+                                <th width="50px" style="text-align:center">
+                                    Ед.Изм.
+                                </th>
+
+                            </tr>
+                            @foreach (var b in Model.TE)
+                            {
+
+
+                                <tr style="background-color:#fff ; color:black" class="table-bordered">
+                                    <th style="text-align:left">
+                                        @b.Name
+                                    </th>
+                                    <th style="text-align:center">
+                                        <input id="TE_@b.Id" class="form-control" style="width:150px;height:30px;" value=" @b.Val" onchange="ChangeTEVal(@b.Id)" />
+                                    </th>
+                                    <th style="text-align:center">
+                                        @b.Izmerenie.Name
+                                    </th>
+
+                                </tr>
+
+
+
+                            }
+                            <tr>
+                                <td>
+                                    <p></p>
+                                </td>
+                            </tr>
+
+                        </table>
+
+                    </div>
+
+
+
+
+                </div>
+
+
+
+
+            </div>
+        </div>
+    }
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="container">
+        <div class="form-horizontal">
+
+            @{ int progress = 0;
+                double pro100 = Model.DOMParts.Count;
+                int procount = 0;
+            }
+            @for (int j = 0; j < Model.DOMParts.Count; j++)
+            {
+
+                if (Model.Elements.Where(x => x.Element.ElementTypeId == Model.DOMParts[j].Id).ToList().Count > 0)
+                {
+                    var a = Model.Elements.Where(x => x.Element.ElementTypeId == Model.DOMParts[j].Id).ToList();
+
+                    <div id="@j" class="row">
+                        <div class="col-md-12" style="background-color:#28a745">
+                            <table style="width:100%">
+                                <tr>
+                                    <td colspan="7" align="center">
+                                        <h3 style="color:white"> @Model.DOMParts[j].Name </h3>
+                                    </td>
+                                </tr>
+                                <tr style="background-color:#28a745 ; color:white" class="table-bordered">
+                                    <th width="230px" style="text-align:center">
+
+                                        Элемент
+                                    </th>
+                                    <th width="95px" style="text-align:center">
+                                        Материал
+                                    </th>
+                                    <th width="100px" style="text-align:center">
+                                        Количество
+                                    </th>
+                                    <th width="50px" style="text-align:center">
+                                        Ед.Изм.
+                                    </th>
+                                    <th width="100px" style="text-align:center">
+                                        Количество
+                                    </th>
+                                    <th width="50px" style="text-align:center">
+                                        Ед.Изм.
+                                    </th>
+                                </tr>
+                                @foreach (var b in a)
+                                {
+                                    string color = "#777777";
+                                    string est = "Отсутствует";
+                                    string est2 = "Отсутствует";
+                                    string read = "readonly";
+
+                                    if (b.Est) { color = "#ffffff"; read = ""; est = b.Kolichestvo.ToString(); est2 = b.Kolichestvo2.ToString(); }
+                                    if (b.Est && b.Element.Podsvetit) { color = "#ff6666"; }
+                                    if (b.Izmerenie2Id == 1) { est2 = "Отсутствует"; }
+                                    <tr style="background-color:@color ; color:black" class="table-bordered">
+                                        <th style="text-align:left">
+                                            @b.Element.Name
+                                        </th>
+                                        <th style="text-align:center">
+                                            @Html.DropDownList("Material_" + b.Id, new SelectList(Model.Materials, "Id", "Name", b.Material.Id), new { @class = "form-control", onchange = "ChangeMaterialAE(" + b.Id + ",this.value)" })
+                                        </th>
+                                        <th style="text-align:center" width="100px">
+                                            <input id="Element_@b.Id" class="form-control" style="width:150px;height:30px;" value="@est" @read onchange="ChangeAEValue(@b.Id)" />
+
+                                        </th>
+                                        <th style="text-align:center">
+                                            @b.Izmerenie.Name
+                                        </th>
+                                        @if (b.Izmerenie2Id != 1)
+                                        {
+                                            <th style="text-align:center" width="100px">
+                                                <input id="Element2_@b.Id" class="form-control" style="width:150px;height:30px;" value="@est2" @read onchange="ChangeAEValue2(@b.Id)" />
+
+                                            </th>
+                                            <th style="text-align:center">
+                                                @b.Izmerenie2.Name
+                                            </th>
+                                        }
+                                    </tr>
+
+
+
+                                }
+
+                            </table>
+
+                        </div>
+
+
+
+
+                    </div>
+                }
+
+
+                procount++;
+                progress = Convert.ToInt16(procount / pro100 * 100);
+                ProgressHub.SendMessage("Загружаем данные элементов...", progress);
+                if (procount > pro100) { procount = Convert.ToInt32(pro100); }
+            }
+
+        </div>
+    </div>
+
+
+
+
+
+
+
+</body>
+
+
+</html>
+
+
+
+
+@section Scripts{
+
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+    @Scripts.Render("~/scripts/nprogress.min.js")
+    @Scripts.Render("~/scripts/jquery.signalR-2.4.0.js")
+    @Scripts.Render("~/signalr/hubs")
+
+    @Scripts.Render("~/scripts/jquery.unobtrusive-ajax.js")
+    @Scripts.Render("~/scripts/bootstrap.js")
+    @Scripts.Render("~/scripts/bootstrap.bundle.js")
+    @Scripts.Render("https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js")
+    @Scripts.Render("~/scripts/jquery.rating/js/jquery.rating-2.0.js")
+    @Scripts.Render("~/scripts/jquery.rating/js/jquery.rating-2.0Red.js")
+
+
+    <link href="/scripts/jquery.rating/styles/jquery.rating.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+
+    <script>
+        function ChangeAEValue(id) {
+            var AE = $('#Element_' + id).val();
+            $.post('@Url.Action("ChangeAEValue", "Osmotrs")', { Id: id, Val: AE },
+                function (data) {
+                });
+
+        }
+    </script>
+    <script>
+        function ChangeAEValue2(id) {
+            var AE = $('#Element_' + id).val();
+            $.post('@Url.Action("ChangeAEValue2", "Osmotrs")', { Id: id, Val: AE },
+                function (data) {
+                });
+
+        }
+    </script>
+    <script>
+        function ChangeType(id,val) {
+             $.post('@Url.Action("ChangeTypeElement", "Osmotrs")', { Id: id, Val: val },
+                function (data) {
+                });
+
+        }
+    </script>
+    <script>
+        function ChangeMaterialAE(id,val) {
+             $.post('@Url.Action("ChangeMaterial", "Osmotrs")', { Id: id, Val: val },
+                function (data) {
+                });
+
+        }
+    </script>
+    <script>
+        function ChangeMaterial(id,val) {
+             $.post('@Url.Action("ChangeMaterialElement", "Osmotrs")', { Id: id, Val: val },
+                function (data) {
+                });
+
+        }
+    </script>
+    <script>
+        function ChangeTEVal(id) {
+            var TE = $('#TE_' + id).val();
+            $.post('@Url.Action("ChangeTEValue", "Osmotrs")', { Id: id, Val: TE },
+                function (data) {
+                });
+
+        }
+    </script>
+    <script>
+        function PS(id)
+        {
+           var PRIM =  $('#Primechanie').val();
+              $.post('@Url.Action("SavePrimechanie", "Osmotrs")', { id: id,text:PRIM},
+                 function (data) {
+                     console.log('Контроллер вернул данные ' + data);
+                            var S = data.split(';');
+                     if (S[0] != 'Ошибка') {
+                                console.log('Примечание сохранено' );
+                            }
+                            else {
+                                alert('Ошибка сохранения файла. '+S[1]);
+                            }
+                            // $('body').append('<ul><li>Java</li><li>JavaScript</li></ul>');
+                        });
+        }
+    </script>
+    <script>
+        $(function () {
+            var PB = $.connection.progressHub;
+            console.log("Loading...");
+            PB.client.sendMessage = function (message, count) {
+                // update progress
+                console.log(count);
+                UpdateProgress(message, count);
+                //alert(message);
+            };
+
+            $.connection.hub.start().done(function () {
+                console.log("Приконнектились");
+                // call the method CallLongOperation defined in the Hub
+                PB.server.getCountAndMessage();
+                //$("#progressBar").hide();
+
+
+
+            });
+
+
+            // Update the progress bar
+            function UpdateProgress(message, count) {
+                // $("#progressBar").fadeIn("slow");
+                var result = $("#result");
+                if (count >= 100) { $("#X").click(); }
+                result.html(message);
+
+                //$("#progressBar").data("progressbar").value(count);
+
+                $("#progressBar").attr("aria-valuenow", count);
+                $("#progressBar").width(count + '%');
+                $("#progressBar").text(count + '%');
+                $("#nadpis").text(message);
+                // $("#progressBar").css("width", count);
+            }
+        });
+    </script>
+
+
+
+    <script>
+        function UploadPDF(e) {
+          var files = $(e)[0].files;
+                console.log('Файлы.' + files);
+                if (files.length > 0) {
+                    if (window.FormData !== undefined) {
+                        var data = new FormData();
+
+                        for (var x = 0; x < files.length; x++) {
+                            data.append("file" + x, files[x]);
+                        }
+
+
+                        $.ajax({
+                            type: "POST",
+                            url: '@Url.Action("Upload", "Osmotrs")',
+                            contentType: false,
+                            processData: false,
+                            data: data,
+                            success: function (result) {
+                                $('.toast').toast('show');
+
+
+                            },
+                            error: function (xhr, status, p3) {
+
+                                alert(xhr.responseText);
+                            }
+                        });
+                    } else {
+                        alert("Браузер не поддерживает загрузку файлов HTML5!");
+                    }
+                }
+        }
+    </script>
+
+    <script>
+        function OpenModal(id) {
+            $('#' + id).modal('show');
+        }
+    </script>
+    <script>
+     function Peredelat2(id)
+     {
+
+                var GO = confirm('Вы уверены что данные неверны? ОЭЖФ получит возможность редактирования данного осмотра! ')
+                if (GO) {
+                    $.post('@Url.Action("Peredelat2", "Osmotrs")', { OsmotrId: id },
+                        function (data) {
+                            if (data != null) {
+                                 var url = "@Url.Action("OsmotrsProverka1", "Houses")";
+                                alert('Осмотр возвращен в ОЭЖФ для редактирования. Сообщите замечания по осмотру в ОЭЖФ лично! ');
+                                $('#wrap_preloader').fadeIn(500);
+                                window.location.replace(url);
+
+                                }
+                        });
+                }
+            }
+    </script>
+    <script>
+        function RemoveWork(id,name)
+        {
+            var GO = confirm('Вы уверены, что хотите удалить работу ' + name + ' ?')
+            if (GO) {
+                $.post('@Url.Action("RemoveWork", "Osmotrs")', { id: id },
+                    function (data) {
+                        console.log('Контроллер вернул данные ' + data);
+                        var S = data.split(';');
+                        if (S[0] != 'Ошибка') {
+                            $("#AO_" + id).remove();
+                            console.log('Удалили строку в таблице');
+                        }
+                        else {
+                            alert('Ошибка сохранения файла. ' + S[1]);
+                        }
+                        // $('body').append('<ul><li>Java</li><li>JavaScript</li></ul>');
+
+
+
+                    });
+            }
+
+        }
+    </script>
+    <script>
+        function RemoveWorkORW(id,name)
+        {
+            var GO = confirm('Вы уверены, что хотите удалить работу ' + name + ' ?')
+            if (GO) {
+                $.post('@Url.Action("RemoveWorkORW", "Osmotrs")', { id: id },
+                    function (data) {
+                        console.log('Контроллер вернул данные ' + data);
+                        var S = data.split(';');
+                        if (S[0] != 'Ошибка') {
+                            $("#RO_" + id).remove();
+                            console.log('Удалили строку в таблице');
+                        }
+                        else {
+                            alert('Ошибка сохранения файла. ' + S[1]);
+                        }
+                        // $('body').append('<ul><li>Java</li><li>JavaScript</li></ul>');
+
+
+
+                    });
+            }
+
+        }
+    </script>
+    <script>
+        function Gotov(id, name) {
+            //  var gotov = $("#Gotovo_" + id).attr('ready');
+            var CW = $('#CloseWork');
+            $('#RabotaId').val(id);
+            $('#RabotaName').val(name);
+            $('#LoadPDF')[0].files = null;
+            $('#NumberFact').val('0');
+            $('#StoimostFact').val('0');
+
+            CW.modal('show');
+
+
+
+        }
+    </script>
+    <script>
+        function GotovORW(id, name) {
+
+            //  var gotov = $("#Gotovo_" + id).attr('ready');
+            var CW = $('#CloseWorkORW');
+            $('#RabotaIdORW').val(id);
+            $('#RabotaNameORW').val(name);
+            $('#LoadPDFORW')[0].files = null;
+            $('#NumberFactORW').val('0');
+            $('#StoimostFactORW').val('0');
+
+            CW.modal('show');
+
+
+
+        }
+    </script>
+    <script>
+        function CloseWorkSubmitORW()
+        {
+            var CW = $('#CloseWorkORW');
+            var Rabota = $('#RabotaIdORW').val();
+            var id = Rabota;
+            var Osmotr = $('#OsmotrIdORW').val();
+            var Number = $('#NumberFactORW').val();
+            var Stoimost = $('#StoimostFactORW').val();
+            var FinNum = $('#FinNumORW_'+id);
+            var FinCost = $('#FinCostORW_'+id);
+            var e = $('#LoadPDFORW');
+            var filename = "";
+            var files = $(e)[0].files;
+                console.log('Файлы.' + files);
+            if (files.length > 0) {
+               // alert('файлы есть');//Грузим файлы если есть
+                    if (window.FormData !== undefined) {
+                        var data = new FormData();
+
+                        for (var x = 0; x < files.length; x++) {
+                            data.append("file" + x, files[x]);
+                        }
+
+
+                        $.ajax({
+                            type: "POST",
+                            url: '@Url.Action("UploadPDF", "Osmotrs")',
+                            contentType: false,
+                            processData: false,
+                            data: data,
+                            success: function (result) {
+                                console.log('file is added to server'+result);
+                                if (result != "") {
+                                    console.log('result is' + result);
+                                    $('.toast').toast('show');
+                                    filename = result;
+                                    console.log('filename is' + filename);
+                                    alert("WorkId: "+Rabota+", OsmotrId:"+ Osmotr+", FinalNumber:"+ Number+", FinalStoimost:"+ Stoimost+", Filename:"+ filename);
+                                    //теперь заполняем работу до конца int WorkId, int OsmotrId, decimal FinalNumber, decimal FinalStoimost, string Filename
+                                         $.post('@Url.Action("GotovoORW", "Osmotrs")', { WorkId: Rabota, OsmotrId: Osmotr, FinalNumber: Number, FinalStoimost: Stoimost, Filename: filename },
+                    function (data) {
+                      //  alert(data);
+                        console.log('Контроллер вернул данные ' + data);
+                        var S = data.split(';');
+                        var CW = $('#CloseWork');
+                        CW.modal('hide');
+                        if (S[0] != 'Ошибка') {
+                            if (S[0] == 'Готово') {
+                                $('#CloseWorkORW').modal('hide');
+                                $("#GotovoORW_" + id).removeClass("btn btn-outline-danger");
+                                $("#GotovoORW_" + id).addClass("btn btn-success");
+                                $("#GotovoORW_" + id).text("Выполнена");
+                                $("#GotovoORW_" + id).attr('ready', 'true');
+                                $("#ActORW_" + id).attr('href', '/Files/' + Osmotr + '/' + filename);
+                                $("#ActORW_" + id).addClass("btn-success");
+                                $("#ActORW_" + id).removeClass("btn-outline-danger");
+                                FinNum.html(Number);
+                                FinCost.html(Stoimost);
+
+                                $("#RO_" + id).addClass('table-success');
+                                console.log('Кнопка стала заленой');
+
+                            }
+                            else {
+                                $("#GotovoORW_" + id).removeClass("btn btn-success");
+                                $("#GotovoORW_" + id).addClass("btn btn-outline-danger");
+                                $("#GotovoORW_" + id).text("Выполнена");
+                                $("#GotovoORW_" + id).attr('ready', 'true');
+                                $("#ActORW_" + id).attr('href', '/Files/' + Osmotr + '/' + filename);
+                                $("#ActORW_" + id).addClass("btn-outline-danger");
+                                $("#ActORW_" + id).removeClass("btn-success");
+
+                                $("#RO_" + id).addClass('table-danger');
+                                console.log('Кнопка стала красной');
+                                $('#CloseWorkORW').modal('hide');
+                            }
+                        }
+                        else {
+                            alert('Ошибка сохранения файла. ' + S[1]);
+                        }
+
+                        // $('body').append('<ul><li>Java</li><li>JavaScript</li></ul>');
+
+
+
+                    });
+
+                                }
+
+
+                            },
+                            error: function (xhr, status, p3) {
+
+                                alert(xhr.responseText);
+                            }
+                        });
+                    } else {
+                        alert("Браузер не поддерживает загрузку файлов HTML5!");
+                    }
+            }
+
+
+
+
+
+
+        }
+    </script>
+    <script>
+        function ReOpenWorkSubmitORW()
+        {
+            var CW = $('#CloseWork');
+            var Rabota = $('#RabotaIdORW').val();
+            var id = Rabota;
+            var Osmotr = $('#OsmotrIdORW').val();
+
+
+
+                                    //теперь заполняем работу до конца
+                   $.post('@Url.Action("NeGotovoORW", "Osmotrs")', { WorkId: Rabota},
+                    function (data) {
+                       // alert(data);
+                        console.log('Контроллер вернул данные ' + data);
+                        var S = data.split(';');
+                        var CW = $('#CloseWork');
+                        CW.modal('hide');
+                        if (S[0] != 'Ошибка') {
+                            if (S[0] == 'НеГотово') {
+                                $('#CloseWorkORW').modal('hide');
+                                $("#GotovoORW_" + id).removeClass("btn btn-success");
+                                $("#GotovoORW_" + id).addClass("btn btn-outline-danger");
+                                $("#GotovoORW_" + id).text("Не выполнена");
+                                $("#GotovoORW_" + id).attr('ready', 'false');
+                                $("#ActORW_" + id).attr('href', '');
+                                $("#ActORW_" + id).removeClass("btn-success");
+                                $("#ActORW_" + id).addClass("btn-outline-danger");
+                                $("#RO_" + id).removeClass('table-success');
+                                console.log('Кнопка стала красной');
+                            }
+
+
+                        }
+                        else {
+                            alert('Ошибка сохранения файла. ' + S[1]);
+                        }
+                        // $('body').append('<ul><li>Java</li><li>JavaScript</li></ul>');
+                    });
+        }
+    </script>
+    <script>
+        function CloseWorkSubmit()
+        {
+            var CW = $('#CloseWork');
+            var Rabota = $('#RabotaId').val();
+            var id = Rabota;
+            var Osmotr = $('#OsmotrId').val();
+            var Number = $('#NumberFact').val();
+            var Stoimost = $('#StoimostFact').val();
+            var e = $('#LoadPDF');
+            var filename = "";
+            var files = $(e)[0].files;
+                console.log('Файлы.' + files);
+            if (files.length > 0) {
+               // alert('файлы есть');//Грузим файлы если есть
+                    if (window.FormData !== undefined) {
+                        var data = new FormData();
+
+                        for (var x = 0; x < files.length; x++) {
+                            data.append("file" + x, files[x]);
+                        }
+
+
+                        $.ajax({
+                            type: "POST",
+                            url: '@Url.Action("UploadPDF", "Osmotrs")',
+                            contentType: false,
+                            processData: false,
+                            data: data,
+                            success: function (result) {
+                                console.log('file is added to server'+result);
+                                if (result != "") {
+                                    console.log('result is' + result);
+                                    $('.toast').toast('show');
+                                    filename = result;
+                                    console.log('filename is' + filename);
+
+                                    //теперь заполняем работу до конца
+                                         $.post('@Url.Action("Gotovo", "Osmotrs")', { WorkId: Rabota, OsmotrId: Osmotr, FinalNumber: Number, FinalStoimost: Stoimost, Filename: filename },
+                    function (data) {
+                       // alert(data);
+                        console.log('Контроллер вернул данные ' + data);
+                        var S = data.split(';');
+                        var CW = $('#CloseWork');
+                        CW.modal('hide');
+                        if (S[0] != 'Ошибка') {
+                            if (S[0] == 'Готово') {
+                                $("#Gotovo_" + id).removeClass("btn btn-outline-danger");
+                                $("#Gotovo_" + id).addClass("btn btn-success");
+                                $("#Gotovo_" + id).text("Выполнена");
+                                $("#Gotovo_" + id).attr('ready', 'true');
+                                $("#ActAOW_" + id).attr('href', '/Files/' + Osmotr + '/' + filename);
+                                $("#ActAOW_" + id).addClass("btn btn-success");
+                                $("#ActAOW_" + id).removeClass("btn btn-outline-danger");
+
+                                $("#AO_" + id).addClass('table-success');
+                                console.log('Кнопка стала заленой');
+                            }
+                            else {
+                                $("#Gotovo_" + id).removeClass("btn btn-success");
+                                $("#Gotovo_" + id).addClass("btn btn-outline-danger");
+                                $("#Gotovo_" + id).text("Не выполнена");
+                                $("#Gotovo_" + id).attr('ready', 'false');
+                                $("#ActAOW_" + id).attr('href', '');
+                                $("#ActAOW_" + id).removeClass("btn-success");
+                                $("#ActAOW_" + id).addClass("btn-outline-danger");
+                                $("#AO_" + id).removeClass('table-success');
+                                console.log('Кнопка стала красной');
+                            }
+                        }
+                        else {
+                            alert('Ошибка сохранения файла. ' + S[1]);
+                        }
+
+                        // $('body').append('<ul><li>Java</li><li>JavaScript</li></ul>');
+
+
+
+                    });
+
+                                }
+
+
+                            },
+                            error: function (xhr, status, p3) {
+
+                                alert(xhr.responseText);
+                            }
+                        });
+                    } else {
+                        alert("Браузер не поддерживает загрузку файлов HTML5!");
+                    }
+            }
+
+
+
+
+
+
+        }
+    </script>
+    <script>
+        function ReOpenWorkSubmit()
+        {
+            var CW = $('#CloseWork');
+            var Rabota = $('#RabotaId').val();
+            var id = Rabota;
+            var Osmotr = $('#OsmotrId').val();
+            var Number = $('#NumberFact').val();
+            var Stoimost = $('#StoimostFact').val();
+            var e = $('#LoadPDF');
+
+                                    //теперь заполняем работу до конца
+                   $.post('@Url.Action("NeGotovo", "Osmotrs")', { WorkId: Rabota},
+                    function (data) {
+                        alert(data);
+                        console.log('Контроллер вернул данные ' + data);
+                        var S = data.split(';');
+                        var CW = $('#CloseWork');
+                        CW.modal('hide');
+                        if (S[0] != 'Ошибка') {
+                            if (S[0] == 'НеГотово') {
+                                $("#Gotovo_" + id).removeClass("btn btn-success");
+                                $("#Gotovo_" + id).addClass("btn btn-outline-danger");
+                                $("#Gotovo_" + id).text("Не выполнена");
+                                $("#Gotovo_" + id).attr('ready', 'false');
+                                $("#ActAOW_" + id).attr('href', '');
+                                $("#ActAOW_" + id).removeClass("btn-success");
+                                $("#ActAOW_" + id).addClass("btn-outline-danger");
+                                $("#AO_" + id).removeClass('table-success');
+                                console.log('Кнопка стала красной');
+                            }
+
+
+                        }
+                        else {
+                            alert('Ошибка сохранения файла. ' + S[1]);
+                        }
+                        // $('body').append('<ul><li>Java</li><li>JavaScript</li></ul>');
+                    });
+        }
+    </script>
+
+
+
+
+    <script>
+        function AddWork(id)
+        {
+            console.log('Начинаем добавление работы ' + id);
+            var OW = $("#OW").val();
+            var N = $("#N" ).val();
+            var O = $("#OSMOTR").val();
+            var Table = $("#AO_"+id);
+            console.log('Приняли такие данные: ' + OW+';'+N+';'+O+';'+Table);
+             $.post('@Url.Action("AddWork", "Osmotrs")', { OsmotrWork: OW, Number: N, OsmotrId:O,ElementId:id},
+                 function (data) {
+                     console.log('Контроллер вернул данные ' + data);
+                            var S = data.split(';');
+                     if (S[0] != 'Ошибка')
+                     {
+                         if (S[5] != 'Modify')
+                         {
+                             //Table.removeAttr('display');
+                             Table.fadeIn('slow');
+                             Table.after('<tr id="AO_' + S[5] + '" class="AO_' + S[5] + '"><td  style="text-align:center">' + S[0] + '</td><td style="text-align:center" >' + S[1] + '</td><td style="text-align:center" colspan="2" >' + S[3] + '</td><td style="text-align:center"colspan="2">0</td><td style="text-align:center">' + S[2] + '</td><td style="text-align:center">' + S[4] + '</td><td style="text-align:center">0</td><td style="text-align:center"><a href="" id="ActAOW_' + id + '" class="btn btn-outline-danger">Akt</a></td><td style="text-align:center"  ><button type="button" id="Gotovo_' + id + '" ADId="' + id + '" onclick="Gotov(' + S[5] + ',' + S[1] +')" class="btn btn-outline-secondary">Новая</button></td><td style="text-align:center" ><button type="button" id="RemoveWork" ADId="' + id + '"  class="btn btn-outline-secondary rem">Удалить работу</button></td></tr>');
+                             // $('#AO_' + id).hide().fadeIn("slow");//появляем медленно строку
+                             console.log('Добавили в таблицу строку' + Table);
+                             $('#AddNewActiveWork').modal('hide');
+                         }
+                         else
+                         {
+                             //El2 + ";" + OW.Name + ";" + OW.Izmerenie.Name + ";" + Number.ToString() + ";" + AOW.TotalCost.ToString()+";"+AOW.Id+";Add";
+                             console.log('Ищем строку AO_' + S[5]);
+                             var El = $("#AO_" + S[5]);
+                             El.replaceWith('<tr id="AO_' + S[5] + '" class="AO_' + S[5] + '"><td  style="text-align:center">' + S[0] + '</td><td style="text-align:center" >' + S[1] + '</td><td style="text-align:center" colspan="2">' + S[3] + '</td><td style="text-align:center"colspan="2">0</td><td style="text-align:center">' + S[2] + '</td><td style="text-align:center">' + S[4] + '</td><td style="text-align:center">0</td><td style="text-align:center"><a href="" id="ActAOW_' + id + '" class="btn btn-outline-danger">Akt</a></td><td style="text-align:center"  ><button type="button" id="Gotovo_' + id + '" ADId="' + id + '" onclick="Gotov(' + S[5] + ',' + S[1] +')" class="btn btn-outline-secondary">Новая</button></td><td style="text-align:center"></td><button type="button" id="RemoveWork" ADId="' + id + '" class="btn btn-outline-secondary rem">Удалить работу</button></td></tr>');
+                             // $('#AO_' + id).hide().fadeIn("slow");//появляем медленно строку
+                             console.log('Заменили строку в таблице' + Table);
+                             $('#AddNewActiveWork').modal('hide');
+                         }
+
+                     }
+                     else
+                     {
+                         alert('Ошибка сохранения файла. ' + S[1]);
+                     }
+                            // $('body').append('<ul><li>Java</li><li>JavaScript</li></ul>');
+                        });
+        }
+    </script>
+    <script>
+        function AddRecommendWork(id)
+        {
+            console.log('Начинаем добавление работы ' + id);
+            var Part = $("#RDOMPart").val();
+            var Number = $("#RNumber" ).val();
+            var Osmotr = $("#ROsmotr").val();
+            var Cost = $("#RCost").val();
+            var Name = $("#RName").val();
+            var Izmerenie = $("#RIzmerenie").val();
+            var Table = $("#RO_"+id );
+            console.log('Приняли такие данные: ' + Part + ';' + Number + ';' + Osmotr + ';' + Table + ";" + Cost + ";" + Name + ";" + Izmerenie);
+             $.post('@Url.Action("AddRecommendWork", "Osmotrs")', { OsmotrId: Osmotr, Number: Number, PartId:Part,Cost:Cost, Name:Name,IzmerenieId:Izmerenie},
+                 function (data) {
+                     console.log('Контроллер вернул данные ' + data);
+                            var S = data.split(';');
+                     if (S[0] != 'Ошибка')
+                     {
+                         if (S[6] != 'Modify')
+                         {
+                             //Table.removeAttr('display');ROW.DOMPart.Name + ";" + ROW.Name + ";" + ROW.Izmerenie.Name + ";" + Number.ToString() + ";" + ROW.Cost.ToString() + ";" + ROW.Id + ";Add";
+
+                             Table.fadeIn('slow');
+                             Table.after('<tr id="RO_' + S[5] + '" class="RO_' + S[5] + '"><td  style="text-align:center">' + S[0] + '</td><td style="text-align:center">' + S[1] + '</td><td style="text-align:center">' + S[3] + '</td><td style="text-align:center" colspan="2">0</td><td style="text-align:center"  colspan="2">' + S[2] + '</td><td style="text-align:center">' + S[4] + '</td><td style="text-align:center" colspan=>0</td><td style="text-align:center" ><button class="btn btn-outline-secondary">AKT</button></td><td style="text-align:center" ><button class="btn btn-outline-secondary">Новая</button></td><td style="text-align:center" colspan="2" ><button type="button" id="RemoveWork" ADId="' + id + '" onclick="RemoveRecommendWork(' + S[5] + ')" class="btn btn-outline-secondary rem">Удалить работу</button></td></tr>');
+                             // $('#RO_' + id).hide().fadeIn("slow");//появляем медленно строку
+                             console.log('Добавили в таблицу строку' + Table);
+                             $('#AddNewRecommendWork').modal('hide');
+                         }
+                         else
+                         {
+                             console.log('Ищем строку RO_' + S[5]);
+                             var El = $("#RO_" + S[4]);
+                             El.replaceWith('<tr id="RO_' + S[5] + '" class="RO_' + S[5] + '"><td  style="text-align:center">' + S[0] + '</td><td style="text-align:center" colspan="2">' + S[1] + '</td><td style="text-align:center">' + S[3] + '</td><td style="text-align:center">' + S[2] + '</td><td style="text-align:center">' + S[4] + '</td><td style="text-align:center" colspan="2" ><button type="button" id="RemoveWork" ADId="' + id + '" onclick="RemoveRecommendWork(' + S[5] + ')" class="btn btn-outline-danger rem">Удалить работу</button></td></tr>');
+                             // $('#RO_' + id).hide().fadeIn("slow");//появляем медленно строку
+                             console.log('Заменили строку в таблице' + Table);
+                             $('#AddNewRecommendWork').modal('hide');
+                         }
+
+                     }
+                     else
+                     {
+                         alert('Ошибка сохранения файла. ' + S[1]);
+                     }
+                            // $('body').append('<ul><li>Java</li><li>JavaScript</li></ul>');
+                        });
+        }
+    </script>
+    <script>
+        function RemoveRecommendWork(id)
+        {
+              $.post('@Url.Action("RemoveRecommendWork", "Osmotrs")', { id: id},
+                 function (data) {
+                     console.log('Контроллер вернул данные ' + data);
+                            var S = data.split(';');
+                     if (S[0] != 'Ошибка') {
+                         $("#RO_" + id).remove();
+                                console.log('Удалили строку в таблице' );
+                            }
+                            else {
+                                alert('Ошибка сохранения файла. '+S[1]);
+                            }
+                            // $('body').append('<ul><li>Java</li><li>JavaScript</li></ul>');
+
+
+
+                        });
+
+        }
+    </script>
+}

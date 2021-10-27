@@ -1,5 +1,8 @@
 ﻿@model IEnumerable<GKHNNC.Models.OtchetNeobhodimieRaboti>
-
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
 
 <!DOCTYPE html>
 
@@ -21,9 +24,9 @@
             <th colspan="2">Контейнерная площадка</th>
             <th colspan="2">Малые формы</th>
             <th colspan="2">Ограждения</th>
-            <th colspan="8"></th>
-          
-          
+            <th colspan="10"></th>
+
+
         </tr>
         <tr>
             <th>
@@ -61,6 +64,9 @@
                 Таблички шт
             </th>
             <th>
+                Доска объявлений шт
+            </th>
+            <th>
                 Стенды шт
             </th>
             <th>
@@ -79,6 +85,9 @@
                 Вывоз снега м3
             </th>
             <th>
+                Сброс снега м2
+            </th>
+            <th>
                 Мех. уборка машиночас.
             </th>
 
@@ -90,56 +99,86 @@
         @{bool Y = false; }
         @foreach (var item in Model)
         {
-            decimal Bordurs = 0;
+            string Bordurs = "0";
+            string Bordurs2 = "0";
 
-            decimal Ploshadkas = 0;
-            decimal Malie = 0;
-            decimal Tablichki = 0;
-            decimal Stendi = 0;
-            decimal Pesok = 0;
-            decimal Grunt = 0;
-            decimal Sheben = 0;
-            decimal Otsev = 0;
-            decimal Sneg = 0;
-            decimal Mehuborka = 0;
+            string Ploshadkas = "0";
+            string Ploshadkas2 = "0";
+            string Malie = "0";
+            string Malie2= "0";
+            string Tablichki = "0";
+            string Doska = "0";
+            string Stendi = "0";
+            string Pesok = "0";
+            string Grunt = "0";
+            string Sheben = "0";
+            string Otsev = "0";
+            string Sneg = "0";
+            string Mehuborka = "0";
+            string SbrosSnega = "0";
 
-            try   { Tablichki = item.AOW.Where(x => x.OsmotrWorkId == 162).First().Number; }
+            try { Tablichki = item.AOW.Where(x => x.OsmotrWorkId == 162).First().Number.ToString().Replace('.',','); }
             catch { }
-            try { Stendi = item.AOW.Where(x => x.OsmotrWorkId == 163).First().Number; }
+            try { Stendi = item.AOW.Where(x => x.OsmotrWorkId == 163).First().Number.ToString().Replace('.', ','); }
             catch { }
-            try { Pesok = item.AOW.Where(x => x.OsmotrWorkId == 154).First().Number; }
+            try { Pesok = item.AOW.Where(x => x.OsmotrWorkId == 154).First().Number.ToString().Replace('.', ','); }
             catch { }
-            try { Grunt = item.AOW.Where(x => x.OsmotrWorkId == 155).First().Number; }
+            try { Grunt = item.AOW.Where(x => x.OsmotrWorkId == 155).First().Number.ToString().Replace('.', ','); }
             catch { }
-            try { Sheben = item.AOW.Where(x => x.OsmotrWorkId == 156).First().Number; }
+            try { Sheben = item.AOW.Where(x => x.OsmotrWorkId == 156).First().Number.ToString().Replace('.', ','); }
             catch { }
-            try { Otsev = item.AOW.Where(x => x.OsmotrWorkId == 157).First().Number; }
+            try { Otsev = item.AOW.Where(x => x.OsmotrWorkId == 157).First().Number.ToString().Replace('.', ','); }
             catch { }
-            try { Tablichki = item.AOW.Where(x => x.OsmotrWorkId == 162).First().Number; }
+            try { Tablichki = item.AOW.Where(x => x.OsmotrWorkId == 162).First().Number.ToString().Replace('.', ','); }
             catch { }
-            try { Sneg = item.AOW.Where(x => x.OsmotrWorkId == 158).First().Number; }
+            try { Doska = item.AOW.Where(x => x.OsmotrWorkId == 166).First().Number.ToString().Replace('.', ','); }
             catch { }
-            try { Mehuborka = item.AOW.Where(x => x.OsmotrWorkId == 159).First().Number; }
+            try { Sneg = item.AOW.Where(x => x.OsmotrWorkId == 158).First().Number.ToString().Replace('.', ','); }
+            catch { }
+            try { Mehuborka = item.AOW.Where(x => x.OsmotrWorkId == 159).First().Number.ToString().Replace('.', ','); }
+            catch { }
+            try { SbrosSnega = item.AOW.Where(x => x.OsmotrWorkId == 165).First().Number.ToString().Replace('.', ','); }
             catch { }
             try
-            { Ploshadkas =item.AOW.Where(x => x.OsmotrWorkId == 160).First().Number; }
+            { Ploshadkas = item.AOW.Where(x => x.OsmotrWorkId == 160).First().Number.ToString().Replace('.', ','); }
             catch { }
             try
-            { Malie = item.AOW.Where(x => x.OsmotrWorkId == 161).First().Number; }
+            { Ploshadkas2 = Math.Round(item.AOW.Where(x => x.OsmotrWorkId == 160).First().Number * 0.05m, 2).ToString().Replace('.', ','); }
+            catch { }
+            try
+            { Malie = item.AOW.Where(x => x.OsmotrWorkId == 161).First().Number.ToString().Replace('.', ','); }
             catch
             {
 
             }
-            decimal Ogragdenia = 0;
             try
-            { Ogragdenia = item.AE.Where(x => x.ElementId == 1218).First().Kolichestvo; }
+            { Malie2 = Math.Round(item.AOW.Where(x => x.OsmotrWorkId == 161).First().Number * 0.05m, 2).ToString().Replace('.', ','); }
+            catch
+            {
+
+            }
+            string Ogragdenia = "0";
+            string Ogragdenia2 = "0";
+            try
+            { Ogragdenia = item.AE.Where(x => x.ElementId == 1218).First().Kolichestvo.ToString().Replace('.', ','); }
+            catch
+            {
+
+            }
+            try
+            { Ogragdenia2 = Math.Round(item.AE.Where(x => x.ElementId == 1218).First().Kolichestvo * 0.05m, 2).ToString().Replace('.', ','); }
             catch
             {
 
             }
             try
             {
-                Bordurs = item.AE.Where(x => x.ElementId == 1217).First().Kolichestvo;
+                Bordurs = Math.Round(item.AE.Where(x => x.ElementId == 1217).First().Kolichestvo * 0.05m, 2).ToString().Replace('.', ',');
+            }
+            catch { }
+            try
+            {
+                Bordurs2 = item.AE.Where(x => x.ElementId == 1217).First().Kolichestvo.ToString().Replace('.', ',');
             }
             catch { }
 
@@ -153,76 +192,82 @@
             string S = "table-warning";
             string Sn = "table-warning";
             string M = "table-warning";
-            if (Bordurs > 0) { Cl1 = ""; }
-            if (Ploshadkas > 0) { Cl2 = ""; }
-            if (Malie > 0) { Cl3 = ""; }
-            if (Ogragdenia > 0) { Cl4 = ""; }
-            if (Pesok >0) { P = ""; }
-            if (Otsev > 0) { O = ""; }
-            if (Grunt > 0) { G = ""; }
-            if (Sheben > 0) { S = ""; }
-            if (Sneg > 0) { Sn = ""; }
-            if (Mehuborka > 0) { M = ""; }
+            if (Bordurs.Equals("0") == false) { Cl1 = ""; }
+            if (Ploshadkas.Equals("0")==false) { Cl2 = ""; }
+            if (Malie.Equals("0") == false) { Cl3 = ""; }
+            if (Ogragdenia.Equals("0") == false) { Cl4 = ""; }
+            if (Pesok.Equals("0") == false) { P = ""; }
+            if (Otsev.Equals("0") == false) { O = ""; }
+            if (Grunt.Equals("0") == false) { G = ""; }
+            if (Sheben.Equals("0") == false) { S = ""; }
+            if (Sneg.Equals("0") == false) { Sn = ""; }
+            if (Mehuborka.Equals("0") == false) { M = ""; }
 
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Adres.EUId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Adres.Adress)
-            </td>
-            <td class="@Cl1">
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Adres.EUId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Adres.Adress)
+                </td>
+                <td class="@Cl1">
 
-                @Bordurs
-            </td>
-            <td class="@Cl1">
+                    @Bordurs
+                </td>
+                <td class="@Cl1">
 
-                @Math.Round(Bordurs * 0.05m, 2)
-            </td>
+                   @Bordurs2
+                </td>
 
-            <td class="@Cl2">
-                @Ploshadkas
-            </td>
-            <td class="@Cl2">
-                @Math.Round(Ploshadkas * 0.05m, 2)
-            </td>
-            <td class="@Cl3">
-                @Malie
-            </td>
-            <td class="@Cl3">
-                @Math.Round(Malie * 0.05m, 2)
-            </td>
-            <td class="@Cl4">
-                @Ogragdenia
-            </td>
-            <td class="@Cl4">
-                @Math.Round(Ogragdenia * 0.05m, 2)
-            </td>
-            <td>
-                @Tablichki
-            </td>
-            <td>
-                @Stendi
-            </td>
-            <td class="@P">
-                @Pesok
-            </td>
-            <td class="@G">
-                @Grunt
-            </td>
-            <td class="@S">
-                @Sheben
-            </td>
-            <td class="@O">
-                @Otsev
-            </td>
-            <td>
-                @Sneg
-            </td>
-            <td>
-                @Mehuborka
-            </td>
-        </tr>
+                <td class="@Cl2">
+                    @Ploshadkas
+                </td>
+                <td class="@Cl2">
+                   @Ploshadkas2
+                </td>
+                <td class="@Cl3">
+                    @Malie
+                </td>
+                <td class="@Cl3">
+                    @Malie2
+                </td>
+                <td class="@Cl4">
+                    @Ogragdenia
+                </td>
+                <td class="@Cl4">
+                    @Ogragdenia2
+                </td>
+                <td>
+                    @Tablichki
+                </td>
+                <td>
+                    @Doska
+                </td>
+                <td>
+                    @Stendi
+                </td>
+                <td class="@P">
+                    @Pesok
+                </td>
+                <td class="@G">
+                    @Grunt
+                </td>
+                <td class="@S">
+                    @Sheben
+                </td>
+                <td class="@O">
+                    @Otsev
+                </td>
+                <td>
+                    @Sneg
+                </td>
+                <td>
+                    @SbrosSnega
+                </td>
+                <td>
+                    @Mehuborka
+                </td>
+            </tr>
         }
 
     </table>
@@ -259,17 +304,17 @@
 @section Scripts
     {
 
-        @Scripts.Render("~/scripts/bootstrap.bundle.js")
-        @Scripts.Render("https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js")
+    @Scripts.Render("~/scripts/bootstrap.bundle.js")
+    @Scripts.Render("https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js")
 
-        @Scripts.Render("~/scripts/jquery-3.4.1.js")
-        @Scripts.Render("~/scripts/jquery-ui-1.12.1.js")
-        @Scripts.Render("~/scripts/jquery.unobtrusive-ajax.js")
-        @Scripts.Render("~/scripts/bootstrap.js")
-        @Scripts.Render("~/scripts/bootstrap.bundle.js")
-        @Scripts.Render("/scripts/ExportToExcel/excelexportjs.js")
-        <link rel="stylesheet" href="~/Scripts/JqueryThemes/ui-lightness/jquery-ui.css" />
-        <script>
+    @Scripts.Render("~/scripts/jquery-3.4.1.js")
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.js")
+    @Scripts.Render("~/scripts/jquery.unobtrusive-ajax.js")
+    @Scripts.Render("~/scripts/bootstrap.js")
+    @Scripts.Render("~/scripts/bootstrap.bundle.js")
+    @Scripts.Render("/scripts/ExportToExcel/excelexportjs.js")
+    <link rel="stylesheet" href="~/Scripts/JqueryThemes/ui-lightness/jquery-ui.css" />
+    <script>
         function Closeall ()
         {
             var GO = confirm('Вы уверены, что хотите закрыть все текущие осмотры? ')
@@ -290,8 +335,8 @@
 
             }
         }
-        </script>
-        <script>
+    </script>
+    <script>
         function OtchetAll ()
         {
 
@@ -308,8 +353,8 @@
 
 
         }
-        </script>
-        <script>
+    </script>
+    <script>
  $("#Search").autocomplete({
         source: '@Url.Action("SearchAdres", "Houses")',
         minLength: 1,
@@ -364,53 +409,53 @@
             var that = this;
             that.value = "";
         });
-        </script>
+    </script>
 
-        <script>
+    <script>
 
 
-            $('#WorkPoisk').on('keypress', function () {
-                var that = this;
+        $('#WorkPoisk').on('keypress', function () {
+            var that = this;
 
-                setTimeout(function () {
-                    var res = /[^а-я,0-9,А-Я ]/g.exec(that.value);
-                    console.log(res);
-                    that.value = that.value.replace(res, '');
-                }, 0);
-            });
-            $('#WorkPoisk').click(function () {
-                var that = this;
-                that.value = "";
-            });
-        </script>
+            setTimeout(function () {
+                var res = /[^а-я,0-9,А-Я ]/g.exec(that.value);
+                console.log(res);
+                that.value = that.value.replace(res, '');
+            }, 0);
+        });
+        $('#WorkPoisk').click(function () {
+            var that = this;
+            that.value = "";
+        });
+    </script>
 
-        <script>
-            function NewOsmotr(id, date) {
-                alert(id + ';' + date);
-                var GO = confirm('Вы уверены, что хотите создать новый осмотр? ')
-                if (GO) {
+    <script>
+        function NewOsmotr(id, date) {
+            alert(id + ';' + date);
+            var GO = confirm('Вы уверены, что хотите создать новый осмотр? ')
+            if (GO) {
 
-                    /**/
-                    window.location.replace('/Osmotrs/Create?id=' + id + '&date=' + date + '&NewOsmotr=true');
-                    /**/
+                /**/
+                window.location.replace('/Osmotrs/Create?id=' + id + '&date=' + date + '&NewOsmotr=true');
+                /**/
 
-                }
             }
-        </script>
-        <script>
-            function OpenModal(id) {
-                $('#' + id).modal('show');
-            }
-        </script>
+        }
+    </script>
+    <script>
+        function OpenModal(id) {
+            $('#' + id).modal('show');
+        }
+    </script>
 
-        <script>
-            function Export() {
+    <script>
+        function Export() {
 
-                $("#tableData").excelexportjs({
-                    containerid: "tableData",
-                    datatype: 'table'
-                });
+            $("#tableData").excelexportjs({
+                containerid: "tableData",
+                datatype: 'table'
+            });
 
-            };
-        </script>
-    }
+        };
+    </script>
+}

@@ -9,7 +9,8 @@ namespace GKHNNC.DAL
         
             public WorkContext() : base("WorkContext")
             {
-            }
+            Database.SetInitializer<WorkContext>(null);
+        }
 
         //public DbSet<Student> Students { get; set; }
         // public DbSet<Enrollment> Enrollments { get; set; }
@@ -18,7 +19,7 @@ namespace GKHNNC.DAL
         public DbSet<Ezdka> Ezdkas { get; set; }
         public DbSet<Zapravka> Zapravkas { get; set; }
         public DbSet<Work> Works { get; set; }
-        public DbSet<GEU> GEUs { get; set; }
+        public DbSet<GKHNNC.Models.GEU> GEUs { get; set; }
         public DbSet<Log> Logs { get; set; }
         public DbSet<Sopostavlenie> Sopostavlenies { get; set; }
         public DbSet<Agent> Agents { get; set; }
@@ -143,6 +144,17 @@ namespace GKHNNC.DAL
         public System.Data.Entity.DbSet<GKHNNC.Models.LogAutoscan> LogAutoscans { get; set; }
         public System.Data.Entity.DbSet<GKHNNC.Models.EU> EU { get; set; }
         public System.Data.Entity.DbSet<GKHNNC.Models.AdresType> AdresTypes { get; set; }
+        public System.Data.Entity.DbSet<GKHNNC.Models.EventLog> EventLogs { get; set; }
+        public System.Data.Entity.DbSet<GKHNNC.Models.Stati> Statis { get; set; }
+        public System.Data.Entity.DbSet<GKHNNC.Models.WorkSoderganie> WorkSoderganies { get; set; }
+        public System.Data.Entity.DbSet<GKHNNC.Models.ActiveWorkSoderganie> ActiveWorkSoderganies { get; set; }
+        public System.Data.Entity.DbSet<GKHNNC.Models.Tip> Tips { get; set; }
+        public System.Data.Entity.DbSet<GKHNNC.Models.TechElement> TechElements { get; set; }
+
+        public System.Data.Entity.DbSet<GKHNNC.Models.TypeElement> TypeElements { get; set; }
+
+        public System.Data.Entity.DbSet<GKHNNC.Models.ConstructiveType> ConstructiveTypes { get; set; }
+        public System.Data.Entity.DbSet<GKHNNC.Models.TelefonsSpravochnik> TelefonsSpravochniks { get; set; }
 
 
         //protected override void OnModelCreating(DbModelBuilder modelBuilder)

@@ -40,7 +40,7 @@ using GKHNNC.Models;
 using Microsoft.AspNet.Identity;
 using System.Web.Helpers;
 using Opredelenie;
-using System.Diagnostics;
+
 
 
 
@@ -51,6 +51,17 @@ namespace GKHNNC.Controllers
         private WorkContext db = new WorkContext();
         public ActionResult Index()
         {
+            List<EventLog> Events = new List<EventLog>();
+            try
+            {
+                Events = db.EventLogs.OrderByDescending(x => x.Date).Take(5).ToList();
+
+            }
+            catch
+            {
+
+            }
+            ViewBag.Events = Events;
             return View();
         }
         /*

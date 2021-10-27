@@ -243,7 +243,9 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\ActiveDefectsController.cs" />
     <Compile Include="Controllers\ActiveElementsController.cs" />
+    <Compile Include="Controllers\ActiveWorkSoderganiesController.cs" />
     <Compile Include="Controllers\AdresController.cs" />
+    <Compile Include="Controllers\AdresTypesController.cs" />
     <Compile Include="Controllers\AllStreetsController.cs" />
     <Compile Include="Controllers\ArendatorsController.cs" />
     <Compile Include="Controllers\ASControlsController.cs" />
@@ -251,6 +253,7 @@
     <Compile Include="Controllers\AvtoScansController.cs" />
     <Compile Include="Controllers\ChatMessagesController.cs" />
     <Compile Include="Controllers\CompleteWorksController.cs" />
+    <Compile Include="Controllers\ConstructiveTypesController.cs" />
     <Compile Include="Controllers\DefectController.cs" />
     <Compile Include="Controllers\DOMCWsController.cs" />
     <Compile Include="Controllers\DOMElectroesController.cs" />
@@ -261,6 +264,8 @@
     <Compile Include="Controllers\DOMRoofsController.cs" />
     <Compile Include="Controllers\DOMRoomsController.cs" />
     <Compile Include="Controllers\DOMVodootvodsController.cs" />
+    <Compile Include="Controllers\ElementsController.cs" />
+    <Compile Include="Controllers\EventLogsController.cs" />
     <Compile Include="Controllers\ExcelExportMonth.cs" />
     <Compile Include="Controllers\EzdkasController.cs" />
     <Compile Include="Controllers\FasadMaterialsController.cs" />
@@ -302,10 +307,14 @@
     <Compile Include="Controllers\SVNsController.cs" />
     <Compile Include="Controllers\TableServicesController.cs" />
     <Compile Include="Controllers\TarifsController.cs" />
+    <Compile Include="Controllers\TipsController.cs" />
+    <Compile Include="Controllers\TypeElementsController.cs" />
     <Compile Include="Controllers\UEVsController.cs" />
     <Compile Include="Controllers\UslugasController.cs" />
     <Compile Include="Controllers\VoditelsController.cs" />
+    <Compile Include="Controllers\WorkSoderganiesController.cs" />
     <Compile Include="Controllers\ZakazchiksController.cs" />
+    <Compile Include="DAL\AutomarshallContext.cs" />
     <Compile Include="Ezdkas.cs">
       <DependentUpon>WorkCenterContext.tt</DependentUpon>
     </Compile>
@@ -323,14 +332,19 @@
     <Compile Include="MarkaAvtomobils.cs">
       <DependentUpon>WorkCenterContext.tt</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\NormMigration.cs" />
-    <Compile Include="Migrations\NormMigration.Designer.cs">
-      <DependentUpon>NormMigration.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\TelefonsSpravochnik.cs" />
+    <Compile Include="Models\TypeElement.cs" />
+    <Compile Include="Models\TechElement.cs" />
     <Compile Include="Models\ActiveElement.cs" />
     <Compile Include="Models\AdresType.cs" />
+    <Compile Include="Models\CameraToPoligon.cs" />
+    <Compile Include="Models\PlanoviStatiView.cs" />
+    <Compile Include="Models\Stati.cs" />
+    <Compile Include="Models\ConstructiveType.cs" />
+    <Compile Include="Models\VehicleRegistrationLog.cs" />
+    <Compile Include="Models\AutomarshallView.cs" />
+    <Compile Include="Models\EventLog.cs" />
     <Compile Include="Models\OtchetNeobhodimieRaboti.cs" />
     <Compile Include="Models\WebUser.cs" />
     <Compile Include="Models\EU.cs" />
@@ -375,6 +389,9 @@
     <Compile Include="Models\Material.cs" />
     <Compile Include="Models\Musor.cs" />
     <Compile Include="Models\OsmotrWork.cs" />
+    <Compile Include="Models\ActiveWorkSoderganie.cs" />
+    <Compile Include="Models\WorkSoderganie.cs" />
+    <Compile Include="Models\Tip.cs" />
     <Compile Include="Models\Zakazchik.cs" />
     <Compile Include="Models\Voditel.cs" />
     <Compile Include="Models\AS24.cs" />
@@ -1914,6 +1931,51 @@
     <Content Include="Views\Osmotrs\OsmotrMobile.cshtml" />
     <Content Include="Views\Osmotrs\ViewMobile.cshtml" />
     <Content Include="Views\Houses\OtchetAll.cshtml" />
+    <Content Include="Views\AdresTypes\Create.cshtml" />
+    <Content Include="Views\AdresTypes\Delete.cshtml" />
+    <Content Include="Views\AdresTypes\Details.cshtml" />
+    <Content Include="Views\AdresTypes\Edit.cshtml" />
+    <Content Include="Views\AdresTypes\Index.cshtml" />
+    <Content Include="Views\EventLogs\Create.cshtml" />
+    <Content Include="Views\EventLogs\Delete.cshtml" />
+    <Content Include="Views\EventLogs\Details.cshtml" />
+    <Content Include="Views\EventLogs\Edit.cshtml" />
+    <Content Include="Views\EventLogs\Index.cshtml" />
+    <Content Include="Views\Osmotrs\PlanoviStatiView.cshtml" />
+    <Content Include="Views\Houses\OtchetAllSpec.cshtml" />
+    <Content Include="Views\WorkSoderganies\Create.cshtml" />
+    <Content Include="Views\WorkSoderganies\Delete.cshtml" />
+    <Content Include="Views\WorkSoderganies\Details.cshtml" />
+    <Content Include="Views\WorkSoderganies\Edit.cshtml" />
+    <Content Include="Views\WorkSoderganies\Index.cshtml" />
+    <Content Include="Views\Tips\Create.cshtml" />
+    <Content Include="Views\Tips\Delete.cshtml" />
+    <Content Include="Views\Tips\Details.cshtml" />
+    <Content Include="Views\Tips\Edit.cshtml" />
+    <Content Include="Views\Tips\Index.cshtml" />
+    <Content Include="Views\ActiveWorkSoderganies\Create.cshtml" />
+    <Content Include="Views\ActiveWorkSoderganies\Delete.cshtml" />
+    <Content Include="Views\ActiveWorkSoderganies\Details.cshtml" />
+    <Content Include="Views\ActiveWorkSoderganies\Edit.cshtml" />
+    <Content Include="Views\ActiveWorkSoderganies\Index.cshtml" />
+    <Content Include="Views\Osmotrs\OsmotrsTechById.cshtml" />
+    <Content Include="Views\Osmotrs\OsmotrsTech.cshtml" />
+    <Content Include="Views\TypeElements\Create.cshtml" />
+    <Content Include="Views\TypeElements\Delete.cshtml" />
+    <Content Include="Views\TypeElements\Details.cshtml" />
+    <Content Include="Views\TypeElements\Edit.cshtml" />
+    <Content Include="Views\TypeElements\Index.cshtml" />
+    <Content Include="Views\ConstructiveTypes\Create.cshtml" />
+    <Content Include="Views\ConstructiveTypes\Delete.cshtml" />
+    <Content Include="Views\ConstructiveTypes\Details.cshtml" />
+    <Content Include="Views\ConstructiveTypes\Edit.cshtml" />
+    <Content Include="Views\ConstructiveTypes\Index.cshtml" />
+    <Content Include="Views\Elements\Create.cshtml" />
+    <Content Include="Views\Elements\Delete.cshtml" />
+    <Content Include="Views\Elements\Details.cshtml" />
+    <Content Include="Views\Elements\Edit.cshtml" />
+    <Content Include="Views\Elements\Index.cshtml" />
+    <Content Include="Views\Osmotrs\PlanoviOtchet.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1922,11 +1984,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\NormMigration.resx">
-      <DependentUpon>NormMigration.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />

@@ -41,6 +41,63 @@
 
 </Center>
 
+
+<Center>
+    <p> <h3>Загрузка технических параметров дома</h3></p>
+
+    @using (Html.BeginForm("TechParametrUpload", "Adres", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <div class="container" id="main">
+            <div class=" row">
+                <p> <h5>Имя файла должно быть написано без пробелов, длина имени менее 20 символов. </h5></p>
+            </div>
+            <div class=" row">
+                <label>Выберите файл для загрузки</label>
+                <input type="file" name="upload" class="form-control" style="width: 365Px;" /><br>
+            </div>
+            <div class=" row">
+
+                <a id="cancel" href="/Home/Index" class="btn btn-default" style="width: 180Px">Назад</a>
+                <input id="download" type="submit" value="Загрузить" class="btn btn-success" style="width: 180Px" />
+
+            </div>
+
+        </div>
+
+    }
+
+
+
+
+</Center>
+
+<Center>
+    <p> <h3>Загрузка списка домов из неудобной тестовой программы</h3></p>
+
+    @using (Html.BeginForm("ZelenayaShnyagaUpload", "Adres", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <div class="container" id="main">
+           
+            <div class=" row">
+                <label>Выберите файл для загрузки</label>
+                <input type="file" name="upload" class="form-control" style="width: 365Px;" /><br>
+            </div>
+            <div class=" row">
+
+                <a id="cancel" href="/Home/Index" class="btn btn-default" style="width: 180Px">Назад</a>
+                <input id="download" type="submit" value="Загрузить" class="btn btn-success" style="width: 180Px" />
+
+            </div>
+
+        </div>
+
+    }
+
+
+
+
+</Center>
+
 <link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
 @section Scripts{
     @Scripts.Render("~/scripts/jquery-3.3.1.min.js")

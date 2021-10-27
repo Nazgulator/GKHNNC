@@ -12,6 +12,8 @@ namespace GKHNNC.Models
         public int Id { get; set; }
         [Display(Name = "Осмотр ИД")]
         public int OsmotrId { get; set; }
+        [Display(Name = "Осмотр ИД")]
+        public Osmotr Osmotr;
         [Display(Name = "Наименование")]
         public string Name { get; set; }
         [Display(Name = "Измерение ID")]
@@ -22,6 +24,10 @@ namespace GKHNNC.Models
         public decimal Cost { get; set; }
         [Display(Name = "Количество")]
         public decimal Number { get; set; }
+        [Display(Name = "Итоговая Стоимость")]
+        public decimal FinalCost { get; set; }
+        [Display(Name = "Итоговое Количество")]
+        public decimal FinalNumber { get; set; }
         [Display(Name = "Часть дома")]
         public DOMPart DOMPart { get; set; }
         [Display(Name = "Часть дома ид")]
@@ -34,8 +40,14 @@ namespace GKHNNC.Models
         public DateTime DateVipolneniya { get; set; }
         [Display(Name = "Фотография акта выполненных работ")]
         public string Photo { get; set; }
-
-
+        [Display(Name = "Пользователь")]
+        public string User { get; set; }
+        [Display(Name = "СтатьяID")]
+        public int StatiId { get; set; }
+        [Display(Name = "Статья")]
+        public Stati Stati { get; set; }
+        [Display(Name = "Коммисия")]
+        public int Kommisia { get; set; }
 
     }
 }

@@ -70,7 +70,7 @@ namespace GKHNNC.Controllers
             DateTime D = DateTime.Now;
             try
             {
-                List<int> Adresa = db.Adres.Where(x=>x.MKD).Select(x=>x.Id).ToList();
+                List<int> Adresa = db.Adres.Where(x=>x.MKD==true&&x.TypeId==1).OrderBy(x=>x.Adress).Select(x=>x.Id).ToList();
                 foreach (int A in Adresa)
                 {
                     try
@@ -102,12 +102,65 @@ namespace GKHNNC.Controllers
             return View(Result.OrderBy(x=>x.Adres.Adress).ToList());
         }
 
+
+        public ActionResult OtchetAllSpec()
+        {
+            List<OtchetNeobhodimieRaboti> Result = new List<OtchetNeobhodimieRaboti>();
+        
+
+            DateTime D = DateTime.Now;
+            try
+            {
+                List<int> Adresa = db.Adres.OrderBy(x => x.Adress).Select(x => x.Id).ToList();
+                foreach (int A in Adresa)
+                {
+                    try
+                    {
+                        OtchetNeobhodimieRaboti X = new OtchetNeobhodimieRaboti();
+                        X.Osmotr = db.Osmotrs.Where(x => x.AdresId == A).Where(x=>x.Date.Year==D.Year).Include(x => x.Adres).First();
+                        X.Adres = X.Osmotr.Adres;
+                        X.AE = db.ActiveElements.Where(x => x.OsmotrId == X.Osmotr.Id ).Include(x => x.Element).ToList();
+                        X.AOW = db.ActiveOsmotrWorks.Where(x => x.OsmotrId == X.Osmotr.Id && (x.OsmotrWorkId==34|| x.OsmotrWorkId == 66 || x.OsmotrWorkId == 112|| x.OsmotrWorkId == 187|| x.OsmotrWorkId == 188|| x.OsmotrWorkId == 64|| x.OsmotrWorkId == 111|| x.OsmotrWorkId == 71||x.OsmotrWorkId == 133)).Include(x => x.OsmotrWork).OrderBy(x=>x.OsmotrWorkId).ToList();
+
+                        //  if (X.AE.Count > 0)
+                        //  {
+                        Result.Add(X);
+                        //  }
+                    }
+                    catch
+                    {
+                        OtchetNeobhodimieRaboti X = new OtchetNeobhodimieRaboti();
+                        X.Adres = db.Adres.Where(x => x.Id == A).First();
+                        Result.Add(X);
+                    }
+
+
+                }
+            }
+            catch (Exception ex)
+            {
+                //  return Json("error");
+            }
+            return View(Result.OrderBy(x => x.Adres.Adress).ToList());
+        }
+
         public ActionResult Index(string Adres = "", string fromD = "", string toD = "", string WorkPoisk = "", bool obnovit = false)
         {
             ViewBag.WorkPoisk = WorkPoisk;
             List<House> H = new List<House>();
             List<House> Y = new List<House>();
             List<Adres> houses = new List<Adres>();
+            List<EventLog> Events = new List<EventLog>();
+            try
+            {
+                Events = db.EventLogs.OrderByDescending(x => x.Date).Take(5).ToList();
+
+            }
+            catch
+            {
+
+            }
+            ViewBag.Events = Events;
             DateTime Date = Opr.MonthMinus(1, DateTime.Now);//берем прошлый месяц
             DateTime FromDate = DateTime.Now.AddYears(-1);
             DateTime ToDate = DateTime.Now;
@@ -134,7 +187,7 @@ namespace GKHNNC.Controllers
             ViewBag.Adres = Adres;
             if (Session["Adresa"] == null)
             {
-                houses = db.Adres.ToList();
+                houses = db.Adres.Where( x=> x.MKD && x.TypeId == 1).ToList();
                 //Сохраняем в сессию адреса
                 Session["Adresa"] = houses;
 
@@ -158,11 +211,11 @@ namespace GKHNNC.Controllers
                     try
                     {
                         int EuId = db.GEUs.Where(x => x.Name.Equals(GEU)).Select(x=>x.EU).First();
-                        houses = houses.Where(x => x.GEU != null).Where(x => x.EUId == EuId).ToList();
+                        houses = houses.Where(x => x.GEU != null).Where(x => x.EUId == EuId&&x.MKD&&x.TypeId == 1).ToList();
                     }
                     catch
                     {
-                        houses = houses.Where(x => x.GEU != null).Where(x => x.GEU.Equals(GEU)).ToList();
+                        houses = houses.Where(x => x.GEU != null).Where(x => x.EUId.Equals(GEU) && x.MKD && x.TypeId == 1).ToList();
                     }
                     
                 }
@@ -213,15 +266,12 @@ namespace GKHNNC.Controllers
                     {
                         DateTime Dat = DateTime.Now;
                         ho.Osmotrs = db.Osmotrs.Where(x => x.AdresId == a.Id && x.DateEnd >= FromDate && x.DateEnd <= ToDate).OrderBy(x => x.Date).ToList();//все осмотры дома
-
                         ho.NumberWorks = 0;
                         foreach (Osmotr O in ho.Osmotrs)
                         {
                             O.ORW = db.OsmotrRecommendWorks.Where(x => x.OsmotrId == O.Id && x.Gotovo == true && x.Name.Contains(WorkPoisk)).Include(x => x.Izmerenie).ToList();
                             O.AOW = db.ActiveOsmotrWorks.Where(x => x.OsmotrId == O.Id && x.Gotovo == true && x.OsmotrWork.Name.Contains(WorkPoisk)).Include(x => x.OsmotrWork).ToList();
                             ho.NumberWorks += O.ORW.Count + O.AOW.Count();
-
-
                         }
 
                         ho.NumberOsmotrs = ho.Osmotrs.Count();
@@ -400,7 +450,7 @@ namespace GKHNNC.Controllers
                 try
                 {
                     DateTime Dat = DateTime.Now;
-                    ho.Osmotrs = db.Osmotrs.Where(x => x.AdresId == a.Id&&x.Sostoyanie>0).OrderBy(x => x.Date).ToList();//все осмотры дома
+                    ho.Osmotrs = db.Osmotrs.Where(x => x.AdresId == a.Id&&x.Sostoyanie>0&&x.Sostoyanie<2).OrderBy(x => x.Date).ToList();//все осмотры дома
                     if (ho.Osmotrs.Count>0)
                     {
 
@@ -481,7 +531,7 @@ namespace GKHNNC.Controllers
                 try
                 {
                     DateTime Dat = DateTime.Now;
-                    ho.Osmotrs = db.Osmotrs.Where(x => x.AdresId == a.Id && x.Sostoyanie > 1).OrderBy(x => x.Date).ToList();//все осмотры дома
+                    ho.Osmotrs = db.Osmotrs.Where(x => x.AdresId == a.Id && x.Sostoyanie > 1&&x.Sostoyanie<3).Include(x=>x.Adres).OrderBy(x => x.Adres.Adress).ToList();//все осмотры дома
                     if (ho.Osmotrs.Count > 0)
                     {
 
@@ -561,7 +611,7 @@ namespace GKHNNC.Controllers
                 try
                 {
                     DateTime Dat = DateTime.Now;
-                    ho.Osmotrs = db.Osmotrs.Where(x => x.AdresId == a.Id && x.Sostoyanie > 2).OrderBy(x => x.Date).ToList();//все осмотры дома
+                    ho.Osmotrs = db.Osmotrs.Where(x => x.AdresId == a.Id && x.Sostoyanie == 3).OrderBy(x => x.Date).ToList();//все осмотры дома
                     if (ho.Osmotrs.Count > 0)
                     {
 
@@ -997,7 +1047,7 @@ namespace GKHNNC.Controllers
             
             //пишем все данные по конструктивным элементам
 
-            if (Fundament.Type != null)
+            if (Fundament!= null && Fundament.Type != null)
             {
                 ho.FundamentPloshad = Fundament.Ploshad;
                 ho.FundamentType = Fundament.Type.Type;

@@ -1645,7 +1645,7 @@ namespace GKHNNC.Controllers
             from++;
             WS.Cells[from, 1] = "являющегося собственником квартиры №_____, находящейся в данном многоквартирном доме*, " +
                 "с одной стороны, и Федеральное государственное бюджетное учреждение 'жилищно-коммунальное управление Новосибирского научного центра' (ФГБУ 'ЖКУ ННЦ')" +
-"именуемое в дальнейшем “Исполнитель”,  в лице начальника ЖЭУ-" + GKH + " " + Nachalnik + ", действующего на основании доверенности №" + Prikaz;
+"именуемое в дальнейшем “Исполнитель”,  в лице начальника ЭУ-" + GKH + " " + Nachalnik + ", действующего на основании доверенности №" + Prikaz;
             range = WS.get_Range("A" + from, "E" + from);
             range.Merge(Type.Missing);
             range.Font.Bold = false;
@@ -2207,22 +2207,26 @@ namespace GKHNNC.Controllers
 
 
 
+
+         
+
+            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!222222222222222222222222222222222222222!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             //Делаем 2 лист
-          //  string[] Podpisi = new string[7] { "Пальцев Е.К.", "", "", "", "Полянских Э.В.", "Ширяев С.В.", "Сухов Е.А." };
+            //  string[] Podpisi = new string[7] { "Пальцев Е.К.", "", "", "", "Полянских Э.В.", "Ширяев С.В.", "Сухов Е.А." };
             // ApExcel.Worksheets.Add();
             ApExcel.Worksheets.Add(Type.Missing);//Добавляем лист
             WS = WbExcel.Sheets[1];
             WS.Name = "3. Работы по ДТР";
-            
+
             startStroka = 1;
             WS.Cells[startStroka, 6] = " Утверждаю:";
             range = WS.get_Range("F" + startStroka, "G" + startStroka);
-          //  Opr.RangeMerge(ApExcel, range, true, true, 10, 15);
+            //  Opr.RangeMerge(ApExcel, range, true, true, 10, 15);
             range.Merge();
             range.Font.Size = 10;
             range.Borders.LineStyle = Excel.XlLineStyle.xlLineStyleNone;
             range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
-            startStroka ++;
+            startStroka++;
             WS.Cells[startStroka, 6] = " Врио директора ФГБУ 'ЖКУ ННЦ'";
             range = WS.get_Range("F" + startStroka, "G" + startStroka);
             //  Opr.RangeMerge(ApExcel, range, true, true, 13, 15);
@@ -2239,7 +2243,7 @@ namespace GKHNNC.Controllers
             range.Borders.LineStyle = Excel.XlLineStyle.xlLineStyleNone;
             range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
             startStroka++;
-            WS.Cells[startStroka, 6] = " '___'________________"+ (O.Date.Year ) + "г.";
+            WS.Cells[startStroka, 6] = " '___'________________" + (O.Date.Year) + "г.";
             range = WS.get_Range("F" + startStroka, "G" + startStroka);
             //  Opr.RangeMerge(ApExcel, range, true, true, 13, 15);
             range.Merge();
@@ -2248,38 +2252,39 @@ namespace GKHNNC.Controllers
             range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
             startStroka++;
 
-           // range = WS.get_Range("A" + 1, "H" + startStroka);
-           // range.Borders.LineStyle = Excel.XlLineStyle.xlLineStyleNone;
+            // range = WS.get_Range("A" + 1, "H" + startStroka);
+            // range.Borders.LineStyle = Excel.XlLineStyle.xlLineStyleNone;
 
-            WS.Cells[startStroka, 1] = "3. Работы по дополнительному текущему ремонту, определение их стоимости и размера платы за дополнительный текущий ремонт на "+(O.Date.Year+1).ToString()+" год по адресу "+ O.Adres.Ulica + " " + O.Adres.Dom;
-            range = WS.get_Range("A"+startStroka, "G"+startStroka);
-            Opr.RangeMerge(ApExcel, range, true, true,13,50);
+            WS.Cells[startStroka, 1] = "3. Работы по дополнительному текущему ремонту, определение их стоимости и размера платы за дополнительный текущий ремонт на " + (O.Date.Year + 1).ToString() + " год по адресу " + O.Adres.Ulica + " " + O.Adres.Dom;
+            range = WS.get_Range("A" + startStroka, "G" + startStroka);
+            Opr.RangeMerge(ApExcel, range, true, true, 13, 50);
 
-       
+
             startStroka++;
-           
+
             range = WS.get_Range("A" + startStroka, "G" + startStroka);
             WS.Cells[startStroka, 1] = "№ п/п"; WS.Cells[startStroka, 1].ColumnWidth = 5;
-            WS.Cells[startStroka, 2] = "Виды работ"; WS.Cells[startStroka, 2].ColumnWidth = 43;
-            WS.Cells[startStroka, 3] = "Ед. измерения"; WS.Cells[startStroka, 3].ColumnWidth = 20;
-            WS.Cells[startStroka, 4] = "Объёмы работ"; 
-            WS.Cells[startStroka, 5] = "Стоимость работ, включая вознаграждение УК, руб."; WS.Cells[startStroka, 5].ColumnWidth = 20;
-         //   WS.Cells[startStroka, 6] = "Вознаграждение УК за выполнение работ по доп. текущему ремонту"; WS.Cells[startStroka, 6].ColumnWidth = 32;
+            WS.Cells[startStroka, 2] = "Виды работ"; WS.Cells[startStroka, 2].ColumnWidth = 50;
+            WS.Cells[startStroka, 3] = "Ед. изм."; WS.Cells[startStroka, 3].ColumnWidth = 6.25;
+            WS.Cells[startStroka, 4] = "Объёмы работ"; WS.Cells[startStroka, 3].ColumnWidth = 8.5;
+            WS.Cells[startStroka, 5] = "Стоимость работ, включая организационно-контрольные работы УК, руб."; WS.Cells[startStroka, 5].ColumnWidth = 22.5;
+            //   WS.Cells[startStroka, 6] = "Вознаграждение УК за выполнение работ по доп. текущему ремонту"; WS.Cells[startStroka, 6].ColumnWidth = 32;
             WS.Cells[startStroka, 6] = "Стоимость работ на кв.м  в месяц, руб."; WS.Cells[startStroka, 6].ColumnWidth = 15;
             WS.Cells[startStroka, 7] = "Срок выполнения ***"; WS.Cells[startStroka, 7].ColumnWidth = 12;
-            Opr.RangeMerge(ApExcel, range, false, true, 11,45);
+     
+            Opr.RangeMerge(ApExcel, range, false, true, 10, 45);
 
             int counter = 0;
-            decimal ActivePloshad = db.Adres.Where(x => x.Id == O.AdresId).Select(x=>x.ActivePloshad).First();
+            decimal ActivePloshad = db.Adres.Where(x => x.Id == O.AdresId).Select(x => x.ActivePloshad).First();
             decimal summa = 0;
-            
 
-            List<ActiveOsmotrWork> AOW = new List<ActiveOsmotrWork>();
-            List<int> Elements= new List<int>();
-       
+
+             var AOW = new List<ActiveOsmotrWork>();
+             var Elements = new List<int>();
+
             try
             {
-                AOW = db.ActiveOsmotrWorks.Where(x => x.OsmotrId == O.Id&& !x.Gotovo && x.OsmotrWork.OtchetId==0).OrderBy(x => x.ElementId).Include(x=>x.OsmotrWork).Include(x=>x.OsmotrWork.Izmerenie).ToList();
+                AOW = db.ActiveOsmotrWorks.Where(x => x.OsmotrId == O.Id && !x.Gotovo && x.OsmotrWork.OtchetId == 0).OrderBy(x => x.ElementId).Include(x => x.OsmotrWork).Include(x => x.OsmotrWork.Izmerenie).ToList();
                 Elements = AOW.Select(x => x.ElementId).Distinct().ToList();
             }
             catch
@@ -2288,12 +2293,12 @@ namespace GKHNNC.Controllers
             }
 
 
-            List<OsmotrRecommendWork> ORK = new List<OsmotrRecommendWork>();
-   
+            var ORK = new List<OsmotrRecommendWork>();
+
             try
             {
-                ORK = db.OsmotrRecommendWorks.Where(x => x.OsmotrId == O.Id&& !x.Gotovo).OrderBy(x => x.Name).Include(x => x.Izmerenie).Include(x => x.DOMPart).ToList();
-              
+                ORK = db.OsmotrRecommendWorks.Where(x => x.OsmotrId == O.Id && !x.Gotovo).OrderBy(x => x.Name).Include(x => x.Izmerenie).Include(x => x.DOMPart).ToList();
+
             }
             catch
             {
@@ -2301,35 +2306,54 @@ namespace GKHNNC.Controllers
             }
             if (ActivePloshad == 0) { ActivePloshad = 1; }
 
-         
 
 
 
-            
+
+
             for (int i = 0; i < Elements.Count; i++)
             {
                 startStroka++;
-                
+
+
                 List<ActiveOsmotrWork> AOW2 = AOW.Where(x => x.ElementId == Elements[i]).ToList();
                 int idd = AOW2[0].OsmotrWork.DOMPartId;
-                string DomPart = db.DOMParts.Where(x => x.Id == idd).Select(x=>x.Name).First() ;
+                string DomPart = db.DOMParts.Where(x => x.Id == idd).Select(x => x.Name).First();
                 WS.Cells[startStroka, 1] = DomPart;
-                range = WS.get_Range("A"+startStroka,"G"+startStroka);
-               //range.Merge();
-                Opr.RangeMerge(ApExcel, range, true, true,13,20);
+                range = WS.get_Range("A" + startStroka, "G" + startStroka);
+                //range.Merge();
+                Opr.RangeMerge(ApExcel, range, true, true, 13, 20);
 
                 foreach (ActiveOsmotrWork A in AOW2)
                 {
+                    decimal stavka = 1.1m;
+                    if (A.TotalCost >= 50000)
+                    {
+                        stavka = 1.05m;
+                    }
+                    if (A.TotalCost >= 100000)
+                    {
+                        stavka = 1.03m;
+                    }
                     counter++;
                     startStroka++;
                     WS.Cells[startStroka, 1] = counter;
                     WS.Cells[startStroka, 2] = A.OsmotrWork.Name;
+                    if (A.OsmotrWork.Name.Length > 44)
+                    {
+                        range = WS.get_Range("A" + startStroka, "G" + startStroka);
+                        range.RowHeight = 29;//высота строки
+                        range.WrapText = true;
+
+                    }
+                    decimal TC = Math.Round(A.TotalCost * stavka, 2);
                     WS.Cells[startStroka, 3] = A.OsmotrWork.Izmerenie.Name;
                     WS.Cells[startStroka, 4] = A.Number;
-                    WS.Cells[startStroka, 5] = A.TotalCost + Math.Round(A.TotalCost / 10, 2);
-                 //   WS.Cells[startStroka, 6] =Math.Round( A.TotalCost/10,2);
-                    WS.Cells[startStroka, 6] = Math.Round(((A.TotalCost+ A.TotalCost/10) / 12)/ActivePloshad, 2);
-                    summa += A.TotalCost;
+                    WS.Cells[startStroka, 5] = TC;
+                    //   WS.Cells[startStroka, 6] =Math.Round( A.TotalCost/10,2);
+                    WS.Cells[startStroka, 6] = Math.Round(((TC) / 12) / ActivePloshad, 2);
+               
+                    summa += TC;
                 }
 
             }
@@ -2339,28 +2363,52 @@ namespace GKHNNC.Controllers
             //range.Merge();
             Opr.RangeMerge(ApExcel, range, true, true, 13, 20);
             //заполняем дополнительные работы
-            for (int i=0;i<ORK.Count;i++)
+            for (int i = 0; i < ORK.Count; i++)
             {
+                if (ORK[i].Kommisia < 0)
+                {
+                    int stavka = 10;
+                    if (ORK[i].Cost >= 50000)
+                    {
+                        stavka = 5;
+                    }
+                    if (ORK[i].Cost >= 100000)
+                    {
+                        stavka = 3;
+                    }
+                    ORK[i].Kommisia = stavka;
+                }
+                decimal FinKom = 1 + Convert.ToDecimal(ORK[i].Kommisia) * 0.01m;//преобразуем коммисию из процентов в коэффициент 1.05 
                 startStroka++;
                 counter++;
+                decimal TC = Math.Round(ORK[i].Cost * FinKom, 2);
                 WS.Cells[startStroka, 1] = counter;
                 WS.Cells[startStroka, 2] = ORK[i].Name;
+                if (ORK[i].Name.Length > 44)
+                {
+                    range = WS.get_Range("A" + startStroka, "G" + startStroka);
+                    range.RowHeight = 29;//высота строки
+                    range.WrapText = true;
+
+                }
                 WS.Cells[startStroka, 3] = ORK[i].Izmerenie.Name;
                 WS.Cells[startStroka, 4] = ORK[i].Number;
-                WS.Cells[startStroka, 5] = ORK[i].Cost + Math.Round(ORK[i].Cost / 10, 2);
-              //  WS.Cells[startStroka, 6] = Math.Round(ORK[i].Cost / 10, 2);
-                WS.Cells[startStroka, 6] = Math.Round(((ORK[i].Cost + ORK[i].Cost / 10) / 12) / ActivePloshad, 2);
-                summa += ORK[i].Cost;
+                WS.Cells[startStroka, 5] = TC;
+                //  WS.Cells[startStroka, 6] = Math.Round(ORK[i].Cost / 10, 2);
+                WS.Cells[startStroka, 6] = Math.Round(((TC) / 12) / ActivePloshad, 2);
+               
+                summa += TC;
 
             }
             startStroka++;
-            
+
             WS.Cells[startStroka, 2] = "Итого";
-           
-            WS.Cells[startStroka, 5] = summa + Math.Round(summa / 10, 2);
+
+
+            WS.Cells[startStroka, 5] = summa;
             //   WS.Cells[startStroka, 6] = Math.Round(summa / 10, 2);
-            String IngOEGF = "";
-            String IngPTO = "";
+            string IngOEGF = "";
+            string IngPTO = "";
             try
             {
                 IngOEGF = G.IngenerOEGF;
@@ -2370,7 +2418,7 @@ namespace GKHNNC.Controllers
 
             }
             try { IngPTO = G.IngenerPTO; } catch { }
-            WS.Cells[startStroka, 6] = Math.Round(((summa+summa/10) / 12) / ActivePloshad, 2);
+            WS.Cells[startStroka, 6] = Math.Round((summa / 12) / ActivePloshad, 2);
             range = WS.get_Range("A" + startStroka, "G" + startStroka);
             range.Font.Bold = true;
             range = WS.get_Range("A5", "G" + startStroka);
@@ -2380,7 +2428,7 @@ namespace GKHNNC.Controllers
             range = WS.get_Range("A" + startStroka, "G" + startStroka);
             Opr.RangeMerge(ApExcel, range, true, true, 11, 20);
 
-            startStroka+=2;
+            startStroka += 2;
             WS.Cells[startStroka, 1] = "Заместитель директора по эксплуатации жилого фонда___________________________Т.П. Топчиева";
             range = WS.get_Range("A" + startStroka, "G" + startStroka);
             Opr.RangeMerge(ApExcel, range, true, false, 13, 20);
@@ -2393,17 +2441,20 @@ namespace GKHNNC.Controllers
             range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
             range.Borders.LineStyle = Excel.XlLineStyle.xlLineStyleNone;
             startStroka++;
-            WS.Cells[startStroka, 1] = "Ведущий инженер ОЭЖФ                              ___________________________"+IngOEGF;
+            WS.Cells[startStroka, 1] = "Ведущий инженер ОЭЖФ                              ___________________________" + IngOEGF;
             range = WS.get_Range("A" + startStroka, "G" + startStroka);
             Opr.RangeMerge(ApExcel, range, true, false, 13, 20);
             range.Borders.LineStyle = Excel.XlLineStyle.xlLineStyleNone;
             range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
             startStroka++;
-            WS.Cells[startStroka, 1] = "Инженер ПТО                                       ___________________________"+IngPTO;
+            WS.Cells[startStroka, 1] = "Инженер ПТО                                       ___________________________" + IngPTO;
             range = WS.get_Range("A" + startStroka, "G" + startStroka);
             Opr.RangeMerge(ApExcel, range, true, false, 13, 20);
             range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
             range.Borders.LineStyle = Excel.XlLineStyle.xlLineStyleNone;
+
+
+
 
             // Сохранение файла Excel.
             try
@@ -3209,7 +3260,265 @@ namespace GKHNNC.Controllers
             range.RowHeight = 18;//высота строки
             range.WrapText = true;
 
+            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!333333333333333333333333333333333333333!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            //Делаем 3 лист только если есть выполненные работы
+            string Addres = Ulica + Dom;
+            Addres = Addres.Replace(" ", "");
+            int Y = Convert.ToInt16(Year);
+            Osmotr O = new Osmotr();
+            try
+            {
+               O = db.Osmotrs.Where(x => x.Adres.Adress.Equals(Addres) && x.Date.Year == Y).Include(x=>x.Adres).First();
+            }
+            catch
+            {
 
+            }
+            List<ActiveOsmotrWork> AOW = new List<ActiveOsmotrWork>();
+            List<int> Elements = new List<int>();// && x.DateVipolneniya.Month == monthInt  &&x.DateVipolneniya.Month == monthInt
+            int monthInt = M+1;
+            try
+            {
+                AOW = db.ActiveOsmotrWorks.Where(x => x.OsmotrId == O.Id && x.Gotovo && x.OsmotrWork.OtchetId == 0 && x.DateVipolneniya.Month == monthInt).OrderBy(x => x.ElementId).Include(x => x.OsmotrWork).Include(x => x.OsmotrWork.Izmerenie).ToList();
+                Elements = AOW.Select(x => x.ElementId).Distinct().ToList();
+            }
+            catch
+            {
+
+            }
+            List<OsmotrRecommendWork> ORK = new List<OsmotrRecommendWork>();
+            try
+            {
+                ORK = db.OsmotrRecommendWorks.Where(x => x.OsmotrId == O.Id && x.Gotovo && x.DateVipolneniya.Month == monthInt).OrderBy(x => x.Name).Include(x => x.Izmerenie).Include(x => x.DOMPart).Include(x => x.Stati).ToList();
+
+            }
+            catch
+            {
+
+            }
+            if (AOW != null && ORK != null && AOW.Count + ORK.Count > 0)
+            {
+
+                ApExcel.Worksheets.Add(Type.Missing);//Добавляем лист
+                WS = WbExcel.Sheets[1];
+                WS.Name = "4. Выполненные работы";
+
+                startStroka = 1;
+                WS.Cells[startStroka, 6] = " Утверждаю:";
+                range = WS.get_Range("F" + startStroka, "G" + startStroka);
+                //  Opr.RangeMerge(ApExcel, range, true, true, 10, 15);
+                range.Merge();
+                range.Font.Size = 10;
+                range.Borders.LineStyle = Excel.XlLineStyle.xlLineStyleNone;
+                range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
+                startStroka++;
+                WS.Cells[startStroka, 6] = " Врио директора ФГБУ 'ЖКУ ННЦ'";
+                range = WS.get_Range("F" + startStroka, "G" + startStroka);
+                //  Opr.RangeMerge(ApExcel, range, true, true, 13, 15);
+                range.Merge();
+                range.Font.Size = 10;
+                range.Borders.LineStyle = Excel.XlLineStyle.xlLineStyleNone;
+                range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
+                startStroka++;
+                WS.Cells[startStroka, 6] = " ____________________В.В.Кисс";
+                range = WS.get_Range("F" + startStroka, "G" + startStroka);
+                //  Opr.RangeMerge(ApExcel, range, true, true, 13, 15);
+                range.Merge();
+                range.Font.Size = 10;
+                range.Borders.LineStyle = Excel.XlLineStyle.xlLineStyleNone;
+                range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
+                startStroka++;
+                WS.Cells[startStroka, 6] = " '___'________________" + (O.Date.Year) + "г.";
+                range = WS.get_Range("F" + startStroka, "G" + startStroka);
+                //  Opr.RangeMerge(ApExcel, range, true, true, 13, 15);
+                range.Merge();
+                range.Font.Size = 10;
+                range.Borders.LineStyle = Excel.XlLineStyle.xlLineStyleNone;
+                range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
+                startStroka++;
+
+                // range = WS.get_Range("A" + 1, "H" + startStroka);
+                // range.Borders.LineStyle = Excel.XlLineStyle.xlLineStyleNone;
+
+                WS.Cells[startStroka, 1] = "4. Отчёт по выполненным работам по дополнительному текущему ремонту на "+ month +" "+  (O.Date.Year + 1).ToString() + " по адресу " + O.Adres.Ulica + " " + O.Adres.Dom;
+                range = WS.get_Range("A" + startStroka, "G" + startStroka);
+                Opr.RangeMerge(ApExcel, range, true, true, 13, 50);
+
+
+                startStroka++;
+
+                range = WS.get_Range("A" + startStroka, "G" + startStroka);
+                WS.Cells[startStroka, 1] = "№ п/п"; WS.Cells[startStroka, 1].ColumnWidth = 5;
+                WS.Cells[startStroka, 2] = "Виды работ"; WS.Cells[startStroka, 2].ColumnWidth = 50;
+                WS.Cells[startStroka, 3] = "Ед. изм."; WS.Cells[startStroka, 3].ColumnWidth = 6.25;
+                WS.Cells[startStroka, 4] = "Объёмы работ"; WS.Cells[startStroka, 3].ColumnWidth = 8.5;
+                WS.Cells[startStroka, 5] = "Стоимость работ руб."; WS.Cells[startStroka, 5].ColumnWidth = 22.5;
+                //   WS.Cells[startStroka, 6] = "Вознаграждение УК за выполнение работ по доп. текущему ремонту"; WS.Cells[startStroka, 6].ColumnWidth = 32;
+                WS.Cells[startStroka, 6] = "Статья финансирования"; WS.Cells[startStroka, 6].ColumnWidth = 15;
+                //  WS.Cells[startStroka, 7] = "Дата выполнения"; WS.Cells[startStroka, 7].ColumnWidth = 12;
+                Opr.RangeMerge(ApExcel, range, false, true, 10, 45);
+
+                int count = 0;
+                decimal ActiveP = db.Adres.Where(x => x.Id == O.AdresId).Select(x => x.ActivePloshad).First();
+                decimal summ = 0;
+
+
+
+
+
+
+
+
+                if (ActiveP == 0) { ActiveP = 1; }
+
+
+
+
+
+
+                for (int i = 0; i < Elements.Count; i++)
+                {
+                    startStroka++;
+
+
+                    List<ActiveOsmotrWork> AOW2 = AOW.Where(x => x.ElementId == Elements[i]).ToList();
+                    int idd = AOW2[0].OsmotrWork.DOMPartId;
+                    string DomPart = db.DOMParts.Where(x => x.Id == idd).Select(x => x.Name).First();
+                    WS.Cells[startStroka, 1] = DomPart;
+                    range = WS.get_Range("A" + startStroka, "G" + startStroka);
+                    //range.Merge();
+                    Opr.RangeMerge(ApExcel, range, true, true, 13, 20);
+
+                    foreach (ActiveOsmotrWork A in AOW2)
+                    {
+                        decimal stavka = 1.1m;
+                        if (A.TotalCost >= 50000)
+                        {
+                            stavka = 1.05m;
+                        }
+                        if (A.TotalCost >= 100000)
+                        {
+                            stavka = 1.03m;
+                        }
+                        count++;
+                        startStroka++;
+                        WS.Cells[startStroka, 1] = count;
+                        WS.Cells[startStroka, 2] = A.OsmotrWork.Name;
+                        if (A.OsmotrWork.Name.Length > 45)
+                        {
+                            range = WS.get_Range("A" + startStroka, "G" + startStroka);
+                            range.RowHeight = 29;//высота строки
+                            range.WrapText = true;
+
+                        }
+                        decimal TC = Math.Round(A.FinalCost * stavka, 2);
+                        WS.Cells[startStroka, 3] = A.OsmotrWork.Izmerenie.Name;
+                        WS.Cells[startStroka, 4] = A.Number;
+                        WS.Cells[startStroka, 5] = TC;
+                        //   WS.Cells[startStroka, 6] =Math.Round( A.TotalCost/10,2);
+                        WS.Cells[startStroka, 6] = "Доп.тек.рем.";
+                        //   WS.Cells[startStroka, 7] = A.DateVipolneniya.ToString("dd.MM.yyyy");
+                        summ += TC;
+                    }
+
+                }
+                startStroka++;
+                WS.Cells[startStroka, 1] = "";
+                range = WS.get_Range("A" + startStroka, "G" + startStroka);
+                //range.Merge();
+                Opr.RangeMerge(ApExcel, range, true, true, 13, 20);
+                //заполняем дополнительные работы
+                for (int i = 0; i < ORK.Count; i++)
+                {
+                    if (ORK[i].Kommisia < 0)
+                    {
+                        int stavka = 10;
+
+                        if (ORK[i].Cost >= 50000)
+                        {
+                            stavka = 5;
+                        }
+                        if (ORK[i].Cost >= 100000)
+                        {
+                            stavka = 3;
+                        }
+                        ORK[i].Kommisia = stavka;
+                    }
+                    decimal KomStavka = 1 + Convert.ToDecimal(ORK[i].Kommisia) * 0.01m;
+                    startStroka++;
+                    count++;
+                    decimal TC = Math.Round(ORK[i].FinalCost * KomStavka, 2);
+                    WS.Cells[startStroka, 1] = count;
+                    WS.Cells[startStroka, 2] = ORK[i].Name;
+                    WS.Cells[startStroka, 3] = ORK[i].Izmerenie.Name;
+                    WS.Cells[startStroka, 4] = ORK[i].Number;
+                    WS.Cells[startStroka, 5] = TC;
+                    //  WS.Cells[startStroka, 6] = Math.Round(ORK[i].Cost / 10, 2);
+                    WS.Cells[startStroka, 6] = ORK[i].Stati.Name;
+                    //  WS.Cells[startStroka, 7] = ORK[i].DateVipolneniya.ToString("dd.MM.yyyy");
+                    summ += TC;
+
+                }
+                startStroka++;
+
+                WS.Cells[startStroka, 2] = "Итого";
+
+
+                WS.Cells[startStroka, 5] = summ;
+                //   WS.Cells[startStroka, 6] = Math.Round(summa / 10, 2);
+                String OEGF = "";
+                String PTO = "";
+                int GK = Convert.ToInt32(GKH);
+                GEU G = db.GEUs.Where(x => x.GEUN == GK).First();
+                try
+                {
+                    OEGF = G.IngenerOEGF;
+                }
+                catch
+                {
+
+                }
+                try
+                {
+                    PTO = G.IngenerPTO;
+                } catch { }
+                //   WS.Cells[startStroka, 6] = Math.Round((summa / 12) / ActivePloshad, 2);
+                range = WS.get_Range("A" + startStroka, "G" + startStroka);
+                range.Font.Bold = true;
+                range = WS.get_Range("A5", "G" + startStroka);
+                range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+                startStroka++;
+                WS.Cells[startStroka, 1] = "***  - в случае отсутствия срока выполнения, работы выполняются в течение срока действия размера платы (тарифного года).";
+                range = WS.get_Range("A" + startStroka, "G" + startStroka);
+                Opr.RangeMerge(ApExcel, range, true, true, 11, 20);
+
+                startStroka += 2;
+                WS.Cells[startStroka, 1] = "Заместитель директора по эксплуатации жилого фонда___________________________Т.П. Топчиева";
+                range = WS.get_Range("A" + startStroka, "G" + startStroka);
+                Opr.RangeMerge(ApExcel, range, true, false, 13, 20);
+                range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
+                range.Borders.LineStyle = Excel.XlLineStyle.xlLineStyleNone;
+                startStroka++;
+                WS.Cells[startStroka, 1] = "Начальник ОЭЖФ                                    ___________________________С.Ю. Конкина";
+                range = WS.get_Range("A" + startStroka, "G" + startStroka);
+                Opr.RangeMerge(ApExcel, range, true, false, 13, 20);
+                range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
+                range.Borders.LineStyle = Excel.XlLineStyle.xlLineStyleNone;
+                startStroka++;
+                
+                WS.Cells[startStroka, 1] = "Ведущий инженер ОЭЖФ                              ___________________________" + OEGF;
+                range = WS.get_Range("A" + startStroka, "G" + startStroka);
+                Opr.RangeMerge(ApExcel, range, true, false, 13, 20);
+                range.Borders.LineStyle = Excel.XlLineStyle.xlLineStyleNone;
+                range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
+                startStroka++;
+                WS.Cells[startStroka, 1] = "Инженер ПТО                                       ___________________________" + PTO;
+                range = WS.get_Range("A" + startStroka, "G" + startStroka);
+                Opr.RangeMerge(ApExcel, range, true, false, 13, 20);
+                range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
+                range.Borders.LineStyle = Excel.XlLineStyle.xlLineStyleNone;
+                
+            }
 
 
             // Сохранение файла Excel.
