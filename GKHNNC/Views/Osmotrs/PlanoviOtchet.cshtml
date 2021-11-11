@@ -47,20 +47,10 @@
         {
             <a href="#@i" style="color:white;font-size:20px">@Model.DOMParts[i].Name |</a>
         }
-        @Html.ActionLink("Сохранить отчет в Excel |", "ExportToExcel", "Osmotrs", null, new { @style = "color:white;font-size:20px" })
+      
         @Html.ActionLink("Назад", "Index", "Houses", null, new { @style = "color:white;font-size:20px" })
     </div>
-    <div class="fixed-bottom">
-        <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="3000">
-            <div class="toast-header">
-                <img src="~/Content/Images/Download/galkaRepeat.gif" class="rounded mr-2" alt="Файл загружен">
-                <strong class="mr-auto">Фотография загружена на сервер!</strong>
-
-
-            </div>
-
-        </div>
-    </div>
+   
     <br />
     <h2>Плановый отчет #@Model.Adres.Adress</h2>
     <div class="col-md-12" style="background-color:#28a745">
@@ -84,87 +74,87 @@
 
 
 
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="container">
-            <div class="form-horizontal">
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="container">
+        <div class="form-horizontal">
 
-                @{ int progress = 0;
-                    double pro100 = Model.DOMParts.Count;
-                    int procount = 0;
-                }
-                
-
-                    
-                    
-
-                        <div  class="row">
-                            <div class="col-md-12" style="background-color:#28a745">
-                                <table style="width:100%">
-
-                                    <tr style="background-color:#28a745 ; color:white" class="table-bordered">
-                                        <th width="230px" style="text-align:center">
-                                            Работа
-                                        </th>
-                                        <th width="95px" style="text-align:center">
-                                            Значение
-                                        </th>
-                                        <th width="95px" style="text-align:center">
-                                            Норма
-                                        </th>
-                                        <th width="95px" style="text-align:center">
-                                            Периодичность
-                                        </th>
-                                        <th width="95px" style="text-align:center">
-                                            Сумма
-                                        </th>
-
-                                    </tr>
-                                    @for (int j = 0; j < Model.WS.Count; j++)
-                                    {
-
-                                    <tr style="background-color:white" class="table-bordered">
-                                        <th style="text-align:left">
-                                            @Model.WS[j].Name
-                                        </th>
-                                        <th style="text-align:center">
-                                            @Model.WS[j].Val
-                                        </th>
-                                        <th width="95px" style="text-align:center">
-                                            @Model.WS[j].Norma
-                                        </th>
-                                        <th width="95px" style="text-align:center">
-                                            @Model.WS[j].Periodichnost
-                                        </th>
-                                        <th width="95px" style="text-align:center">
-                                            @(Math.Round(Model.WS[j].Norma * Model.WS[j].Val * Model.WS[j].Periodichnost, 2))
-                                        </th>
-
-                                    </tr>
-
-
-                                    }
-
-
-                                    </table>
-
-                            </div>
+            @{ int progress = 0;
+                double pro100 = Model.DOMParts.Count;
+                int procount = 0;
+            }
 
 
 
 
-                        </div>
-                    
+
+            <div class="row">
+                <div class="col-md-12" style="background-color:#28a745">
+                    <table id="tableData" style="width:100%">
+
+                        <tr style="background-color:#28a745 ; color:white" class="table-bordered">
+                            <th width="230px" style="text-align:center">
+                                Работа
+                            </th>
+                            <th width="95px" style="text-align:center">
+                                Значение
+                            </th>
+                            <th width="95px" style="text-align:center">
+                                Норма
+                            </th>
+                            <th width="95px" style="text-align:center">
+                                Периодичность
+                            </th>
+                            <th width="95px" style="text-align:center">
+                                Сумма
+                            </th>
+
+                        </tr>
+                        @for (int j = 0; j < Model.WS.Count; j++)
+                        {
+
+                            <tr style="background-color:white" class="table-bordered">
+                                <th style="text-align:left" title="@Model.WS[j].Opisanie">
+                                    @Model.WS[j].Name
+                                </th>
+                                <th style="text-align:center" title="Расчетное значение (генерируется в момент создания отчета, не хранится в БД)">
+                                    @Model.WS[j].Val
+                                </th>
+                                <th width="95px" style="text-align:center" title="Норма (выставлена в таблице 'Справочник работ по содержанию', едина для всех домов)">
+                                    @Model.WS[j].Norma
+                                </th>
+                                <th width="95px" style="text-align:center" title="Периодичность (выставлена в таблице 'Справочник работ по содержанию', едина для всех домов)">
+                                    @Model.WS[j].Periodichnost
+                                </th>
+                                <th width="95px" style="text-align:center" title="Человекочасы расчетное значение Значение * Норма * Периодичность (генерируется в момент создания отчета, не хранится в БД)">
+                                    @(Math.Round(Model.WS[j].Norma * Model.WS[j].Val * Model.WS[j].Periodichnost, 2))
+                                </th>
+
+                            </tr>
 
 
-                   @{ procount++;
-                       progress = Convert.ToInt16(procount / pro100 * 100);
-                       ProgressHub.SendMessage("Загружаем данные элементов...", progress);
-                       if (procount > pro100) { procount = Convert.ToInt32(pro100); }
-                   }
+                        }
+
+
+                    </table>
+                    <button onclick="Export()" class="btn btn-success">Экспорт в эксель</button>
+                </div>
+
+
+
 
             </div>
+
+
+
+            @{ procount++;
+                progress = Convert.ToInt16(procount / pro100 * 100);
+                ProgressHub.SendMessage("Загружаем данные элементов...", progress);
+                if (procount > pro100) { procount = Convert.ToInt32(pro100); }
+            }
+
         </div>
+    </div>
 
 
 
@@ -172,7 +162,7 @@
 
 
 
-    </body>
+</body>
 
 
 </html>
@@ -186,7 +176,7 @@
     @Scripts.Render("~/scripts/nprogress.min.js")
     @Scripts.Render("~/scripts/jquery.signalR-2.4.0.js")
     @Scripts.Render("~/signalr/hubs")
-
+    @Scripts.Render("/scripts/ExportToExcel/excelexportjs.js")
     @Scripts.Render("~/scripts/jquery.unobtrusive-ajax.js")
     @Scripts.Render("~/scripts/bootstrap.js")
     @Scripts.Render("~/scripts/bootstrap.bundle.js")
@@ -198,6 +188,30 @@
     <link href="/scripts/jquery.rating/styles/jquery.rating.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
 
+
+
+
+    <script>
+        function Export() {
+            var images = $("img");
+            for (var i = 0; i < images.length; i++) {
+                var Alt = images[i].getAttribute("alt");
+                images[i].replaceWith(Alt);
+
+            };
+
+            var inputs = $("input");
+            for (var i = 0; i < inputs.length; i++) {
+                var Inp = inputs[i].value;
+                inputs[i].replaceWith(Inp);
+            }
+            $("#tableData").excelexportjs({
+                containerid: "tableData",
+                datatype: 'table'
+            });
+          
+        };
+    </script>
     <script>
         function ChangeAEValue(id) {
             var AE = $('#Element_' + id).val();

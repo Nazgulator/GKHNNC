@@ -156,6 +156,8 @@ namespace GKHNNC.DAL
         public System.Data.Entity.DbSet<GKHNNC.Models.ConstructiveType> ConstructiveTypes { get; set; }
         public System.Data.Entity.DbSet<GKHNNC.Models.TelefonsSpravochnik> TelefonsSpravochniks { get; set; }
 
+        public System.Data.Entity.DbSet<GKHNNC.Models.CanCreateOsmotr> CanCreateOsmotrs { get; set; }
+
 
         //protected override void OnModelCreating(DbModelBuilder modelBuilder)
 

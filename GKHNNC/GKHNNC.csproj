@@ -251,6 +251,7 @@
     <Compile Include="Controllers\ASControlsController.cs" />
     <Compile Include="Controllers\AvtomobilsController.cs" />
     <Compile Include="Controllers\AvtoScansController.cs" />
+    <Compile Include="Controllers\CanCreateOsmotrsController.cs" />
     <Compile Include="Controllers\ChatMessagesController.cs" />
     <Compile Include="Controllers\CompleteWorksController.cs" />
     <Compile Include="Controllers\ConstructiveTypesController.cs" />
@@ -333,6 +334,7 @@
       <DependentUpon>WorkCenterContext.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\CanCreateOsmotr.cs" />
     <Compile Include="Models\TelefonsSpravochnik.cs" />
     <Compile Include="Models\TypeElement.cs" />
     <Compile Include="Models\TechElement.cs" />
@@ -1976,6 +1978,11 @@
     <Content Include="Views\Elements\Edit.cshtml" />
     <Content Include="Views\Elements\Index.cshtml" />
     <Content Include="Views\Osmotrs\PlanoviOtchet.cshtml" />
+    <Content Include="Views\CanCreateOsmotrs\Create.cshtml" />
+    <Content Include="Views\CanCreateOsmotrs\Delete.cshtml" />
+    <Content Include="Views\CanCreateOsmotrs\Details.cshtml" />
+    <Content Include="Views\CanCreateOsmotrs\Edit.cshtml" />
+    <Content Include="Views\CanCreateOsmotrs\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

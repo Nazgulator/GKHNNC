@@ -87,7 +87,7 @@
     @if (User.IsInRole("Администратор") || User.Identity.Name.Contains("ИнженерОЭЖФ") || User.Identity.Name.Contains("Эксплуатация") || User.Identity.Name.Contains("ПТО") || User.Identity.Name.Contains("СлужбаГЭ"))
     {
 
-        <div class="container">
+        <div id="tableData" class="container">
             <div class="form-horizontal">
 
 
@@ -350,7 +350,7 @@
     @Scripts.Render("~/scripts/nprogress.min.js")
     @Scripts.Render("~/scripts/jquery.signalR-2.4.0.js")
     @Scripts.Render("~/signalr/hubs")
-
+    @Scripts.Render("/scripts/ExportToExcel/excelexportjs.js")
     @Scripts.Render("~/scripts/jquery.unobtrusive-ajax.js")
     @Scripts.Render("~/scripts/bootstrap.js")
     @Scripts.Render("~/scripts/bootstrap.bundle.js")
@@ -362,6 +362,28 @@
     <link href="/scripts/jquery.rating/styles/jquery.rating.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
 
+
+    <script>
+        function Export(P, PK, R, V, AS, D) {
+            var images = $("img");
+            for (var i = 0; i < images.length; i++) {
+                var Alt = images[i].getAttribute("alt");
+                images[i].replaceWith(Alt);
+
+            };
+
+            var inputs = $("input");
+            for (var i = 0; i < inputs.length; i++) {
+                var Inp = inputs[i].value;
+                inputs[i].replaceWith(Inp);
+            }
+            $("#tableData").excelexportjs({
+                containerid: "tableData",
+                datatype: 'table'
+            });
+        
+        };
+    </script>
     <script>
         function ChangeAEValue(id) {
             var AE = $('#Element_' + id).val();
@@ -373,7 +395,7 @@
     </script>
     <script>
         function ChangeAEValue2(id) {
-            var AE = $('#Element_' + id).val();
+            var AE = $('#Element2_' + id).val();
             $.post('@Url.Action("ChangeAEValue2", "Osmotrs")', { Id: id, Val: AE },
                 function (data) {
                 });

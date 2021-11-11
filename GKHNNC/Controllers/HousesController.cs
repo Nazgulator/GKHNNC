@@ -162,7 +162,7 @@ namespace GKHNNC.Controllers
             }
             ViewBag.Events = Events;
             DateTime Date = Opr.MonthMinus(1, DateTime.Now);//берем прошлый месяц
-            DateTime FromDate = DateTime.Now.AddYears(-1);
+            DateTime FromDate = DateTime.Now.AddYears(-2);
             DateTime ToDate = DateTime.Now;
             if (fromD != "")//если определен диапазон дат
             {
