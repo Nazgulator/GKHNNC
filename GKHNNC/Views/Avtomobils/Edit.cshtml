@@ -76,16 +76,45 @@
                </div>
                <div class="col-md-6">
                    <div class="checkbox">
-                      
+
                        @Html.EditorFor(model => model.Glonass, new { htmlAttributes = new { @class = "form-control" } })
                        @Html.ValidationMessageFor(model => model.Glonass, "", new { @class = "text-danger" })
                    </div>
                </div>
 
            </div>
-           
+
+           <div class="row col-md-6 col-md-offset-3" style="height:50Px;  ">
+               <div class="col-md-6" style="text-align:justify;display:flex;align-items:center;height:50Px">
+                   @Html.LabelFor(model => model.WhiteSpisok, htmlAttributes: new { @class = "control-label" })
+
+               </div>
+               <div class="col-md-6">
+                   <div class="checkbox">
+
+                       @Html.EditorFor(model => model.WhiteSpisok, new { htmlAttributes = new { @class = "form-control" } })
+                       @Html.ValidationMessageFor(model => model.WhiteSpisok, "", new { @class = "text-danger" })
+                   </div>
+               </div>
+           </div>
+
+           <div class="row col-md-6 col-md-offset-3" style="height:50Px;  ">
+               <div class="col-md-6" style="text-align:justify;display:flex;align-items:center;height:50Px">
+                   @Html.LabelFor(model => model.KontrAgentId, htmlAttributes: new { @class = "control-label" })
+
+               </div>
+               <div class="col-md-6">
+                   <div class="checkbox">
+
+                       @Html.EditorFor(model => model.KontrAgentId, new { htmlAttributes = new { @class = "form-control" } })
+                       @Html.ValidationMessageFor(model => model.KontrAgentId, "", new { @class = "text-danger" })
+                   </div>
+               </div>
+           </div>
+
+
            <div class="row col-md-6 col-md-offset-3">
-               <div class=" form-group">
+            
                    <div class=" col-md-6  ">
                        @Html.ActionLink("Назад", "Index", null, new { @class = "btn btn-success btn-block" })
                    </div>
@@ -93,7 +122,7 @@
                        <input type="submit" value="Изменить" class="btn btn-success btn-block" />
                    </div>
 
-               </div>
+             
            </div>
 
        </div>

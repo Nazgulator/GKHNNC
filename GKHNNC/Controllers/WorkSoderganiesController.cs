@@ -50,7 +50,7 @@ namespace GKHNNC.Controllers
         // сведения см. в статье https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Name,IzmerenieId,Norma,Obiem,Opisanie,Code,Val,TipId,Periodichnost")] WorkSoderganie workSoderganie)
+        public ActionResult Create([Bind(Include = "Id,Name,IzmerenieId,Norma,Obiem,Opisanie,Code,Val,TipId,Periodichnost,Remont,CostMterials,CostWrok,ProcGood,ProcBad")] WorkSoderganie workSoderganie)
         {
             if (ModelState.IsValid)
             {
@@ -86,7 +86,7 @@ namespace GKHNNC.Controllers
         // сведения см. в статье https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Name,IzmerenieId,Norma,Obiem,Opisanie,Code,Val,TipId,Periodichnost")] WorkSoderganie workSoderganie)
+        public ActionResult Edit([Bind(Include = "Id,Name,IzmerenieId,Norma,Obiem,Opisanie,Code,Val,TipId,Periodichnost,Remont,CostMterials,CostWrok,ProcGood,ProcBad")] WorkSoderganie workSoderganie)
         {
             if (ModelState.IsValid)
             {

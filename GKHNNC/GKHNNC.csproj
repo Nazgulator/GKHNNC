@@ -275,6 +275,7 @@
     <Compile Include="Controllers\FundamentMaterialsController.cs" />
     <Compile Include="Controllers\FundamentTypesController.cs" />
     <Compile Include="Controllers\GEUsController.cs" />
+    <Compile Include="Controllers\GroupsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\HousesController.cs" />
     <Compile Include="Controllers\IPUsController.cs" />
@@ -284,6 +285,8 @@
     <Compile Include="Controllers\MarkaAvtomobilsController.cs" />
     <Compile Include="Controllers\MarshrutsController.cs" />
     <Compile Include="Controllers\MaterialsController.cs" />
+    <Compile Include="Controllers\MaterialStandartsController.cs" />
+    <Compile Include="Controllers\MaterialToWorkStandartsController.cs" />
     <Compile Include="Controllers\MechanicsController.cs" />
     <Compile Include="Controllers\MusorPloshadkasController.cs" />
     <Compile Include="Controllers\MusorsController.cs" />
@@ -305,6 +308,8 @@
     <Compile Include="Controllers\RoomTypesController.cs" />
     <Compile Include="Controllers\RoomWindowsController.cs" />
     <Compile Include="Controllers\SaveDB.cs" />
+    <Compile Include="Controllers\SchetchiksController.cs" />
+    <Compile Include="Controllers\SchetchikTipsController.cs" />
     <Compile Include="Controllers\SVNsController.cs" />
     <Compile Include="Controllers\TableServicesController.cs" />
     <Compile Include="Controllers\TarifsController.cs" />
@@ -313,7 +318,10 @@
     <Compile Include="Controllers\UEVsController.cs" />
     <Compile Include="Controllers\UslugasController.cs" />
     <Compile Include="Controllers\VoditelsController.cs" />
+    <Compile Include="Controllers\WhiteListsController.cs" />
     <Compile Include="Controllers\WorkSoderganiesController.cs" />
+    <Compile Include="Controllers\WorkSoderganiesControllerZ.cs" />
+    <Compile Include="Controllers\WorkStandartsController.cs" />
     <Compile Include="Controllers\ZakazchiksController.cs" />
     <Compile Include="DAL\AutomarshallContext.cs" />
     <Compile Include="Ezdkas.cs">
@@ -334,6 +342,10 @@
       <DependentUpon>WorkCenterContext.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\MaterialToWorkStandart.cs" />
+    <Compile Include="Models\MaterialStandart.cs" />
+    <Compile Include="Models\SchetchikTip.cs" />
+    <Compile Include="Models\WhiteList.cs" />
     <Compile Include="Models\CanCreateOsmotr.cs" />
     <Compile Include="Models\TelefonsSpravochnik.cs" />
     <Compile Include="Models\TypeElement.cs" />
@@ -392,6 +404,9 @@
     <Compile Include="Models\Musor.cs" />
     <Compile Include="Models\OsmotrWork.cs" />
     <Compile Include="Models\ActiveWorkSoderganie.cs" />
+    <Compile Include="Models\Schetchik.cs" />
+    <Compile Include="Models\Group.cs" />
+    <Compile Include="Models\WorkStandart.cs" />
     <Compile Include="Models\WorkSoderganie.cs" />
     <Compile Include="Models\Tip.cs" />
     <Compile Include="Models\Zakazchik.cs" />
@@ -1945,11 +1960,6 @@
     <Content Include="Views\EventLogs\Index.cshtml" />
     <Content Include="Views\Osmotrs\PlanoviStatiView.cshtml" />
     <Content Include="Views\Houses\OtchetAllSpec.cshtml" />
-    <Content Include="Views\WorkSoderganies\Create.cshtml" />
-    <Content Include="Views\WorkSoderganies\Delete.cshtml" />
-    <Content Include="Views\WorkSoderganies\Details.cshtml" />
-    <Content Include="Views\WorkSoderganies\Edit.cshtml" />
-    <Content Include="Views\WorkSoderganies\Index.cshtml" />
     <Content Include="Views\Tips\Create.cshtml" />
     <Content Include="Views\Tips\Delete.cshtml" />
     <Content Include="Views\Tips\Details.cshtml" />
@@ -1983,6 +1993,47 @@
     <Content Include="Views\CanCreateOsmotrs\Details.cshtml" />
     <Content Include="Views\CanCreateOsmotrs\Edit.cshtml" />
     <Content Include="Views\CanCreateOsmotrs\Index.cshtml" />
+    <Content Include="Views\WorkSoderganies\Create.cshtml" />
+    <Content Include="Views\WorkSoderganies\Delete.cshtml" />
+    <Content Include="Views\WorkSoderganies\Details.cshtml" />
+    <Content Include="Views\WorkSoderganies\Edit.cshtml" />
+    <Content Include="Views\WorkSoderganies\Index.cshtml" />
+    <Content Include="Views\WhiteLists\Create.cshtml" />
+    <Content Include="Views\WhiteLists\Delete.cshtml" />
+    <Content Include="Views\WhiteLists\Details.cshtml" />
+    <Content Include="Views\WhiteLists\Edit.cshtml" />
+    <Content Include="Views\WhiteLists\Index.cshtml" />
+    <Content Include="Views\Poligons\Index - Копировать.cshtml" />
+    <Content Include="Views\Groups\Create.cshtml" />
+    <Content Include="Views\Groups\Delete.cshtml" />
+    <Content Include="Views\Groups\Details.cshtml" />
+    <Content Include="Views\Groups\Edit.cshtml" />
+    <Content Include="Views\Groups\Index.cshtml" />
+    <Content Include="Views\SchetchikTips\Create.cshtml" />
+    <Content Include="Views\SchetchikTips\Delete.cshtml" />
+    <Content Include="Views\SchetchikTips\Details.cshtml" />
+    <Content Include="Views\SchetchikTips\Edit.cshtml" />
+    <Content Include="Views\SchetchikTips\Index.cshtml" />
+    <Content Include="Views\Schetchiks\Create.cshtml" />
+    <Content Include="Views\Schetchiks\Delete.cshtml" />
+    <Content Include="Views\Schetchiks\Details.cshtml" />
+    <Content Include="Views\Schetchiks\Edit.cshtml" />
+    <Content Include="Views\Schetchiks\Index.cshtml" />
+    <Content Include="Views\WorkStandarts\Create.cshtml" />
+    <Content Include="Views\WorkStandarts\Delete.cshtml" />
+    <Content Include="Views\WorkStandarts\Details.cshtml" />
+    <Content Include="Views\WorkStandarts\Edit.cshtml" />
+    <Content Include="Views\WorkStandarts\Index.cshtml" />
+    <Content Include="Views\MaterialStandarts\Create.cshtml" />
+    <Content Include="Views\MaterialStandarts\Delete.cshtml" />
+    <Content Include="Views\MaterialStandarts\Details.cshtml" />
+    <Content Include="Views\MaterialStandarts\Edit.cshtml" />
+    <Content Include="Views\MaterialStandarts\Index.cshtml" />
+    <Content Include="Views\MaterialToWorkStandarts\Create.cshtml" />
+    <Content Include="Views\MaterialToWorkStandarts\Delete.cshtml" />
+    <Content Include="Views\MaterialToWorkStandarts\Details.cshtml" />
+    <Content Include="Views\MaterialToWorkStandarts\Edit.cshtml" />
+    <Content Include="Views\MaterialToWorkStandarts\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

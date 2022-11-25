@@ -1,0 +1,91 @@
+﻿@model GKHNNC.Models.Schetchik
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Schetchik</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Adres.Adress)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Adres.Adress)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Group.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Group.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Tip.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Tip.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Summa)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Summa)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Diameter)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Diameter)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DateStart)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DateStart)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DateEnd)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DateEnd)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Number)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Number)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

@@ -82,6 +82,8 @@
             @{ int progress = 0;
                 double pro100 = Model.DOMParts.Count;
                 int procount = 0;
+                var Soderganie = Model.WS.Where(x => x.Remont == false).ToList();
+                var Remont = Model.WS.Where(x => x.Remont == true).ToList();
             }
 
 
@@ -91,10 +93,21 @@
             <div class="row">
                 <div class="col-md-12" style="background-color:#28a745">
                     <table id="tableData" style="width:100%">
+                        <tr>
+                            <td colspan="7" style="text-align:center">
 
+                                <h2>Содержание</h2>
+                            </td>
+                        </tr>
                         <tr style="background-color:#28a745 ; color:white" class="table-bordered">
                             <th width="230px" style="text-align:center">
                                 Работа
+                            </th>
+                            <th width="95px" style="text-align:center">
+                                Ед. изм.
+                            </th>
+                            <th width="230px" style="text-align:center">
+                                Физическая величина
                             </th>
                             <th width="95px" style="text-align:center">
                                 Значение
@@ -108,33 +121,186 @@
                             <th width="95px" style="text-align:center">
                                 Сумма
                             </th>
+                            <th width="230px" style="text-align:center">
+                                Исходные данные
+                            </th>
 
                         </tr>
-                        @for (int j = 0; j < Model.WS.Count; j++)
+                        @if (Soderganie.Count > 0)
                         {
+                            int X = 0;
+                            decimal Chelovekochasi = 0;
+                            for (int j = 0; j < Soderganie.Count; j++)
+                            {
 
-                            <tr style="background-color:white" class="table-bordered">
-                                <th style="text-align:left" title="@Model.WS[j].Opisanie">
-                                    @Model.WS[j].Name
-                                </th>
-                                <th style="text-align:center" title="Расчетное значение (генерируется в момент создания отчета, не хранится в БД)">
-                                    @Model.WS[j].Val
-                                </th>
-                                <th width="95px" style="text-align:center" title="Норма (выставлена в таблице 'Справочник работ по содержанию', едина для всех домов)">
-                                    @Model.WS[j].Norma
-                                </th>
-                                <th width="95px" style="text-align:center" title="Периодичность (выставлена в таблице 'Справочник работ по содержанию', едина для всех домов)">
-                                    @Model.WS[j].Periodichnost
-                                </th>
-                                <th width="95px" style="text-align:center" title="Человекочасы расчетное значение Значение * Норма * Периодичность (генерируется в момент создания отчета, не хранится в БД)">
-                                    @(Math.Round(Model.WS[j].Norma * Model.WS[j].Val * Model.WS[j].Periodichnost, 2))
-                                </th>
+                                if (X != Soderganie[j].TipId)
+                                {
+                                    if (Chelovekochasi > 0)
+                                    {
+                                        <tr>
+                                            <th colspan="6" style="text-align:right"><h6>Итого по разделу:</h6></th>
+                                            <th style="text-align:center">@Chelovekochasi</th>
+                                            <th></th>
+                                        </tr>
+                                    }
+                                    Chelovekochasi = 0;
+                                    <tr>
+                                        <th colspan="8" style="text-align:center"><h3>@Soderganie[j].Tip.Name</h3></th>
+                                    </tr>
+                                    <tr style="background-color:#28a745 ; color:white" class="table-bordered">
+                                        <th width="230px" style="text-align:center">
+                                            Работа
+                                        </th>
+                                        <th width="95px" style="text-align:center">
+                                            Ед. изм.
+                                        </th>
+                                        <th width="230px" style="text-align:center">
+                                            Физическая величина
+                                        </th>
+                                        <th width="95px" style="text-align:center">
+                                            Значение
+                                        </th>
+                                        <th width="95px" style="text-align:center">
+                                            Норма
+                                        </th>
+                                        <th width="95px" style="text-align:center">
+                                            Периодичность
+                                        </th>
+                                        <th width="95px" style="text-align:center">
+                                            Сумма
+                                        </th>
+                                        <th width="230px" style="text-align:center">
+                                            Исходные данные
+                                        </th>
 
-                            </tr>
+                                    </tr>
+                                    X = Soderganie[j].TipId;
+                                }
 
 
+                                <tr style="background-color:white" class="table-bordered">
+                                    <th style="text-align:left" title="@Soderganie[j].Opisanie">
+                                        @Soderganie[j].Name
+                                    </th>
+                                    <th style="text-align:center" title="Единицы измерения">
+                                        @if (Soderganie[j].Izmerenie != null)
+                                        {
+                                            @Soderganie[j].Izmerenie.Name
+                                        }
+                                    </th>
+                                    <th style="text-align:center" title="Физическая величина">
+                                        @Soderganie[j].Fiz.ToString().Replace('.', ',')
+                                    </th>
+                                    <th style="text-align:center" title="Расчетное значение (генерируется в момент создания отчета, не хранится в БД)">
+                                        @Soderganie[j].Val.ToString().Replace('.', ',')
+                                    </th>
+                                    <th width="95px" style="text-align:center" title="Норма (выставлена в таблице 'Справочник работ по содержанию', едина для всех домов)">
+                                        @Soderganie[j].Norma.ToString().Replace('.', ',')
+                                    </th>
+                                    <th width="95px" style="text-align:center" title="Периодичность (выставлена в таблице 'Справочник работ по содержанию', едина для всех домов)">
+                                        @Soderganie[j].Periodichnost.ToString().Replace('.', ',')
+                                    </th>
+                                    <th width="95px" style="text-align:center" title="Человекочасы расчетное значение Значение * Норма * Периодичность (генерируется в момент создания отчета, не хранится в БД)">
+                                        @(Math.Round(Soderganie[j].Norma * Soderganie[j].Val * Soderganie[j].Periodichnost, 2).ToString().Replace('.', ','))
+                                    </th>
+                                    <th style="text-align:left" title="Исходные данные">
+                                        @Soderganie[j].Comment
+                                    </th>
+                                </tr>
+
+                                Chelovekochasi += Math.Round(Soderganie[j].Norma * Soderganie[j].Val * Soderganie[j].Periodichnost, 2);
+                            }
                         }
+                        <tr>
+                            <td colspan="7" style="text-align:center">
+                                <h2>Ремонт</h2>
+                            </td>
+                        </tr>
+                        @if (Remont.Count > 0)
+                        {
+                            int X = 0;
+                            for (int j = 0; j < Remont.Count; j++)
+                            {
+                                Remont[j].Comment += " Алгоритм =" + Remont[j].Opisanie + " номер " + Remont[j].Code;
+                                string cl = "#ffffff";
+                                string cl2 = "#ffffff";
+                                string podskazka = "Расчетное значение (" + Remont[j].Comment + ")";
+                                string podskazka2 = "Человекочасы расчетное значение Значение * Стоимость материалов + Стоимость работ * Периодичность (генерируется в момент создания отчета, не хранится в БД)";
+                                if (Remont[j].ProcBad == 0) { cl = "#ff0000"; podskazka = "Не установлены зависимость процентов ремонта от состояния элемента в последнем осмотре (сколько процентов от общего количества в зависимости от звезд)"; }
+                                if (Remont[j].CostMterials + Remont[j].CostWrok == 0) { cl2 = "#ff0000"; podskazka2 = "Не установлена стоимость работ"; }
 
+
+
+
+
+                                if (X != Remont[j].TipId)
+                                {
+                                    <tr>
+                                        <th colspan="7" style="text-align:center"><h5>@Remont[j].Tip.Name</h5></th>
+                                    </tr>
+                                    <tr style="background-color:#28a745 ; color:white" class="table-bordered">
+                                        <th width="230px" style="text-align:center">
+                                            Работа
+                                        </th>
+                                        <th width="95px" style="text-align:center">
+                                            Ед. изм.
+                                        </th>
+                                        <th width="230px" style="text-align:center">
+                                            Физическая величина
+                                        </th>
+                                        <th width="95px" style="text-align:center">
+                                            Значение
+                                        </th>
+                                        <th width="95px" style="text-align:center">
+                                            Норма
+                                        </th>
+                                        <th width="95px" style="text-align:center">
+                                            Периодичность
+                                        </th>
+                                        <th width="95px" style="text-align:center">
+                                            Сумма
+                                        </th>
+                                        <th width="230px" style="text-align:center">
+                                            Исходные данные
+                                        </th>
+
+                                    </tr>
+                                    X = Remont[j].TipId;
+                                }
+
+                                <tr style="background-color:white" class="table-bordered">
+                                    <th style="text-align:left" title="@Remont[j].Opisanie">
+                                        @Remont[j].Name
+                                    </th>
+                                    <th style="text-align:center" title="@Remont[j].Opisanie">
+                                        @if (Remont[j].Izmerenie != null)
+                                        {
+                                            @Remont[j].Izmerenie.Name
+                                        }
+                                    </th>
+                                    <th style="text-align:center" title="Количество элементов">
+                                        @Remont[j].Fiz.ToString().Replace('.', ',')
+                                    </th>
+                                    <th style="text-align:center" title="@podskazka">
+                                        @Remont[j].Val.ToString().Replace('.', ',')
+                                    </th>
+                                    <th width="95px" style="text-align:center" title="Норма (выставлена в таблице 'Справочник работ по содержанию', едина для всех домов)">
+                                        @Remont[j].Norma.ToString().Replace('.', ',')
+                                    </th>
+                                    <th width="95px" style="text-align:center" title="Периодичность (выставлена в таблице 'Справочник работ по содержанию', едина для всех домов)">
+                                        @Remont[j].Periodichnost.ToString().Replace('.', ',')
+                                    </th>
+                                    <th width="95px" style="text-align:center" title="@podskazka2">
+                                        @(Math.Round((Remont[j].CostMterials + Remont[j].CostWrok) * Remont[j].Val * Remont[j].Periodichnost, 2).ToString().Replace('.', ','))
+                                    </th>
+                                    <th width="95px" style="text-align:center">
+                                        @Remont[j].Comment
+                                    </th>
+                                </tr>
+
+
+                            }
+                        }
 
                     </table>
                     <button onclick="Export()" class="btn btn-success">Экспорт в эксель</button>
@@ -202,9 +368,10 @@
 
             var inputs = $("input");
             for (var i = 0; i < inputs.length; i++) {
-                var Inp = inputs[i].value;
+                var Inp = inputs[i].value.replace('.',',');
                 inputs[i].replaceWith(Inp);
             }
+           
             $("#tableData").excelexportjs({
                 containerid: "tableData",
                 datatype: 'table'

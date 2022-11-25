@@ -48,7 +48,7 @@
         {
 
             <div class="alert-success">
-                <p>12.07.2021 Добавлена таблица событий осмотров (создание, изменение статусов).</p>
+                <p>07.02.2022 Добавлены приборы учета ЭЭ, Отопление, ГВС, ХВС.</p>
             </div>
 
             if (User.Identity.Name.Contains("ПТО") || User.Identity.Name.Contains("ОЭЖФ") || User.IsInRole("Администратор"))
@@ -66,11 +66,12 @@
                         }
                     </table>
 
+
                 }
 
             }
 
-            if (User.Identity.Name.Contains("БухгалтерПоТопливу") == false && User.Identity.Name.Contains("УАТ") == false && User.Identity.Name.Contains("УЭВ") == false && User.Identity.Name.Contains("Асанова") == false)
+            if (User.Identity.Name.Contains("УАТ") == false && User.Identity.Name.Contains("УЭВ") == false && User.Identity.Name.Contains("Асанова") == false)
             {
                 <div class="media col-md-4 col-md-offset-4">
                     <div class="media-left">
@@ -104,11 +105,17 @@
                     </button>
                 </p>
 
-                if (User.IsInRole("Администратор") || User.Identity.Name.Contains("ОЭЖФ") || User.Identity.Name.Contains("Эксплуатация"))
+                if (User.IsInRole("Администратор") || User.Identity.Name.Contains("ОЭЖФ") || User.Identity.Name.Contains("Эксплуатация") || User.Identity.Name.Contains("СГЭ"))
                 {
                     <p>
                         <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("OsmotrsProverka1", "Houses")'">
                             <i class="glyphicon glyphicon-map-marker"></i> Проверить осмотры (ОЭЖФ) &raquo;
+                        </button>
+                    </p>
+
+                    <p>
+                        <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Schetchiks")'">
+                            <i class="glyphicon glyphicon-hand-left"></i> Счетчики  &raquo;
                         </button>
                     </p>
                 }
@@ -212,6 +219,36 @@
                     <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "ActiveWorkSoderganies")'">
                         <i class="glyphicon glyphicon-map-marker"></i> Активные работы по содержанию &raquo;
                     </button>
+                </p>
+
+
+
+                <div class="media col-md-4 col-md-offset-4">
+                    <div class="media-left">
+                        <img src="~/Ico/icons8-руководство-50.png" class="media-object" style="width:50px">
+                    </div>
+                    <div class="media-body">
+                        <h3 class="media-heading">Жилищный стандарт</h3>
+                        <p>Интеграция с ПО Жилищный стандарт</p>
+                    </div>
+                </div>
+                <p>
+                    <button type="button" class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "WorkStandarts")'">
+                        <span></span> Работы Стандарт (план) &raquo;
+                    </button>
+                    <span></span>
+                </p>
+                <p>
+                    <button type="button" class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "MaterialStandarts")'">
+                        <span class="glyphicon glyphicon-ok"></span> Материалы Стандарт (план) &raquo;
+                    </button>
+                    <span class="glyphicon glyphicon-search"></span>
+                </p>
+                <p>
+                    <button type="button" class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "MaterialToWorkStandarts")'">
+                        <span class="glyphicon glyphicon-ok"></span> Привязка материалов к работам (план) &raquo;
+                    </button>
+                    <span class="glyphicon glyphicon-search"></span>
                 </p>
 
 
@@ -405,6 +442,11 @@
                     <div class="row">
                         <div class="col-md-12">
                             <p>
+                                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Schetchiks")'">
+                                    <i class="glyphicon glyphicon-hand-left"></i> Счетчики  &raquo;
+                                </button>
+                            </p>
+                            <p>
                                 <button class="btn btn-success btn-lg" style="width:500Px" onclick="location.href='@Url.Action("Index", "GEUs")'">
                                     <i class="glyphicon glyphicon-briefcase"></i> ЖЭУ &raquo;
                                 </button>
@@ -430,6 +472,7 @@
                                     <i class="glyphicon glyphicon-open"></i> Загрузка таблиц для актов &raquo;
                                 </button>
                             </p>
+
                         </div>
 
                     </div>
@@ -639,6 +682,11 @@
                 </button>
             </p>
             <p>
+                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Import", "MusorPloshadkas")'">
+                    <i class="glyphicon glyphicon-trash"></i>  Импорт мусорных площадок &raquo;
+                </button>
+            </p>
+            <p>
                 <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("MarshrutsBaseIndex", "MusorPloshadkas")'">
                     <i class="glyphicon glyphicon-trash"></i> Базовые и активные маршруты  &raquo;
                 </button>
@@ -655,7 +703,7 @@
             </p>
         }
 
-        if (User.Identity.Name.Contains("Полигон") || User.IsInRole("Администратор") || User.Identity.Name.Contains("Логист") || User.Identity.Name.Contains("Асанова"))
+        if (User.Identity.Name.Contains("Полигон") || User.IsInRole("Администратор") || User.Identity.Name.Contains("Логист") || User.Identity.Name.Contains("Асанова") || User.Identity.Name.Contains("УАТ"))
         {
             <p>
                 <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Poligons")'">

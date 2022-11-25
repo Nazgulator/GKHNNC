@@ -22,9 +22,6 @@
             @Html.DisplayNameFor(model => model.Name)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Periodichnost)
-        </th>
-        <th>
             @Html.DisplayNameFor(model => model.Norma)
         </th>
         <th>
@@ -39,6 +36,24 @@
         <th>
             @Html.DisplayNameFor(model => model.Val)
         </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Periodichnost)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Remont)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CostMterials)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CostWrok)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ProcGood)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ProcBad)
+        </th>
         <th></th>
     </tr>
 
@@ -52,9 +67,6 @@
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Periodichnost)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Norma)
@@ -72,8 +84,26 @@
             @Html.DisplayFor(modelItem => item.Val)
         </td>
         <td>
-            @Html.ActionLink("Редактировать", "Edit", new { id = item.Id }) |
-            @Html.ActionLink("Удалить", "Delete", new { id = item.Id })
+            @Html.DisplayFor(modelItem => item.Periodichnost)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Remont)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CostMterials)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CostWrok)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ProcGood)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ProcBad)
+        </td>
+        <td>
+            @Html.ActionLink("Редактировать", "Edit", new { id=item.Id }) |
+            @Html.ActionLink("Удалить", "Delete", new { id=item.Id })
         </td>
     </tr>
 }

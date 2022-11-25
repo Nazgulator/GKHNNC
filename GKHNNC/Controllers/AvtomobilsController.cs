@@ -18,7 +18,7 @@ namespace GKHNNC.Controllers
         // GET: Avtomobils
         public ActionResult Index()
         {
-            var avtomobils = db.Avtomobils.Include(a => a.Marka).Include(a => a.Type);
+            var avtomobils = db.Avtomobils.Include(a => a.Marka).Include(a => a.Type).Include(a => a.KontrAgent);
             return View(avtomobils.ToList());
         }
         public ActionResult AvtomobilsSpisok(string Selection)
@@ -33,20 +33,20 @@ namespace GKHNNC.Controllers
                 List<Avtomobil> avtomobils = new List<Avtomobil>();
                 if (AT + AN == 0)
                 {
-                     avtomobils = db.Avtomobils.Include(a => a.Marka).Include(a => a.Type).Where(x => x.Glonass == AG).ToList();
+                     avtomobils = db.Avtomobils.Include(a => a.Marka).Include(a => a.Type).Include(a=>a.KontrAgent).Where(x => x.Glonass == AG).ToList();
                 }
 
                 if (AT==0 && AN!=0)
                 {
-                    avtomobils = db.Avtomobils.Include(a => a.Marka).Include(a => a.Type).Where(x =>x.Id == AN && x.Glonass == AG).ToList();
+                    avtomobils = db.Avtomobils.Include(a => a.Marka).Include(a => a.Type).Include(a => a.KontrAgent).Where(x =>x.Id == AN && x.Glonass == AG).ToList();
                 }
                 if (AT != 0 && AN == 0)
                 {
-                    avtomobils = db.Avtomobils.Include(a => a.Marka).Include(a => a.Type).Where(x => x.Type.Id == AT && x.Glonass == AG).ToList();
+                    avtomobils = db.Avtomobils.Include(a => a.Marka).Include(a => a.Type).Include(a => a.KontrAgent).Where(x => x.Type.Id == AT && x.Glonass == AG).ToList();
                 }
                 if (AT != 0 && AN != 0)
                 {
-                    avtomobils = db.Avtomobils.Include(a => a.Marka).Include(a => a.Type).Where(x => x.Type.Id == AT && x.Id == AN && x.Glonass == AG).ToList();
+                    avtomobils = db.Avtomobils.Include(a => a.Marka).Include(a => a.Type).Include(a => a.KontrAgent).Where(x => x.Type.Id == AT && x.Id == AN && x.Glonass == AG).ToList();
                 }
                 return View(avtomobils);
             }
@@ -110,6 +110,7 @@ namespace GKHNNC.Controllers
             if (ModelState.IsValid)
             {
                 if (avtomobil.Garage == null) { avtomobil.Garage = 0; }
+                avtomobil.KontrAgentId = 1;
                 db.Avtomobils.Add(avtomobil);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -120,6 +121,15 @@ namespace GKHNNC.Controllers
             return View(avtomobil);
         }
 
+        public  JsonResult White(int id)
+        {
+            Avtomobil A =db.Avtomobils.Where(x => x.Id == id).First();
+            A.WhiteSpisok = !A.WhiteSpisok;
+            db.Entry(A).State = EntityState.Modified;
+            db.SaveChanges();
+
+            return Json("");
+        }
         // GET: Avtomobils/Edit/5
         public ActionResult Edit(int? id)
         {
@@ -134,6 +144,7 @@ namespace GKHNNC.Controllers
             }
             ViewBag.MarkaId = new SelectList(db.MarkaAvtomobils, "Id", "Name", avtomobil.MarkaId);
             ViewBag.TypeId = new SelectList(db.TypeAvtos, "Id", "Type", avtomobil.TypeId);
+            ViewBag.KontragentId = new SelectList(db.KontrAgents, "Id", "Name", avtomobil.KontrAgentId);
             return View(avtomobil);
         }
 
@@ -142,7 +153,7 @@ namespace GKHNNC.Controllers
         // сведения см. в статье https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,MarkaId,TypeId,Number,Date,Garage,Glonass")] Avtomobil avtomobil)
+        public ActionResult Edit([Bind(Include = "Id,MarkaId,TypeId,Number,Date,Garage,Glonass,WhiteSpisok,KontragentId")] Avtomobil avtomobil)
         {
             if (ModelState.IsValid)
             {

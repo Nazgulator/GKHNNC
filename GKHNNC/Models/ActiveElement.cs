@@ -30,6 +30,10 @@ namespace GKHNNC.Models
         public string Photo1 { get; set; }
         [Display(Name = "Фото2")]
         public string Photo2 { get; set; }
+        [Display(Name = "СтароеЛиФото1")]
+        public bool IsOld1 { get; set; }
+        [Display(Name = "СтароеЛиФото2")]
+        public bool IsOld2 { get; set; }
         [Display(Name = "Дата")]
         public DateTime Date { get; set; }
         [Display(Name = "Дата изменения")]

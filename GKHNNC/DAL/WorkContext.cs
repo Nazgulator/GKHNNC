@@ -157,6 +157,19 @@ namespace GKHNNC.DAL
         public System.Data.Entity.DbSet<GKHNNC.Models.TelefonsSpravochnik> TelefonsSpravochniks { get; set; }
 
         public System.Data.Entity.DbSet<GKHNNC.Models.CanCreateOsmotr> CanCreateOsmotrs { get; set; }
+        public System.Data.Entity.DbSet<GKHNNC.Models.WhiteList> WhiteLists { get; set; }
+
+        public System.Data.Entity.DbSet<GKHNNC.Models.Group> Groups { get; set; }
+
+        public System.Data.Entity.DbSet<GKHNNC.Models.Schetchik> Schetchiks { get; set; }
+
+        public System.Data.Entity.DbSet<GKHNNC.Models.SchetchikTip> SchetchikTips { get; set; }
+        public System.Data.Entity.DbSet<GKHNNC.Models.WorkStandart> WorkStandarts { get; set; }
+
+        public System.Data.Entity.DbSet<GKHNNC.Models.MaterialStandart> MaterialStandasrts { get; set; }
+        public System.Data.Entity.DbSet<GKHNNC.Models.MaterialToWorkStandart> MaterialToWorkStandarts { get; set; }
+
+
 
 
         //protected override void OnModelCreating(DbModelBuilder modelBuilder)

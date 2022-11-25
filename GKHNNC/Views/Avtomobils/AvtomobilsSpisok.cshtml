@@ -25,11 +25,19 @@
         <th>
             @Html.DisplayNameFor(model => model.Glonass)
         </th>
+        <th>
+            @Html.DisplayNameFor(model => model.KontrAgent)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.WhiteSpisok)
+        </th>
         <th></th>
     </tr>
 
     @foreach (var item in Model)
     {
+        string ch = "";
+        if (item.WhiteSpisok) { ch = "checked"; }
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Marka.Name)
@@ -47,8 +55,14 @@
                 @Html.DisplayFor(modelItem => item.Garage)
             </td>
             <td>
-                
                 @Html.DisplayFor(modelItem => item.Glonass)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.KontrAgent)
+            </td>
+            <td>
+                <input class="form-control" type="checkbox"  name="WhiteSpisok" @ch id="W_@item.Id" onchange="White(@item.Id)" />
+           
             </td>
             <td>
                 @Html.ActionLink("Редактировать", "Edit", new { id = item.Id }) |
@@ -58,5 +72,30 @@
     }
 
 </table>
-<p><a href="/Home/Index" class="btn btn-success btn-block" >В главное меню &raquo;</a> </p>
+<p><a href="/Home/Index" class="btn btn-success btn-block">В главное меню &raquo;</a> </p>
 
+@section Scripts{
+
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+    @Scripts.Render("~/scripts/nprogress.min.js")
+    @Scripts.Render("~/scripts/jquery.signalR-2.4.0.js")
+    @Scripts.Render("~/signalr/hubs")
+    @Scripts.Render("/scripts/ExportToExcel/excelexportjs.js")
+    @Scripts.Render("~/scripts/jquery.unobtrusive-ajax.js")
+    @Scripts.Render("~/scripts/bootstrap.js")
+    @Scripts.Render("~/scripts/bootstrap.bundle.js")
+    @Scripts.Render("https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js")
+    @Scripts.Render("~/scripts/jquery.rating/js/jquery.rating-2.0.js")
+    @Scripts.Render("~/scripts/jquery.rating/js/jquery.rating-2.0Red.js")
+
+    <script>
+        function White(id) {
+            var X = $('#W_' + id).val();
+            $.post('@Url.Action("White", "Avtomobils")', { Id: id},
+                function (data) {
+                });
+
+        }
+    </script>
+
+}

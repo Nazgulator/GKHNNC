@@ -26,36 +26,6 @@
     <table id="table" class="table table-bordered table-striped">
 
 
-        <tr>
-            <td colspan="9" height="3px" style="@AHTUNG">
-                <h4 style="color:white;text-align:center"> Добавление нового рейса </h4>
-            </td>
-        </tr>
-        <tr style="text-align:center">
-
-            <th colspan="2" width="18%" style="font-size:20px">
-                @Html.DisplayNameFor(model => model.Number)
-            </th>
-            <th style="font-size:20px">
-                Тип автомобиля
-            </th>
-            <th style="font-size:20px;line-height:0.9em">
-                @Html.DisplayNameFor(model => model.MassIn)
-            </th>
-            <th style="font-size:20px;line-height:0.9em">
-                @Html.DisplayNameFor(model => model.MassOut)
-            </th>
-            <th colspan="2" width="10%" style="font-size:20px;">
-                Контрагент
-            </th>
-            <th>
-                Результаты измерения при проведении радиационного дозиметрического контроля, мн3в
-            </th>
-            <th style="font-size:20px">
-                Опции
-            </th>
-
-        </tr>
 
         @using (Html.BeginForm("Create", "Poligons", FormMethod.Post))
         {
@@ -90,116 +60,23 @@
 
             }
 
-            if (ViewBag.Avto != null)
-            {
-                if (ViewBag.Avto.Marka == null)
-                {
-                    alt = ViewBag.Avto.Type.Type;
-                }
-                else
-                {
-                    alt = ViewBag.Avto.Type.Type + " " + ViewBag.Avto.Marka.Name;
-                }
 
-            }
-
-
-            if (ViewBag.AvtoType != null) { Atype = ViewBag.AvtoImage.ToString() + ".png"; TType = ViewBag.AvtoType; }
-            if (ViewBag.Number != null) { val = ViewBag.Number; }
-            string ecoclass = "";
-            if (ViewBag.Avto != null && ViewBag.Avto.NePuskat)
-            {
-                ecoclass = "btn btn-danger";
-                ADD = "Въезд запрещён! Свяжитесь с экологом.";
-                ADDCLASS = "btn btn-danger";
-                SaveOn = false;
-            }
-            else
-            {
-                if (ViewBag.AvtoKontragentId == 2)
-                {
-                    ecoclass = "btn btn-success";
-                }
-                else
-                {
-                    if (ViewBag.AvtoKontragentId == 1)
-                    {
-                        ecoclass = "btn btn-outline-secondary";
-                    }
-                    else
-                    {
-                        ecoclass = "btn btn-info";
-                    }
-                }
-            }
-            if (User.Identity.Name.Contains("Асанова") || User.Identity.Name.Contains("Логист"))
-            {
-                SaveOn = false;
-                ADD = "Вы не можете добавлять рейсы";
-                ADDCLASS = "btn btn-secondary";
-            }
-            <tr style="text-align:center">
-
-                <td colspan="2">
-                    @Html.Editor("Number", new { htmlAttributes = new { @class = "form-control", value = val, style = "border:3px solid #000000;font-size:20px;font-weight:bold" } })
-
-
-                </td>
-                <td style="background-color:#FFFFFF">
-                    <img src="~/Content/Images/@Atype" height="64" width="128" data-toggle="modal" alt="@alt" data-target="#AvtoMain" data-placement="top" style="cursor:pointer" title="@TType нажмите чтобы узнать детальную информацию">
-                    @if (ViewBag.Avto != null)
-                    {
-                        <img src="~/Content/Images/Info.png" onclick="AvtoNomerPoisk('@ViewBag.Avto.Id','@ViewBag.PoiskKontrId','@ViewBag.Resultat','@ViewBag.Vesi','@ViewBag.Avtosort','@ViewBag.Date')" width="25" style="cursor:pointer" title="@ViewBag.Number нажмите чтобы выбрать все рейсы данного автомобиля">
-                    }
-
-                </td>
-                <td>
-                    <input id="MassIn" name="MassIn" class="form-control" type="number" min="0" step="1" style="border:3px solid #000000;font-size:20px;font-weight:bold" />
-                </td>
-                <td>
-                    <input id="MassOut" name="MassOut" class="form-control" type="number" min="0" step="1" style="border:3px solid #000000;font-size:20px;font-weight:bold" value=@MassOutA />
-                </td>
-
-                <td colspan="2" style="font-size:16px">
-
-                    @Html.DropDownList("KontrAgentId", new SelectList(ViewBag.AllKontrAgents, "Value", "Text", ViewBag.AvtoKontrAgentId), new { @class = ecoclass, style = "border:3px solid #000000;font-size:20px;font-weight:bold" })
-
-                    <input id="VibralRab" name="VibralRab" type="checkbox" hidden />
-                </td>
-                <td>
-                    @Html.Editor("Description", new { htmlAttributes = new { @class = "form-control", placeholder = "В пределах нормы.", style = "border:3px solid #000000;font-size:20px;font-weight:bold" } })
-                </td>
-
-                <td>
-                    @if (SaveOn)
-                    {
-                        <button id="Save" type="submit" class="@ADDCLASS ">@ADD</button>
-                    }
-                    else
-                    {
-                        <input class="@ADDCLASS" value="@ADD" style="cursor:no-drop" readonly />
-                    }
-                </td>
-
-            </tr>
             <tr>
                 <td colspan="3" style="text-align:right">
                     @if (User.IsInRole("Администратор") || User.Identity.Name.Contains("Логист"))
                     {
-                        <input class="btn btn-success btn-block" style="cursor:pointer" readonly value="К базовым и активным маршрутам &raquo;" onclick="window.location.replace('/MusorPloshadkas/MarshrutsBaseIndex/')" />
+                        <input class="btn btn-success btn-block" style="cursor:pointer" readonly value="Белый список &raquo;" onclick="window.location.replace('/WhiteLists/Index/')" />
                     }
                 </td>
                 <td colspan="2" style="text-align:right">
 
-                    <input type="date" id="Date" name="Date" style="border:3px solid #000000;font-size:20px;font-weight:bold" placeholder="Выберите дату" class="form-control" autocomplete="off" onchange="AvtoNomerPoisk('@ViewBag.PoiskId','@ViewBag.PoiskKontrId','@ViewBag.Resultat','@ViewBag.Vesi','@ViewBag.Avtosort',this.value)" />
-                </td>
-                <td colspan="2">
-                    <input class="btn btn-success btn-block" style="cursor:pointer" readonly value="Добавить контрагента &raquo;" onclick="window.location.replace('/KontrAgents/Index/')" />
+                    <input type="date" id="Date" name="Date" style="border:3px solid #000000;font-size:20px;font-weight:bold" placeholder="Выберите дату" class="form-control" autocomplete="off" onchange="AvtoNomerPoisk('@ViewBag.PoiskId','@ViewBag.PoiskKontrId','@ViewBag.Resultat','@ViewBag.Vesi','@ViewBag.Avtosort',this.value,'@ViewBag.Date2')" />
 
-                </td>
-                <td colspan="1">
-                    <img src="~/Content/Images/LegendaPoligon.png" height="40" data-toggle="tooltip" alt="ЖКХ ННЦ" data-placement="top" title="Легенда к ведомости">
-                </td>
+                <td colspan="2">
+                <td colspan="2" style="text-align:right">
+
+                    <input type="date" id="Date2" name="Date2" style="border:3px solid #000000;font-size:20px;font-weight:bold" placeholder="Выберите дату окончания" class="form-control" autocomplete="off" onchange="AvtoNomerPoisk('@ViewBag.PoiskId','@ViewBag.PoiskKontrId','@ViewBag.Resultat','@ViewBag.Vesi','@ViewBag.Avtosort','@ViewBag.Date',this.value)" />
+
                 <td colspan="2">
                     <p><a onclick="Export('@ViewBag.PoiskId','@ViewBag.PoiskKontrId','@ViewBag.Resultat','@ViewBag.Vesi','@ViewBag.Avtosort','@ViewBag.Date')" style="color:white" class="btn btn-success btn-block">В EXCEL &raquo;</a> </p>
                 </td>
@@ -208,19 +85,19 @@
         <tr>
 
             <td colspan="1" style="font-size:20px;text-align:center">
-                <button class="btn btn-success btn-block" onclick="AvtoNomerPoisk('@ViewBag.PoiskId','@ViewBag.PoiskKontrId','1','@ViewBag.Vesi','@ViewBag.Avtosort','@ViewBag.Date')">ТОЛЬКО НАШИ</button>
+                <button class="btn btn-success btn-block" onclick="AvtoNomerPoisk('@ViewBag.PoiskId','@ViewBag.PoiskKontrId','1','@ViewBag.Vesi','@ViewBag.Avtosort','@ViewBag.Date','@ViewBag.Date2')">ТОЛЬКО НАШИ</button>
             </td>
             <td colspan="2">
-                <button class="btn btn-success" onclick="AvtoNomerPoisk('0','2','@ViewBag.Resultat','@ViewBag.Vesi','@ViewBag.Avtosort','@ViewBag.Date')">ЭКОЛОГИЯ</button>
+                <button class="btn btn-success" onclick="AvtoNomerPoisk('0','2','@ViewBag.Resultat','@ViewBag.Vesi','@ViewBag.Avtosort','@ViewBag.Date','@ViewBag.Date2')">ЭКОЛОГИЯ</button>
             </td>
             <td colspan="3">
-                <button class="btn btn-success btn-block" onclick="AvtoNomerPoisk('@ViewBag.PoiskId','@ViewBag.PoiskKontrId','@ViewBag.Resultat','1','@ViewBag.Avtosort','@ViewBag.Date')">РАБОТАЮЩИЕ ВЕСЫ</button>
+                <button class="btn btn-success btn-block" onclick="AvtoNomerPoisk('@ViewBag.PoiskId','@ViewBag.PoiskKontrId','@ViewBag.Resultat','1','@ViewBag.Avtosort','@ViewBag.Date','@ViewBag.Date2')">РАБОТАЮЩИЕ ВЕСЫ</button>
             </td>
             <td>
-                <button class="btn btn-success btn-block" onclick="AvtoNomerPoisk('@ViewBag.PoiskId','@ViewBag.PoiskKontrId','@ViewBag.Resultat','2','@ViewBag.Avtosort','@ViewBag.Date')">НЕИСПРАВНЫЕ ВЕСЫ</button>
+                <button class="btn btn-success btn-block" onclick="AvtoNomerPoisk('@ViewBag.PoiskId','@ViewBag.PoiskKontrId','@ViewBag.Resultat','2','@ViewBag.Avtosort','@ViewBag.Date','@ViewBag.Date2')">НЕИСПРАВНЫЕ ВЕСЫ</button>
             </td>
             <td colspan="1">
-                <button class="btn btn-success btn-block" onclick="AvtoNomerPoisk('@ViewBag.PoiskId','@ViewBag.PoiskKontrId','@ViewBag.Resultat','@ViewBag.Vesi','1','@ViewBag.Date')">ДНЕВНЫЕ РЕЗУЛЬТАТЫ</button>
+                <button class="btn btn-success btn-block" onclick="AvtoNomerPoisk('@ViewBag.PoiskId','@ViewBag.PoiskKontrId','@ViewBag.Resultat','@ViewBag.Vesi','1','@ViewBag.Date','@ViewBag.Date2')">ДНЕВНЫЕ РЕЗУЛЬТАТЫ</button>
             </td>
             <td>
                 <button class="btn btn-success" onclick="AvtoNomerPoisk('0','-2','@ViewBag.Resultat','@ViewBag.Vesi','@ViewBag.Avtosort','@ViewBag.Date')">ТАЛОНЫ</button>
@@ -241,37 +118,37 @@
                 </td>
 
                 <td colspan="9" align="right">
-                    @if (ViewBag.PoiskId != 0)
+                    @if (ViewBag.PoiskId != 0 && ViewBag.PoiskId != null)
                     {
-                        <button class="btn btn-outline-secondary " onclick="AvtoNomerPoisk('0','@ViewBag.PoiskKontrId','@ViewBag.Resultat','@ViewBag.Vesi','@ViewBag.Avtosort','@ViewBag.Date')">@ViewBag.Poisk</button>
+                        <button class="btn btn-outline-secondary " onclick="AvtoNomerPoisk('0','@ViewBag.PoiskKontrId','@ViewBag.Resultat','@ViewBag.Vesi','@ViewBag.Avtosort','@ViewBag.Date','@ViewBag.Date2')">@ViewBag.Poisk</button>
                     }
 
-                    @if (ViewBag.Vesi == 1)
+                    @if (ViewBag.Vesi == 1 && ViewBag.PoiskId != null)
                     {
-                        <button class="btn btn-outline-secondary " onclick="AvtoNomerPoisk('@ViewBag.PoiskId','@ViewBag.PoiskKontrId','@ViewBag.Resultat','0','@ViewBag.Avtosort','@ViewBag.Date')">РАБОТАЮЩИЕ ВЕСЫ</button>
+                        <button class="btn btn-outline-secondary " onclick="AvtoNomerPoisk('@ViewBag.PoiskId','@ViewBag.PoiskKontrId','@ViewBag.Resultat','0','@ViewBag.Avtosort','@ViewBag.Date','@ViewBag.Date2')">РАБОТАЮЩИЕ ВЕСЫ</button>
                     }
-                    @if (ViewBag.Vesi == 2)
+                    @if (ViewBag.Vesi == 2 && ViewBag.PoiskId != null)
                     {
-                        <button class="btn btn-outline-secondary " onclick="AvtoNomerPoisk('@ViewBag.PoiskId','@ViewBag.PoiskKontrId','@ViewBag.Resultat','0','@ViewBag.Avtosort','@ViewBag.Date')">НЕИСПРАВНЫЕ ВЕСЫ</button>
+                        <button class="btn btn-outline-secondary " onclick="AvtoNomerPoisk('@ViewBag.PoiskId','@ViewBag.PoiskKontrId','@ViewBag.Resultat','0','@ViewBag.Avtosort','@ViewBag.Date','@ViewBag.Date2')">НЕИСПРАВНЫЕ ВЕСЫ</button>
                     }
 
                     @if (ViewBag.PoiskKontrId != 0)
                     {
-                        <button class="btn btn-outline-secondary " style="width:400px" onclick="AvtoNomerPoisk('@ViewBag.PoiskId','0','@ViewBag.Resultat','@ViewBag.Vesi','@ViewBag.Avtosort','@ViewBag.Date')">@ViewBag.PoiskKontr</button>
+                        <button class="btn btn-outline-secondary " style="width:400px" onclick="AvtoNomerPoisk('@ViewBag.PoiskId','0','@ViewBag.Resultat','@ViewBag.Vesi','@ViewBag.Avtosort','@ViewBag.Date','@ViewBag.Date2')">@ViewBag.PoiskKontr</button>
                     }
 
                     @if (ViewBag.Resultat == 1)
                     {
-                        <button class="btn btn-outline-secondary " style="width:300px" onclick="AvtoNomerPoisk('@ViewBag.PoiskId','@ViewBag.PoiskKontrId','0','@ViewBag.Vesi','@ViewBag.Avtosort','@ViewBag.Date')">ТОЛЬКО НАШИ</button>
+                        <button class="btn btn-outline-secondary " style="width:300px" onclick="AvtoNomerPoisk('@ViewBag.PoiskId','@ViewBag.PoiskKontrId','0','@ViewBag.Vesi','@ViewBag.Avtosort','@ViewBag.Date','@ViewBag.Date2')">ТОЛЬКО НАШИ</button>
                     }
 
                     @if (ViewBag.Avtosort == 1)
                     {
-                        <button class="btn btn-outline-secondary " onclick="AvtoNomerPoisk('@ViewBag.PoiskId','@ViewBag.PoiskKontrId','@ViewBag.Resultat','@ViewBag.Vesi','0','@ViewBag.Date')">ДНЕВНЫЕ РЕЗУЛЬТАТЫ</button>
+                        <button class="btn btn-outline-secondary " onclick="AvtoNomerPoisk('@ViewBag.PoiskId','@ViewBag.PoiskKontrId','@ViewBag.Resultat','@ViewBag.Vesi','0','@ViewBag.Date','@ViewBag.Date2')">ДНЕВНЫЕ РЕЗУЛЬТАТЫ</button>
                     }
                     @if (ViewBag.Date.Month != DateTime.Now.Month || ViewBag.Date.Day != DateTime.Now.Day)
                     {
-                        <button class="btn btn-outline-secondary " onclick="AvtoNomerPoisk('@ViewBag.PoiskId','@ViewBag.PoiskKontrId','@ViewBag.Resultat','@ViewBag.Vesi','@ViewBag.Avtosort','')">ПО ДАТЕ @ViewBag.Date.Day.@ViewBag.Date.Month.@ViewBag.Date.Year</button>
+                        <button class="btn btn-outline-secondary " onclick="AvtoNomerPoisk('@ViewBag.PoiskId','@ViewBag.PoiskKontrId','@ViewBag.Resultat','@ViewBag.Vesi','@ViewBag.Avtosort','','')">ПО ДАТЕ @ViewBag.Date.Day.@ViewBag.Date.Month.@ViewBag.Date.Year</button>
                     }
 
 
@@ -327,25 +204,7 @@
             <th>
                 Объем бункера, куб.м.
             </th>
-            <th>
-                Коэффициент максимально допустимого сжатия
-            </th>
-            <th>
-                @if (ViewBag.Vesi != 2)
-                {
-                    <p> Вес с мусором, кг</p>
 
-                }
-                else
-                {<p> Масса мусора, кг</p>}
-
-            </th>
-            <th>
-                Вес без мусора, кг
-            </th>
-            <th>
-                Масса мусора, кг
-            </th>
             <th>
                 Контрагент
             </th>
@@ -365,15 +224,15 @@
             </th>
 
         </tr>
-        @{int counter = 0; int AID = 0; int NumberReis = 0; string AS = ""; decimal MassMusor = 0;}
+        @{int counter = 0; string AID = ""; int NumberReis = 0; string AS = ""; decimal MassMusor = 0;}
         @foreach (var item in Model)
         {
             counter++;
             if (ViewBag.Avtosort != 0)
             {
-                if (item.AvtomobilId != AID)
+                if (item.Number != AID)
                 {
-                    if (AID != 0)
+                    if (AID != "")
                     {
                         <tr>
                             <th colspan="3" style="font-size:16px;text-align:right">Всего рейсов</th>
@@ -387,7 +246,7 @@
                     if ((User.Identity.Name.Contains("Логист") || User.IsInRole("Администратор") || User.Identity.Name.Equals("НачальникПолигона")) && item.Avtomobil.GKHNNC) { AS = "Факт " + NumberReis + "/" + item.PoligonIn + " AS"; }
                     else { AS = NumberReis.ToString(); }
                     MassMusor = item.MassMusor;
-                    AID = item.Avtomobil.Id;
+                    AID = item.Number;
                 }
                 else
                 {
@@ -403,8 +262,10 @@
             string TType = "";
             string Radiation = "";
             string DataTarget = "#Avto" + item.Avtomobil.Id;
-            if (item.Description.Equals("В пределах нормы.") == false && ViewBag.Resultat == 0) { Radiation = "table-danger"; }
-            if (item.Avtomobil.GKHNNC) { Nasha = "table-success"; }
+            if (item.White == false) { item.Description = "Нет в списке!"; }
+            // if ((item.Description.Equals("В пределах нормы.") == false && ViewBag.Resultat == 0)||item.Avtomobil.WhiteSpisok==false) { Radiation = "table-danger"; }
+            if ((item.Description.Equals("В пределах нормы.") == false && ViewBag.Resultat == 0) || item.White == false) { Radiation = "table-danger"; }
+            if (item.Avtomobil.GKHNNC || item.White == true) { Nasha = "table-success"; }
             Atype = item.Type.Ico.ToString() + ".png";
             TType = item.Type.Type;
             string ecoclass = "";
@@ -414,9 +275,10 @@
             VibralRab += " Пользователь: " + item.User;
             if (item.MassMusor < 0 && Radiation.Equals("")) { VesiClass = "table-success"; }
             if (item.KontrAgentName.Equals("Грунт") && Radiation.Equals("")) { VesiClass = "table-dark"; }
-            if (item.Picture != null && Radiation.Equals("") && item.CameraFix == false) { VesiClass = "table-warning"; }
+            //   if (item.Picture != null && Radiation.Equals("") && item.CameraFix == false) { VesiClass = "table-warning"; }
+
             if (item.Picture != null && Radiation.Equals("") && item.CameraFix == true) { VesiClass = ""; }
-            if ((item.KontrAgentName.Equals("Регион. оператор «Экология-Новосибирск»") || ViewBag.PoiskKontrId == 2) && ViewBag.PoiskKontrId != -2)
+            if ((item.KontrAgentName.Equals("Регион. оператор «Экология-Новосибирск»") || (ViewBag.PoiskKontrId == 2 && ViewBag.PoiskKontrId != null)) && ViewBag.PoiskKontrId != -2)
             {
                 ecoclass = "btn btn-success";
             }
@@ -453,7 +315,7 @@
                 }
 
             }
-            if ((item.KontrAgentName.Equals("Камера") && (User.IsInRole("Администратор") || User.Identity.Name.Equals("НачальникПолигона") || User.Identity.Name.Equals("Полигон"))) || item.KontrAgentName.Equals("Камера") == false)
+            if ((item.KontrAgentName.Equals("Камера") && (User.IsInRole("Администратор") || User.Identity.Name.Equals("НачальникПолигона") || User.Identity.Name.Contains("УАТ") || User.Identity.Name.Equals("Полигон"))) || item.KontrAgentName.Equals("Камера") == false)
             {
                 <tr class="@Radiation @VesiClass" style="text-align:center;height:64px">
                     <td>
@@ -462,7 +324,14 @@
                     <td style="font-size:16px">
                         @if (ViewBag.Resultat == 0)
                         {
-                            @item.Date.ToString("HH:mm")
+                            if (ViewBag.Date2 != null)
+                            {
+                                @item.Date.ToString("dd.MM HH:mm")
+                            }
+                            else
+                            {
+                                @item.Date.ToString("HH:mm")
+                            }
                         }
                         else
                         {
@@ -472,11 +341,8 @@
                     </td>
                     <td style="font-size:16px">
 
-                        <button id="AvtoNomer" class="btn btn-circle btn-light" style="width:130px;font-size:16px;font-weight:bold" onclick="AvtoNomerPoisk('@item.Avtomobil.Id','@ViewBag.PoiskKontrId','@ViewBag.Resultat','@ViewBag.Vesi','@ViewBag.Avtosort','@ViewBag.Date')">
-                            @if (Nasha != "")
-                            {
-                                <img src="~/Content/Images/star.png" height="16" width="16" data-toggle="tooltip" alt="ФГУП ЖКХ ННЦ" data-placement="top" title="Автомобиль ФГУП ЖКХ ННЦ">
-                            }
+                        <button id="AvtoNomer" class="btn btn-circle btn-light" style="width:130px;font-size:16px;font-weight:bold" title="@item.Tint" onclick="AvtoNomerPoisk('@item.Avtomobil.Id','@ViewBag.PoiskKontrId','@ViewBag.Resultat','@ViewBag.Vesi','@ViewBag.Avtosort','@ViewBag.Date')">
+
                             @if (item.CameraFix)
                             {
                                 //   <img src="~/Content/Images/S5.png" height="16" width="16" data-toggle="tooltip" alt="Подтверждена камерой" data-placement="top" title="Подтверждена камерой">
@@ -491,11 +357,14 @@
                     @if (User.IsInRole("Администратор") || User.Identity.Name.Equals("НачальникПолигона"))
                     {
                         <td style="padding:0px;width:128px">
-                            @if (item.CameraFix || item.Picture != null)
+                           @if (Model.Count() < 1000)
+                           {
+                            if (item.CameraFix || item.Picture != null)
                             {
 
                                 <img src="@item.Picture" height="64" width="128" class=" image" alt="Подтверждена камерой" onclick="Photo(this)" data-placement="top" title="Скриншот" />
                             }
+                           }
                         </td>
                     }
 
@@ -505,29 +374,7 @@
                     <td>
                         @item.Avtomobil.ObiemBunkera
                     </td>
-                    <td>
-                        @item.Avtomobil.KoefficientSgatiya
-                    </td>
-                    @{int Massout = Convert.ToInt32(item.MassOut); int Massin = Convert.ToInt32(item.MassIn); int Massmusor = Convert.ToInt32(item.MassMusor); }
-                    <td style="font-size:16px">
-                        @Massin
-                    </td>
 
-                    <td style="font-size:16px">
-                        @if (Radiation.Equals("") && DateTime.Now.Day == ViewBag.Date.Day && (User.IsInRole("Администратор") || User.Identity.Name.Contains("Администратор") || User.Identity.Name.Contains("Полигон")))
-                        {
-                            <input id="@item.Id" class="form-control" style="border:3px solid #000000;font-size:18px;font-weight:bold" type="number" onchange="MassOutChange(this)" value="@Massout" />
-                        }
-                        else
-                        {
-                            @Html.DisplayFor(modelItem => item.MassOut)
-                        }
-
-
-                    </td>
-                    <td style="font-size:16px">
-                        @Massmusor
-                    </td>
                     <td style="font-size:16px">
                         @if (ViewBag.PoiskKontr == null || ViewBag.PoiskKontrId == -2 || ViewBag.PoiskKontr.Equals("0"))
                         {
@@ -561,7 +408,7 @@
                                 if (User.Identity.Name.Contains("Полигон") || User.IsInRole("Администратор") || User.Identity.Name.Equals("НачальникПолигона"))
                                 {
 
-                                    if (item.Picture != null && Radiation.Equals("") && item.CameraFix == false)
+                                    if (item.Picture != null && item.CameraFix == false)
                                     {
                                         <button id="ReCreate_@item.Id" style="width:50px" class="btn btn-success" onclick="ReCreatePoligon('@item.Number','@item.Picture','@item.PlateShot','@item.IdCam')">+</button>
                                         <button id="@item.IdCam" style="width:50px" class="btn btn-danger" onclick="DeleteCamera(this)">-</button>
@@ -1045,7 +892,7 @@ else
                 containerid: "tableData",
                 datatype: 'table'
             });
-            window.location.replace('/Poligons/Index?PoiskKontr=' + PK + '&Poisk=' + P + '&result=' + R + '&Vesi=' + V + '&Avtosort=' + AS + '&TekDate=' + D);
+            window.location.replace('/Poligons/Index?PoiskKontr=' + PK + '&Poisk=' + P + '&result=' + R + '&Vesi=' + V + '&Avtosort=' + AS + '&TekDate=' + D + '&Date2=' + D2);
         };
     </script>
 
@@ -1059,8 +906,8 @@ else
         });
     </script>
     <script>
-        function AvtoNomerPoisk(P, PK, R, V, AS, D) {
-            window.location.replace('/Poligons/Index?PoiskKontr=' + PK + '&Poisk=' + P + '&result=' + R + '&Vesi=' + V + '&Avtosort=' + AS + '&TekDate=' + D);
+        function AvtoNomerPoisk(P, PK, R, V, AS, D, D2) {
+            window.location.replace('/Poligons/Index?PoiskKontr=' + PK + '&Poisk=' + P + '&result=' + R + '&Vesi=' + V + '&Avtosort=' + AS + '&TekDate=' + D + '&Date2=' + D2);
 
         };
     </script>
@@ -1227,6 +1074,36 @@ else
     <script type="text/javascript">
         $(function () {
             $('#Date')
+                .datepicker({ dateFormat: 'yy/mm/dd' })
+                .get(0).setAttribute("type", "text");
+            $.datepicker.regional['ru'] = {
+                prevText: 'Пред',
+                nextText: 'След',
+                monthNames: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+                    'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+                monthNamesShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн',
+                    'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
+                dayNames: ['воскресенье', 'понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота'],
+                dayNamesShort: ['вск', 'пнд', 'втр', 'срд', 'чтв', 'птн', 'сбт'],
+                dayNamesMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+                weekHeader: 'Не',
+                dateFormat: 'yy/mm',
+                showOn: "both",
+                buttonText: "Выбрать дату",
+                firstDay: 1,
+                isRTL: false,
+                showMonthAfterYear: true,
+                yearSuffix: '',
+                gotoCurrent: false
+            };
+            $.datepicker.setDefaults($.datepicker.regional['ru']);
+
+        });
+    </script>
+
+    <script type="text/javascript">
+        $(function () {
+            $('#Date2')
                 .datepicker({ dateFormat: 'yy/mm/dd' })
                 .get(0).setAttribute("type", "text");
             $.datepicker.regional['ru'] = {

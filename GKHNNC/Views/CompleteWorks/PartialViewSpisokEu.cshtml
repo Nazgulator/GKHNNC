@@ -174,8 +174,9 @@
                     {
 
 
-                        <input type="submit" name="b-@counter" id="@counter" value="Сформировать акт" class="btn btn-success btn-default" />
+                        // <input type="submit" name="b-@counter" id="@counter" value="Сформировать акт" class="btn btn-success btn-default" />
                         //<a href="/Home/Index" class="btn btn-success" style="width: 100%">Сформировать акт</a>
+                        <button id="@item.AdresId" value="@sborka" class="btn btn-success" onclick="SformirovatAkt(@item.AdresId)">Сформировать акт</button>
                         <button class="btn btn-success" onclick="otchetYear('@item.Date.Year','@item.AdresId','@ViewBag.GEU')">Отчет за год</button>
 
                     }
@@ -206,6 +207,7 @@
         @Scripts.Render("~/scripts/jquery-3.3.1.js")
         @Scripts.Render("~/Scripts/chosen.jquery.min.js")
 
+    
         <script>
             //скрипт для обработки формирования актов
             $("input[type='submit']").click(function () {
@@ -236,22 +238,7 @@
 
 
         </script>
-        <script>
-            function otchetYear(year,adres,geu)
-                
-            {
-                alert("Создаем отчет за год");
-               $.post('@Url.Action("SformirovatAktYear", "CompleteWorks")', { Year: year,AdresId:adres,GEU:geu }, function (data) {
-
-                        window.location.href = data;
-                  
-                        
-
-
-
-                    });
-            }
-        </script>
+       
 
 
 

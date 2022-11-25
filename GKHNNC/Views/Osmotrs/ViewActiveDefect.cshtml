@@ -156,12 +156,20 @@
         string DefectId = "Defect" + Model.Id;
         string styleOn = "";
         string styleOff = "";
+
+        string bcolor1 = "lightgray";
+        string bcolor2 = "lightgray";
+        string title1 = "Фото свежее";
+        string title2 = "Фото свежее";
+        if (Model.Photo1 != null&&Model.IsOld1&& Model.Photo1!="null.jpg"&& Model.Photo1 != "null.jpg") { bcolor1 = "#ffd800"; title1 = "Фото взято из предыдущего осмотра!"; }
+        if (Model.Photo2 != null&&Model.IsOld2 && Model.Photo2 != "null.jpg" && Model.Photo2 != "null.jpg") { bcolor2 = "#ffd800"; title2 = "Фото взято из предыдущего осмотра!"; }
+
     }
 
 
     @if (Model.Photo1 == null && Model.Photo2 == null)
     {
-
+     
 
 
         <tr id="@TR1" style="background-color:lightgray @styleOn">
@@ -169,12 +177,12 @@
 
                 <h4> @Model.Element.Name</h4>
             </th>
-            <td width="100px">
+            <td width="100px"  style="background-color:@bcolor1" title="@title1">
 
                 <input type="file" name="Photo" onchange="InputChange(this)" id="@PhotoElement1" class="form-control-file" />
 
             </td>
-            <td width="100px">
+            <td width="100px" style="background-color:@bcolor2" title="@title2">
 
                 <input type="file" name="Photo" onchange="InputChange(this)" id="@PhotoElement2" class="form-control-file" />
 
@@ -244,12 +252,12 @@
                 <h4> @Model.Element.Name</h4>
             </th>
 
-            <td width="100px">
+            <td width="100px" style="background-color:@bcolor1" title="@title1">
                 <a data-fancybox="gallery" id="@PED1" href="@PE1">
                     <img src="@PE1" id="@PhotoElement1" to="@PE1" class="img-responsive" height="32" width="32" onerror="this.style.display = 'none'">
                 </a>
             </td>
-            <td width="100px">
+            <td width="100px" style="background-color:@bcolor2" title="@title2">
                 <a data-fancybox="gallery" id="@PED2" href="@PE2">
                     <img src="@PE2" id="@PhotoElement2" to="@PE2" class="img-responsive" height="32" width="32" onerror="this.style.display = 'none'">
                 </a>
@@ -402,6 +410,8 @@
 
     @for (int i = 0; i < Model.ActiveDefects.Count; i++)
     {
+      
+
         string Ph1 = Model.ActiveDefects[i].Photo1;
         if (Ph1 == null || Ph1.Equals(""))
         {
@@ -440,7 +450,7 @@
             </td>
 
 
-            <td style="text-align:center">
+            <td style="text-align:center" >
                 <a data-fancybox="gallery" href="@Ph1">
                     <img src="@Ph1" id="Photo" to="@P2" class="img-responsive" height="32" width="32" onerror="this.style.display = 'none'">
                 </a>

@@ -133,7 +133,7 @@
                                 @if (item.Osmotrs != null && item.Osmotrs.Count > 0)
                                 {
                                     @Html.ActionLink("Технический паспорт", "OsmotrsTechById", "Osmotrs", new { Id = item.Osmotrs.OrderByDescending(x => x.Date).First().Id }, new { @type = "button", @class = "btn btn-success" })
-                                    if (User.IsInRole("Администратор") || User.Identity.Name.Contains("ОЭЖФ") || User.Identity.Name.Contains("ПТО"))
+                                    if (User.IsInRole("Администратор") || User.Identity.Name.Contains("ОЭЖФ") || User.Identity.Name.Contains("ПТО")||User.Identity.Name.Contains("Экономист") || User.Identity.Name.Contains("Начальник") || User.Identity.Name.Contains("Директор"))
                                     {
                                     @Html.ActionLink("Плановый отчет", "PlanoviOtchet", "Osmotrs", new { AdresId = item.AdresId }, new { @type = "button", @class = "btn btn-success" })
                                     }
@@ -161,9 +161,14 @@
 
                                         if (item.Osmotrs[j].Sostoyanie > 0)
                                         {
+                                            string Opisanie = "Осмотр находится на заполнении в ЭУ";
                                             string sostoyanie = "btn btn-secondary";
-                                            if (item.Osmotrs[j].Sostoyanie > 1) { sostoyanie = "btn btn-success"; }
-                                            @Html.ActionLink("Осмотр от " + item.Osmotrs[j].Date.ToString("dd.MM.yyyy"), "Info", "Osmotrs", new { id = item.Osmotrs[j].AdresId, date = item.Osmotrs[j].Date }, new { @type = "button", @class = sostoyanie });
+                                            if (item.Osmotrs[j].Sostoyanie  == 1 ) { Opisanie = "Осмотр находится на проверке в ОЭЖФ"; }
+                                            if (item.Osmotrs[j].Sostoyanie == 2) { Opisanie = "Осмотр находится на проверке ПТО"; }
+                                            if (item.Osmotrs[j].Sostoyanie == 3) { Opisanie = "Осмотр завершен!"; }
+                                            if (item.Osmotrs[j].Sostoyanie > 0 && item.Osmotrs[j].Sostoyanie <3) { sostoyanie = "btn btn-info"; }
+                                            if (item.Osmotrs[j].Sostoyanie == 3) { sostoyanie = "btn btn-success"; }
+                                            @Html.ActionLink("Осмотр от " + item.Osmotrs[j].Date.ToString("dd.MM.yyyy"), "Info", "Osmotrs", new { id = item.Osmotrs[j].AdresId, date = item.Osmotrs[j].Date }, new { @type = "button", @class = sostoyanie, @title = Opisanie  });
                                         }
                                         else
                                         {

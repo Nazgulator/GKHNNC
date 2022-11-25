@@ -15,6 +15,7 @@
                     }
                     <td><h5><CENTER><b>МЕСЯЦ</b></CENTER></h5></td>
                     <td><h5><CENTER><b>ГОД</b></CENTER></h5></td>
+                    <td><h5><CENTER><b></b></CENTER></h5></td>
 
 
                 </tr>
@@ -44,6 +45,9 @@
                         }
                         @Html.DropDownList("Year", MSL3, new { @class = "form-control", @style = "width: 100%" })
                     </td>
+                    <td>
+                        <button class="btn btn-success btn-block" onclick="Poisk()">Поиск</button>
+                    </td>
 
                 </tr>
 
@@ -58,64 +62,15 @@
 
 
 
+    
     <script>
-        //скрипт для обработки выбора года чтоб выводить дома по году и месяцу
-                        $('#Year').change(function () {
-                            var _this = $(this);
-
-                            var Y = $('#Year').val();//выбраное значение в селекте
-                            var M = $('#Month').val();//выбраное значение в селекте
-                            var GEU = $('#GEU').val();//выбраное значение в селекте
-                            var SV = Y + ";" + M+";"+GEU;
-                            $("#Spisok").load('@Url.Action("PartialViewSpisokEu", "CompleteWorks")', { Selection: SV });
-
-
-                           //идем в комплит воркс контроллер и там действие поиск по жэу отправляем выбранное значение в селекте, получаем дату список всех домов по жэу из БД перекинутых в лист стринг
-
-                            // alert("PING!");
-
-                        });
-    </script>
-    <script>
-        //скрипт для обработки выбора года чтоб выводить дома по году и месяцу
-                        $('#Month').change(function () {
-                            var _this = $(this);
-
-                            var Y = $('#Year').val();//выбраное значение в селекте
+        function Poisk() {
+        var Y = $('#Year').val();//выбраное значение в селекте
                             var M = $('#Month').val();//выбраное значение в селекте
                             var GEU = $('#GEU').val();//выбраное значение в селекте
                             var SV = Y + ";" + M + ";" + GEU;
                             $("#Spisok").load('@Url.Action("PartialViewSpisokEu", "CompleteWorks")', { Selection: SV });
-
-
-                           //идем в комплит воркс контроллер и там действие поиск по жэу отправляем выбранное значение в селекте, получаем дату список всех домов по жэу из БД перекинутых в лист стринг
-
-                            // alert("PING!");
-
-                        });
-
-
+        }
     </script>
-    <script>
-        //скрипт для обработки выбора года чтоб выводить дома по году и месяцу
-                        $('#GEU').change(function () {
-                            var _this = $(this);
-
-                            var Y = $('#Year').val();//выбраное значение в селекте
-                            var M = $('#Month').val();//выбраное значение в селекте
-                            var GEU = $('#GEU').val();//выбраное значение в селекте
-                            var SV = Y + ";" + M + ";" + GEU;
-                            $("#Spisok").load('@Url.Action("PartialViewSpisokEu", "CompleteWorks")', { Selection: SV });
-
-
-                           //идем в комплит воркс контроллер и там действие поиск по жэу отправляем выбранное значение в селекте, получаем дату список всех домов по жэу из БД перекинутых в лист стринг
-
-                            // alert("PING!");
-
-                        });
-
-
-    </script>
-
 
 }

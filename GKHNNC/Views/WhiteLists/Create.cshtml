@@ -1,0 +1,84 @@
+﻿@model GKHNNC.Models.WhiteList
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+<h2>Создать</h2>
+
+@using (Html.BeginForm()) 
+{
+    @Html.AntiForgeryToken()
+    
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+<div class="container">
+ <div class="form-horizontal">
+
+        <div class="row col-md-6 col-md-offset-3">
+		  <div class="col-md-12">
+            @Html.LabelFor(model => model.Nomer, htmlAttributes: new { @class = "control-label" })
+        
+            </div>
+            <div class="col-md-12">
+                @Html.EditorFor(model => model.Nomer, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Nomer, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+        <div class="row col-md-6 col-md-offset-3">
+		  <div class="col-md-12">
+            @Html.LabelFor(model => model.Marka, htmlAttributes: new { @class = "control-label" })
+        
+            </div>
+            <div class="col-md-12">
+                @Html.EditorFor(model => model.Marka, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Marka, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+        <div class="row col-md-6 col-md-offset-3">
+		  <div class="col-md-12">
+            @Html.LabelFor(model => model.Obiem, htmlAttributes: new { @class = "control-label" })
+        
+            </div>
+            <div class="col-md-12">
+                @Html.EditorFor(model => model.Obiem, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Obiem, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+        <div class="row col-md-6 col-md-offset-3">
+		  <div class="col-md-12">
+            @Html.LabelFor(model => model.Kontragent, htmlAttributes: new { @class = "control-label" })
+        
+            </div>
+            <div class="col-md-12">
+                @Html.EditorFor(model => model.Kontragent, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Kontragent, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        
+<div class="row col-md-12">
+<p> </p>
+</div>
+
+
+            
+                <div class=" col-md-6  ">
+                    @Html.ActionLink("Назад", "Index", null, new { @class = "btn btn-outline-success btn-block" })
+                </div>
+                <div class=" col-md-6  ">
+                    <input type="submit" value="Готово" class="btn btn-success btn-block" />
+                </div>
+
+            
+
+   </div>
+ </div>
+ }

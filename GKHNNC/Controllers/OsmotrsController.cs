@@ -66,7 +66,7 @@ namespace GKHNNC.Controllers
                 try
                 {
                    O= db.Osmotrs.Where(x => x.Id == id).Include(x => x.Adres).First();
-                    AE = db.ActiveElements.Where(x => x.OsmotrId == O.Id).Include(x => x.Element).Include(x => x.Material).Include(x => x.Izmerenie).OrderBy(x => x.Element.ElementTypeId).ToList();
+                    AE = db.ActiveElements.Where(x => x.OsmotrId == O.Id).Include(x => x.Element).Include(x => x.Material).Include(x => x.Izmerenie).OrderBy(x => x.Element.ElementTypeId).ThenBy(x=>x.ElementId).ToList();
                     AOW = db.ActiveOsmotrWorks.Where(x => x.OsmotrId == O.Id&&x.OsmotrWork.OtchetId==0).Include(x => x.OsmotrWork).ToList();
 
                 }
@@ -109,37 +109,80 @@ namespace GKHNNC.Controllers
             return File(path, file_type, fileName);
          
         }
-        public decimal RaschetWS(Osmotr O, WorkSoderganie W)
+        public decimal RaschetWS( Osmotr O, WorkSoderganie W)
         {
             decimal result = 0; // Площадь дома
+            string formula = "";//детальное описание процесса
+            int Zvezda = 5;
+            TechElement TE = new TechElement();
+            ActiveElement E = new ActiveElement();
             if (W.Code == 1)
             {
-              result =  O.TE.Where(x => x.Name == "Общая площадь дома").Select(x=>x.Val).First();
-          
+                TE = O.TE.Where(x => x.Name == "Общая площадь дома").First();
+                result =TE.Val;
+                formula += "Площадь дома =" + result;
+
             }
             if (W.Code == 2) // Площадь кровли
             {
-                result = O.TE.Where(x => x.Name == "Площадь кровли").Select(x => x.Val).First();
+               TE = O.TE.Where(x => x.Name == "Площадь кровли").First();
+                result = TE.Val;
+                formula += "Площадь кровли =" + result;
             }
              if (W.Code == 3) //Воронки
             {
-                result = O.Elements.Where(x => x.ElementId == 1134).Select(x => x.Kolichestvo).First();
+                List<ActiveElement> LE = O.Elements.Where(x => x.ElementId == 1134&& x.Est).ToList();
+               // E = O.Elements.Where(x => x.ElementId == 1134).First();
+              //  result = E.Kolichestvo;
+              //  Zvezda = E.Sostoyanie;
+                result = LE.Sum(x => x.Kolichestvo);
+                if (LE.Count > 0)
+                {
+                    Zvezda = Convert.ToInt16(LE.Sum(x => x.Sostoyanie) / LE.Count);
+                    formula += LE.Select(x => x.Element.Name + " =" + x.Kolichestvo + " ").Aggregate((c, n) => c + " " + n);
+                }
             }
             if (W.Code == 4) //Количество квартир
             {
-                result = O.TE.Where(x => x.Name == "Количество квартир").Select(x => x.Val).First();
+                TE = O.TE.Where(x => x.Name == "Количество квартир").First();
+                result = TE.Val;
+                formula += "Количество квартир =" + result;
             }
             if (W.Code == 5) //Площадь подвала
             {
-                result = O.TE.Where(x => x.Name == "Площадь подвала").Select(x => x.Val).First()*2;
+                TE = O.TE.Where(x => x.Name == "Площадь подвала").First();
+                result =TE.Val*2;
+                formula += "Площадь подвала и чердака ="+result;
             }
             if (W.Code == 6) //Длинна трубопровода канализации
             {
-                result = O.Elements.Where(x => x.ElementId == 1185||x.ElementId==1414).Sum(x => x.Kolichestvo);
+               List<ActiveElement> LE = O.Elements.Where(x => (x.ElementId == 1185 || x.ElementId == 1414) && x.Est).ToList();
+                result = LE.Sum(x=>x.Kolichestvo);
+                if (LE.Count > 0)
+                {
+                    Zvezda = Convert.ToInt16(LE.Sum(x => x.Sostoyanie) / LE.Count);
+                    formula += LE.Select(x => x.Element.Name + " =" + x.Kolichestvo + " ").Aggregate((c, n) => c + " " + n);
+                }
             }
-            if (W.Code == 7) //Длинна трубопровода отопления
+            if (W.Code == 7) //Длинна трубопровода отопления до 50
             {
-                result = O.Elements.Where(x => x.ElementId == 1418 || x.ElementId == 1164).Sum(x => x.Kolichestvo);
+                List<ActiveElement> LE = O.Elements.Where(x => x.ElementId == 1164 && x.Est).ToList();
+                result = LE.Sum(x => x.Kolichestvo);
+                if (LE.Count > 0)
+                {
+                    Zvezda = Convert.ToInt16(LE.Sum(x => x.Sostoyanie) / LE.Count);
+                    formula += LE.Select(x => x.Element.Name + " =" + x.Kolichestvo + " ").Aggregate((c, n) => c + " " + n);
+                }
+            }
+            if (W.Code == 50) //Длинна трубопровода отопления 50-100
+            {
+                List<ActiveElement> LE = O.Elements.Where(x => (x.ElementId == 1418 || x.ElementId == 1164) && x.Est).ToList();
+                result = LE.Sum(x => x.Kolichestvo);
+                if (LE.Count > 0)
+                {
+                    Zvezda = Convert.ToInt16(LE.Sum(x => x.Sostoyanie) / LE.Count);
+                    formula += LE.Select(x => x.Element.Name + " =" + x.Kolichestvo + " ").Aggregate((c, n) => c + " " + n);
+                }
             }
             if (W.Code == 8) //Фикс
             {
@@ -147,74 +190,534 @@ namespace GKHNNC.Controllers
             }
             if (W.Code == 9) //Стояки
             {
-                result =  O.Elements.Where(x => x.ElementId == 1402).Sum(x => x.Kolichestvo);
+                List<ActiveElement> LE = O.Elements.Where(x => x.ElementId == 1402 && x.Est).ToList();
+                result =  LE.Sum(x => x.Kolichestvo);
+                if (LE.Count > 0)
+                {
+                    Zvezda = Convert.ToInt16(LE.Sum(x => x.Sostoyanie) / LE.Count);
+                    formula += LE.Select(x => x.Element.Name + " =" + x.Kolichestvo + " ").Aggregate((c, n) => c + " " + n);
+                }
             }
             if (W.Code == 10) //Лестничные площадки
             {
-                result = O.Elements.Where(x => x.ElementId == 1410).Sum(x => x.Kolichestvo);
+                List<ActiveElement> LE = O.Elements.Where(x => x.ElementId == 1410 && x.Est).ToList();
+                result =LE.Sum(x => x.Kolichestvo);
+                if (LE.Count > 0)
+                {
+                    Zvezda = Convert.ToInt16(LE.Sum(x => x.Sostoyanie) / LE.Count);
+                    formula += LE.Select(x => x.Element.Name + " =" + x.Kolichestvo + " ").Aggregate((c, n) => c + " " + n);
+                }
             }
             if (W.Code == 11) //ВРУ
             {
-                result = O.Elements.Where(x => x.ElementId == 1160).Sum(x => x.Kolichestvo);
+                List<ActiveElement> LE = O.Elements.Where(x => x.ElementId == 1160 && x.Est).ToList();
+                result = LE.Sum(x => x.Kolichestvo);
+                if (LE.Count > 0)
+                {
+                    Zvezda = Convert.ToInt16(LE.Sum(x => x.Sostoyanie) / LE.Count);
+                    formula += LE.Select(x => x.Element.Name + " =" + x.Kolichestvo + " ").Aggregate((c, n) => c + " " + n);
+                }
             }
             if (W.Code == 12) //Двери входные и тамбурные
             {
-                result =  O.Elements.Where(x => x.ElementId == 1146|| x.ElementId == 1409).Sum(x => x.Kolichestvo);
+                List<ActiveElement> LE = O.Elements.Where(x => (x.ElementId == 1146 || x.ElementId == 1409) && x.Est).ToList();
+                result =  LE.Sum(x => x.Kolichestvo);
+                if (LE.Count > 0)
+                {
+                    Zvezda = Convert.ToInt16(LE.Sum(x => x.Sostoyanie) / LE.Count);
+                    formula += LE.Select(x => x.Element.Name + " =" + x.Kolichestvo + " ").Aggregate((c, n) => c + " " + n);
+                }
             }
             if (W.Code == 13) //Ограждения и перила
             {
-                result =  O.Elements.Where(x => x.ElementId == 1149).Sum(x => x.Kolichestvo);
+                List<ActiveElement> LE = O.Elements.Where(x => x.ElementId == 1149 && x.Est).ToList();
+                result =  LE.Sum(x => x.Kolichestvo);
+                if (LE.Count > 0)
+                {
+                    Zvezda = Convert.ToInt16(LE.Sum(x => x.Sostoyanie) / LE.Count);
+                    formula += LE.Select(x => x.Element.Name + " =" + x.Kolichestvo + " ").Aggregate((c, n) => c + " " + n);
+                }
             }
             if (W.Code == 14) //Подоконники
             {
-                result = O.Elements.Where(x => x.ElementId == 1411).Sum(x => x.Kolichestvo);
+                 List<ActiveElement> LE = O.Elements.Where(x => x.ElementId == 1411 && x.Est).ToList();
+                result = LE.Sum(x => x.Kolichestvo);
+                if (LE.Count > 0)
+                {
+                    Zvezda = Convert.ToInt16(LE.Sum(x => x.Sostoyanie) / LE.Count);
+                    formula += LE.Select(x => x.Element.Name + " =" + x.Kolichestvo + " ").Aggregate((c, n) => c + " " + n);
+                }
             }
             if (W.Code == 15) //Почтовые ящики
             {
-                result = O.Elements.Where(x => x.ElementId == 1151).Sum(x => x.Kolichestvo);
+                List<ActiveElement> LE = O.Elements.Where(x => x.ElementId == 1151 && x.Est).ToList();
+                result =LE.Sum(x => x.Kolichestvo);
+                if (LE.Count > 0)
+                {
+                    Zvezda = Convert.ToInt16(LE.Sum(x => x.Sostoyanie) / LE.Count);
+                    formula += LE.Select(x => x.Element.Name + " =" + x.Kolichestvo + " ").Aggregate((c, n) => c + " " + n);
+                }
             }
             if (W.Code == 16) //Металлические решетки
             {
-                result = O.Elements.Where(x => x.ElementId == 1413).Sum(x => x.Kolichestvo);
+                List<ActiveElement> LE = O.Elements.Where(x => x.ElementId == 1413 && x.Est).ToList();
+                result = LE.Sum(x => x.Kolichestvo);
+                if (LE.Count > 0)
+                {
+                    Zvezda = Convert.ToInt16(LE.Sum(x => x.Sostoyanie) / LE.Count);
+                    formula += LE.Select(x => x.Element.Name + " =" + x.Kolichestvo + " ").Aggregate((c, n) => c + " " + n);
+                }
             }
             if (W.Code == 17) //Радиаторы
             {
-                result =  O.Elements.Where(x => x.ElementId == 1169).Sum(x => x.Kolichestvo);
+                List<ActiveElement> LE = O.Elements.Where(x => x.ElementId == 1169 && x.Est).ToList();
+                result =  LE.Sum(x => x.Kolichestvo);
+                if (LE.Count > 0)
+                {
+                    Zvezda = Convert.ToInt16(LE.Sum(x => x.Sostoyanie) / LE.Count);
+                    formula += LE.Select(x => x.Element.Name + " =" + x.Kolichestvo + " ").Aggregate((c, n) => c + " " + n);
+                }
             }
             if (W.Code == 18) //Бордюры
             {
-                result =  O.Elements.Where(x => x.ElementId == 1217).Sum(x => x.Kolichestvo);
+                List<ActiveElement> LE = O.Elements.Where(x => x.ElementId == 1217 && x.Est).ToList();
+                result =  LE.Sum(x => x.Kolichestvo);
+                if (LE.Count > 0)
+                {
+                    Zvezda = Convert.ToInt16(LE.Sum(x => x.Sostoyanie) / LE.Count);
+                    formula += LE.Select(x => x.Element.Name + " =" + x.Kolichestvo + " ").Aggregate((c, n) => c + " " + n);
+                }
             }
             if (W.Code == 19) //Контейнерная площадка
             {
-                result =  O.Elements.Where(x => x.ElementId == 1406).Sum(x => x.Kolichestvo);
+                List<ActiveElement> LE = O.Elements.Where(x => x.ElementId == 1406 && x.Est).ToList();
+                result =  LE.Sum(x => x.Kolichestvo);
+                if (LE.Count > 0)
+                {
+                    Zvezda = Convert.ToInt16(LE.Sum(x => x.Sostoyanie) / LE.Count);
+                    formula += LE.Select(x => x.Element.Name + " =" + x.Kolichestvo + " ").Aggregate((c, n) => c + " " + n);
+                }
             }
             if (W.Code == 20) //Малые формы
             {
-                result =  O.Elements.Where(x => x.ElementId == 1407).Sum(x => x.Kolichestvo);
+                List<ActiveElement> LE = O.Elements.Where(x => x.ElementId == 1407 && x.Est).ToList();
+                result =  LE.Sum(x => x.Kolichestvo);
+              
+                if (LE.Count > 0)
+                {
+                    Zvezda = Convert.ToInt16(LE.Sum(x => x.Sostoyanie) / LE.Count);
+                    formula += LE.Select(x => x.Element.Name + " =" + x.Kolichestvo + " ").Aggregate((c, n) => c + " " + n);
+                }
             }
             if (W.Code == 21) //Уличные ограждения
             {
-                result = O.Elements.Where(x => x.ElementId == 1133).Sum(x => x.Kolichestvo);
+                List<ActiveElement> LE = O.Elements.Where(x => x.ElementId == 1133 && x.Est).ToList();
+                result = LE.Sum(x => x.Kolichestvo);
+               
+                if (LE.Count > 0)
+                {
+                    Zvezda = Convert.ToInt16(LE.Sum(x => x.Sostoyanie) / LE.Count);
+                    formula += LE.Select(x => x.Element.Name + " =" + x.Kolichestvo + " ").Aggregate((c, n) => c + " " + n);
+                }
             }
-            if (W.Obiem > 0)
+            if (W.Code == 22) //количество подъездов в МКД, на 1 подъезд - 1м2
             {
+                TE = O.TE.Where(x => x.Name == "Подъездов").First();
+                result = TE.Val;
+               
+                    
+                    formula +="Количество подъездов в доме ="+result;
+                
+            }
+            if (W.Code == 23) //от длины водосточных труб, 5% (состояние не важно)
+            {
+                List<ActiveElement> LE = O.Elements.Where(x => x.ElementId == 1205 && x.Est).ToList();
+                result = LE.Sum(x => x.Kolichestvo);
+              
+                if (LE.Count > 0)
+                {
+                    Zvezda = Convert.ToInt16(LE.Sum(x => x.Sostoyanie) / LE.Count);
+                    formula += LE.Select(x => x.Element.Name + " =" + x.Kolichestvo + " ").Aggregate((c, n) => c + " " + n);
+                }
+            }
+            if (W.Code == 24) //от количества воронок, 5% (состояние не важно)
+            {
+                List<ActiveElement> LE = O.Elements.Where(x => x.ElementId == 1134 && x.Est).ToList();
+                result = LE.Sum(x => x.Kolichestvo);
+                result = Math.Ceiling(result);
+              
+            
+                if (LE.Count > 0)
+                {
+                    formula += LE.Select(x => x.Element.Name + " =" + x.Kolichestvo + " ").Aggregate((c, n) => c + " " + n);
+                    Zvezda = Convert.ToInt16(LE.Sum(x => x.Sostoyanie) / LE.Count);
+                }
+            }
+            if (W.Code == 25) //от количества вентялиционных каналов и шахт, 5%(состояние не важно)*1 м2
+            {
+                List<ActiveElement> LE = O.Elements.Where(x => x.ElementId == 1206 && x.Est).ToList();
+                result = LE.Sum(x => x.Kolichestvo);
+                result = Math.Ceiling(result);
+
+                if (LE.Count > 0)
+                {
+                    formula += LE.Select(x => x.Element.Name + " =" + x.Kolichestvo + " ").Aggregate((c, n) => c + " " + n);
+                    Zvezda = Convert.ToInt16(LE.Sum(x => x.Sostoyanie) / LE.Count);
+                }
+            }
+            if (W.Code == 26) //от количества дверей = (подвал + чердак + мусорокамеры) * 5 % (состояние не важно)
+            {
+                result = KolichestvoDverei(O);
+               
+                    Zvezda = 5;
+                
+            }
+            if (W.Code == 27) //количество входных дверей*10% (состояние не важно)
+            {
+                
+                List<ActiveElement> LE = O.Elements.Where(x => x.ElementId == 1146 && x.Est).ToList();
+                result = LE.Sum(x => x.Kolichestvo2);
+              
+                if (LE.Count > 0)
+                {
+                    formula += LE.Select(x => x.Element.Name + " =" + x.Kolichestvo2 + " ").Aggregate((c, n) => c + " " + n);
+                    Zvezda = Convert.ToInt16(LE.Sum(x => x.Sostoyanie) / LE.Count);
+                }
+            }
+            if (W.Code == 28) //количетво оконных блоков*5% (состояние не важно)
+
+            {
+               
+                List<ActiveElement> LE = O.Elements.Where(x => x.ElementId == 1147 && x.Est).ToList();
+                result = LE.Sum(x => x.Kolichestvo2);
+            
+                if (LE.Count > 0)
+                {
+                    formula += LE.Select(x => x.Element.Name + " =" + x.Kolichestvo2 + " ").Aggregate((c, n) => c + " " + n);
+                    Zvezda = Convert.ToInt16(LE.Sum(x => x.Sostoyanie) / LE.Count);
+                }
+            }
+            if (W.Code == 29) //от количества дверей=(тамбур+подвал+чердак+мусорокамеры)/10 дверей*2 п.м. (состояние не важно)
+            {
+
+                result = KolichestvoDverei(O);
+                result = Math.Round((result/10) * 2, 2);
+               
+            }
+            if (W.Code == 30) //от количества дверей(ДЕРЕВЯННЫЕ)=(тамбур+подъездные)*5% (состояние не важно)
+            {
+                List<ActiveElement> LE = O.Elements.Where(x => (x.ElementId == 1409 || x.ElementId == 1146)&&(x.MaterialId==22||x.MaterialId==2082) && x.Est).ToList();
+                if (LE.Count > 0)
+                {
+                    formula += LE.Select(x => x.Element.Name + " =" + x.Kolichestvo2 + " ").Aggregate((c, n) => c + " " + n);
+                    Zvezda = Convert.ToInt16(LE.Sum(x => x.Sostoyanie) / LE.Count);
+                }
+                result = LE.Sum(x => x.Kolichestvo2);
+
+            }
+            if (W.Code == 31) //от этажности и количества подъездов. До 6 этажей - 10п.м. на 1 подъезд, 6 этажей и выше - 20п.м. на 1 подъезд при наличии швов в доме
+            {
+
+                decimal Podezdov = 0;
+                decimal Etagei = 0;
+                List<ActiveElement> LE = O.Elements.Where(x => x.ElementId == 1125 && x.Est).ToList();
+                if (LE.Count > 0 && LE[0].Est)
+                {
+                    Etagei = O.TE.Where(x => x.Name == "Этажей").Select(x => x.Val).First();
+                    Podezdov = O.TE.Where(x => x.Name == "Подъездов").Select(x => x.Val).First();
+                    formula += "Этажей =" + Etagei + "Подъездов =" + Podezdov;
+                    if (Etagei < 6)
+                    {
+                        result = Math.Round(Podezdov * 10, 2);
+                        formula += " =10%";
+
+                    }
+                    else
+                    {
+                        result = Math.Round(Podezdov * 20, 2);
+                        formula += " =20%";
+                    }
+                }
+
+            }
+            if (W.Code == 32) // от общей длины труб до 50мм = (отопление + ГВС + ХВС) *%%, 5 % -хорошее состояние, 10 % -удов
+            {
+
+                List<ActiveElement> LE = O.Elements.Where(x => (x.ElementId == 1164 || x.ElementId == 1180 || x.ElementId == 1181) && x.Est).ToList();
+                result = LE.Sum(x => x.Kolichestvo);
+               
+                if (LE.Count > 0)
+                {
+                    formula += LE.Select(x => x.Element.Name + " =" + x.Kolichestvo + " ").Aggregate((c,n)=>c+" "+n);
+                    Zvezda = Convert.ToInt16(LE.Sum(x => x.Sostoyanie) / LE.Count);
+                }
+
+            }
+            if (W.Code == 33) // от общей длины труб до 50мм = (отопление + ГВС + ХВС) *%%, 5 % -хорошее состояние, 10 % -удов
+            {
+
+                List<ActiveElement> LE = O.Elements.Where(x => (x.ElementId == 1415 || x.ElementId == 1416 || x.ElementId == 1418) && x.Est).ToList();
+                result = LE.Sum(x => x.Kolichestvo);
+              
+                if (LE.Count > 0)
+                {
+                    formula += LE.Select(x => x.Element.Name + " =" + x.Kolichestvo + " ").Aggregate((c,n)=>c+" "+n);
+                    Zvezda = Convert.ToInt16(LE.Sum(x => x.Sostoyanie) / LE.Count);
+                }
+
+            }
+            if (W.Code == 34) //от количества радиаторов*5(секций)*%%, 5%-хорошее состояние, 10% - удов
+            {
+
+                List<ActiveElement> LE = O.Elements.Where(x => x.ElementId == 1169 && x.Est).ToList();
+                result = LE.Sum(x => x.Kolichestvo2)*5;
+                if (LE.Count > 0)
+                {
+                    formula += LE.Select(x => x.Element.Name + " =" + x.Kolichestvo2 + " X5").Aggregate((c,n)=>c+" "+n);
+                    Zvezda = Convert.ToInt16(LE.Sum(x => x.Sostoyanie) / LE.Count);
+                }
+
+            }
+            if (W.Code == 35) //одна ревизия на дом, сумма фиксированная - 1600
+            {
+
+               
+                result = 1;
+
+            }
+            if (W.Code == 36) //от общего кол-ва кранов более 50ММ=(отопление+ГВС+ХВС)*%%, 5%-хорошее состояние, 10% - удов
+
+            {
+                List<ActiveElement> LE = O.Elements.Where(x =>  (x.ElementId == 1423 || x.ElementId == 1425) && x.Est).ToList();
+                result = LE.Sum(x => x.Kolichestvo);
+                if (LE.Count > 0)
+                {
+                    formula += LE.Select(x => x.Element.Name + " =" + x.Kolichestvo + " ").Aggregate((c,n)=>c+" "+n);
+                    Zvezda = Convert.ToInt16(LE.Sum(x => x.Sostoyanie) / LE.Count);
+                }
+
+            }
+            if (W.Code == 37) //от общего кол-ва кранов до 50 мм=(отопление+ГВС+ХВС)*%%, 5%-хорошее состояние, 10% - удов
+
+
+            {
+                List<ActiveElement> LE = O.Elements.Where(x => (x.ElementId == 1420 || x.ElementId == 1424) && x.Est).ToList();
+                result = LE.Sum(x => x.Kolichestvo);
+                if (LE.Count > 0)
+                {
+                    formula += LE.Select(x => x.Element.Name + " =" + x.Kolichestvo + " ").Aggregate((c,n)=>c+" "+n);
+                    Zvezda = Convert.ToInt16(LE.Sum(x => x.Sostoyanie) / LE.Count);
+                }
+
+            }
+            if (W.Code == 38) //от общего кол-ва кранов до 50мм=(отопление+ГВС+ХВС)*0,8(80% от общего количества)*%%, 5%-хорошее состояние, 10% - удов
+            {
+                List<ActiveElement> LE = O.Elements.Where(x => (x.ElementId == 1420 || x.ElementId == 1424) && x.Est).ToList();
+                result = LE.Sum(x => x.Kolichestvo) * 0.8m;
+                if (LE.Count > 0)
+                {
+                    formula += LE.Select(x => x.Element.Name + " =" + x.Kolichestvo + " ").Aggregate((c,n)=>c+" "+n);
+                    Zvezda = Convert.ToInt16(LE.Sum(x => x.Sostoyanie) / LE.Count);
+                }
+
+            }
+            if (W.Code == 39) //от общей длины труб 100мм=(отопление+ГВС+ХВС)*длинну окружности (П*D)*10% ( не зависит от состояния)
+            {
+                List<ActiveElement> LE = O.Elements.Where(x => (x.ElementId == 1415 || x.ElementId == 1416 || x.ElementId == 1418) && x.Est).ToList();
+                result = LE.Sum(x => x.Kolichestvo) * 3.14m * 0.1m;
+                if (LE.Count > 0)
+                {
+                    formula += LE.Select(x => x.Element.Name + " =" + x.Kolichestvo + " ").Aggregate((c,n)=>c+" "+n);
+                    Zvezda = Convert.ToInt16(LE.Sum(x => x.Sostoyanie) / LE.Count);
+                }
+
+            }
+            if (W.Code == 40) //Смена насоса 1 шт на 1 дом
+            {
+                result =1;
+            }
+            if (W.Code == 41) //от количества этажных щитков*1шт(автомат)
+            {
+                List<ActiveElement> LE = O.Elements.Where(x => x.ElementId == 1161 && x.Est).ToList();
+                result = LE.Sum(x => x.Kolichestvo) /2;
+                if (LE.Count > 0)
+                {
+                    formula += LE.Select(x => x.Element.Name + " =" + x.Kolichestvo + " ").Aggregate((c,n)=>c+" "+n);
+                }
+            }
+            if (W.Code == 42) // от длины магистрального провода *%%, 5 % -хорошее состояние, 10 % -удов
+
+            {
+                List<ActiveElement> LE = O.Elements.Where(x => x.ElementId == 1162 && x.Est).ToList();
+                result = LE.Sum(x => x.Kolichestvo);
+                if (LE.Count > 0)
+                {
+                    formula += LE.Select(x => x.Element.Name + " =" + x.Kolichestvo + " ").Aggregate((c,n)=>c+" "+n);
+                }
+            }
+            if (W.Code == 44) //  Сумма (подъездных+подвальные)*%%, 2%-хорошее состояние, 5% - удов
+
+
+            {
+                List<ActiveElement> LE = O.Elements.Where(x => (x.ElementId == 1157 || x.ElementId == 1159) && x.Est).ToList();
+                result = LE.Sum(x => x.Kolichestvo);
+                if (LE.Count > 0)
+                {
+                    formula += LE.Select(x => x.Element.Name + " =" + x.Kolichestvo + " ").Aggregate((c,n)=>c+" "+n);
+                }
+            }
+            if (W.Code == 46) //от кол-ва ВРУ*2шт
+            {
+                List<ActiveElement> LE = O.Elements.Where(x => x.ElementId == 1160 && x.Est).ToList();
+                result = LE.Sum(x => x.Kolichestvo)*2;
+                if (LE.Count > 0)
+                {
+                    formula += LE.Select(x => x.Element.Name + " =" + x.Kolichestvo + " ").Aggregate((c,n)=>c+" "+n);
+                }
+            }
+            if (W.Code == 47) //от канализации 50-100 мм
+            {
+                List<ActiveElement> LE = O.Elements.Where(x => x.ElementId == 1414 && x.Est).ToList();
+                result = LE.Sum(x => x.Kolichestvo) ;
+                //if (result > 50) { result = 50; }
+                if (LE.Count > 0)
+                {
+                    formula += LE.Select(x => x.Element.Name + " =" + x.Kolichestvo + " ").Aggregate((c, n) => c + " " + n);
+                }
+            }
+            if (W.Code == 48) //от Площади кровли с фильтром (МЕТАЛЛИЧЕСКАЯ)
+            {
+                TechElement Tech = O.TE.Where(x =>x.AdresId == O.AdresId&&x.Name == "Площадь кровли").First();
+                List<ActiveElement> LE = O.Elements.Where(x => x.ElementId == 1129 && x.Est).ToList();
+                TypeElement T = db.TypeElements.Where(x => x.AdresId == O.AdresId && x.DOMPartId == 5).First();
+                if (T != null && (T.MaterialId == 1296 || T.MaterialId == 1753 || T.MaterialId == 9))
+                {
+                    result = Tech.Val;
+              //      result = LE.Sum(x => x.Kolichestvo);
+                   
+                        formula += " Площадь кровли =" + Tech.Val;
+                    if (LE.Count > 0)
+                    {
+                        Zvezda = Convert.ToInt16(LE.Sum(x => x.Sostoyanie) / LE.Count);
+                    }
+                }
+                else
+                {
+                    formula += " Расчет нулевой так как крыша в доме не металлическая";
+                }
+            }
+
+            if (W.Code == 49) //от Площади кровли с фильтром (МЯГКАЯ)
+            {
+                TechElement Tech = O.TE.Where(x => x.AdresId == O.AdresId && x.Name == "Площадь кровли").First();
+                List<ActiveElement> LE = O.Elements.Where(x => x.ElementId == 1129 && x.Est).ToList();
+                TypeElement T = db.TypeElements.Where(x => x.AdresId == O.AdresId && x.DOMPartId == 5).First();
+                if (T!=null&&(T.MaterialId == 1555 || T.MaterialId == 1728 ))
+                {
+                    result = Tech.Val;
+                    formula += " Площадь кровли =" + Tech.Val;
+                    if (LE.Count > 0)
+                    {
+                        Zvezda = Convert.ToInt16(LE.Sum(x => x.Sostoyanie) / LE.Count);
+                    }
+
+                }
+                else
+                {
+                    formula +=  " Расчет нулевой так как крыша в доме не мягкая";
+                }
+              
+            }
+
+            if (W.Code == 51) //от Площади кровли с фильтром (ШИФЕР)
+            {
+                TechElement Tech = O.TE.Where(x => x.AdresId == O.AdresId && x.Name == "Площадь кровли").First();
+                List<ActiveElement> LE = O.Elements.Where(x => x.ElementId == 1129 && x.Est).ToList();
+                TypeElement T = db.TypeElements.Where(x => x.AdresId == O.AdresId && x.DOMPartId == 5).First();
+                if (T != null && T.MaterialId == 1309 )
+                {
+                    result = Tech.Val;
+                    formula += " Площадь кровли =" + Tech.Val;
+                    if (LE.Count > 0)
+                    {
+                        Zvezda = Convert.ToInt16(LE.Sum(x => x.Sostoyanie) / LE.Count);
+                    }
+
+                }
+                else
+                {
+                    formula += " Расчет нулевой так как крыша в доме не из шифера";
+                }
+
+            }
+
+            if (W.Obiem > 0&&!W.Remont)
+            {
+                formula += "Звезды = " + Zvezda;
+                formula += " Количество элементов = " + result;
+              //  formula += " Ставка = " + Stavka + "% ";
+                W.Fiz = result;
                 result = Math.Round(result / W.Obiem,2);
             }
+            if (W.Remont&&W.Code!=29&&W.Code!=31&&W.Code!=40)
+            {
+                formula += "Звезды = "+Zvezda;
+                decimal Stavka = 100;
+                if (W.ProcGood > 0)
+                {
+                    if (Zvezda >= 4) { Stavka =  W.ProcGood; }
+                    if (Zvezda <= 3) { Stavka =  W.ProcBad; }
+                }
+                formula += " Количество элементов = " + result;
+                W.Fiz = result;
+                var RezStav = result * Stavka;
+              
+                result = Math.Round((RezStav)/100,2);
+                if (W.Code == 32 || W.Code == 33 || W.Code == 37 || W.Code == 42||W.Code == 47||W.Code == 49)//Округляем до 50 если длинна трубопровода после учета процентов больше
+                {
+                    if (result > 50)
+                    {
+                        result = 50;
+                        formula += " Поскольку длинна более 50 м, то результат округляется до 50м! ";
+                    }
+
+                }
+
+                if ((W.Code >=24 &&W.Code<=28) || (W.Code >= 34&&W.Code<=38)||W.Code==44||W.Code==42||W.Code==22 || W.Code == 30)
+                {
+                   result =  Math.Ceiling(result);
+                }
+
+                formula += " Ставка = " + Stavka + "% ";
+
+            }
+            W.Comment = formula;
+            return result;
+        }
+        public decimal KolichestvoDverei(Osmotr O)
+        {
+            decimal result = 0;
+            List<ActiveElement> LE = O.Elements.Where(x => (x.ElementId == 1153  || x.ElementId == 1144 || x.ElementId == 1146 || x.ElementId == 1132 || x.ElementId == 1143) && x.Izmerenie2Id==2 ).ToList();
+            result = LE.Sum(x => x.Kolichestvo2);
+            LE = O.Elements.Where(x => (x.ElementId == 1153 || x.ElementId == 1144 || x.ElementId == 1146  || x.ElementId == 1132 || x.ElementId == 1143) && x.IzmerenieId == 2).ToList();
+            result += LE.Sum(x => x.Kolichestvo);
             return result;
         }
 
     public ActionResult PlanoviOtchet(int AdresId)
         {
-            Osmotr O = db.Osmotrs.Where(x => x.AdresId == AdresId).Include(x=>x.Adres).OrderByDescending(x => x.Date).First();
-            O.Elements = db.ActiveElements.Where(x => x.OsmotrId == O.Id).ToList();
+            Osmotr O = db.Osmotrs.Where(x => x.AdresId == AdresId&&x.Sostoyanie==3).Include(x=>x.Adres).OrderByDescending(x => x.Date).First();
+            O.Elements = db.ActiveElements.Where(x => x.OsmotrId == O.Id).Include(x=>x.Element).Include(x=>x.Izmerenie).Include(x=>x.Izmerenie2).ToList();
             O.DOMParts = db.DOMParts.ToList();
-            O.TE = db.TechElements.Where(x => x.AdresId == AdresId).ToList();
-            O.WS = db.WorkSoderganies.ToList();
+            O.TE = db.TechElements.Where(x => x.AdresId == AdresId).Include(x=>x.Izmerenie).ToList();
+            O.WS = db.WorkSoderganies.Include(x=>x.Tip).Include(x=>x.Izmerenie).OrderBy(x=>x.TipId).ToList();
             
             foreach(WorkSoderganie W in O.WS)
             {
+                string Formula = "";
                 W.Val = RaschetWS(O, W);
+                W.Cost = W.CostMterials + W.CostWrok;
+                if (W.Periodichnost == 0) { W.Periodichnost = 1; }
             }
             return View(O);
         }
@@ -225,7 +728,7 @@ namespace GKHNNC.Controllers
             public ActionResult SaveElement(int Id=0, string Photo1="", string Photo2="",int EdIzm=0,decimal Kolvo = 0, int Material=0)
         {
             string Data = "";
-
+            string result = "Ошибка! Необходимо загрузить две фотографии!";
             ActiveElement A = new ActiveElement();
                 try
                 {
@@ -238,12 +741,18 @@ namespace GKHNNC.Controllers
                 {
                     if (Photo1 != "" && Photo2 != "")
                     {
+                        result = "Данные элемента успешно сохранены!";
+                        string Filename1 = Path.GetFileName(Photo1);
+                        string Filename2 = Path.GetFileName(Photo2);
+                        if (A.Photo1==null||A.Photo1.Equals(Filename1) == false) { A.IsOld1 = false; }
+                        if (A.Photo2 == null||A.Photo2.Equals(Filename2) == false) { A.IsOld2 = false; }
                         A.Photo1 = Path.GetFileName(Photo1);
                         A.Photo2 = Path.GetFileName(Photo2);
                     }
                     else
                     {
-                      //загружаются фотки по умолчанию
+                       
+                        //загружаются фотки по умолчанию
                     }
                 }
                    
@@ -261,7 +770,7 @@ namespace GKHNNC.Controllers
 
                     string Izmerenie = db.Izmerenies.Where(x => x.Id == EdIzm).Select(x=>x.Name).First();
                     string Mat = db.Materials.Where(x => x.Id == Material).Select(x => x.Name).First();
-                    Data = A.Photo1 + ";" + A.Photo2+";"+A.Sostoyanie+";"+Izmerenie+";"+Mat+";"+Kolvo.ToString();
+                Data = A.Photo1 + ";" + A.Photo2 + ";" + A.Sostoyanie + ";" + Izmerenie + ";" + Mat + ";" + Kolvo.ToString()+";"+result ;
 
                 }
                 catch(Exception e) { Data = "Ошибка; сохранения изменений!"; }
@@ -1998,6 +2507,7 @@ namespace GKHNNC.Controllers
 
         public ActionResult Create(DateTime date,int id = 0,bool NewOsmotr=false)
         {
+            Start:
             bool LoadOsmotr = false;
             string error = "";
 
@@ -2298,7 +2808,8 @@ namespace GKHNNC.Controllers
                         //сохраняем новый осмотр если дата прошлого отличается хотя бы на  или прошлого осмотра нет
                         if (LastO == null ||LastO.Date.Month != D.Date.Month || LastO.Date.Year != D.Date.Year)
                         {
-                            int last = LastO.Id;
+                            int last = 0;
+                            
                             int newo =0;
                             try
                             {
@@ -2309,15 +2820,23 @@ namespace GKHNNC.Controllers
                                 NewO.DateEnd = date;
                                 NewO.DateOEGF = date;
                                 NewO.DatePTO = date;
-                                NewO.Opisanie = "Повторный осмотр";
+                                NewO.Opisanie = "Первый осмотр";
                                
                                 db.Osmotrs.Add(NewO);
                                 db.SaveChanges();
                                 newo = NewO.Id;
-                                OtmetitEvent("Создан новый осмотр #" + NewO.Id + " по адресу " + NewO.Adres.Adress, "table-info");
-                                if (Directory.Exists("/Files/"+NewO.Id)==false)
+                                OtmetitEvent(User.Identity.Name+" создал новый осмотр #" + NewO.Id + " по адресу " + NewO.Adres.Adress, "table-info");
+                               // System.IO.File.Copy(HostingEnvironment.MapPath(LastPath + AE.Photo1), HostingEnvironment.MapPath(NewPath + AE.Photo1), true);
+                                if (Directory.Exists(HostingEnvironment.MapPath("/Files/" + newo)) ==false)
                                 {
-                                    Directory.CreateDirectory("/Files/" + newo);
+                                    try
+                                    {
+                                        Directory.CreateDirectory(HostingEnvironment.MapPath("/Files/" + newo));
+                                    }
+                                    catch (Exception ex)
+                                    {
+
+                                    }
                                     
                                 }
                                 NewO.AOW = new List<ActiveOsmotrWork>();
@@ -2362,7 +2881,7 @@ namespace GKHNNC.Controllers
                                 try
                                 {
                                     // пробуем найти рекомендуемые работы предыдущего осмотра которые еще не выполнены
-                                    List<OsmotrRecommendWork> LastORW = db.OsmotrRecommendWorks.Where(x => x.OsmotrId == LastO.Id && !x.Gotovo).ToList();
+                                    List<OsmotrRecommendWork> LastORW = db.OsmotrRecommendWorks.Where(x => x.OsmotrId == LastO.Id && !x.Gotovo).Include(x=>x.Izmerenie).Include(x=>x.DOMPart).ToList();
 
                                     //Сохраняем их под новыми ID и делаем ссылку на новый осмотр
                                     foreach (OsmotrRecommendWork ORW in LastORW)
@@ -2452,6 +2971,8 @@ namespace GKHNNC.Controllers
                     //  DateTime ToDate = DateTime.Now;
                     //DateTime FromDate = Convert.ToDateTime("");
                     Session["Houses" + NewO.Adres.Adress] = null;
+                    NewOsmotr = false;
+                    goto Start;
                 }
             }
             ViewBag.Month = Opredelenie.Opr.MonthToNorm(Opredelenie.Opr.MonthOpred(Result.Date.Month));
@@ -2982,11 +3503,12 @@ namespace GKHNNC.Controllers
                 try
                 {
                     //Загружаем активные элементы прошлого осмотра
-                    AE = db.ActiveElements.Where(x => x.ElementId == E.Id && x.AdresId == NewO.AdresId).OrderByDescending(x => x.Date).First();
+                    AE = db.ActiveElements.Where(x => x.ElementId == E.Id && x.AdresId == NewO.AdresId&& x.OsmotrId == LastO.Id).OrderByDescending(x => x.Date).First();
                     //Если элемент есть то сохраняем с новой датой и новым ID осмотра
                     AE.Date = NewO.Date;
                     AE.OsmotrId = NewO.Id;
-                    
+                    AE.IsOld1 = true;
+                    AE.IsOld2 = true;
                     db.ActiveElements.Add(AE);
                     db.SaveChanges();
                     NewO.Elements.Add(AE);
@@ -2998,7 +3520,7 @@ namespace GKHNNC.Controllers
                         System.IO.File.Copy(HostingEnvironment.MapPath(LastPath + AE.Photo1), HostingEnvironment.MapPath(NewPath + AE.Photo1),true);
                         System.IO.File.Copy(HostingEnvironment.MapPath(LastPath + AE.Photo2), HostingEnvironment.MapPath(NewPath + AE.Photo2),true);
                     }
-                    catch
+                    catch (Exception e)
                     {
 
                     }
@@ -3209,7 +3731,7 @@ namespace GKHNNC.Controllers
             {
                 try
                 {
-                    dbAE = db.ActiveElements.Where(x => x.OsmotrId == OsmotrId).OrderByDescending(x => x.Date).ToList();
+                    dbAE = db.ActiveElements.Where(x => x.OsmotrId == OsmotrId).OrderBy(x=>x.ElementId).ThenBy(x=>x.Id).ToList();
                     Session["ActiveElements" + OsmotrId] = dbAE;
                 }
                 catch

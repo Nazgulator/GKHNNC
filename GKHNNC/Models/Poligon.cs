@@ -75,6 +75,13 @@ namespace GKHNNC.Models
         public long IdCam;
 
 
+        [Display(Name = "Подсказка")]
+        public string Tint;
+
+        [Display(Name = "В белом списке?")]
+        public bool White = false;
+
+
 
 
         //Теперь только для jquery

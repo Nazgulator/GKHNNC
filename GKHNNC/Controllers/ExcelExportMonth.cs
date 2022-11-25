@@ -1644,7 +1644,7 @@ namespace GKHNNC.Controllers
 
             from++;
             WS.Cells[from, 1] = "являющегося собственником квартиры №_____, находящейся в данном многоквартирном доме*, " +
-                "с одной стороны, и Федеральное государственное бюджетное учреждение 'жилищно-коммунальное управление Новосибирского научного центра' (ФГБУ 'ЖКУ ННЦ')" +
+                "с одной стороны, и Федеральное государственное бюджетное учреждение 'Академия комфорта' (ФГБУ 'Академия комфорта')" +
 "именуемое в дальнейшем “Исполнитель”,  в лице начальника ЭУ-" + GKH + " " + Nachalnik + ", действующего на основании доверенности №" + Prikaz;
             range = WS.get_Range("A" + from, "E" + from);
             range.Merge(Type.Missing);
@@ -2111,63 +2111,67 @@ namespace GKHNNC.Controllers
 
             foreach (DOMPart P in DP)
             {
-                startStroka++;
+                
                 List<ActiveElement> AE = ActiveElements.Where(x=>x.Element.ElementTypeId==P.Id).ToList();
-                WS.Cells[startStroka, naimenovanie] = P.Name;
-                range = WS.get_Range("A" + startStroka, "E" + startStroka);
-                range.Font.Size = 14;
-                range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
-                range.Merge();
-
-                foreach (ActiveElement A in AE)
+                if (AE.Where(x => x.Est).Count() > 0) //Если нет элементов то не выводим в экселе данный раздел
                 {
-                    if (A.Est != false)
+                    startStroka++;
+                    WS.Cells[startStroka, naimenovanie] = P.Name;
+                    range = WS.get_Range("A" + startStroka, "E" + startStroka);
+                    range.Font.Size = 14;
+                    range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+                    range.Merge();
+
+                    foreach (ActiveElement A in AE)
                     {
-                        startStroka++;
+                        if (A.Est != false)
+                        {
+                            startStroka++;
 
-                        WS.Cells[startStroka, naimenovanie] = A.Element.Name;
-                        if (A.Element.Name.Replace(" ", "").Length > 50)
-                        {
-                            WS.Cells[startStroka, naimenovanie].RowHeight = 25;
-                            WS.Cells[startStroka, naimenovanie].WrapText = true;
-                            WS.Cells[startStroka, periodichnost].WrapText = true;
-                        }
-                        WS.Cells[startStroka, periodichnost] = A.Material.Name;
-                        WS.Cells[startStroka, izmerenie] = A.Izmerenie.Name;
-                        WS.Cells[startStroka, stoimost] = A.Kolichestvo;
-                        
-                        WS.Cells[startStroka, cena] = sostOpred(A.Sostoyanie);
-
-                        range = WS.get_Range("A" + startStroka, "E" + startStroka);
-                        range.Font.Size = 8;
-                        range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
-                        //теперь ищем дефекты 
-                        List<ActiveDefect> AD = new List<ActiveDefect>();
-                        try
-                        {
-                            AD = db.ActiveDefects.Where(x => x.OsmotrId == O.Id && x.ElementId == A.ElementId).Include(x => x.Defect).Include(x=>x.Element).ToList();
-                        }
-                        catch { }
-                        if (AD.Count > 0)
-                        {
-                            foreach (ActiveDefect D in AD)
+                            WS.Cells[startStroka, naimenovanie] = A.Element.Name;
+                            if (A.Element.Name.Replace(" ", "").Length > 50)
                             {
-                                startStroka++;
-                                WS.Cells[startStroka, 1] = "      "+D.Defect.Def;
-                                WS.Cells[startStroka, 2] = "Дефект";
-                                WS.Cells[startStroka, 3] = D.Opisanie;
-                                range = WS.get_Range("C" + startStroka, "E" + startStroka);
-                                range.Merge();
-                               
-                                range = WS.get_Range("A" + startStroka, "E" + startStroka);
-                                range.Font.Size = 8;
-                                range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
-                                range.Interior.Color = Color.LightGray;
-
+                                WS.Cells[startStroka, naimenovanie].RowHeight = 25;
+                                WS.Cells[startStroka, naimenovanie].WrapText = true;
+                                WS.Cells[startStroka, periodichnost].WrapText = true;
                             }
+                            WS.Cells[startStroka, periodichnost] = A.Material.Name;
+                            WS.Cells[startStroka, izmerenie] = A.Izmerenie.Name;
+                            WS.Cells[startStroka, stoimost] = A.Kolichestvo;
+
+                            WS.Cells[startStroka, cena] = sostOpred(A.Sostoyanie);
+
+                            range = WS.get_Range("A" + startStroka, "E" + startStroka);
+                            range.Font.Size = 8;
+                            range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+                            //теперь ищем дефекты 
+                            List<ActiveDefect> AD = new List<ActiveDefect>();
+                            try
+                            {
+                                AD = db.ActiveDefects.Where(x => x.OsmotrId == O.Id && x.ElementId == A.ElementId).Include(x => x.Defect).Include(x => x.Element).ToList();
+                            }
+                            catch { }
+                            if (AD.Count > 0)
+                            {
+                                foreach (ActiveDefect D in AD)
+                                {
+                                    startStroka++;
+                                    WS.Cells[startStroka, 1] = "      " + D.Defect.Def;
+                                    WS.Cells[startStroka, 2] = "Дефект";
+                                    WS.Cells[startStroka, 3] = D.Opisanie;
+                                    range = WS.get_Range("C" + startStroka, "E" + startStroka);
+                                    range.Merge();
+
+                                    range = WS.get_Range("A" + startStroka, "E" + startStroka);
+                                    range.Font.Size = 8;
+                                    range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+                                    range.Interior.Color = Color.LightGray;
+
+                                }
+                            }
+
+
                         }
-
-
                     }
                 }
             }
@@ -2227,7 +2231,7 @@ namespace GKHNNC.Controllers
             range.Borders.LineStyle = Excel.XlLineStyle.xlLineStyleNone;
             range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
             startStroka++;
-            WS.Cells[startStroka, 6] = " Врио директора ФГБУ 'ЖКУ ННЦ'";
+            WS.Cells[startStroka, 6] = "Директор ФГБУ 'Академия комфорта'";
             range = WS.get_Range("F" + startStroka, "G" + startStroka);
             //  Opr.RangeMerge(ApExcel, range, true, true, 13, 15);
             range.Merge();
@@ -2713,7 +2717,7 @@ namespace GKHNNC.Controllers
 
             from++;
             WS.Cells[from, 1] = "являющегося собственником квартиры №_____, находящейся в данном многоквартирном доме*, " +
-                "с одной стороны, и Федеральное государственное бюджетное учреждение 'Жилищно-коммунальное управление Новосибирского научного центра' (ФГБУ 'ЖКУ ННЦ')" +
+                "с одной стороны, и Федеральное государственное бюджетное учреждение 'Академия комфорта' (ФГБУ 'Академия комфорта')" +
 "именуемое в дальнейшем “Исполнитель”,  в лице начальника "+GEUEU + EU + " " + Nachalnik + ", действующего на основании доверенности №" + Prikaz;
             range = WS.get_Range("A" + from, "E" + from);
             range.Merge(Type.Missing);
@@ -3312,7 +3316,7 @@ namespace GKHNNC.Controllers
                 range.Borders.LineStyle = Excel.XlLineStyle.xlLineStyleNone;
                 range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
                 startStroka++;
-                WS.Cells[startStroka, 6] = " Врио директора ФГБУ 'ЖКУ ННЦ'";
+                WS.Cells[startStroka, 6] = " Директор ФГБУ 'Академия комфорта'";
                 range = WS.get_Range("F" + startStroka, "G" + startStroka);
                 //  Opr.RangeMerge(ApExcel, range, true, true, 13, 15);
                 range.Merge();
@@ -3749,7 +3753,7 @@ namespace GKHNNC.Controllers
 
             from++;
             WS.Cells[from, 1] = "являющегося собственником квартиры №_____, находящейся в данном многоквартирном доме*, " +
-                "с одной стороны, и Федеральное государственное бюджетное учреждение 'Жилищно-коммунальное управление Новосибирского научного центра' (ФГБУ 'ЖКУ ННЦ')" +
+                "с одной стороны, и Федеральное государственное бюджетное учреждение 'Академия комфорта' (ФГБУ 'Академия комфорта')" +
 "именуемое в дальнейшем “Исполнитель”,  в лице начальника ЭУ-" + EU + " " + Nachalnik + ", действующего на основании доверенности №" + Prikaz;
             range = WS.get_Range("A" + from, "E" + from);
             range.Merge(Type.Missing);

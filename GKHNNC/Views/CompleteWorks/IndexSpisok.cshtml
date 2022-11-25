@@ -37,7 +37,7 @@
         counter++;
         
         
-        <tr>
+        <tr id="OBJ_@item.ID">
             <td>
                 @Html.DisplayFor(modelItem => item.WorkAdress)
 
@@ -58,6 +58,7 @@
                 @Html.DisplayFor(modelItem => item.Agent)
             </td>
             <td>
+                <button id="delete_@item.ID" onclick="DeleteWork(@item.ID)" class="btn btn-danger" style="width:40px">X</button>
                 @Html.ActionLink(" Информация", "Delete", new { id = item.ID }, new { @class = "btn btn-success btn-icon glyphicon glyphicon-info-sign" })
 
             </td>
@@ -74,6 +75,24 @@
     @Scripts.Render("~/scripts/jquery-3.3.1.js")
     @Scripts.Render("~/Scripts/chosen.jquery.min.js")
 
-    
+    <script>
+        function DeleteWork(id) {
+            var res = confirm("Уверены что хотите удалить данную работу?")
+            if (res)
+            {
+            
+                
+                $.post('@Url.Action("DeleteWork", "CompleteWorks")', { ID: id },
+                    function (data) {
+                        $("#OBJ_" + id).remove();
+                        alert(data);
+
+
+
+                    });
+
+            } 
+        }
+    </script>
 
 }

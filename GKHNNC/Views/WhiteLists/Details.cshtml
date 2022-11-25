@@ -1,0 +1,51 @@
+﻿@model GKHNNC.Models.WhiteList
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>WhiteList</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Nomer)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Nomer)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Marka)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Marka)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Obiem)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Obiem)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Kontragent)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Kontragent)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

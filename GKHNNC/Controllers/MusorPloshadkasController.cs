@@ -1969,7 +1969,7 @@ namespace GKHNNC.Controllers
 
         //используется для загрузки новых и обновления старых мусорных площадок. Заменяет данные если нашел такую площадку или добавляет новую если не нашел.
         [HttpPost]
-        public ActionResult ImportVsePloshadki( HttpPostedFileBase file)
+        public ActionResult ImportVsePloshadki(HttpPostedFileBase file)
         {
             string errors = "";
             string StreetsFalse = "";
@@ -1982,7 +1982,7 @@ namespace GKHNNC.Controllers
             }
             file.SaveAs(Server.MapPath("~/Files/" + fileName));
             //обрабатываем файл после загрузки
-            string[] Names = new string[] { "УЛИЦА", "ДОМ", "ИДНОВОЕ", "ТИП", "ИМЯЮЛ","ИД", "ГРАФИК", "ОБЪЕМКОНТЕЙНЕРА"};
+            string[] Names = new string[] { "АДРЕС", "КОНТРАГЕНТ", "ОБЪЕМ", "КОЛИЧЕСТВО", "ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ", "ВС" };
             string Error = "";
             List<List<string>> excel = ExcelSVNUpload.IMPORT(Server.MapPath("~/Files/" + fileName), Names, out Error);
             if (excel.Count < 1)
@@ -1996,203 +1996,165 @@ namespace GKHNNC.Controllers
             else
             {
                 List<MusorPloshadka> LMP = new List<MusorPloshadka>();
-               
 
+                excel.RemoveAt(0);
                 foreach (List<string> E in excel)
                 {
                     LMP = db.MusorPloshadkas.ToList();
                     MusorPloshadka MP = new MusorPloshadka();
 
                     //Грузим улицы из базы 
-                    string[] Streets = E[0].Split(',');
+                    string[] Streets = E[0].Replace("Новосибирск,", "").Split(',');
                     bool UliciNaideni = false;
                     List<AllStreet> StreetsExcel = new List<AllStreet>();
 
-                    foreach (string ss in Streets)
+
+                    try
                     {
-                        try
+                        string Text = Streets[0].Replace(" ", "").Replace("ул", "").Replace("проезд", "").Replace("пр-кт", "");
+                        if (Streets[0].Contains("Трофимука")) { Text = "АкадемикаТрофимука"; }
+                        if (Streets[0].Contains("Морской")) { Text = "Морскойпроспект"; }
+                        if (Streets[0].Contains("Детский")) { Text = "Детскийпроезд"; }
+                        if (Streets[0].Contains("Весенний")) { Text = "Весеннийпроезд"; }
+                        if (Streets[0].Contains("Цветной")) { Text = "Цветнойпроезд"; }
+                        if (Streets[0].Contains("Молодежи")) { Text = "БульварМолодежи"; }
+                        if (Streets[0].Contains("Молодёжи")) { Text = "БульварМолодежи"; }
+                        if (Streets[0].Contains("Коптюга")) { Text = "АкадемикаКоптюга"; }
+                        if (Streets[0].Contains("Лаврентьева")) { Text = "АкадемикаЛаврентьева"; }
+                        if (Streets[0].Contains("Муссы")) { Text = "МусыДжалиля"; }
+                        if (Streets[0].Contains("Университетский")) { Text = "Университетскийпроспект"; }
+                        AllStreet AS = db.AllStreets.Where(x => x.Name.Replace(" ", "").Equals(Text)).First();
+                        StreetsExcel.Add(AS);
+                        string NomerDoma = Streets[1].Replace(" ", "").Replace(",", "").Replace(".", "").Replace("-", "");
+                        string Kontainers = "";//E[4] + ";" + E[5] + ";" + E[6] + ";" + E[7] + ";" + E[8] + ";" + E[9] + ";" + E[10];
+                        string Obiems = "";
+                        decimal ObiemKontainera = Convert.ToDecimal(E[2]);
+                        int QTY = Convert.ToInt32(E[3]);
+                        string Name = E[1];
+                        MusorPloshadka Musor = new MusorPloshadka();
+                        string Grafik = "";
+                        if (E[4] != null && E[4] != "0")
                         {
-                            string Text = ss.Replace(" ", "");
-                            if (ss.Contains("Трофимука")) { Text = "АкадемикаТрофимука"; }
-                            if (ss.Contains("Морской")) { Text = "Морскойпроспект"; }
-                            if (ss.Contains("Детский")) { Text = "Детскийпроезд"; }
-                            if (ss.Contains("Весенний")) { Text = "Весеннийпроезд"; }
-                            if (ss.Contains("Цветной")) { Text = "Цветнойпроезд"; }
-                            if (ss.Contains("Молодежи")) { Text = "БульварМолодежи"; }
-                            if (ss.Contains("Молодёжи")) { Text = "БульварМолодежи"; }
-                            if (ss.Contains("Коптюга")) { Text = "АкадемикаКоптюга"; }
-                            if (ss.Contains("Лаврентьева")) { Text = "АкадемикаЛаврентьева"; }
-                            if (ss.Contains("Муссы")) { Text = "МусыДжалиля"; }
-                            if (ss.Contains("Университетский")) { Text = "Университетскийпроспект"; }
-                            AllStreet AS = db.AllStreets.Where(x => x.Name.Replace(" ", "").Equals(Text)).First();
-                            StreetsExcel.Add(AS);
-                        }
-                        catch
-                        {
-                            StreetsFalse += ss + E[1] + ";";
-                        }
-                    }
-                    //Если все улицы в записи найдены то идем дальше
-                    if (StreetsExcel.Count == Streets.Length) { UliciNaideni = true; }
-
-                    if (UliciNaideni)
-                    {
-                        string P = "";
-                        foreach (AllStreet AS in StreetsExcel)
-                        {
-                            P = AS.Id + ";";
-
-                        }
-                        P = P.Remove(P.Length - 1, 1);
-                        List<MusorPloshadka> MPS = LMP.Where(x => x.StreetId.Equals(P)).ToList();
-                        //Если найдены мусорные площадки с такой комбинацией улиц то ищем совпадения по дому
-                        if (MPS.Count > 0)
-                        {
-                            //ищем дом совпавшую с файлом
-                            string NomerDoma = E[1].Replace(" ", "").Replace(",", "").Replace(".", "").Replace("-", "");
-                            List<MusorPloshadka> Chastichno = MPS.Where(x => x.Name.Replace(" ", "").Replace(",", "").Replace(".", "").Replace("-", "").Equals(NomerDoma)).ToList();
-                            List<MusorPloshadka> Polnostu = new List<MusorPloshadka>();
-                            foreach (MusorPloshadka AS in Chastichno)
+                            if (E[4].Contains("заявка"))
                             {
-                                int go = StreetsExcel.Count;
-                                foreach (AllStreet ES in StreetsExcel)
-                                {
-                                    try
-                                    {
-
-
-                                        try
-                                        {
-                                            if (AS.VseUlici.Contains(ES)) { go--; break; }
-                                        }
-                                        catch
-                                        {
-
-                                        }
-
-                                    }
-                                    catch
-                                    {
-
-                                    }
-                                }
-                                if (go == 0)
-                                {
-                                    Polnostu.Add(AS);
-                                }
-                            }
-                            if (Polnostu.Count > 1)
-                            {
-                                MusorPloshadka Test = null;
-                                try
-                                {
-                                    Test = Polnostu.Where(x => x.ObiemContainera == Convert.ToDecimal(E[2])).First();
-                                }
-                                catch
-                                {
-
-                                }
-                                try
-                                {
-                                    Test = Polnostu.First();
-                                }
-                                catch
-                                {
-
-                                }
-                                if (Test != null)
-                                {
-                                    Polnostu = new List<MusorPloshadka>();
-                                    Polnostu.Add(Test);
-                                }
-
-
-                            }
-                            if (Polnostu.Count == 1)
-                            {
-                                MP = Polnostu[0];
-                                MP.GrafikVivoza = E[6];
-                                MP.ObiemContainera = Convert.ToDecimal(E[7]);
-                                MP.IDNew = E[2].Replace(" ", "");
-                                MP.Obnovleno = false;
-                                if (MP.ObiemContainera > 0)
-                                {
-
-                                }
-
-                                MP.Kontainers = "0;0;0;0;0;0;0";
-                                MP.Obiem = "0;0;0;0;0;0;0";
-                                try
-                                {
-                                    db.Entry(MP).State = EntityState.Modified;
-                                    db.SaveChanges();
-                                }
-                                catch
-                                {
-
-                                }
-
-
-
-
+                                Grafik += "По заявке";
+                                Kontainers += "0;";
+                                Obiems += "0;";
                             }
                             else
                             {
-                                string s = "Ошибка загрузки";
-                                if (Polnostu.Count > 1) { s = "У площадки " + Polnostu.Count.ToString() + " варианта, не могу определиться"; }
-                                if (Polnostu.Count == 0)
-                                {
-                                    s = "У площадки нет совпадений ";
-                                   
-                                }
-                                errors += s + E[0] + " " + E[1] + ";";
+                                Grafik += "ПН ";
+                                Kontainers += E[4] + ";";
+                                Obiems += (Convert.ToInt32(E[4]) * ObiemKontainera).ToString() + ";";
                             }
-
                         }
                         else
                         {
-                            MusorPloshadka Musor = new MusorPloshadka();
-
-                            Musor.GrafikVivoza = E[6];
-                            Musor.ObiemContainera = Convert.ToDecimal(E[7]);
-                            Musor.IDNew = E[2].Replace(" ", "");
-                            Musor.TypeId = 1;
-                            Musor.NameUL = E[4];
-                            Musor.IDPloshadki = E[5];
-                            Musor.Kontainers = "0;0;0;0;0;0;0";
-                            Musor.Obiem = "0;0;0;0;0;0;0";
-                            Musor.Name = E[1];
-                            Musor.UL = E[3];
-                            Musor.StreetId = P;
-                            Musor.Obnovleno = false;
-                            try
-                            {
-                                db.MusorPloshadkas.Add(Musor);
-                                db.SaveChanges();
-                            }
-                            catch (Exception e)
-                            {
-
-                            }
+                            Kontainers += "0;";
+                            Obiems += "0;";
                         }
+                        if (E[5] != null && E[5] != "0")
+                        {
+                            Grafik += "ВТ ";
+                            Kontainers += E[5]+";";
+                            Obiems += (Convert.ToInt32(E[5]) * ObiemKontainera).ToString() + ";";
+                        }
+                        else
+                        {
+                            Kontainers += "0;";
+                            Obiems += "0;";
+                        }
+                        if (E[6] != null && E[6] != "0")
+                        {
+                            Grafik += "СР ";
+                            Kontainers += E[6] + ";";
+                            Obiems += (Convert.ToInt32(E[6]) * ObiemKontainera).ToString() + ";";
+                        }
+                        else
+                        {
+                            Kontainers += "0;";
+                            Obiems += "0;";
+                        }
+                        if (E[7] != null && E[7] != "0")
+                        {
+                            Grafik += "ЧТ ";
+                            Kontainers += E[7] + ";";
+                            Obiems += (Convert.ToInt32(E[7]) * ObiemKontainera).ToString() + ";";
+                        }
+                        else
+                        {
+                            Kontainers += "0;";
+                            Obiems += "0;";
+                        }
+                        if (E[8] != null && E[8] != "0")
+                        {
+                            Grafik += "ПТ ";
+                            Kontainers += E[8] + ";";
+                            Obiems += (Convert.ToInt32(E[8]) * ObiemKontainera).ToString() + ";";
+                        }
+                        else
+                        {
+                            Kontainers += "0;";
+                            Obiems += "0;";
+                        }
+                        if (E[9] != null && E[9] != "0")
+                        {
+                            Grafik += "СБ ";
+                            Kontainers += E[9] + ";";
+                            Obiems += (Convert.ToInt32(E[9]) * ObiemKontainera).ToString() + ";";
+                        }
+                        else
+                        {
+                            Kontainers += "0;";
+                            Obiems += "0;";
+                        }
+                        if (E[10] != null && E[10] != "0")
+                        {
+                            Grafik += "ВС";
+                            Kontainers += E[10] ;
+                            Obiems += (Convert.ToInt32(E[10]) * ObiemKontainera).ToString();
+                        }
+                        else
+                        {
+                            Kontainers += "0";
+                            Obiems += "0";
+                        }
+                        Musor.GrafikVivoza = Grafik;
+                        Musor.ObiemContainera = ObiemKontainera;
+                        Musor.IDNew = "0";
+                        Musor.TKO = true;
+                        Musor.TypeId = 3;
+                        Musor.NameUL = Name;
+                        Musor.IDPloshadki = "0";
+                        Musor.Kontainers = Kontainers;
+                        Musor.Obiem = Obiems;
+                        Musor.Name = Streets[1];
+                        Musor.UL = Name;
+                        Musor.StreetId = AS.Id.ToString();
+                        Musor.Obnovleno = false;
+                        db.MusorPloshadkas.Add(Musor);
+                        db.SaveChanges();
                     }
-                    else
+                    catch  (Exception e)
                     {
-
+                        StreetsFalse += Streets[0] + Streets[1] + ";";
                     }
+
+                    //Если все улицы в записи найдены то идем дальше
+                    if (StreetsExcel.Count == Streets.Length) { UliciNaideni = true; }
+
+
+
                 }
+             
+             
 
+              
+            
+
+                ViewBag.Er2 = " Не найдены улицы: " + StreetsFalse;
+                return RedirectToAction("Index");
             }
-            errors = errors.Remove(errors.Length - 1, 1);
-            HttpCookie cookie = new HttpCookie("Errors");
-
-            cookie["Errors"] = errors;
-            cookie["Er2"] = StreetsFalse;
-            // Добавить куки в ответ
-            Response.Cookies.Add(cookie);
-
-            ViewBag.Er2 = " Не найдены улицы: " + StreetsFalse;
-            return RedirectToAction("Index");
         }
 
 

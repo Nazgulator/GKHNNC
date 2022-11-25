@@ -59,6 +59,9 @@ namespace GKHNNC.Models
         [Display(Name = "Не пускает")]
         public bool NePuskat { get; set; }
 
+        [Display(Name = "Белый список")]
+        public bool WhiteSpisok { get; set; }
+
         //только для визуала
         public string NewNumber;
 

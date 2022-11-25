@@ -32,6 +32,22 @@ namespace GKHNNC.Models
         public Tip Tip { get; set; }
         [Display(Name = "Периодичность")]
         public int Periodichnost { get; set; }
+        [Display(Name = "Ремонт?")]
+        public bool Remont { get; set; }
+        [Display(Name = "Стоимость материалов")]
+        public decimal CostMterials { get; set; }
+        [Display(Name = "Стоимость работы без материалов")]
+        public decimal CostWrok { get; set; }
+        [Display(Name = "% хорошее состояние")]
+        public decimal ProcGood { get; set; }
+        [Display(Name = "% плохое состояние")]
+        public decimal ProcBad { get; set; }
+        [Display(Name = "Общая стоимость материалов и работы")]
+        public decimal Cost;
+        [Display(Name = "Формула расчета")]
+        public string Comment;
+        [Display(Name = "Физическая величина")]
+        public decimal Fiz;
         //public string Agent { get; set; }
         //public DateTime Date { get; set; }
 

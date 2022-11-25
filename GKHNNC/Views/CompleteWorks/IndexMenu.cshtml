@@ -1,76 +1,92 @@
 ﻿@{Layout = "~/Views/Shared/_Layout0.cshtml"; }
+
+
+
 <table class="table table-striped table-bordered">
     <tbody>
-        @using (Html.BeginForm("OtchetMonth", "CompleteWorks", FormMethod.Post))
-        {
-            <tr style="height:20Px">
 
-                <td><h5><CENTER><b>ЖЭУ</b></CENTER></h5></td>
-                <td><h5><CENTER><b>АДРЕС</b></CENTER></h5></td>
-                <td><h5><CENTER><b>МЕСЯЦ</b></CENTER></h5></td>
-                <td><p><CENTER><b>ГОД</b></CENTER></p></td>
+        <tr style="height:20Px">
 
-
-            </tr>
+            <td><h5><CENTER><b>ЖЭУ</b></CENTER></h5></td>
+            <td><h5><CENTER><b>АДРЕС</b></CENTER></h5></td>
+            <td><h5><CENTER><b>МЕСЯЦ</b></CENTER></h5></td>
+            <td><p><CENTER><b>ГОД</b></CENTER></p></td>
 
 
-            <tr>
-
-                <td>
-                    @{
-                        MultiSelectList MSL2 = new MultiSelectList(ViewBag.GEU);
-                        @Html.DropDownList("GEU", MSL2, new { @class = "form-control" })
-                    }
-                </td>
-
-                <td>
-
-                    @{
-                        MultiSelectList MSL4 = new MultiSelectList(ViewBag.Adres);
-                    }
-                    @Html.DropDownList("WorkAdress", MSL4, new { @class = "form-control" })
-                </td>
-
-                <td>
+        </tr>
 
 
-                    @Html.DropDownList("Month", new SelectList(ViewBag.Month, "value", "text"), new { @class = "form-control" })
-                </td>
+        <tr>
 
-                <td>
-                    @{
+            <td>
+                @{
+                    MultiSelectList MSL2 = new MultiSelectList(ViewBag.GEU);
+                    @Html.DropDownList("GEU", MSL2, new { @class = "form-control" })
+                }
+            </td>
 
-                        MultiSelectList MSL3 = new MultiSelectList(ViewBag.Year);
-                    }
-                    @Html.DropDownList("Year", MSL3, new { @class = "form-control" })
-                </td>
+            <td>
+                @{
+                    MultiSelectList MSL4 = new MultiSelectList(ViewBag.Adres);
+                }
+                @Html.DropDownList("WorkAdress", MSL4, new { @class = "form-control" })
 
-            </tr>
-            <tr>
-                <td>
-                    @{
-                        SelectList CE = new SelectList(new string[] { "ТО конструктивных элементов", "ТО внутридомового инженерного оборудования" });
-                    }
-                    @Html.DropDownList("WorkGroup", @CE, new { @class = "form-control" })
-                </td>
-                <td>
+            </td>
 
-                    @Html.DropDownList("Work", new SelectList(ViewBag.Works, "value", "text"), new { @class = "form-control" })
-                </td>
-                <td>
-
-                    <input readonly id="izmerenie" class="form-control" />
-
-                </td>
-                <td>
-
-                    <input id="kolvo" type="number" placeholder="Количество" class="form-control" />
-
-                </td>
-            </tr>
+            <td>
 
 
-        }
+                @Html.DropDownList("Month", new SelectList(ViewBag.Month, "value", "text"), new { @class = "form-control" })
+            </td>
+
+            <td>
+                @{
+
+                    MultiSelectList MSL3 = new MultiSelectList(ViewBag.Year);
+                }
+                @Html.DropDownList("Year", MSL3, new { @class = "form-control" })
+            </td>
+
+        </tr>
+        <tr>
+            <td>
+                @{
+                    SelectList CE = new SelectList(new string[] { "ТО конструктивных элементов", "ТО внутридомового инженерного оборудования" });
+                }
+                @Html.DropDownList("WorkGroup", @CE, new { @class = "form-control" })
+            </td>
+            <td>
+
+                @Html.DropDownList("Work", new SelectList(ViewBag.Works, "value", "text"), new { @class = "form-control" })
+            </td>
+            <td>
+
+                <input readonly id="izmerenie" class="form-control" />
+
+            </td>
+            <td>
+
+                <input id="kolvo" type="number" placeholder="Количество" class="form-control" />
+
+            </td>
+        </tr>
+
+
+
+        <tr>
+            <td colspan="4">
+                <div class="bs-multiselect form-control">
+                    <select id="multiadres" class="select dropdown  "  multiple data-mdb-placeholder="Выберите несколько адресов">
+
+                        @foreach (string a in ViewBag.Adres)
+                        {
+                            <option value="@a">@a</option>
+                        }
+                    </select>
+
+                </div>
+            </td>
+        </tr>
         <tr>
             <td colspan="4">
                 <button class="btn btn-success btn-block" onclick="AddNewWork()">  Добавить работу   </button>
@@ -82,6 +98,7 @@
     @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
     @Scripts.Render("~/scripts/jquery-3.3.1.js")
     @Scripts.Render("~/Scripts/chosen.jquery.min.js")
+
     <script>
             //скрипт для поиска домов по жэу
         $("#GEU").change(function () {
@@ -125,7 +142,7 @@
 
             //теперь ищем измерение
             $.post('@Url.Action("PoiskIzmereniaPoRabote", "CompleteWorks")', { selection: F }, function (data2) {
-               
+
                 var WA = $("#izmerenie");
                 WA.text(data2);
                 WA.val(data2);
@@ -147,9 +164,16 @@
             var Izmerenie = $("#izmerenie").val();
             var Kolvo = $("#kolvo").val();
             var WG = $("#WorkGroup").val();
-            alert("Y:"+ parseInt(Year)+", M:"+ Month+", A:"+ Adres+", G:"+ GEU+", W:"+ parseInt(Work)+", I:" +Izmerenie+", K:"+ Kolvo+", WG:"+WG);
+            var Multiadres = $("#multiadres").val().toString().replace(',', ';');
+
+            var ma = "";
+            $("#multiadres").each(function () {
+                ma += $(this).val()+";";
+            });
+            ma = ma.slice(0, -1);
+            alert("Y:" + parseInt(Year) + ", M:" + Month + ", A:" + Adres + ", G:" + GEU + ", W:" + parseInt(Work) + ", I:" + Izmerenie + ", K:" + Kolvo + ", WG:" + WG + ", Multiadres=" + ma);
             //отправляем работу на добавление
-            $.post('@Url.Action("AddNewWork", "CompleteWorks")', { Y: parseInt(Year), M: Month, A: Adres, G: GEU, W: parseInt(Work), I: Izmerenie, K: Kolvo, WG:WG }, function (data2)
+            $.post('@Url.Action("AddNewWork", "CompleteWorks")', { Y: parseInt(Year), M: Month, A: Adres, G: GEU, W: parseInt(Work), I: Izmerenie, K: Kolvo, WG: WG, Multiadres: ma }, function (data2)
             {
                 var S = data2.split(';');
                 var Tabl = $("#T");
@@ -161,9 +185,9 @@
             });
 
         }
-    
-            
-    
+
+
+
     </script>
 
 

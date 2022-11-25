@@ -72,7 +72,7 @@ namespace GKHNNC.Controllers
             string Agent = "ЖЭУ-2";
             if (User.Identity.Name.Contains("ЖЭУ"))
             {
-                Agent = User.Identity.Name.Replace(" ", "");
+                Agent = User.Identity.Name.Replace(" ", "").Replace("НачальникЖЭУ", "");
             }
             string Adres = "Всеадреса";
             string Month = DateTime.Now.Month.ToString();
@@ -142,7 +142,7 @@ namespace GKHNNC.Controllers
             int EUId = 0;
             if (xxx.Contains("ЖЭУ"))
             {
-                int GeuId = Convert.ToInt16(xxx.Replace("ЖЭУ-", ""));
+                int GeuId = Convert.ToInt16(xxx.Replace("ЖЭУ-", "").Replace("НачальникЖЭУ",""));
             
                 try
                 {
@@ -384,7 +384,7 @@ namespace GKHNNC.Controllers
             if (User.Identity.Name.Contains("ЖЭУ"))
             {
                 //GEU = User.Identity.Name.Replace(" ", "");
-                string eid = db.GEUs.Where(x => x.Name.Contains(User.Identity.Name)).Select(x => x.EU).First().ToString();
+                string eid = db.GEUs.Where(x => x.Name.Contains(User.Identity.Name.Replace("НачальникЖЭУ",""))).Select(x => x.EU).First().ToString();
                 GGEU.Add(eid);
 
             }
@@ -434,19 +434,41 @@ namespace GKHNNC.Controllers
 
         }
 
+
+        public JsonResult DeleteWork(int ID)
+        {
+            string Alert = "";
+            var CW = db.CompleteWorks.Where(x => x.ID == ID).First();
+            try
+            {
+                db.CompleteWorks.Remove(CW);
+                db.SaveChanges();
+                Alert = "Работа удалена!";
+            }
+            catch (Exception e)
+            {
+                Alert = "Ошибка удаления "+ e.Message;
+            }
+            return Json(Alert);
+        }
         //формируем список для вывода по домам
         public ActionResult PartialViewSpisokEu(string Selection)
         {
             string GEU = "";
             string Year = "";
             string Month = "";
+            List<VipolnennieUslugi> VUAll = new List<VipolnennieUslugi>();
+            List<string> VUString = new List<string>();
+            List<int> VUNumber = new List<int>();
+
+           
 
             GEU = "1";
             if (Selection == null)
             {
                 Year = DateTime.Now.Year.ToString();
                 Month = DateTime.Now.Month.ToString();
-                string g = User.Identity.Name.Replace(" ","");
+                string g = User.Identity.Name.Replace(" ","").Replace("НачальникЖЭУ","");
                 if (Request.Cookies["Month"] != null)
                 {
                     Month = Request.Cookies["Month"].Value;
@@ -473,163 +495,227 @@ namespace GKHNNC.Controllers
                 HttpContext.Response.Cookies["Month"].Expires = DateTime.Now.AddDays(1);
             }
 
-              
 
-            if (User.Identity.Name.Contains("ЭУ"))
-            {
-                //GEU = User.Identity.Name.Replace(" ", "");
-                string eid = db.GEUs.Where(x => x.Name.Contains(User.Identity.Name)).Select(x => x.EU).First().ToString();
-                GEU = eid;
 
-            }
-            int EU = Convert.ToInt16(GEU);
-            int M = 0;
-            Obratno(Month, out M);
-            int Y = Convert.ToInt16(Year);
-            Month = M.ToString();
-            List<Adres> Adresadb = db.Adres.Where(a => a.EUId == EU ).ToList();
-            List<CompleteWork> completeWorksDB = db.CompleteWorks.Where(x => x.WorkDate.Year == Y&& x.WorkDate.Month==M).ToList();
-            List<CompleteWork> CWSpisok = new List<CompleteWork>();
-            List<string> CWAdresa = new List<string>();
-            List<int> CWNumber = new List<int>();
-            List<string> CWString = new List<string>();
-            //создаем список всех адресов из выполненных работ
-            int progress = 0;
-            int saveprogress = 0;
-            int cc = 0;
-            foreach (CompleteWork C in completeWorksDB)
+
+            if (Selection != null)
             {
-                cc++;
-                progress = Convert.ToInt16(Convert.ToDecimal(cc) / completeWorksDB.Count * 10);
-                ProgressHub.SendMessage("Загружено...", progress);
-                bool go = false;
-                for (int i = 0; i < CWAdresa.Count; i++)
+                if (User.Identity.Name.Contains("ЭУ"))
+                {
+                    //GEU = User.Identity.Name.Replace(" ", "");
+                    string eid = db.GEUs.Where(x => x.Name.Contains(User.Identity.Name.Replace("НачальникЖЭУ", ""))).Select(x => x.EU).First().ToString();
+                    GEU = eid;
+
+                }
+                int EU = Convert.ToInt16(GEU);
+                int M = 0;
+                Obratno(Month, out M);
+                int Y = Convert.ToInt16(Year);
+                Month = M.ToString();
+
+                DateTime D = new DateTime(Y, M, 1);
+                DateTime ToD = new DateTime(Y, M, 1).AddMonths(1);
+                List<Adres> Adresadb = db.Adres.Where(a => a.EUId == EU).Distinct().ToList();
+                List<string> AdresDist = Adresadb.Select(x => x.Adress.Replace(" ", "").ToUpper()).ToList();
+                List<CompleteWork> completeWorksDB = db.CompleteWorks.Where(x => x.WorkDate >= D && x.WorkDate <= ToD && AdresDist.Contains(x.WorkAdress.Replace(" ", ""))).OrderBy(x => x.WorkAdress).ToList();
+                List<CompleteWork> CWSpisok = new List<CompleteWork>();
+                List<VipolnennieUslugi> completeUslugsDB = db.VipolnennieUslugis.Include(X => X.Adres).Include(X => X.Usluga).Where(x => x.Date == D  && x.StoimostNaM2 + x.StoimostNaMonth!=0 && AdresDist.Contains(x.Adres.Adress.Replace(" ", ""))).ToList();//.OrderBy(x => x.Adres.Adress)
+                List<VipolnennieUslugi> VUSpisok = new List<VipolnennieUslugi>();
+                List<string> CWAdresa = new List<string>();
+                try
+                {
+                    CWAdresa = completeWorksDB.Select(x => x.WorkAdress.Replace(" ", "")).Distinct().ToList();
+                }
+                catch (Exception e)
                 {
 
-                    if (C.WorkAdress.Replace(" ", "").Equals(CWAdresa[i]))
+                }
+                //   CWAdresa = AdresDist;
+                List<int> CWNumber = new List<int>();
+                List<string> CWString = new List<string>();
+                //создаем список всех адресов из выполненных работ
+                int progress = 0;
+                int saveprogress = 0;
+                int cc = 0;
+                /*       foreach (CompleteWork C in completeWorksDB)
+                       {
+                           cc++;
+                           progress = Convert.ToInt16(Convert.ToDecimal(cc) / completeWorksDB.Count * 10);
+                           ProgressHub.SendMessage("Загружено...", progress);
+                           bool go = false;
+                           for (int i = 0; i < CWAdresa.Count; i++)
+                           {
+
+                               if (C.WorkAdress.Replace(" ", "").Equals(CWAdresa[i]))
+                               {
+                                   go = true;
+                                   break;
+                               }
+
+                           }
+                           if (!go)
+                           {
+                               CWAdresa.Add(C.WorkAdress.Replace(" ", ""));
+                               CWNumber.Add(0);
+                               CWString.Add("");
+
+
+                           }
+                           else
+                           {
+
+                           }
+                       }
+                       */
+                CWAdresa.Sort();
+                foreach (var CWA in CWAdresa)
+                {
+                    try
                     {
-
-
-
-                        go = true;
-                        break;
-                    }
-
-                }
-                if (!go)
-                {
-                    CWAdresa.Add(C.WorkAdress.Replace(" ", ""));
-                    CWNumber.Add(0);
-                    CWString.Add("");
-
-
-                }
-                else
-                {
-
-                }
-            }
-            CWAdresa.Sort();
-            saveprogress = 10;
-            // сверяем адреса с БД по ЖЭУ
-            cc = 0;
-            for (int i = CWAdresa.Count - 1; i >= 0; i--)
-            {
-                cc++;
-                progress = Convert.ToInt16(saveprogress + Convert.ToDecimal(cc) / CWAdresa.Count * 10);
-                ProgressHub.SendMessage("Загружено...", progress);
-                bool go = false;
-                foreach (Adres A in Adresadb)
-                {
-                    if (A.Adress.Replace(" ", "").Equals(CWAdresa[i].Replace(" ", "")))
-                    {
-                        go = true;
-                        break;
-                    }
-                }
-                if (!go)
-                {
-                    CWAdresa.RemoveAt(i);
-                }
-
-            }
-            saveprogress = 20;
-            cc = 0;
-            for (int j = completeWorksDB.Count - 1; j >= 0; j--)//для каждой работы
-            {
-                cc++;
-                progress = Convert.ToInt16(saveprogress + Convert.ToDecimal(cc) / completeWorksDB.Count * 10);
-                ProgressHub.SendMessage("Загружено...", progress);
-                for (int i = 0; i < CWAdresa.Count; i++)//для каждого адреса
-                {
-                    if (completeWorksDB[j].WorkAdress.Replace(" ", "").Equals(CWAdresa[i]))//если адрес работы совпал с адресом дома
-                    {
-                        if (CWString[i].Replace(" ", "").Contains(completeWorksDB[j].WorkName.Replace(" ", "")) == false)//проверка на типы услуг
+                        List<string> CWS = completeWorksDB.Where(x => x.WorkAdress.Replace(" ", "").Equals(CWA)).Select(x => x.WorkName).ToList();
+                        string cws = "";
+                        int num = CWS.Count();
+                        foreach (string s in CWS)
                         {
-                            CWNumber[i]++;
-                            CWString[i] += completeWorksDB[j].WorkName + ";";
-
+                            cws += s + ";";
                         }
-                        break;
+                        cws = cws.Remove(cws.Length - 1, 1);
+                        CWString.Add(cws);
+                        CWNumber.Add(num);
+
                     }
-
-                }
-            }
-
-
-            ViewBag.CWString = CWString;//названия услуг через ;
-            ViewBag.CWNumber = CWNumber;//количество услуг
-            ViewBag.CWAdresa = CWAdresa;
-            ViewBag.GEU = GEU;
-            List<VipolnennieUslugi> VUAll = new List<VipolnennieUslugi>();
-            List<string> VUString = new List<string>();
-            List<int> VUNumber = new List<int>();
-            int counter = 0;
-            saveprogress = 30;
-            cc = 0;
-            foreach (string Adres in CWAdresa)
-            {
-                cc++;
-                progress = Convert.ToInt16(saveprogress + Convert.ToDecimal(cc) / CWAdresa.Count * 70);
-                ProgressHub.SendMessage("Загружено...", progress);
-
-                VUString.Add("");
-                VUNumber.Add(0);
-                List<VipolnennieUslugi> VUDB = db.VipolnennieUslugis.Include(z => z.Adres).Include(f => f.Usluga).Where(x => x.Adres.Adress.Replace(" ", "").Equals(Adres.Replace(" ", "")) && x.Date.Year == Y && x.Date.Month == M).ToList();
-                VipolnennieUslugi V = new VipolnennieUslugi();
-
-                foreach (VipolnennieUslugi VU in VUDB)
-                {
-
-                    if (VUString[counter].Contains(VU.Usluga.Name) == false)
+                    catch
                     {
-                        if (VU.StoimostNaM2 + VU.StoimostNaMonth != 0)
-                        {
-                            VUString[counter] += VU.Usluga.Name + ";";
-                            VUNumber[counter]++;
-                        }
 
                     }
 
+                    try
+                    {
+                        List<VipolnennieUslugi> CUS = completeUslugsDB.Where(x => x.Adres.Adress.Equals(CWA)).ToList();
+                        string cus = "";
+                        int num = CUS.Count();
+                        foreach (var s in CUS)
+                        {
+                            cus += s.Usluga.Name + ";";
+                            // VipolnennieUslugi F = new VipolnennieUslugi();
+                            // DateTime FFF = new DateTime(Y, M, 1);
+                            //  F.Adres = s.Adres;
+                            //   F.Date = FFF;
+                           
+                        }
+                        VUAll.Add(CUS[0]);
+                        cus = cus.Remove(cus.Length - 1, 1);
+                        VUString.Add(cus);
+                        VUNumber.Add(num);
+                    }
+                    catch
+                    {
+
+                    }
                 }
-                if (VUDB.Count > 0)
-                {
-                    VUAll.Add(VUDB.First());
-                }
-                else
-                {
-                    VipolnennieUslugi F = new VipolnennieUslugi();
-                    Adres FF = new Adres();
-                    DateTime FFF = new DateTime(Y, M, 1);
-                    FF.Adress = Adres;
-                    F.Adres = FF;
-                    F.Date = FFF;
-                    VUAll.Add(F);
-                }
-                counter++;
+
+                saveprogress = 10;
+                // сверяем адреса с БД по ЖЭУ
+                cc = 0;
+                /*    for (int i = CWAdresa.Count - 1; i >= 0; i--)
+                    {
+                        cc++;
+                        progress = Convert.ToInt16(saveprogress + Convert.ToDecimal(cc) / CWAdresa.Count * 10);
+                        ProgressHub.SendMessage("Загружено...", progress);
+                        bool go = false;
+                        foreach (Adres A in Adresadb)
+                        {
+                            if (A.Adress.Replace(" ", "").Equals(CWAdresa[i].Replace(" ", "")))
+                            {
+                                go = true;
+                                break;
+                            }
+                        }
+                        if (!go)
+                        {
+                            CWAdresa.RemoveAt(i);
+                        }
+
+                    }
+                    */
+                saveprogress = 20;
+                cc = 0;
+                /*        for (int j = completeWorksDB.Count - 1; j >= 0; j--)//для каждой работы
+                        {
+                            cc++;
+                            progress = Convert.ToInt16(saveprogress + Convert.ToDecimal(cc) / completeWorksDB.Count * 10);
+                            ProgressHub.SendMessage("Загружено...", progress);
+                            for (int i = 0; i < CWAdresa.Count; i++)//для каждого адреса
+                            {
+                                if (completeWorksDB[j].WorkAdress.Replace(" ", "").Equals(CWAdresa[i]))//если адрес работы совпал с адресом дома
+                                {
+                                    if (CWString[i].Replace(" ", "").Contains(completeWorksDB[j].WorkName.Replace(" ", "")) == false)//проверка на типы услуг
+                                    {
+                                        CWNumber[i]++;
+                                        CWString[i] += completeWorksDB[j].WorkName + ";";
+
+                                    }
+                                    break;
+                                }
+
+                            }
+                        }
+        */
+
+                ViewBag.CWString = CWString;//названия услуг через ;
+                ViewBag.CWNumber = CWNumber;//количество услуг
+                ViewBag.CWAdresa = CWAdresa;
+                ViewBag.GEU = GEU;
+
+                int counter = 0;
+                saveprogress = 30;
+                cc = 0;
+                /*      foreach (string Adres in CWAdresa)
+                      {
+                          cc++;
+                          progress = Convert.ToInt16(saveprogress + Convert.ToDecimal(cc) / CWAdresa.Count * 70);
+                          ProgressHub.SendMessage("Загружено...", progress);
+
+                          VUString.Add("");
+                          VUNumber.Add(0);
+                          List<VipolnennieUslugi> VUDB = db.VipolnennieUslugis.Include(z => z.Adres).Include(f => f.Usluga).Where(x => x.Adres.Adress.Replace(" ", "").Equals(Adres.Replace(" ", "")) && x.Date.Year == Y && x.Date.Month == M).ToList();
+                          VipolnennieUslugi V = new VipolnennieUslugi();
+
+                          foreach (VipolnennieUslugi VU in VUDB)
+                          {
+
+                              if (VUString[counter].Contains(VU.Usluga.Name) == false)
+                              {
+                                  if (VU.StoimostNaM2 + VU.StoimostNaMonth != 0)
+                                  {
+                                      VUString[counter] += VU.Usluga.Name + ";";
+                                      VUNumber[counter]++;
+                                  }
+
+                              }
+
+                          }
+                          if (VUDB.Count > 0)
+                          {
+                              VUAll.Add(VUDB.First());
+                          }
+                          else
+                          {
+                              VipolnennieUslugi F = new VipolnennieUslugi();
+                              Adres FF = new Adres();
+                              DateTime FFF = new DateTime(Y, M, 1);
+                              FF.Adress = Adres;
+                              F.Adres = FF;
+                              F.Date = FFF;
+                              VUAll.Add(F);
+                          }
+                          counter++;
+                      }
+                  }
+                  */
+                ViewBag.VUNumber = VUNumber;
+                ViewBag.VUString = VUString;
             }
-            ViewBag.VUNumber = VUNumber;
-            ViewBag.VUString = VUString;
             return View(VUAll);
         }
   
@@ -943,16 +1029,33 @@ namespace GKHNNC.Controllers
             return Json("SformirovatAkt",data);
         }
 
-        [Authorize]
-        [HttpPost]
+      //  [Authorize]
+      //  [HttpPost]
         public ActionResult SformirovatAkt (string Selection)
         {
-            string[] s = Selection.Split(';');
-            string Adres = s[0].Replace(" ", "");
-            string AdresAll = s[0];
-            string Month = s[2];
-            string Year = s[1];
+            if (Selection == null||Selection.Contains(";")==false)
+            {
+                return Json("Ничего не найдено");
+            }
+            string[] s = Selection.Replace("'","").Split(';');
+            string Adres = "";
+            string AdresAll = "";
+            string Month = "";
+            string Year = "";
             string GEU = "";
+            try
+            {
+               
+                Adres = s[0].Replace(" ", "");
+                AdresAll = s[0];
+                Month = s[2];
+                Year = s[1];
+              
+            }
+            catch
+            {
+
+            }
             int G = 0;
 
             if (s.Length < 4)
@@ -1021,7 +1124,7 @@ namespace GKHNNC.Controllers
             string contentType = "application/vnd.ms-excel";
             //return File(path2, contentType, filename);
 
-             return Json(data);
+             return Json(data, JsonRequestBehavior.AllowGet);
         }
 
         [Authorize]
@@ -1070,7 +1173,7 @@ namespace GKHNNC.Controllers
             string contentType = "application/vnd.ms-excel";
             //return File(path2, contentType, filename);
 
-            return Json(data);
+            return Json(data,JsonRequestBehavior.AllowGet);
         }
 
         [Authorize]
@@ -1438,8 +1541,32 @@ namespace GKHNNC.Controllers
         }
 
         //Y: Year, M: Month, A: Adres, G: GEU, W: Work, I: Izmerenie, K: Kolvo 
-        public ActionResult AddNewWork(int Y,string M,string A, string G, int W, string I, string K, string WG)
+        public ActionResult AddNewWork(int Y,string M,string A, string G, int W, string I, string K, string WG, string Multiadres = "X")
         {
+          //  var dbAdres = db.Adres;
+            List<string> Adresa = new List<string>();
+            if (Multiadres.Equals("X")==false)
+            {
+                string[] S = Multiadres.Split(',');
+                foreach (string s in S)
+                {
+                   // int i = 0;
+                    try
+                    {
+                       // i = dbAdres.Where(x => x.Adress.Equals(s)).Select(x => x.Id).First();
+                        Adresa.Add(s);
+                    }
+                    catch
+                    {
+
+                    }
+                }
+            }
+            else
+            {
+               // int i = dbAdres.Where(x => x.Adress.Equals(A)).Select(x => x.Id).First();
+                Adresa.Add(A);
+            }
 
             //адрес дата группа измерение ИД номер 
             string data = "";
@@ -1449,36 +1576,39 @@ namespace GKHNNC.Controllers
             int Mon = 0;
             Obratno(M, out Mon);
             //   MonthOpred(M, out M);
-            if (I.Equals("") == false)
+            if (Adresa.Count>0)
             {
-                try
+                foreach (string z in Adresa)
                 {
-                    // string[] s = selection.Split(';');
-                    CompleteWork CW = new CompleteWork();
-                    CW.WorkAdress = A;
+                    try
+                    {
+                        // string[] s = selection.Split(';');
+                        CompleteWork CW = new CompleteWork();
+                        CW.WorkAdress = z;
 
-                    int Day = R.Next(29) + 1;
-                    CW.WorkDate = new DateTime(Y, Mon, Day);
-                    CW.WorkGroup = WG;
-                    CW.WorkIzmerenie = I;
-                    CW.WorkWorkId = W;
-                    CW.WorkNumber = Convert.ToDecimal(K);
-                    CW.Date = DateTime.Now;
-                    CW.Agent = G;
-                    CW.KtoSohranil = User.Identity.Name.Replace(" ", "");
-                    Work Work = db.Works.Find(CW.WorkWorkId);
-                    CW.WorkCode = Work.Code;
-                    CW.WorkName = Work.Name;
-                    db.CompleteWorks.Add(CW);
-                    db.SaveChanges();
-                    string Month = "";
-                    MonthOpred(CW.WorkDate.Month, out Month);
-                    // < p > Адрес </ p >           < p > Наименование </ p >            < p > Количество </ p >            < p > Измерение </ p >            < p > Дата </ p >           < p > Агент </ p >
-                    data = CW.WorkAdress + ";" + Work.Name + ";" + CW.WorkNumber + ";" + CW.WorkIzmerenie + ";" + CW.WorkDate + ";" + CW.Agent;
-                }
-                catch
-                {
-                    data = "0;alert-danger;Ошибка в добавлении работы!";
+                        int Day = R.Next(29) + 1;
+                        CW.WorkDate = new DateTime(Y, Mon, Day);
+                        CW.WorkGroup = WG;
+                        CW.WorkIzmerenie = I;
+                        CW.WorkWorkId = W;
+                        CW.WorkNumber = Convert.ToDecimal(K);
+                        CW.Date = DateTime.Now;
+                        CW.Agent = G;
+                        CW.KtoSohranil = User.Identity.Name.Replace(" ", "");
+                        Work Work = db.Works.Find(CW.WorkWorkId);
+                        CW.WorkCode = Work.Code;
+                        CW.WorkName = Work.Name;
+                        db.CompleteWorks.Add(CW);
+                        db.SaveChanges();
+                        string Month = "";
+                        MonthOpred(CW.WorkDate.Month, out Month);
+                        // < p > Адрес </ p >           < p > Наименование </ p >            < p > Количество </ p >            < p > Измерение </ p >            < p > Дата </ p >           < p > Агент </ p >
+                        data = CW.WorkAdress + ";" + Work.Name + ";" + CW.WorkNumber + ";" + CW.WorkIzmerenie + ";" + CW.WorkDate + ";" + CW.Agent;
+                    }
+                    catch
+                    {
+                        data = "0;alert-danger;Ошибка в добавлении работы!";
+                    }
                 }
             }
 

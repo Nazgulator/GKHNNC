@@ -17,12 +17,32 @@ namespace GKHNNC.Controllers
         private AutomarshallContext adb = new AutomarshallContext();
 
         // GET: Poligons
-        public ActionResult Index(string Number, int Poisk = 0, int PoiskKontr = 0, int result = 0, int Vesi = 0, int Avtosort = 0,string TekDate="")
+        public ActionResult Index(string Number, int Poisk = 0, int PoiskKontr = 0, int result = 0, int Vesi = 0, int Avtosort = 0,string TekDate="", string Date2 = "")
         {
             DateTime Date = DateTime.Now;
-            if (TekDate!="")
+            DateTime DateTo = DateTime.Now;
+
+            if (Date2!="")
+            {
+                //   if (Date2.Contains("/"))
+                //    {
+                //       string[] S = Date2.Split('/');
+                //         DateTo = new DateTime(Convert.ToInt16(S[0]), Convert.ToInt16(S[1]), Convert.ToInt16(S[1]));
+                //    }
+
+                DateTo = Convert.ToDateTime(Date2);
+                ViewBag.Date2 = DateTo;
+            }
+          
+                if (TekDate!="")
             {
                 Date = Convert.ToDateTime(TekDate);
+              //  if (TekDate.Contains("/"))
+              //  {
+            //        string[] S = Date2.Split('/');
+           //         Date = new DateTime(Convert.ToInt16(S[0]), Convert.ToInt16(S[1]), Convert.ToInt16(S[1]));
+           //     }
+                 
                 //добавляем куки с осмотром
                 HttpCookie cookie = new HttpCookie("Poligon");
                 cookie["Date"] = Date.ToString();
@@ -31,11 +51,11 @@ namespace GKHNNC.Controllers
             }
             else
             {
-                 HttpCookie cookieReq = Request.Cookies["Poligon"];
-                 if (cookieReq != null)
-                 {
-                     Date = Convert.ToDateTime(cookieReq["Date"]);
-                 }
+             //    HttpCookie cookieReq = Request.Cookies["Poligon"];
+            //     if (cookieReq != null)
+            //     {
+           //          Date = Convert.ToDateTime(cookieReq["Date"]);
+          //       }
                
             }
             if (Date.Day == DateTime.Now.Day && Date.Month == DateTime.Now.Month && Date.Year == DateTime.Now.Year) { Date = DateTime.Now; }
@@ -96,6 +116,7 @@ namespace GKHNNC.Controllers
                     ViewBag.AvtoKontragent = Avto.KontrAgent.Name;
                     ViewBag.AvtoKontragentId = Avto.KontrAgent.Id;
                     ViewBag.Avto = Avto;
+            
                 }
                 catch(Exception e)
                 {
@@ -116,7 +137,7 @@ namespace GKHNNC.Controllers
 
             List<Poligon> Poligons = new List<Poligon>();
             ViewBag.Date = Date;//сохраняем дату для передачи
-
+      
 
 
             string NumberPoisk = "";
@@ -125,7 +146,16 @@ namespace GKHNNC.Controllers
                 DateTime D = Date;
                 if (Poisk != 0)
                 {
-                    Poligons = db.Poligons.Where(x => x.Date.Year == D.Year && x.Date.Month == D.Month && x.Date.Day == D.Day && x.AvtomobilId == Poisk).Include(z => z.Avtomobil).Include(z => z.Avtomobil.Marka).Include(z => z.Avtomobil.Type).Include(x => x.Marka).Include(x => x.Type).Include(x => x.Avtomobil.KontrAgent).ToList();
+                    if (Date2 == "")
+                    {
+                        Poligons = db.Poligons.Where(x => x.Date.Year == D.Year && x.Date.Month == D.Month && x.Date.Day == D.Day && x.AvtomobilId == Poisk).Include(z => z.Avtomobil).Include(z => z.Avtomobil.Marka).Include(z => z.Avtomobil.Type).Include(x => x.Marka).Include(x => x.Type).Include(x => x.Avtomobil.KontrAgent).ToList();
+                    }
+                    else
+                    {
+                        Poligons = db.Poligons.Where(x => x.Date>=D&&x.Date<=DateTo && x.AvtomobilId == Poisk).Include(z => z.Avtomobil).Include(z => z.Avtomobil.Marka).Include(z => z.Avtomobil.Type).Include(x => x.Marka).Include(x => x.Type).Include(x => x.Avtomobil.KontrAgent).ToList();
+
+                    }
+
                     NumberPoisk = db.Avtomobils.Where(x => x.Id == Poisk).Select(x => x.Number).First();
                     ViewBag.Poisk = NumberPoisk;
                     ViewBag.PoiskId = Poisk;
@@ -133,8 +163,16 @@ namespace GKHNNC.Controllers
                 }
                 else
                 {
+                    if (Date2 == "")
+                    {
+                        Poligons = db.Poligons.Where(x => x.Date.Year == D.Year && x.Date.Month == D.Month && x.Date.Day == D.Day).Include(z => z.Avtomobil).Include(z => z.Avtomobil.Marka).Include(z => z.Avtomobil.Type).Include(x => x.Marka).Include(x => x.Type).Include(x => x.Avtomobil.KontrAgent).ToList();
+                    }
+                    else
+                    {
+                        Poligons = db.Poligons.Where(x => x.Date>=D&& x.Date<=DateTo).Include(z => z.Avtomobil).Include(z => z.Avtomobil.Marka).Include(z => z.Avtomobil.Type).Include(x => x.Marka).Include(x => x.Type).Include(x => x.Avtomobil.KontrAgent).ToList();
 
-                    Poligons = db.Poligons.Where(x => x.Date.Year == D.Year && x.Date.Month == D.Month && x.Date.Day == D.Day).Include(z => z.Avtomobil).Include(z => z.Avtomobil.Marka).Include(z => z.Avtomobil.Type).Include(x => x.Marka).Include(x => x.Type).Include(x => x.Avtomobil.KontrAgent).ToList();
+                    }
+
                     ViewBag.Poisk = "0";
                     ViewBag.PoiskId = 0;
 
@@ -162,9 +200,12 @@ namespace GKHNNC.Controllers
                     }
                 }
 
+       
+
             }
-            catch
-            { }
+            catch (Exception Ex)
+            {
+            }
 
             Dictionary<char, char> DicVer = new Dictionary<char, char>()
                 {
@@ -201,7 +242,14 @@ namespace GKHNNC.Controllers
                 {
                     if (User.IsInRole("Администратор") || User.Identity.Name.Equals("НачальникПолигона"))
                     {
-                        AW = adb.AutomarshallViews.Where(x => x.TimeStamp.Year == Date.Year && x.TimeStamp.Month == Date.Month && x.TimeStamp.Day == Date.Day).ToList();
+                        if (Date2 == "")
+                        {
+                            AW = adb.AutomarshallViews.Where(x => x.TimeStamp.Year == Date.Year && x.TimeStamp.Month == Date.Month && x.TimeStamp.Day == Date.Day).ToList();
+                        }
+                        else
+                        {
+                            AW = adb.AutomarshallViews.Where(x => x.TimeStamp>=Date&&x.TimeStamp<=DateTo).ToList();
+                        }
                     }
                     else
                     {
@@ -373,7 +421,7 @@ namespace GKHNNC.Controllers
 
             if (Avtosort!=0)
             {
-                Poligons = Poligons.OrderBy(x=>x.AvtomobilId).ThenBy(x => x.Date).ThenByDescending(x=>x.Id).ToList();
+                Poligons = Poligons.OrderBy(x=>x.Number).ThenBy(x => x.Date).ThenByDescending(x=>x.Id).ToList();
                 foreach (Poligon P in Poligons)
                 {
                     try
@@ -420,6 +468,60 @@ namespace GKHNNC.Controllers
 
 
             }
+
+            //Сверяем с белым листом
+            List<WhiteList> White = new List<WhiteList>();
+            try
+            {
+                White = db.WhiteLists.ToList();
+            }
+            catch
+            {
+
+            }
+            ViewBag.White = White;
+            // List<string> WL = White.OrderBy(x => x.Id).Select(x => x.Nomer.Replace(" ","").Remove(4).Remove(0,1)).ToList(); //сравнение только цифр
+            List<string> WL = White.OrderBy(x => x.Id).Select(x => x.Nomer.Replace(" ", "")).ToList();
+            foreach (Poligon p in Poligons)
+            {
+                
+                string Nimb = p.Number.Replace(" ", "").Remove(5);
+               
+                   // int y = Convert.ToInt16(Nimb[0]);
+                 //   if (!char.IsDigit(Nimb[0]))
+
+               //     {
+                    //   Nimb = Nimb.Remove(0, 1); //сравнение только цифр
+              //  }
+
+
+
+
+                p.White = false;
+                try
+                {
+                    var X = White.Where(x => x.Nomer.Contains(Nimb)).First();// WL.Where(x => x.Equals(Nimb)).First();
+                    p.White = true;
+                    p.MassIn = Math.Round(X.Obiem  * 165.1M, 2); ;
+                    p.MassOut = 0;
+                    p.MassMusor =p.MassIn;
+                    p.Avtomobil.ObiemBunkera = X.Obiem;
+                    p.Avtomobil.KontrAgent.Name = X.Kontragent;
+                    p.KontrAgentName = X.Kontragent;
+                    p.Avtomobil.Marka.Name = X.Marka;
+                    p.Tint = "Поиск в белом листе как "+Nimb;
+                   // p.MassMusor = X.Obiem;
+                }
+                catch
+                {
+                    p.White = false;
+                    p.Tint = "Не найдена в белом листе как " + Nimb;
+                }
+            }
+
+
+
+
             ViewBag.Resultat = result;
             ViewBag.Summ = Poligons.Sum(x => x.MassMusor);
             return View(Poligons);
