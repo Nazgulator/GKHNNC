@@ -1505,7 +1505,7 @@ WorkDate = cl.First().WorkDate
             {
 
             }
-            //Суммируем данные по ОРК
+            //Суммируем данные по ОРC
             try
             {
                 ORCs = db.ORCs.Where(x => x.ADDRESS.Equals(AdresMKD.ORC) && x.PROVIDER.Contains("ФГБУ АКАД-Я КОМФ")&&x.Year==Year).ToList();//Выбираем всех ОРКов

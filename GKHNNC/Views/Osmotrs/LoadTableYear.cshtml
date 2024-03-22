@@ -23,9 +23,6 @@
             Выполненные работы
         </th>
         <th>
-            Прочие средства
-        </th>
-        <th>
             Баланс дома на конец периода
         </th>
     </tr>
@@ -45,11 +42,8 @@
         <th title="Статья Аренда Данные Остатки + Вознаграждение " class="table-success">
             @Model.Arenda
         </th>
-        <th>
-            0
-        </th>
-        <th title="Расчетное значение  @Model.OstatkiArendaSTART - @Model.OstatkiArendaEND + @Model.OstatkiArendaOplacheno" class="table-warning">
-            @Model.ArendaRaschet
+        <th title="Расчетное значение  @Model.OstatkiArendaSTART - @Model.OstatkiArendaEND + @Model.OstatkiArendaOplacheno -@Model.Arenda" class="table-warning">
+            @(Model.OstatkiArendaSTART - Model.OstatkiArendaEND + Model.OstatkiArendaOplacheno - Model.Arenda)
         </th>
     </tr>
     <tr>
@@ -68,11 +62,8 @@
         <th title="Статья ДопТекРем Данные Расход отчет Остатки" class="table-success">
             @Model.OstatkiDopTekRemEND
         </th>
-        <th>
-            0
-        </th>
-        <th title="Расчетное значение  @Model.OstatkiDopTekRemSTART - @Model.OstatkiDopTekRemEND + @Model.ORCDopTekRemPAY" class="table-warning">
-            @Model.DopTekRemRaschet
+        <th title="Расчетное значение  @Model.OstatkiDopTekRemSTART - @Model.OstatkiDopTekRemEND + @Model.ORCDopTekRemPAY - @Model.DopTekRem" class="table-warning">
+            @(@Model.OstatkiDopTekRemSTART - Model.OstatkiDopTekRemEND + Model.ORCDopTekRemPAY - Model.DopTekRem)
         </th>
     </tr>
 
@@ -90,13 +81,10 @@
             @Model.ORCNepredRemontPAY
         </th>
         <th title="Статья ДопТекРем Данные Расход отчет Остатки" class="table-success">
-            @Model.OstatkiNepredRemEND
-        </th>
-        <th>
-            0
-        </th>
-        <th title="Расчетное значение  @Model.OstatkiNepredRemSTART - @Model.OstatkiNepredRemEND + @Model.ORCNepredRemontPAY" class="table-warning">
             @Model.NepredRaschet
+        </th>
+        <th title="Расчетное значение  @Model.OstatkiNepredRemSTART - @Model.OstatkiNepredRemEND + @Model.ORCNepredRemontPAY - @Model.NepredRemont" class="table-warning">
+            @(Model.OstatkiNepredRemSTART - Model.OstatkiNepredRemEND + @Model.ORCNepredRemontPAY - Model.NepredRemont)
         </th>
     </tr>
     <tr>
@@ -104,45 +92,19 @@
             Текущий ремонт (содержание)
         </td>
         <th>
-            0
+            @Model.OstatkiTekRemSTART
         </th>
         <th title="Столбец CHARGE отчет ОРС" class="table-danger">
             @Model.ORCTekRemCHANGE
         </th>
-        <th title="Столбец PAY отчет ОРС" class="table-danger">
-            @Model.ORCTekRemPAY
+        <th title="Столбец PAY отчет ОРС " class="table-danger">
+            @(Model.ORCTekRemPAY)
         </th>
-        <th title="-" class="table-success">
-            0
-        </th>
-        <th>
-            0
-        </th>
-        <th title="Расчетное значение  0 - @Model.OstatkiTekRemEND + @Model.ORCTekRemPAY" class="table-warning">
-            @Model.TekRemRaschet
-        </th>
-    </tr>
-    <tr>
-        <td>
-            ТЕКУЩИЙ РЕМОНТ (содержание)
-        </td>
-        <th>
-            0
-        </th>
-        <th title="" class="table-danger">
-            0
-        </th>
-        <th title="" class="table-danger">
-            0
-        </th>
-        <th title="-" class="table-success">
+        <th title="ТЕКРЕМ (Содержание) WORD" class="table-success">
             @Model.TEKREM
         </th>
-        <th>
-            0
-        </th>
-        <th title="Расчетное значение  0 - @Model.OstatkiTekRemEND + @Model.ORCTekRemPAY" class="table-warning">
-            @Model.TekRemRaschet
+        <th title="Расчетное значение   @Model.OstatkiTekRemSTART - @Model.OstatkiTekRemEND + @Model.ORCTekRemPAY - @Model.TEKREM" class="table-warning">
+            @(Model.OstatkiTekRemSTART - Model.OstatkiTekRemEND + Model.ORCTekRemPAY - Model.TEKREM)
         </th>
     </tr>
     <tr>
@@ -160,9 +122,6 @@
         </th>
         <th title="Статья Содержание и ремонт собственные средства Данные Word 3 исключения" class="table-info">
             @Model.Soderganie
-        </th>
-        <th>
-            0
         </th>
         <th title="Расчетное значение  @Model.OstatkiSoderganieSTART - @Model.Soderganie + @Model.ORCSoderganiePAY" class="table-warning">
             @Model.SoderganieRaschet
