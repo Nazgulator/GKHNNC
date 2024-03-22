@@ -44,13 +44,13 @@ namespace GKHNNC.Controllers
         {
             List<Osmotr> Osmotrs = new List<Osmotr>();
 
-
+            int Y = DateTime.Now.Year;
             try
             {
-                Osmotrs = db.Osmotrs.Where(x => x.Sostoyanie == 0).ToList();
+                Osmotrs = db.Osmotrs.Where(x => x.Sostoyanie < 3&&(x.Date.Year==Y||x.Date.Year==Y-1)).ToList();
                 foreach (Osmotr O in Osmotrs)
                 {
-                    O.Sostoyanie = 1;
+                    O.Sostoyanie = 3;
                     db.Entry(O).State = EntityState.Modified;
                     db.SaveChanges();
                 }
@@ -143,6 +143,72 @@ namespace GKHNNC.Controllers
             }
             return View(Result.OrderBy(x => x.Adres.Adress).ToList());
         }
+        public List<Adres> GetAdresa()
+        {
+            List<Adres> A = new List<Adres>();
+            if (Session["Adresa"] == null)
+            {
+                try
+                {
+                    A = db.Adres.Where(x => x.MKD && x.TypeId == 1).ToList();
+                    //Сохраняем в сессию адреса
+                    Session["Adresa"] = A;
+                }
+                catch
+                {
+
+                }
+
+
+            }
+            else
+            {
+                A = (List<Adres>)Session["Adresa"];
+            }
+
+            if (A.Count==0)
+            {
+                try
+                {
+                    A = db.Adres.Where(x => x.MKD && x.TypeId == 1).ToList();
+                }
+                catch
+                {
+
+                }
+            }
+            return A;
+        }
+
+        public List<Osmotr> GetOsmotrs(bool Obnovit)
+        {
+            List<Osmotr> Osmotrs = new List<Osmotr>();
+            if (Obnovit==false && Session["Osmotrs"] !=null)
+            {
+try
+                {
+                    Osmotrs = (List<Osmotr>) Session["Osmotrs"];
+                }
+                catch
+                {
+
+                }
+            }
+      
+           if (Osmotrs.Count==0)
+            {
+try
+                {
+                    Osmotrs = db.Osmotrs.Include(x => x.Adres).Include(x => x.ORW).Include(x => x.AOW).ToList();
+                    Session["Osmotrs"] = Osmotrs;
+                }
+                catch (Exception e)
+                {
+
+                }
+            }
+            return Osmotrs;
+        }
 
         public ActionResult Index(string Adres = "", string fromD = "", string toD = "", string WorkPoisk = "", bool obnovit = false)
         {
@@ -151,6 +217,8 @@ namespace GKHNNC.Controllers
             List<House> Y = new List<House>();
             List<Adres> houses = new List<Adres>();
             List<EventLog> Events = new List<EventLog>();
+            List<Osmotr> Osmotrs = new List<Osmotr>();
+            List<OsmotrWork> PoiskWorks = new List<OsmotrWork>();
             try
             {
                 Events = db.EventLogs.OrderByDescending(x => x.Date).Take(5).ToList();
@@ -184,19 +252,19 @@ namespace GKHNNC.Controllers
 
                 }
             }
+            if (WorkPoisk!="")
+            {
+                try
+                {
+                    PoiskWorks = db.OsmotrWorks.Where(x => x.Name.Contains(WorkPoisk)).ToList();
+                }
+                catch
+                {
+
+                }
+            }
             ViewBag.Adres = Adres;
-            if (Session["Adresa"] == null)
-            {
-                houses = db.Adres.Where( x=> x.MKD && x.TypeId == 1).ToList();
-                //Сохраняем в сессию адреса
-                Session["Adresa"] = houses;
-
-
-            }
-            else
-            {
-               houses = (List<Adres>)Session["Adresa"];
-            }
+            houses = GetAdresa();
             if (Adres.Equals("") == false)
             {
                 houses = houses.Where(x => x.Adress.Contains(Adres)).ToList();
@@ -238,8 +306,8 @@ namespace GKHNNC.Controllers
             int procount = 0;
             pro100 = houses.Count;
 
-          
 
+            Osmotrs = GetOsmotrs(obnovit);
             foreach (Adres a in houses)
             {
                 if (Session["Houses" + a.Adress] == null || obnovit==true)
@@ -265,14 +333,49 @@ namespace GKHNNC.Controllers
                     try
                     {
                         DateTime Dat = DateTime.Now;
-                        ho.Osmotrs = db.Osmotrs.Where(x => x.AdresId == a.Id && x.DateEnd >= FromDate && x.DateEnd <= ToDate).OrderBy(x => x.Date).ToList();//все осмотры дома
+                        ho.Osmotrs = Osmotrs.Where(x => x.AdresId == a.Id ).OrderBy(x => x.Date).ToList(); //&& x.Date >= FromDate && x.DateEnd <= ToDate
+                        //db.Osmotrs.Where(x => x.AdresId == a.Id && x.DateEnd >= FromDate && x.DateEnd <= ToDate).OrderBy(x => x.Date).ToList();//все осмотры дома
                         ho.NumberWorks = 0;
-                        foreach (Osmotr O in ho.Osmotrs)
+                        if (PoiskWorks.Count>0)
                         {
-                            O.ORW = db.OsmotrRecommendWorks.Where(x => x.OsmotrId == O.Id && x.Gotovo == true && x.Name.Contains(WorkPoisk)).Include(x => x.Izmerenie).ToList();
-                            O.AOW = db.ActiveOsmotrWorks.Where(x => x.OsmotrId == O.Id && x.Gotovo == true && x.OsmotrWork.Name.Contains(WorkPoisk)).Include(x => x.OsmotrWork).ToList();
-                            ho.NumberWorks += O.ORW.Count + O.AOW.Count();
+                            ho.NumberWorks = 0;
+                           
+                                foreach (Osmotr O in ho.Osmotrs)
+                                { try
+                            {
+                                    ho.NumberWorks += O.ORW.Where(y => y.Gotovo == true).Where(x => x.Name.Contains(WorkPoisk)).Count();
+
+                                     foreach (OsmotrWork W in PoiskWorks)
+                                    {
+                                        ho.NumberWorks += O.AOW.Where(x => x.OsmotrWorkId == W.Id&&x.Gotovo==true).Count();
+                                    }
+                                }
+                            catch
+                            {
+
+                            }
+                                }
+                                
+                           
                         }
+                        else
+                        {
+                            try
+                            {
+                                ho.NumberWorks=ho.Osmotrs.Sum(x => x.ORW.Count + x.AOW.Count); 
+                            }
+                            catch
+                            {
+
+                            }
+                          
+                        }
+                     //   foreach (Osmotr O in ho.Osmotrs)
+                    //    {
+                    //        O.ORW = db.OsmotrRecommendWorks.Where(x => x.OsmotrId == O.Id && x.Gotovo == true && x.Name.Contains(WorkPoisk)).Include(x => x.Izmerenie).ToList();
+                    //        O.AOW = db.ActiveOsmotrWorks.Where(x => x.OsmotrId == O.Id && x.Gotovo == true && x.OsmotrWork.Name.Contains(WorkPoisk)).Include(x => x.OsmotrWork).ToList();
+                    //        ho.NumberWorks += O.ORW.Count + O.AOW.Count();
+                    //    }
 
                         ho.NumberOsmotrs = ho.Osmotrs.Count();
                         ho.OsmotrEst = true;
@@ -282,15 +385,18 @@ namespace GKHNNC.Controllers
                     catch (Exception e) { ho.OsmotrEst = false; }
                     try
                     {
-                        int D = db.DOMCWs.Where(x => x.AdresId == a.Id).OrderByDescending(x => x.Date).Select(x => x.Id).First();
-                        ho.GISGKH = true;
+                      //  int D = db.DOMCWs.Where(x => x.AdresId == a.Id).OrderByDescending(x => x.Date).Select(x => x.Id).First();
+                     //   ho.GISGKH = true;
                     }
                     catch
                     {
-                        ho.GISGKH = false;
+                     //   ho.GISGKH = false;
                     }
 
-                    if ((WorkPoisk != "" && ho.NumberWorks > 0) || WorkPoisk.Equals(""))//Если ищем по наименованию выполненной работы то не выводим дома без этой работы
+                    ho.GISGKH = true;//Данные гисжкх явно устарели игнорим их с 25.11.2022
+                    H.Add(ho);
+
+               /*     if ((WorkPoisk != "" && ho.NumberWorks > 0) || WorkPoisk.Equals(""))//Если ищем по наименованию выполненной работы то не выводим дома без этой работы
                     {
 
 
@@ -303,7 +409,7 @@ namespace GKHNNC.Controllers
                             Y.Add(ho);
                         }
                     }
-
+                    */
                     procount++;
                     progress = Convert.ToInt16(procount / pro100 * 100);
                     ProgressHub.SendMessage("Загружаем данные домов, подождите немножко...", progress);
@@ -318,7 +424,14 @@ namespace GKHNNC.Controllers
                 }
                 
             }
-            H.AddRange(Y);
+            try
+            {
+                H.AddRange(Y);
+            }
+            catch
+            {
+
+            }
 
 
 

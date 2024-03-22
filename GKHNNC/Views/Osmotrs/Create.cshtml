@@ -25,7 +25,7 @@
         });
     </script>
 
-    <div id='wrap_preloader' style=" width: 100%;height: 100%;position: fixed;top:0px;margin: 0px auto;background: #1C1C1C;z-index: 99;text-align: center;color: #fff;font-size: 15px;padding-top: 260px;color:limegreen">
+    <div id='wrap_preloader' style=" width: 100%;height: 100%;position: fixed;top:0px;margin: 0px auto;background: #161616;z-index: 99;text-align: center;color: #fff;font-size: 15px;padding-top: 260px;color:limegreen">
 
         <p>
             <img src="~/Content/Images/Download/D1.gif" align="middle" class="rounded mr-2" alt="Идёт загрузка...">
@@ -43,9 +43,12 @@
 
 
     <div id="MENU" style="background:#28a745;z-index:90;position:fixed;top:0px;">
-        @for (int i = 0; i < Model.DOMParts.Count; i++)
+        @if (Model != null && Model.DOMParts != null)
+        {
+        for (int i = 0; i < Model.DOMParts.Count; i++)
         {
             <a href="#@i" style="color:white;font-size:20px">@Model.DOMParts[i].Name |</a>
+        }
         }
         @Html.ActionLink("Сохранить отчет в Excel |", "ExportToExcel", "Osmotrs", null, new { @style = "color:white;font-size:20px" })
         @Html.ActionLink("Назад", "Index", "Houses", null, new { @style = "color:white;font-size:20px" })
@@ -68,7 +71,14 @@
         <table>
             <tr>
                 <td>
+                    @try
+                    {
                     <h3>@Model.Adres.Ulica @Model.Adres.Dom</h3>
+                    }
+                    catch
+                    {
+
+                    }
                 </td>
             </tr>
 
@@ -95,13 +105,13 @@
     <hr />
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
- 
+
 
 
 
     @if (Model.ORW != null)
     {
-        Console.WriteLine("Модель Рекомендованные работы = " + Model.ORW.Count().ToString());
+        Console.WriteLine("Модель Рекомендованные работы = " + Model.ORW.Count.ToString());
         <div class="container">
 
             <table id="RO" class="table-bordered table-striped">
@@ -128,27 +138,27 @@
 
 
                 }
-                    <tr id="RO_@Model.Id" class="AO_@Model.Id" style="@Stealth">
-                        <th style="text-align:center">
-                            Часть дома
-                        </th>
-                        <th width="300px" style="text-align:center">
-                            Наименование работы
-                        </th>
-                        <th style="text-align:center" colspan="2">
-                            Количество
-                        </th>
-                        <th style="text-align:center">
-                            Измерение
-                        </th>
-                        <th style="text-align:center">
-                            Стоимость
-                        </th>
-                     
-                        <th style="text-align:center" colspan="2">
-                            Опции
-                        </th>
-                    </tr>
+                <tr id="RO_@Model.Id" class="AO_@Model.Id" style="@Stealth">
+                    <th style="text-align:center">
+                        Часть дома
+                    </th>
+                    <th width="300px" style="text-align:center">
+                        Наименование работы
+                    </th>
+                    <th style="text-align:center" colspan="2">
+                        Количество
+                    </th>
+                    <th style="text-align:center">
+                        Измерение
+                    </th>
+                    <th style="text-align:center">
+                        Стоимость
+                    </th>
+
+                    <th style="text-align:center" colspan="2">
+                        Опции
+                    </th>
+                </tr>
 
                 @for (int i = 0; i < Model.ORW.Count; i++)
                 {
@@ -164,13 +174,13 @@
                     }
                     if (@Model.ORW[i].Gotovo) { CS = " table-success"; }
                     <tr id="RO_@Model.ORW[i].Id" class="@CS">
-                        <td id="DP_@Model.ORW[i].Id"style="text-align:center">
+                        <td id="DP_@Model.ORW[i].Id" style="text-align:center">
                             @Model.ORW[i].DOMPart.Name
                         </td>
                         <td id="Nam_@Model.ORW[i].Id" width="300px" style="text-align:center">
                             @Model.ORW[i].Name
                         </td>
-                        <td id="Num_@Model.ORW[i].Id"style="text-align:center" colspan="2">
+                        <td id="Num_@Model.ORW[i].Id" style="text-align:center" colspan="2">
                             @Model.ORW[i].Number
                         </td>
                         <td id="Izm_@Model.ORW[i].Id" style="text-align:center">
@@ -179,29 +189,28 @@
                         <td id="Cost_@Model.ORW[i].Id" style="text-align:center">
                             @Model.ORW[i].Cost
                         </td>
-                        @if (User.Identity.Name.Contains("ПТО") || User.Identity.Name.Contains("ОЭЖФ") || User.IsInRole("Администратор"))
+
+                        @if (Model.ORW[i].Gotovo == false)
                         {
-                            if (Model.ORW[i].Gotovo == false)
-                            {
-                        <td style="text-align:center" colspan="2">
+                            <td style="text-align:center" colspan="2">
 
-                            <button type="button" id="RemoveRecommendWork" ADId="@Model.ORW[i].Id" onclick="RemoveRecommendWork('@Model.ORW[i].Id')" class="btn btn-outline-danger">Удалить работу</button>
+                                <button type="button" id="RemoveRecommendWork" ADId="@Model.ORW[i].Id" onclick="RemoveRecommendWork('@Model.ORW[i].Id')" class="btn btn-outline-danger">Удалить работу</button>
 
-                            <button type="button" id="GotovoORW_@Model.ORW[i].Id" ready="@Got" ADId="@Model.ORW[i].Id" onclick="GotovORW('@Model.ORW[i].Id ')" class="@WC">@WCC</button>
-                            <button type="button" id="EditRecommendWork_@Model.ORW[i].Id" ready="@Got" ADId="@Model.ORW[i].Id" onclick="EditRecommendWork('@Model.ORW[i].Id','@Model.ORW[i].DOMPart.Id','@Model.ORW[i].Name','@Model.ORW[i].Number','@Model.ORW[i].Izmerenie.Id','@Model.ORW[i].Cost','@Model.Id')" class="btn btn-outline-success">Редактировать работу</button>
+                                <button type="button" id="GotovoORW_@Model.ORW[i].Id" ready="@Got" ADId="@Model.ORW[i].Id" onclick="GotovORW('@Model.ORW[i].Id ')" class="@WC">@WCC</button>
+                                <button type="button" id="EditRecommendWork_@Model.ORW[i].Id" ready="@Got" ADId="@Model.ORW[i].Id" onclick="EditRecommendWork('@Model.ORW[i].Id','@Model.ORW[i].DOMPart.Id','@Model.ORW[i].Name','@Model.ORW[i].Number','@Model.ORW[i].Izmerenie.Id','@Model.ORW[i].Cost','@Model.Id')" class="btn btn-outline-success">Редактировать работу</button>
 
-                        </td>
+                            </td>
 
 
-                            }
-                            else
-                            {
-                                <td style="text-align:center" colspan="2">
-                                    <button type="button" class="btn btn-outline-success">Работа выполнена</button>
-                                </td>
-
-                            }
                         }
+                        else
+                        {
+                            <td style="text-align:center" colspan="2">
+                                <button type="button" class="btn btn-outline-success">Работа выполнена</button>
+                            </td>
+
+                        }
+
 
                     </tr>
                 }
@@ -217,7 +226,10 @@
         Console.WriteLine("Модель не содержит рекомендованных работ ");
     }
 
-
+    <!-- <div id="Passport">
+            Html.Action("PassportWorks", "PassportWorkTypes", new { AdresId = Model.AdresId })
+        </div>
+    -->
 
 
     <div class="container">
@@ -292,7 +304,16 @@
             </td>
         </tr>
     </table>
-
+    <table>
+        <tr>
+            <td width="70%">
+                <textarea id="Vivod" class="form-control btn-block" placeholder="Выводы комиссии">@Model.Vivods</textarea>
+            </td>
+            <td width="30%">
+                <button class="btn btn-success btn-block" onclick="SaveVivods(@Model.Id)"> Сохранить выводы </button>
+            </td>
+        </tr>
+    </table>
 
 
     <div class=" col-md-6  ">
@@ -492,10 +513,11 @@
             var OW = $("#OW" + id).val();
             var N = $("#N" + id).val();
             var O = $("#OSMOTR" + id).val();
+            var M = $("#M" + id).val();
             var Table= $(".AO_" + id);
             var Tablica = $("#AO_" + id);
-            console.log('Приняли такие данные: ' + OW+';'+N+';'+O+';'+Table);
-             $.post('@Url.Action("AddWork", "Osmotrs")', { OsmotrWork: OW, Number: N, OsmotrId:O,ElementId:id},
+            console.log('Приняли такие данные: ' + OW+';'+N+';'+O+';'+Table+";"+M);
+             $.post('@Url.Action("AddWork", "Osmotrs")', { OsmotrWork: OW, Number: N, OsmotrId:O,ElementId:id, Month:M},
                  function (data) {
                      console.log('Контроллер вернул данные ' + data);
                             var S = data.split(';');
@@ -505,7 +527,7 @@
                          {
                              //Table.removeAttr('display');
                              Table.fadeIn('slow');
-                             Table.after('<tr id="AO_' + S[5] + '" class="AO_' + S[5] + '"><td  style="text-align:center">' + S[1] + '</td><td style="text-align:center" colspan="2">' + S[3] + '</td><td style="text-align:center">' + S[2] + '</td><td style="text-align:center">' + S[4] + '</td><td style="text-align:center" colspan="2" ><button type="button" id="RemoveWork" ADId="' + id + '" onclick="RemoveWork(' + S[5] + ')" class="btn btn-outline-danger rem">Удалить работу</button></td></tr>');
+                             Table.after('<tr id="AO_' + S[5] + '" class="AO_' + S[5] + '"><td  style="text-align:center">' + S[1] + '</td><td style="text-align:center" colspan="2">' + S[3] + '</td><td style="text-align:center">' + S[2] + '</td><td style="text-align:center">' + S[4] + '</td><td style="text-align:center">' + S[7] + '</td><td style="text-align:center" colspan="2" ><button type="button" id="RemoveWork" ADId="' + id + '" onclick="RemoveWork(' + S[5] + ')" class="btn btn-outline-danger rem">Удалить работу</button></td></tr>');
                              // $('#AO_' + id).hide().fadeIn("slow");//появляем медленно строку
                              console.log('Добавили в таблицу строку' + Table);
                              $('#Modal_' + id).modal('hide');
@@ -515,7 +537,7 @@
                          {
                              console.log('Ищем строку AO_' + S[5]);
                              var El = $("#AO_" + S[4]);
-                             El.replaceWith('<tr id="AO_' + S[5] + '" class="AO_' + S[5] + '"><td  style="text-align:center">' + S[1] + '</td><td style="text-align:center" colspan="2">' + S[3] + '</td><td style="text-align:center">' + S[2] + '</td><td style="text-align:center">' + S[4] + '</td><td style="text-align:center" colspan="2" ><button type="button" id="RemoveWork" ADId="' + id + '" onclick="RemoveWork(' + S[5] + ')" class="btn btn-outline-danger rem">Удалить работу</button></td></tr>');
+                             El.replaceWith('<tr id="AO_' + S[5] + '" class="AO_' + S[5] + '"><td  style="text-align:center">' + S[1] + '</td><td style="text-align:center" colspan="2">' + S[3] + '</td><td style="text-align:center">' + S[2] + '</td><td style="text-align:center">' + S[4] + '</td><td style="text-align:center">' + S[7] + '</td><td style="text-align:center" colspan="2" ><button type="button" id="RemoveWork" ADId="' + id + '" onclick="RemoveWork(' + S[5] + ')" class="btn btn-outline-danger rem">Удалить работу</button></td></tr>');
                              // $('#AO_' + id).hide().fadeIn("slow");//появляем медленно строку
                              console.log('Заменили строку в таблице' + Table);
                              $('#Modal_' + id).modal('hide');
@@ -933,6 +955,16 @@
 
     </script>
     <script>
+        function SaveVivods(id)
+        {
+            var Vivod =$('#Vivod').val();
+                var GO = confirm('Сохраняем выводы комиссии в осмотре #'+id+'?')
+                if (GO) {
+                    $.post('@Url.Action("SaveVivods", "Osmotrs")', { Vivod: Vivod, id:id} );
+                }
+            }
+    </script>
+    <script>
      function Delete(id)
      {
 
@@ -960,26 +992,25 @@
 
     </script>
     <script>
-        function EditRecommendWork(id,Part,Name,Number,Izmerenie,Cost,OsmotrId)
-        {
-          
+        function EditRecommendWork(id, Part, Name, Number, Izmerenie, Cost, OsmotrId) {
+
             OpenModal("AddNewRecommendWork");
-           // console.log('Начинаем редактирование работы ' + id);
+            // console.log('Начинаем редактирование работы ' + id);
             $("#ROsmotr").val(OsmotrId);
             $("#RWork").val(id);
 
             $("#RDOMPart").val(Part);
             $("#RNumber").val(parseInt(Number));
-       
+
             $("#RCost").val(parseFloat(Cost));
             $("#RName").val(Name);
             $("#RIzmerenie").val(parseInt(Izmerenie));
-            var Table = $("#RO_"+id );
-          
+            var Table = $("#RO_" + id);
+
         }
     </script>
     <script>
-        function AddRecommendWorkNew(OsmotrId,id) {
+        function AddRecommendWorkNew(OsmotrId, id) {
             OpenModal('AddNewRecommendWork');
             $("#ROsmotr").val(OsmotrId);
             $("#RWork").val(0);
@@ -1094,5 +1125,34 @@
                         });
 
         }
+    </script>
+    <script type="text/javascript">
+        $(function () {
+            $('#Date')
+                .datepicker({ dateFormat: 'yy/mm/dd' })
+                .get(0).setAttribute("type", "text");
+            $.datepicker.regional['ru'] = {
+                prevText: 'Пред',
+                nextText: 'След',
+                monthNames: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+                    'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+                monthNamesShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн',
+                    'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
+                dayNames: ['воскресенье', 'понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота'],
+                dayNamesShort: ['вск', 'пнд', 'втр', 'срд', 'чтв', 'птн', 'сбт'],
+                dayNamesMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+                weekHeader: 'Не',
+                dateFormat: 'yy/mm',
+                showOn: "both",
+                buttonText: "Выбрать дату",
+                firstDay: 1,
+                isRTL: false,
+                showMonthAfterYear: true,
+                yearSuffix: '',
+                gotoCurrent: false
+            };
+            $.datepicker.setDefaults($.datepicker.regional['ru']);
+
+        });
     </script>
 }

@@ -5,9 +5,12 @@ using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Web;
 using System.Web.Hosting;
 using System.Web.Mvc;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Wordprocessing;
 using GKHNNC.DAL;
 using GKHNNC.Models;
 using ImageResizer;
@@ -24,6 +27,245 @@ namespace GKHNNC.Controllers
             var osmotrs = db.Osmotrs.Where(x=>x.Sostoyanie==0).Include(o => o.Adres);
    
             return View(osmotrs.ToList());
+        }
+
+        public JsonResult MKDMASSExportToExcel(int Y = 0)
+        {
+            List<string> S = db.AdresMKDs.Select(x => x.ASU).ToList();
+            if (Y == 0)
+            {
+                Y = DateTime.Now.Year;
+            }
+            foreach (string s in S )
+            {
+                MKDExportToExcel(s,Y);
+               
+            }
+            return Json("Ok", JsonRequestBehavior.AllowGet);
+        }
+
+        public FileResult MKDExportGisOtchet(int Year)
+        {
+            List<string> S = db.AdresMKDs.Select(x => x.ASU).ToList();
+            List<MKDYearOtchet> OO = new List<MKDYearOtchet>();
+            foreach (string s in S)
+            {
+               // MKDExportToExcel(s);
+                MKDYearOtchet O = SformirovatMKDOtchet(s,Year);
+                OO.Add(O);
+            }
+
+
+            DateTime Date = DateTime.Now.AddYears(-1);
+
+            if (Directory.Exists(Server.MapPath("~/Files")) == false)
+            {
+                Directory.CreateDirectory(Server.MapPath("~/Files"));
+            }
+            if (Directory.Exists(Server.MapPath("~/Files/MKD" + Date.Year)) == false)
+            {
+                Directory.CreateDirectory(Server.MapPath("~/Files/MKD" + Date.Year));
+            }
+            // получаем имя файла
+            string fileName = "GISGKH_"+Date.Year;
+            var path = Server.MapPath("~/Files/MKD" + Date.Year + "/");
+
+            //экспорт в эксель акта осмотра отправляем все активные элементы и сам осмотр
+            ExcelExportDomVipolnennieUslugi.GISGKHOtchet(OO, path, fileName);
+
+            string EndPath = path + fileName + ".xlsx";
+            // Путь к файлу
+
+            // Тип файла - content-type
+            string file_type = "application/xlsx";
+            // Имя файла - необязательно
+
+            return File(EndPath, file_type, fileName + ".xlsx");
+
+        }
+
+
+
+        public FileResult MKDExportToExcel(string Adres, int Year)
+        {
+            MKDYearOtchet O = new MKDYearOtchet();
+            string A = Adres.Replace(" ", "");
+            AdresaMKDs AdresMKD = db.AdresMKDs.Where(x => x.ASU.Replace(" ", "").Equals(A)).First();
+            O = SformirovatMKDOtchet(AdresMKD.ASU, Year);
+            
+
+            DateTime Date = DateTime.Now.AddYears(-1);
+           
+            if (Directory.Exists(Server.MapPath("~/Files")) == false)
+            {
+                Directory.CreateDirectory(Server.MapPath("~/Files"));
+            }
+            if (Directory.Exists(Server.MapPath("~/Files/MKD"+Year)) == false)
+            {
+                Directory.CreateDirectory(Server.MapPath("~/Files/MKD" + Year));
+            }
+            // получаем имя файла
+            string fileName = O.Adres.Replace("/","_")+"_"+Year;
+            var path = Server.MapPath("~/Files/MKD" + Date.Year+"/");
+
+            //экспорт в эксель акта осмотра отправляем все активные элементы и сам осмотр
+            ExcelExportDomVipolnennieUslugi.MKDOtchet(O, path, fileName, Year);
+
+            string EndPath = path + fileName + ".xlsx";
+            // Путь к файлу
+
+            // Тип файла - content-type
+            string file_type = "application/xlsx";
+            // Имя файла - необязательно
+
+            return File(EndPath, file_type, fileName+ ".xlsx");
+
+        }
+
+
+ 
+
+
+        public JsonResult MKDFixResults(int Y)
+        {
+            
+            try
+            {
+                //чистим прошлые записи
+                var Results = db.MKDYearResults.Where(x=>x.PeriodYear==Y).ToList();
+
+                db.MKDYearResults.RemoveRange(Results);
+                db.SaveChanges();
+
+            }
+            catch
+            {
+
+            }
+
+
+            List<MKDYearOtchet> O = new List<MKDYearOtchet>();
+            List<AdresaMKDs> AdresMKD = db.AdresMKDs.ToList();
+            foreach (var mkd in AdresMKD)
+            {
+                MKDYearOtchet Otch = SformirovatMKDOtchet(mkd.ASU, Y);
+                O.Add(Otch);
+                try
+                {
+                    MKDYearResult YR = new MKDYearResult();
+                    YR.AdresMKD = Otch.Adres;
+                    YR.AdresFGBU = Otch.Adres;
+                    YR.AdresId = Otch.AdresId;
+                    YR.PeriodYear = Y;
+                    YR.Statya = "Аренда";
+                    YR.BallStart = Otch.OstatkiArendaSTART;
+                    YR.BallEnd = Otch.ArendaRaschet; 
+                    YR.Nachisleno = Otch.OstatkiArendaNachisleno;
+                    YR.Oplacheno = Otch.OstatkiArendaOplacheno;
+                    YR.CompleteWorks = Otch.OstatkiArendaEND;
+                    try
+                    {
+                        db.MKDYearResults.Add(YR);
+                        db.SaveChanges();
+                    }
+                    catch (Exception e)
+                    {
+
+                    }
+
+                    YR = new MKDYearResult();
+                    YR.AdresMKD = Otch.Adres;
+                    YR.AdresFGBU = Otch.Adres;
+                    YR.AdresId = Otch.AdresId;
+                    YR.PeriodYear = Y;
+                    YR.Statya = "Дополнительный текущий ремонт";
+                    YR.BallStart = Otch.OstatkiDopTekRemSTART;
+                    YR.BallEnd = Otch.DopTekRemRaschet ;
+                    YR.Nachisleno = Otch.ORCDopTekRemCHANGE;
+                    YR.Oplacheno = Otch.ORCDopTekRemPAY;
+                    YR.CompleteWorks = Otch.OstatkiDopTekRemEND;
+                    try
+                    {
+                        db.MKDYearResults.Add(YR);
+                        db.SaveChanges();
+                    }
+                    catch
+                    {
+
+                    }
+
+                    YR = new MKDYearResult();
+                    YR.AdresMKD = Otch.Adres;
+                    YR.AdresFGBU = Otch.Adres;
+                    YR.PeriodYear = Y;
+                    YR.AdresId = Otch.AdresId;
+                    YR.Statya = "Непредвиденный/Неотложный ремонт";
+                    YR.BallStart = Otch.OstatkiNepredRemSTART;
+                    YR.BallEnd = Otch.NepredRaschet;
+                    YR.Nachisleno = Otch.ORCNepredRemontCHANGE;
+                    YR.Oplacheno = Otch.ORCNepredRemontPAY;
+                    YR.CompleteWorks = Otch.OstatkiNepredRemEND;
+                    try
+                    {
+                        db.MKDYearResults.Add(YR);
+                        db.SaveChanges();
+                    }
+                    catch
+                    {
+
+                    }
+
+                    YR = new MKDYearResult();
+                    YR.AdresMKD = Otch.Adres;
+                    YR.AdresFGBU = Otch.Adres;
+                    YR.PeriodYear = Y;
+                    YR.AdresId = Otch.AdresId;
+                    YR.Statya = "Текущий ремонт (содержание)";
+                    YR.BallStart = 0;
+                    YR.BallEnd = Otch.TekRemRaschet;  
+                    YR.Nachisleno = Otch.ORCTekRemCHANGE;
+                    YR.Oplacheno = Otch.ORCTekRemPAY;
+                    YR.CompleteWorks = Otch.OstatkiTekRemEND;
+                    try
+                    {
+                        db.MKDYearResults.Add(YR);
+                        db.SaveChanges();
+                    }
+                    catch
+                    {
+
+                    }
+
+                    YR = new MKDYearResult();
+                    YR.AdresMKD = Otch.Adres;
+                    YR.AdresFGBU = Otch.Adres;
+                    YR.PeriodYear = Y;
+                    YR.AdresId = Otch.AdresId;
+                    YR.Statya = "Содержание";
+                    YR.BallStart = Otch.OstatkiSoderganieSTART;
+                    YR.BallEnd = Otch.SoderganieRaschet;
+                    YR.Nachisleno = Otch.ORCSoderganieCHANGE;
+                    YR.Oplacheno = Otch.ORCSoderganiePAY;
+                    YR.CompleteWorks = Otch.Soderganie; 
+                    try
+                    {
+                        db.MKDYearResults.Add(YR);
+                        db.SaveChanges();
+                    }
+                    catch
+                    {
+
+                    }
+
+                    
+                }
+                catch
+                {
+
+                }
+            }
+            return Json("Ok");
+
         }
 
         //модуль экспорта осмотра в эксель
@@ -93,7 +335,7 @@ namespace GKHNNC.Controllers
                 Directory.CreateDirectory(Server.MapPath("~/Files/" + O.Id.ToString()));
             }
                     // получаем имя файла
-                    string fileName = "Osmotr.xlsx";
+                    string fileName = O.Id.ToString()+".xlsx";
                     var path = Server.MapPath("~/Files/" + O.Id.ToString() + "/" + fileName);
 
             //экспорт в эксель акта осмотра отправляем все активные элементы и сам осмотр
@@ -732,13 +974,14 @@ namespace GKHNNC.Controllers
             ActiveElement A = new ActiveElement();
                 try
                 {
-                    A = db.ActiveElements.Where(x => x.Id == Id).First();
-                if ((A.Photo1 == null || A.Photo2 == null) && (Photo1 == "" || Photo2 == ""))
+                    A = db.ActiveElements.Include(x=>x.Element).Where(x => x.Id == Id).First();
+                if ((A.Photo1 == null || A.Photo2 == null) && (Photo1 == "" || Photo2 == "") && A.Element.ElementTypeId != 19 )
                 {
                     Data = "Ошибка; Отсутствуют фотографии! Загрузите обе фотографии и сохраните элемент.";
                 }
                 else
                 {
+                   
                     if (Photo1 != "" && Photo2 != "")
                     {
                         result = "Данные элемента успешно сохранены!";
@@ -751,7 +994,18 @@ namespace GKHNNC.Controllers
                     }
                     else
                     {
-                       
+                        if (Photo1 != "")
+                        {
+                            result = "Данные элемента успешно сохранены!";
+                            string Filename1 = Path.GetFileName(Photo1);
+                            if (A.Photo1 == null || A.Photo1.Equals(Filename1) == false) { A.IsOld1 = false; }
+                            A.Photo1 = Path.GetFileName(Photo1);
+                        }
+                        else
+                        {
+
+                        }
+                        
                         //загружаются фотки по умолчанию
                     }
                 }
@@ -1030,6 +1284,664 @@ namespace GKHNNC.Controllers
             }
             return Json(Data);//RedirectToAction("ViewActiveDefect",A);
         }
+        //Нужны для обработки файла Word
+        private static void ProcessCell(TableCell node, List<string> textBuilder)
+        {
+            textBuilder.Add(node.InnerText);
+            //foreach (var text in node.Descendants<Text>())
+            //{
+            //    try
+            //    {
+
+            //    }
+            //    catch
+            //    {
+
+            //    }
+                
+            //   // textBuilder.Add(text.InnerText);
+            //}
+        }
+
+        private static void ProcessParagraph(Paragraph node, List<string> textBuilder)
+        {
+            foreach (var text in node.Descendants<Text>())
+            {
+                try
+                {
+               
+                }
+                catch
+                {
+
+                }
+                textBuilder.Add(text.InnerText);
+            }
+        }
+
+        private static void ProcessTable(Table node, List<string> textBuilder)
+        {
+            //int Counter = 0;
+            foreach (var row in node.Descendants<TableRow>())
+            {
+               
+              //  if (Counter < 2)
+              //  {
+              //      Counter++;
+              //  }
+             //   else
+             //   {
+                    foreach (var cell in row.Descendants<TableCell>())
+                    {
+
+                        ProcessCell(cell, textBuilder);
+
+                        //foreach (var para in cell.Descendants<Paragraph>())
+                        //{
+                        //    ProcessParagraph(para, textBuilder);
+                        //}
+
+                    }
+             //   }
+               
+            }
+        }
+
+        public ActionResult MKDResult()
+        {
+            List<MKDCompleteWork> Result = new List<MKDCompleteWork>();
+            try
+            {
+              Result =  db.MKDCompleteWork.ToList();
+            }
+            catch
+            {
+
+            }
+  
+
+
+            return View(Result);
+
+        }
+
+        public ActionResult MKDYear(string Adres = "", int Y =0)
+        {
+            List<MKDCompleteWork> Result = new List<MKDCompleteWork>();
+            AdresaMKDs AdresMKD = new AdresaMKDs();
+            try
+            {
+                 AdresMKD = db.AdresMKDs.Where(x => x.ASU.Replace(" ", "").Equals(Adres)).First();//Ищем адрес по наименованию АСУ
+                if (AdresMKD.Id > 0)
+                {
+                    Result = db.MKDCompleteWork.Where(x=>x.AdresMKDID== AdresMKD.Id&& x.WorkDate.Year==Y).OrderBy(x=>x.WorkTip).ToList();
+                }
+                else
+                {
+                    Result = db.MKDCompleteWork.Where(x => x.WorkDate.Year == Y).ToList();
+                }
+
+            }
+            catch
+            {
+
+            }
+            List<MKDCompleteWork> result = Result
+.GroupBy(c => new
+{
+    c.WorkName,
+    c.AdresMKDID,
+    c.WorkTip
+
+})
+.Select(cl => new MKDCompleteWork
+{
+    AdresMKDID = cl.First().AdresMKDID,
+    WorkName = cl.First().WorkName,
+    Count = cl.Count(),
+    WorkSumma = cl.Sum(x => x.WorkSumma),
+    WorkCena = cl.First().WorkCena,
+    WorkIzmerenie = cl.First().WorkIzmerenie,
+    WorkTip = cl.First().WorkTip,
+WorkDate = cl.First().WorkDate
+}).ToList();
+
+            List<AdresaMKDs> AM = db.AdresMKDs.ToList();
+            foreach (MKDCompleteWork r in result)
+            {
+                r.AdresMKD = AM.Where(x => x.Id == r.AdresMKDID).First();
+            }
+
+            decimal ArendaMKD = 0;
+            //Ищем аренду 
+            try
+            {
+              MKDArenda  Arenda = db.MKDArendas.Where(x => x.ASUId == AdresMKD.Id).First();
+                ArendaMKD = Arenda.Vosnagragdenie;
+            
+            }
+            catch
+            {
+
+            }
+
+            ViewBag.Vosnagragdenie = ArendaMKD;
+
+            return View(result);
+
+        }
+
+        public JsonResult FindHouses(string term)
+        {
+            List<AdresaMKDs> AM = db.AdresMKDs.ToList();
+          /*  List<MKDCompleteWork> MK = db.MKDCompleteWork.ToList();
+            AdresaMKDs Old = new AdresaMKDs();
+            foreach (MKDCompleteWork r in MK)
+            {
+                if (Old.Id != null && Old.Id != r.AdresMKDID)
+                {
+                    r.AdresMKD = AM.Where(x => x.Id == r.AdresMKDID).First();
+                    Old = r.AdresMKD;
+                }
+            }
+            */
+           // Dictionary<int, string> MCW = AM.Where(x=>x.ASU.Contains(term)).ToDictionary(x => x.Id, x => x.ASU);//MK.Where(x=>x.AdresMKDID!=null).Select(x => new { x.AdresMKDID, x.AdresMKD }).Distinct().ToDictionary(x => x.AdresMKDID, x => x.AdresMKD.ASU);
+         List<string> MCW = AM.Where(x => x.ASU.Contains(term)).Select(x=>x.ASU).ToList();
+            //  ViewBag.MCW = MCW;
+            return Json(MCW, JsonRequestBehavior.AllowGet);
+        }
+
+        public MKDYearOtchet SformirovatMKDOtchet(string Adres, int Year)
+        {
+            MKDYearOtchet O = new MKDYearOtchet();
+            string A = Adres.Replace(" ","");
+            AdresaMKDs AdresMKD = db.AdresMKDs.Where(x => x.ASU.Replace(" ", "").Equals(A)).First();//Ищем адрес по наименованию АСУ
+            O.Adres = AdresMKD.ASU;
+            O.AdresId = AdresMKD.Id;
+            List<ORC> ORCs = new List<ORC>();
+            List<MKDCompleteWork> All = new List<MKDCompleteWork>();
+            List<MKDOstatki> OstatkiAll = new List<MKDOstatki>();
+            List<MKDYearResult> ResultsOld = new List<MKDYearResult>();
+
+            decimal DopTekRemOld = 0;
+            decimal ArendaOld = 0;
+            decimal NeotlogniOld = 0;
+            decimal TekRemOld = 0;
+            decimal SoderganieOld = 0;
+
+            try
+            {
+                int OldYear = Year - 1;
+                ResultsOld = db.MKDYearResults.Where(x => x.PeriodYear == OldYear&&x.AdresId == AdresMKD.Id ).ToList();
+                
+
+            }
+            catch
+            {
+
+            }
+
+            try {
+                DopTekRemOld = ResultsOld.Where(x => x.Statya.Equals("Дополнительный текущий ремонт")).Sum(x => x.BallEnd); ;
+                ArendaOld = ResultsOld.Where(x => x.Statya.Equals("Аренда")).Sum(x => x.BallEnd);
+                NeotlogniOld = ResultsOld.Where(x => x.Statya.Equals("Непредвиденный/Неотложный ремонт")).Sum(x => x.BallEnd);
+                TekRemOld = ResultsOld.Where(x => x.Statya.Equals("Текущий ремонт (содержание)")).Sum(x => x.BallEnd);
+                SoderganieOld = ResultsOld.Where(x => x.Statya.Equals("Содержание")).Sum(x => x.BallEnd);
+            } catch { }
+
+            List<MKDArenda> Arenda = new List<MKDArenda>();
+            //Суммируем данные по WORD
+            try
+            {
+                All = db.MKDCompleteWork.Where(x => x.AdresMKDID == AdresMKD.Id&&x.WorkSumma!=0&&x.WorkDate.Year==Year).ToList();
+             
+             //   O.KapRemont = All.Where(x => x.WorkTip.Contains("содержания несущих конструкций") || x.WorkTip.Contains("содержания оборудования и систем")).Sum(x => x.WorkSumma);
+                O.Soderganie = All.Where(x => x.WorkTip.Contains("ТЕКУЩИЙ РЕМОНТ") ==false && x.WorkTip.Contains("Непредвиденный/неотложный ремонт") == false && x.WorkTip.Contains("Ремонтные работы за счет статьи Аренда") == false && x.WorkTip.Contains("Дополнительный текущий ремонт") == false).Sum(x => x.WorkSumma);
+                O.DopTekRem = All.Where(x => x.WorkTip.Contains("Дополнительный текущий ремонт")).Sum(x => x.WorkSumma);
+                O.Arenda = All.Where(x => x.WorkTip.Contains("Аренда")).Sum(x => x.WorkSumma);
+                O.TEKREM = All.Where(x => x.WorkTip.Contains("ТЕКУЩИЙ РЕМОНТ")).Sum(x => x.WorkSumma);
+            }
+            catch
+            {
+
+            }
+            //Суммируем данные по ОРК
+            try
+            {
+                ORCs = db.ORCs.Where(x => x.ADDRESS.Equals(AdresMKD.ORC) && x.PROVIDER.Contains("ФГБУ АКАД-Я КОМФ")&&x.Year==Year).ToList();//Выбираем всех ОРКов
+                                                                                                                              // O.ORCKapRemontCHANGE = ORCs.Where(x => x.SERVICE.Contains("КАП.РЕМОНТ") ).Sum(x => x.CHARGE);
+                O.ORCSoderganieCHANGE = ORCs.Where(x => x.SERVICE.Contains("СОДЕРЖАНИЕ ЖИЛЬЯ")).Sum(x => x.CHARGE);
+                O.ORCDopTekRemCHANGE = ORCs.Where(x => x.SERVICE.Contains("ДОП.ТЕК")).Sum(x => x.CHARGE);
+                O.ORCTekRemCHANGE = ORCs.Where(x => x.SERVICE.Contains("ТЕКУЩ.РЕМОНТ(СОДЕРЖАНИЕ)")).Sum(x => x.CHARGE);
+                O.ORCNepredRemontCHANGE = ORCs.Where(x => x.SERVICE.Contains("НЕПРЕДВ") ).Sum(x => x.CHARGE);
+                O.ORCSoderganiePAY = ORCs.Where(x => x.SERVICE.Contains("СОДЕРЖАНИЕ ЖИЛЬЯ")).Sum(x => x.PAYS);
+                O.ORCDopTekRemPAY = ORCs.Where(x => x.SERVICE.Contains("ДОП.ТЕК") ).Sum(x => x.PAYS);
+                O.ORCTekRemPAY = ORCs.Where(x => x.SERVICE.Contains("ТЕКУЩ.РЕМОНТ(СОДЕРЖАНИЕ)")).Sum(x => x.PAYS);
+                O.ORCNepredRemontPAY = ORCs.Where(x => x.SERVICE.Contains("НЕПРЕДВ")).Sum(x => x.PAYS);
+
+            }
+            catch (Exception e)
+            {
+
+            }
+
+            //Ищем данные по остаткам
+            try
+            {
+                OstatkiAll = db.MKDOstatkis.Where(x => x.Adres.Equals(AdresMKD.ASU.Replace("д. ", ""))&&x.Year == Year).ToList();
+
+                O.OstatkiDopTekRemSTART = OstatkiAll.Where(x => x.Schet.Contains("Доп. тек")).Sum(x => x.OstatokJan) + DopTekRemOld;
+                O.OstatkiDopTekRemEND = OstatkiAll.Where(x => x.Schet.Contains("Доп. тек")).Sum(x => x.Rashod);
+
+                O.OstatkiTekRemSTART = OstatkiAll.Where(x => x.Schet.Contains("Содержание")).Sum(x => x.OstatokJan) +TekRemOld;
+                O.OstatkiTekRemEND = 0;//OstatkiAll.Where(x => x.Schet.Contains("Содержание")).Sum(x => x.Rashod);
+
+                O.OstatkiNepredRemSTART = OstatkiAll.Where(x => x.Schet.Contains("Непредвиденный")).Sum(x => x.OstatokJan)+ NeotlogniOld;
+                O.OstatkiNepredRemEND = OstatkiAll.Where(x => x.Schet.Contains("Непредвиденный")).Sum(x => x.Rashod);
+
+                O.OstatkiSoderganieSTART = OstatkiAll.Where(x => x.Schet.Contains("Содержание")).Sum(x => x.OstatokJan)+SoderganieOld;
+                O.OstatkiSoderganieEND = OstatkiAll.Where(x => x.Schet.Contains("Содержание")).Sum(x => x.Rashod);
+
+                O.OstatkiArendaSTART = OstatkiAll.Where(x => x.Schet.Contains("Аренда")).Sum(x => x.OstatokJan) +ArendaOld;
+                O.OstatkiArendaEND = OstatkiAll.Where(x => x.Schet.Contains("Аренда")).Sum(x => x.Rashod);
+
+
+                O.DopTekRemRaschet = O.OstatkiDopTekRemSTART - O.OstatkiDopTekRemEND + O.ORCDopTekRemPAY;
+
+                O.NepredRaschet = O.OstatkiNepredRemSTART - O.OstatkiNepredRemEND + O.ORCNepredRemontPAY;
+
+                O.TekRemRaschet = 0 - O.OstatkiTekRemEND + O.ORCTekRemPAY;
+
+                O.SoderganieRaschet = O.OstatkiSoderganieSTART - O.Soderganie + O.ORCSoderganiePAY;
+                //  O.OstatkiArendaSTART = OstatkiAll.Where(x => x.Schet.Contains("Аренда")).Sum(x => x.OstatokJan);
+                //  O.OstatkiArendaEND = OstatkiAll.Where(x => x.Schet.Contains("Аренда")).Sum(x => x.OstatokDec);
+                //  O.OstatkiArendaNachisleno = OstatkiAll.Where(x => x.Schet.Contains("Аренда")).Sum(x => x.Rashod);
+                //  O.OstatkiArendaOplacheno = OstatkiAll.Where(x => x.Schet.Contains("Аренда")).Sum(x => x.Dohod);
+            }
+            catch
+            {
+
+            }
+
+
+            //Ищем аренду 
+            try
+            {
+                Arenda = db.MKDArendas.Where(x => x.ASUId == AdresMKD.Id&&x.Year==Year).ToList();
+                O.ArendaVosnagragdenie = Arenda.Sum(x => x.Vosnagragdenie);
+                O.OstatkiArendaNachisleno = Arenda.Sum(x => x.Nachisleno);
+                O.OstatkiArendaOplacheno = Arenda.Sum(x => x.Oplacheno);
+                O.Arenda += O.ArendaVosnagragdenie;
+
+                O.OstatkiArendaEND += O.ArendaVosnagragdenie;
+                O.ArendaRaschet = O.OstatkiArendaSTART + O.OstatkiArendaOplacheno - O.OstatkiArendaEND;
+            
+            }
+            catch
+            {
+
+            }
+           //Добавляем статью Вознаграждение УО
+            MKDCompleteWork CW = new MKDCompleteWork();
+            CW.WorkTip = "Ремонтные работы за счет статьи Аренда";
+            CW.WorkName = "Вознаграждение управляющей организации 10%";
+            CW.WorkSumma = O.ArendaVosnagragdenie;
+            All.Add(CW);
+
+            //Сохраняем в отчет
+            O.CompletedWorks = All.OrderBy(x => x.WorkTip).ToList();
+            O.Stati = All.Select(x => x.WorkTip).Distinct().ToList();
+
+            return O;
+        }
+  
+
+        public JsonResult SaveYearResults( int Id, decimal Start, decimal End , decimal Nach, decimal Opl ,decimal Works )
+        {
+            try
+            {
+              var YR =  db.MKDYearResults.Where(x => x.Id == Id).First();
+                YR.BallStart = Start;
+                YR.BallEnd = End;
+                YR.Nachisleno = Nach;
+                YR.Oplacheno = Opl;
+                YR.CompleteWorks = Works;
+                db.Entry(YR).State = EntityState.Modified;
+                db.SaveChanges();
+                return Json("Ok");
+            }
+            catch
+            {
+                return Json("Error");
+            }
+
+            return Json("Ok");
+        }
+
+
+        public ActionResult LoadTableYear(string Adres, int Y=0)
+        {
+            MKDYearOtchet O = new MKDYearOtchet();
+            O = SformirovatMKDOtchet(Adres,Y);
+            return View(O);
+        }
+
+        public ActionResult MKDYearOtchetSelect()
+        {
+            List<AdresaMKDs> AM = db.AdresMKDs.ToList();
+            List<MKDCompleteWork> MK = db.MKDCompleteWork.ToList();
+            AdresaMKDs Old = new AdresaMKDs();
+            foreach (MKDCompleteWork r in MK)
+            {
+                if (Old.Id != null && Old.Id != r.AdresMKDID)
+                {
+                    r.AdresMKD = AM.Where(x => x.Id == r.AdresMKDID).First();
+                    Old = r.AdresMKD;
+                }
+            }
+            Dictionary<int, string> MCW = AM.ToDictionary(x => x.Id, x => x.ASU);//MK.Where(x=>x.AdresMKDID!=null).Select(x => new { x.AdresMKDID, x.AdresMKD }).Distinct().ToDictionary(x => x.AdresMKDID, x => x.AdresMKD.ASU);
+            ViewBag.MCW = MCW;
+            return View();
+        }
+    
+   
+
+        public ActionResult ObrabotatWord()
+        {
+            string errors = "";
+            string StreetsFalse = "";
+            int Dobavleno = 0;
+            int Udaleno = 0;
+            int AdresMKDId = 0;
+            string[] fileEntries = Directory.GetFiles(Server.MapPath("~/Files/MKD/"));
+            List<MKDCompleteWork> Result = new List<MKDCompleteWork>();
+            List<string> Errors = new List<string>();
+            foreach (string f in fileEntries)
+            {
+                try
+                {
+                    string File = System.IO.Path.GetFileName(f).Replace(".docx", "");//.Replace("лит_","").Replace("ул_", "").Replace("ул","");
+                    DateTime D = new DateTime();
+
+                    int Month = 1;
+                    int Year = DateTime.Now.AddYears(-2).Year;
+                    int MaxYear = DateTime.Now.Year;
+                    bool Naideno = false;
+                    for (int Y = Year; Y <= MaxYear; Y++)
+                    {
+                        for (int M = 1; M <= 12; M++)
+                        {
+                            DateTime DD = new DateTime(Y, M, 1);
+                            string Date = "_"+DD.ToString("MM") + "_" + DD.ToString("yyyy");
+                            if (File.IndexOf(Date) > 0)
+                            {
+                                //Нашли дату в файле
+                                D = new DateTime(Y, M, 1);
+                                string Adres = File.Remove(File.IndexOf(Date));
+                                try
+                                {
+                                 AdresMKDId =  db.AdresMKDs.Where(x => x.FileName.Equals(Adres)).First().Id;
+                                    Naideno = true;
+                                    break;
+
+                                }
+                                catch (Exception e)
+                                {
+                                   
+                                }
+
+                            }
+                        }
+                    }
+                    if(!Naideno)
+                    {
+                        Errors.Add("Не найдено соответствие файлу "+ File +" сопоставьте его имя в таблице соответствия");
+                        continue;
+                    }
+
+                 //   string[] S = File.Split('_');
+                 //   string TYPE = "";
+                 //   if (S.Length>5)
+                 //   {
+                 //       TYPE = S[0].ToUpper();
+                 //   }
+                 //   string STREET = S[1].ToUpper();
+                 //   string DOM = S[2].ToUpper();
+                  //  D = new DateTime(Convert.ToInt16(S[4]), Convert.ToInt16(S[3]), 1);
+                    List<MKDCompleteWork> MCW = new List<MKDCompleteWork>();
+                    try
+                    {
+                        MCW = db.MKDCompleteWork.Where(x => x.AdresMKDID == AdresMKDId && x.WorkDate == D).ToList();
+                    }
+                    catch
+                    {
+
+                    }
+                    if (MCW.Count>0)
+                    {
+                        foreach (var m in MCW)
+                        {
+                            db.Entry(m).State = EntityState.Deleted;
+                            Udaleno++;
+                        }
+                        try
+                        {
+                            db.SaveChanges();
+
+                        }
+                        catch
+                        {
+
+                        }
+                    }
+                    ViewBag.Udaleno = Udaleno;
+
+                    bool NaidenaTablica = false;
+                    MCW = new List<MKDCompleteWork>();
+                    using (WordprocessingDocument wDoc = WordprocessingDocument.Open(f, false))
+                        {
+
+                            var parts = wDoc.MainDocumentPart.Document.Descendants().FirstOrDefault();
+                            if (parts != null)
+                            {
+                                foreach (var node in parts.ChildElements)
+                                {
+                                    if (node is Paragraph)
+                                    {
+                                      //  ProcessParagraph((Paragraph)node, textBuilder);
+                                      //  textBuilder.AppendLine("");
+                                    }
+
+                                if (node is Table)
+                                {
+                                    List<string> textBuilder = new List<string>();
+                                    string tip = "";
+                                    ProcessTable((Table)node, textBuilder);
+
+                                    //if (textBuilder.Count>100)
+                                    //{
+                                    //    foreach (var v in textBuilder)
+                                    //    {
+                                    //        if (v.Contains("домов, в т.ч.:"))
+                                    //        {
+                                    //            textBuilder.Remove(v);
+                                    //            break;
+                                    //        }
+                                    //        textBuilder.Remove(v);
+                                    //    }
+                                    //}
+                                    List<WordComplete> WorkTypes = new List<WordComplete>();
+                                    bool Nestandart = false;
+                                    if (textBuilder.Count > 2)
+                                    {
+                                        tip = textBuilder[0].Replace(", в т.ч.:","");
+                                          textBuilder.RemoveAt(0);
+                                          textBuilder.RemoveAt(0);
+
+                                        if (textBuilder.Count > 50)
+
+                                        {
+                                            Nestandart = true;
+                                            List<string> NewTextBuilder = new List<string>();
+                                            
+                                            //List<string> Udalenie = new List<string>();
+                                            //Udalenie.Add("Работы, необходимые для надлежащего ");
+                                            //Udalenie.Add("Работы и услуги по содержанию");
+  
+                                            //bool udalit = false;
+                                            bool DobavitNext = true;
+                                            
+                                            for (int i=0;i < textBuilder.Count; i++)
+                                            {
+                                                //if (udalit)
+                                                //{
+                                                //    textBuilder.Remove(textBuilder[i]);
+                                                //    udalit = false;
+
+                                                //}
+
+                                                bool Dobavit = true;
+                                                if (!DobavitNext)
+                                                {
+                                                    Dobavit = false;
+                                                    DobavitNext = true;
+                                                    continue;
+                                                }
+                                                if (i<10&&(textBuilder[i].Contains("Наименование вида работы (услуги)")
+                                                    || textBuilder[i].Contains("Периодичность / количественный показатель")
+                                                    || textBuilder[i].Contains("Единица измерения работы (услуги)")
+                                                    || textBuilder[i].Contains("сметная стоимость")
+                                                    || textBuilder[i].Contains("Цена выполненной работы (оказанной услуги)")
+                                                    ))
+                                                {
+                                                   // textBuilder.Remove(textBuilder[i]);
+                                                    Dobavit = false;
+                                                    continue;
+                                                }
+
+
+                                                if (textBuilder[i].Contains("Работы, необходимые для надлежащего")|| textBuilder[i].Contains("Работы и услуги по содержанию") 
+                                                    ||textBuilder[i].Contains("ТЕКУЩИЙ РЕМОНТ (содержание)") ||textBuilder[i].Contains("Ремонтные работы за счет статьи") 
+                                                    || textBuilder[i].Contains("Работы по текущему ремонту общего имущества"))
+                                                {
+                                                    WordComplete WT = new WordComplete();
+                                                    WT.WorkType = textBuilder[i].Replace(", в т.ч.:", "");
+                                                   
+                                                    WorkTypes.Add(WT);
+                                                 
+                                                    //  textBuilder.Remove(textBuilder[i]);
+                                                    //   textBuilder.Remove(textBuilder[i]);
+                                                    Dobavit = false;
+                                                    DobavitNext = false;
+                                                    continue;
+                                                }
+
+                                                if (Dobavit)
+                                                {
+                                                    WorkTypes.Last().AllWorks.Add(textBuilder[i]);
+                                                    NewTextBuilder.Add(textBuilder[i]);
+                                                }
+                                               // textBuilder.RemoveAt(i);//.Remove(textBuilder[i]);
+
+
+                                            }
+                                            textBuilder = NewTextBuilder;
+                                        }
+
+                                      if (Nestandart==false)
+                                        {
+                                            WordComplete WT = new WordComplete();
+                                            WT.WorkType = tip;
+                                            WT.AllWorks = textBuilder;
+                                            WorkTypes.Add(WT);
+                                        }
+
+                                        foreach (var wt in WorkTypes)
+                                        {
+
+
+                                            int MaxInRow = 5;
+
+                                        // int maxRow = textBuilder.Count / MaxInRow;
+                                        int maxRow = wt.AllWorks.Count / MaxInRow;
+                                        for (int i = 0; i < maxRow; i++)
+                                        {
+                                            try
+                                            {
+                                                int start = MaxInRow * i;
+                                                string Work = wt.AllWorks[start];
+                                                try
+                                                {
+                                                    if (Work.Contains("."))
+                                                    {
+                                                        int dot = Work.IndexOf(".");
+                                                        if (dot <= 5)
+                                                        {
+                                                         Work =  Work.Remove(0, dot + 1);
+                                                        }
+                                                    }
+                                                }
+                                                catch
+                                                {
+
+                                                }
+                                              //  string Tip = tip;//textBuilder[start+1];
+                                                if (Nestandart)
+                                                {
+                                                  //  Tip = WorkTypes[i];
+                                                }
+                                                if (wt.AllWorks[start + 3].Equals(""))
+                                                    {
+                                                        wt.AllWorks[start + 3] = "0";
+                                                    }
+                                                string Izmerenie = wt.AllWorks[start+2];
+                                                decimal CenaZaEdinicu = Convert.ToDecimal(wt.AllWorks[start+3].Replace(" ","").Replace(",",".").Replace(" ", "")); 
+                                                decimal Summa = Convert.ToDecimal(wt.AllWorks[start+4].Replace(" ", "").Replace(",", ".").Replace(" ",""));
+
+                                                MKDCompleteWork MKD = new MKDCompleteWork();
+                                                MKD.WorkDate = D;
+                                                MKD.AdresMKDID = AdresMKDId;
+                                              //  MKD.House = DOM;
+                                             //   MKD.Street = STREET;
+                                                MKD.WorkCena = CenaZaEdinicu;
+                                                MKD.WorkIzmerenie = Izmerenie;
+                                                MKD.WorkName = Work;
+                                                MKD.WorkSumma = Summa;
+                                                MKD.WorkTip = wt.WorkType;
+                                             //   MKD.Prefix = TYPE;
+                                                db.MKDCompleteWork.Add(MKD);
+                                                db.SaveChanges();
+                                                Result.Add(MKD);
+                                                NaidenaTablica = true;
+                                            }
+                                            catch (Exception e)
+                                            {
+                                              //  Errors.Add("Ошибка обработки файла " + File + e.Message);
+                                            }
+                                        }
+                                        }
+
+                                    }
+                                }
+                                }
+                            }
+                        }
+                    if (!NaidenaTablica)
+                        {
+                        Errors.Add("Не найдена таблица в файле "+ File+ " видимо он корректировался вручную?");
+                    }
+                }
+                catch (Exception exx)
+                {
+
+                }
+            }
+            ViewBag.Dobavleno = Result.Count;
+            ViewBag.Errors = Errors;
+            return View(Result);
+            
+        }
+
 
         [HttpPost]
         public JsonResult Upload()
@@ -1140,6 +2052,9 @@ namespace GKHNNC.Controllers
             }
             return Json(fileName);
         }
+
+
+      
 
 
         public JsonResult SaveOsmotr (int OsmotrId=1)
@@ -1759,6 +2674,16 @@ namespace GKHNNC.Controllers
             {
                 return null;
             }
+            DateTime ND = AE.Date.Date;
+            List<string> Dates = new List<string>();
+            Dates.Add("Не запланирована");
+            for (int i =0;i<13;i++)
+            {
+                 ND = ND.AddMonths(1);
+                Dates.Add(ND.ToString("dd.MM.yyyy"));
+            }
+
+            ViewBag.Month = Dates;
             ViewBag.AW = addwork;
             ViewBag.Materials = new SelectList(db.Materials, "Id", "Name");
             ViewBag.Izmerenies = new SelectList(db.Izmerenies, "Id", "Name");
@@ -1823,12 +2748,34 @@ namespace GKHNNC.Controllers
         }
 
         [HttpPost]
-        public JsonResult AddWork(int OsmotrWork, int Number, int OsmotrId, int ElementId)
+        public JsonResult AddWork(int OsmotrWork, int Number, int OsmotrId, int ElementId, string Month)
         {
+
+          
             ActiveOsmotrWork AOW = new ActiveOsmotrWork();
             AOW.OsmotrWorkId = OsmotrWork;
             AOW.OsmotrWork = db.OsmotrWorks.Find(AOW.OsmotrWorkId);
             AOW.Number = Number;
+            int Y = 0;
+            int M = 0;
+            int day = 1;
+            DateTime NewDate = new DateTime();
+            if (Month!="")
+            {
+                try
+                {
+                    string[] S = Month.Split('-');
+                    Y = Convert.ToInt16(S[0]);
+                    M = Convert.ToInt16(S[1]);
+                    day= Convert.ToInt16(S[2]);
+                    NewDate = new DateTime(Y, M, day);
+                }
+                catch
+                {
+
+                }
+               
+            }
             OsmotrWork OW = new OsmotrWork();
             try
             {
@@ -1854,9 +2801,24 @@ namespace GKHNNC.Controllers
                 A2.Number = AOW.Number;
                 A2.User = User.Identity.Name;
                 A2.Photo = "";
+                if (Month.Equals("Не запланирована") == false)
+                {
+                    A2.Zaplanirovana = true;
+                    A2.DateZaplanirovana = NewDate;
+                }
+                
                 db.Entry(A2).State = EntityState.Modified;
                 db.SaveChanges();
-                string D = El+";"+OW.Name + ";" + OW.Izmerenie.Name + ";" + Number.ToString() + ";" + A2.TotalCost.ToString() + ";" + A2.Id+";Modify";
+                string DZ = "";
+                if (A2.DateZaplanirovana != null)
+                {
+                    DZ = A2.DateZaplanirovana.ToString();
+                }
+                else
+                {
+                    DZ = "";
+                }
+                string D = El+";"+OW.Name + ";" + OW.Izmerenie.Name + ";" + Number.ToString() + ";" + A2.TotalCost.ToString() + ";" + A2.Id+";Modify;"+DZ;
                 return Json(D);
             }
             catch(Exception e)
@@ -1872,6 +2834,11 @@ namespace GKHNNC.Controllers
                 AOW.StatiId = 1;
                 AOW.KontragentId = 1;
                 AOW.Kommisia = -1;
+                if (Month.Equals("Не запланирована")== false)
+                {
+                    AOW.Zaplanirovana = true;
+                    AOW.DateZaplanirovana = NewDate;
+                }
                 db.ActiveOsmotrWorks.Add(AOW);
 
                 db.SaveChanges();
@@ -1880,7 +2847,20 @@ namespace GKHNNC.Controllers
             {
 
             }
-            string Data = El2 + ";" + OW.Name + ";" + OW.Izmerenie.Name + ";" + Number.ToString() + ";" + AOW.TotalCost.ToString()+";"+AOW.Id+";Add";
+
+
+
+             string DZZ = "";
+            if (AOW.DateZaplanirovana != null)
+            {
+                DZZ = AOW.DateZaplanirovana.ToString();
+            }
+            else
+            {
+                DZZ = "";
+            }
+
+            string Data = El2 + ";" + OW.Name + ";" + OW.Izmerenie.Name + ";" + Number.ToString() + ";" + AOW.TotalCost.ToString()+";"+AOW.Id+ ";Add;" + DZZ;
             return Json(Data);
         }
 
@@ -2482,6 +3462,8 @@ namespace GKHNNC.Controllers
             return Json(Errors);
         }
 
+ 
+
         public ActionResult MaterialEdit (string S = "")
         {
             S =S.ToUpper();
@@ -2505,15 +3487,60 @@ namespace GKHNNC.Controllers
         }
         // GET: Osmotrs/Create
 
+            public JsonResult SaveVivods(string Vivod, int id)
+        {
+            string Result = "";
+            try
+            {
+               var O = db.Osmotrs.Where(x => x.Id == id).First();
+                O.Vivods = Vivod;
+                db.Entry(O).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+            catch (Exception e)
+            {
+
+            }
+            return Json(Result);
+        }
+
         public ActionResult Create(DateTime date,int id = 0,bool NewOsmotr=false)
         {
             Start:
             bool LoadOsmotr = false;
             string error = "";
 
+            //Проверяем можно ли создавать новые осмотры
             if (NewOsmotr)
             {
               NewOsmotr = db.CanCreateOsmotrs.OrderByDescending(x => x.Id).Select(x=>x.Sozdanie).First();
+            }
+            //Если можно то проверяем есть ли осмотр по этому дому за этот год
+            if (NewOsmotr)
+            {
+                NewOsmotr = false;
+                int TO = 0;
+
+                try
+                {
+                    //Ищем осмотры по Году и адресу
+                    int DY = date.Year;
+                 TO = db.Osmotrs.Where(x => x.Date.Year == DY && x.AdresId== id).Count();
+                }
+                catch
+                {
+
+                }
+                if (TO==0)
+                {
+                    //Если количество найденных осмотров по году и адресу = 0 то разрешаем создать новый осмотр
+                    NewOsmotr = true;
+                }
+                else
+                {
+                    //Иначе отправляем на главную страницу
+                   return RedirectToAction("Index");
+                }
             }
 
             List<Element> Elements = GetElements();// db.Elements.ToList();
@@ -2534,8 +3561,10 @@ namespace GKHNNC.Controllers
             if (date == null)
             {
                 date = DateTime.Now;
+                
             }
 
+          
             Osmotr Result = new Osmotr();
 
             //ищем по базе осмотры, если есть за текущий месяц на данном доме то продолжаем заполнять его.
@@ -2804,7 +3833,8 @@ namespace GKHNNC.Controllers
                         }
                         catch { LastO = null; }
                         //теперь у нас могут быть данные предыдущего осмотра
-                        DateTime D = DateTime.Now;
+                        // DateTime D = DateTime.Now;
+                        DateTime D = new DateTime(date.Year, 5, 15);
                         //сохраняем новый осмотр если дата прошлого отличается хотя бы на  или прошлого осмотра нет
                         if (LastO == null ||LastO.Date.Month != D.Date.Month || LastO.Date.Year != D.Date.Year)
                         {
@@ -3768,6 +4798,36 @@ namespace GKHNNC.Controllers
             return dbAD;
         }
 
+        public List<Osmotr> GetOsmotrs(bool Obnovit)
+        {
+            List<Osmotr> Osmotrs = new List<Osmotr>();
+            if (Obnovit == false && Session["Osmotrs"] != null)
+            {
+                try
+                {
+                    Osmotrs = (List<Osmotr>)Session["Osmotrs"];
+                }
+                catch
+                {
+
+                }
+            }
+
+            if (Osmotrs.Count == 0)
+            {
+                try
+                {
+                    Osmotrs = db.Osmotrs.Include(x=>x.Adres).Include(x => x.ORW).Include(x => x.AOW).ToList();
+                    Session["Osmotrs"] = Osmotrs;
+                }
+                catch (Exception e)
+                {
+
+                }
+            }
+            return Osmotrs;
+        }
+
         public ActionResult Info(DateTime date, int id = 0)
         {
             bool LoadOsmotr = true;
@@ -3841,8 +4901,8 @@ namespace GKHNNC.Controllers
                         try
                         {
                         //Include(x => x.DOMCW).Include(x => x.DOMHW).Include(x => x.DOMElectro).Include(x => x.DOMFasad).Include(x => x.DOMFundament).Include(x => x.DOMOtoplenie).Include(x => x.DOMRoof).Include(x => x.DOMRoom).Include(x => x.DOMVodootvod)
-                        O = db.Osmotrs.Where(x => x.AdresId == id && x.Date.Year == date.Year && x.Date.Month == date.Month).OrderByDescending(x => x.Date).First();
-                            O.Adres = Adresa.Where(x => x.Id == id).First();
+                        O = GetOsmotrs(false).Where(x => x.AdresId == id && x.Date.Year == date.Year && x.Date.Month == date.Month).OrderByDescending(x => x.Date).First();
+                       // O.Adres = Adresa.Where(x => x.Id == id).First();
                         }
                         catch
                         {
@@ -3900,7 +4960,7 @@ namespace GKHNNC.Controllers
                 }
                 try
                 {
-                    Result.ORW = db.OsmotrRecommendWorks.Include(x=>x.DOMPart).Include(x=>x.Izmerenie).Include(x => x.DOMPart).Where(x => x.OsmotrId == Result.Id).ToList();
+                    Result.ORW = db.OsmotrRecommendWorks.Include(x=>x.DOMPart).Include(x=>x.Izmerenie).Where(x => x.OsmotrId == Result.Id).ToList();
                 }
                 catch
                 {
@@ -3924,7 +4984,7 @@ namespace GKHNNC.Controllers
                     //catch { }
 
                     List<ActiveElement> dbAE = new List<ActiveElement>();
-                    dbAE = GetActiveElements(Result.Id);
+                    dbAE =GetActiveElements(Result.Id);
 
 
                     List<ActiveDefect> dbAD = new List<ActiveDefect>();

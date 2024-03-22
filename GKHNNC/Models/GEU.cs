@@ -12,8 +12,10 @@ namespace GKHNNC.Models
         public int Id { get; set; }
         [Display(Name = "Наименование")]
         public string Name { get; set; }
-        [Display(Name = "Начальник")]
+        [Display(Name = "Начальник РП")]
         public string Director { get; set; }
+        [Display(Name = "Начальник ИП")]
+        public string DirectorIP { get; set; }
         [Display(Name = "Доверенность №")]
         public string Doverennost { get; set; }
         [Display(Name = "Инженер ПТО")]

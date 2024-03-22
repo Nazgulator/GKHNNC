@@ -30,6 +30,10 @@ namespace GKHNNC.Models
         public bool Gotovo { get; set; }
         [Display(Name = "Дата выполнения")]
         public DateTime DateVipolneniya { get; set; }
+        [Display(Name = "Дата запланирована")]
+        public DateTime? DateZaplanirovana { get; set; }
+        [Display(Name = "Запланирована")]
+        public bool Zaplanirovana { get; set; }
         [Display(Name = "Фотография акта выполненных работ")]
         public string Photo { get; set; }
         [Display(Name = "Пользователь")]

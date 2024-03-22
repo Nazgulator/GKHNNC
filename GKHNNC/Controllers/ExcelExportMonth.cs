@@ -17,7 +17,6 @@ using System.Web.UI;
 
 
 
-
 namespace GKHNNC.Controllers
 {
     public class ExcelExportMonth
@@ -1047,14 +1046,14 @@ namespace GKHNNC.Controllers
 
             
             int k = startStroka;
-            while (WS.Cells[k,stNumber].Interior.Color != ColorTranslator.ToOle(Color.White))
+            while (WS.Cells[k,stNumber].Interior.Color != ColorTranslator.ToOle(System.Drawing.Color.White))
             {
                 //Идем вниз по строкам и если первая ячейка не белая и в ней есть цифра то заносим ее в базу.
                 string C = WS.Cells[k, stNumber].Text;
                 try
                 {
                     C = Convert.ToInt32(C).ToString();
-                    if (WS.Cells[k, stNumber].Font.Color != ColorTranslator.ToOle(Color.Black))
+                    if (WS.Cells[k, stNumber].Font.Color != ColorTranslator.ToOle(System.Drawing.Color.Black))
                     {
                         Krasnoe.Add(true);
                     }
@@ -1908,7 +1907,7 @@ namespace GKHNNC.Controllers
             ApExcel.Visible = false;//невидимо
             ApExcel.ScreenUpdating = false;//и не обновляемо
             ApExcel.StandardFont = "TimesNewRoman";
-            WS.Name = "Акт";
+            WS.Name = "1. Акт";
 
 
             int from = 1;
@@ -1947,7 +1946,7 @@ namespace GKHNNC.Controllers
             range.Font.Name = "TimesNewRoman";
 
             from++;
-            WS.Cells[from, 3] = " Заместитель директора по эксплуатации ЖФ _______________(_______)";
+            WS.Cells[from, 3] = " Заместитель директора по эксплуатации ЖФ _______________(Топчиева Т.П.)";
             range = WS.get_Range("C" + from, "E" + from);
             range.Merge(Type.Missing);
             range.Font.Bold = false;
@@ -1958,8 +1957,8 @@ namespace GKHNNC.Controllers
             range.WrapText = true;
             range.Font.Name = "TimesNewRoman";
 
-            WS.Cells[from, 1] = " Главный инженер  __________________(_________)";
-            range = WS.get_Range("A" + from, "A" + from);
+            WS.Cells[from, 1] = " Главный инженер  __________(Шпедт О.А.)";
+            range = WS.get_Range("A" + from, "B" + from);
             range.Merge(Type.Missing);
             range.Font.Bold = false;
             range.Font.Size = 10;
@@ -1992,8 +1991,9 @@ namespace GKHNNC.Controllers
             range.WrapText = true;
             range.Font.Name = "TimesNewRoman";
 
+           
             from++;
-            WS.Cells[from, 2] = "Акт осмотра №"+ O.Id+" от "+O.Date.ToString("dd.MM.yy");
+            WS.Cells[from, 2] = "Акт весеннего осмотра №" + O.Id+" от "+O.Date.ToString("dd.MM.yy");
             range = WS.get_Range("A" + from, "E" + from);
             range.Merge(Type.Missing);
             range.Font.Bold = true;
@@ -2005,16 +2005,20 @@ namespace GKHNNC.Controllers
             range.Font.Name = "TimesNewRoman";
 
             string Ad = O.Adres.Ulica;
-
-            if (Ad.Contains("МОЛОДЕЖИ") || Ad.Contains("ЛЕОНАРДО")) { Ad = "БУЛЬВАР " + Ad; }
-            if (Ad.Contains("МОРСКОЙ") || Ad.Contains("СТРОИТЕЛЕЙ")) { Ad = Ad + " ПРОСПЕКТ"; }
-            if (Ad.Contains("ДЕТСКИЙ") || Ad.Contains("ВЕСЕННИЙ") || Ad.Contains("ЦВЕТНОЙ")) { Ad = Ad + " ПРОЕЗД"; }
-            Ad = "ул. " + Ad;
+            bool AddUl = false;
+            if (Ad.Contains("МОЛОДЕЖИ") || Ad.Contains("ЛЕОНАРДО")) { Ad = "БУЛЬВАР " + Ad; AddUl = true; }
+            if (Ad.Contains("МОРСКОЙ") || Ad.Contains("СТРОИТЕЛЕЙ")) { Ad = Ad + " ПРОСПЕКТ"; AddUl = true; }
+            if (Ad.Contains("ДЕТСКИЙ") || Ad.Contains("ВЕСЕННИЙ") || Ad.Contains("ЦВЕТНОЙ")) { Ad = Ad + " ПРОЕЗД"; AddUl = true; }
+            if (!AddUl)
+            {
+                Ad = "ул."+ Ad;
+            }
+            
             string Res = " д. " + O.Adres.Dom.Replace(" ", "");
             string Adres = Ad+ Res;
 
             from++;
-            WS.Cells[from, 2] = "по обследованию жилого дома ";
+            WS.Cells[from, 2] = "по обследованию многоквартирного дома ";
             range = WS.get_Range("A" + from, "E" + from);
             range.Merge(Type.Missing);
             range.Font.Bold = true;
@@ -2037,17 +2041,7 @@ namespace GKHNNC.Controllers
             range.WrapText = true;
             range.Font.Name = "TimesNewRoman";
 
-            from++;
-            WS.Cells[from, 2] = "на наличие дефектов.";
-            range = WS.get_Range("A" + from, "E" + from);
-            range.Merge(Type.Missing);
-            range.Font.Bold = true;
-            range.Font.Size = 13;
-            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
-            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
-            range.RowHeight = 20;
-            range.WrapText = true;
-            range.Font.Name = "TimesNewRoman";
+          
 
             from++;
             range = WS.get_Range("A" + from, "E" + from);
@@ -2055,8 +2049,8 @@ namespace GKHNNC.Controllers
 
             int startStroka = from + 1;
             range = WS.Cells[startStroka, naimenovanie];//столбец номер ширина
-            range.ColumnWidth = 37;
-            range.Font.Size = 10;
+            range.ColumnWidth = 20;
+            range.Font.Size = 8;
             range.Value = "Конструктивный элемент";
             range.Font.Bold = true;
             range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
@@ -2100,7 +2094,8 @@ namespace GKHNNC.Controllers
 
 
             range = WS.Cells[startStroka, cena];
-            range.ColumnWidth = 15.5;
+
+           
             range.Font.Size = 8;
             range.Value = "Состояние";
             range.Font.Bold = true;
@@ -2108,6 +2103,7 @@ namespace GKHNNC.Controllers
             range.RowHeight = 15;//высота строки
             range.WrapText = true;
             range.HorizontalAlignment = Excel.Constants.xlLeft;
+            
 
             foreach (DOMPart P in DP)
             {
@@ -2118,7 +2114,7 @@ namespace GKHNNC.Controllers
                     startStroka++;
                     WS.Cells[startStroka, naimenovanie] = P.Name;
                     range = WS.get_Range("A" + startStroka, "E" + startStroka);
-                    range.Font.Size = 14;
+                    range.Font.Size = 12;
                     range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
                     range.Merge();
 
@@ -2163,9 +2159,9 @@ namespace GKHNNC.Controllers
                                     range.Merge();
 
                                     range = WS.get_Range("A" + startStroka, "E" + startStroka);
-                                    range.Font.Size = 8;
+                                    range.Font.Size = 7;
                                     range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
-                                    range.Interior.Color = Color.LightGray;
+                                    range.Interior.Color = System.Drawing.Color.LightGray;
 
                                 }
                             }
@@ -2178,6 +2174,7 @@ namespace GKHNNC.Controllers
 
             //Определяем жэу
             GEU G = new GEU();
+            string eu = "ЭУ1";
             try
             {
                 G = db.GEUs.Where(x => x.Name.Contains(GEU.ToString())).First();
@@ -2187,20 +2184,120 @@ namespace GKHNNC.Controllers
                 G = db.GEUs.First();
             }
 
+            try
+            {
+                eu = "ЭУ" + G.EU;//db.EU.Where(x => x.Id == G.EU).First();
+            }
+            catch
+            {
+
+            }
+
+            startStroka++;
+            startStroka++;
+            WS.Cells[startStroka, 1] = "В ходе осмотра выявлено:";
+            range = WS.Cells[startStroka, periodichnost];
+            range.ColumnWidth = 20;
+           
+            range.Font.Bold = true;
+            range.Font.Size = 8;
+            range.RowHeight = 15;//высота строки
+            range.WrapText = true;
+            range.HorizontalAlignment = Excel.Constants.xlLeft;
+
+            startStroka++;
+            range = WS.get_Range("A" + (startStroka), "E" + (startStroka));
+          //  range.ColumnWidth = 13;
+            WS.Cells[startStroka, 1] = "Выводы комиссии:";
+            range.Merge();
+
+            startStroka++;
+            range = WS.get_Range("A" + (startStroka), "E" + (startStroka));
+            //range.RowHeight = 30;
+            range.WrapText = true;
+            WS.Cells[startStroka, 1] = O.Vivods;
+            range.RowHeight = 1;
+            try
+            {
+                range.RowHeight =(Math.Truncate(Convert.ToDecimal(O.Vivods.Length) / 60) + 1) * 15+1;
+            }
+            catch
+            {
+
+            }
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.Merge();
+
+            startStroka++;
+            range = WS.get_Range("A" + (startStroka), "E" + (startStroka));
+           // range.ColumnWidth = 20;
+            WS.Cells[startStroka, 1] = "___________________________________________________________________________";
+           
+            range.Font.Bold = true;
+            range.Font.Size = 8;
+            range.RowHeight = 15;//высота строки
+            range.WrapText = true;
+            range.HorizontalAlignment = Excel.Constants.xlLeft;
+            range.Merge();
+
+            startStroka++;
+            range = WS.get_Range("A" + (startStroka), "E" + (startStroka));
+    
+            WS.Cells[startStroka, 1] = "___________________________________________________________________________";
+            range.Font.Bold = true;
+            range.Font.Size = 8;
+            range.RowHeight = 15;//высота строки
+            range.WrapText = true;
+            range.HorizontalAlignment = Excel.Constants.xlLeft;
+            range.Merge();
+
+            startStroka++;
+            range = WS.get_Range("A" + (startStroka), "E" + (startStroka));
+
+            WS.Cells[startStroka, 1] = "___________________________________________________________________________";
+            range.Font.Bold = true;
+            range.Font.Size = 8;
+            range.RowHeight = 15;//высота строки
+            range.WrapText = true;
+            range.HorizontalAlignment = Excel.Constants.xlLeft;
+            range.Merge();
+
+            startStroka++;
+            range = WS.get_Range("A" + (startStroka), "E" + (startStroka));
+             WS.Cells[startStroka, 1] = "___________________________________________________________________________";
+            range.Font.Bold = true;
+            range.Font.Size = 8;
+    
+            range.RowHeight = 15;//высота строки
+            range.WrapText = true;
+            range.HorizontalAlignment = Excel.Constants.xlLeft;
+            range.Merge();
+
+            startStroka++;
+            range = WS.get_Range("A" + (startStroka), "E" + (startStroka));
+            WS.Cells[startStroka, 1] = "___________________________________________________________________________";
+            range.Font.Bold = true;
+            range.Font.Size = 8;
+    
+            range.RowHeight = 15;//высота строки
+            range.WrapText = true;
+            range.HorizontalAlignment = Excel.Constants.xlLeft;
+            range.Merge();
 
             startStroka++;
             from = startStroka;
             WS.Cells[startStroka, 1] = "Члены коммиссии:";
             range = WS.get_Range("A" + from, "A" + from);
-            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
             range.RowHeight = 25;//высота строки
-            WS.Cells[startStroka, 5] = "1._______________(___________) Начальник " + G.Name;
-            WS.Cells[startStroka+1, 5] = "2._______________(___________) Управдом";
-            WS.Cells[startStroka+2, 5] = "3._______________(___________) Старший по дому";
-            WS.Cells[startStroka+3, 5] = "4._______________(___________) Проверил";
+            startStroka++;
+            WS.Cells[startStroka, 5] = "1._______________("+G.DirectorIP+") Начальник " + eu;
+            WS.Cells[startStroka+1, 5] = "2._______________(___________) Представитель УО";
+            WS.Cells[startStroka+2, 5] = "3._______________(___________) Председатель Совета МКД";
+            WS.Cells[startStroka+3, 5] = "4._______________("+G.IngenerOEGF+") ведущий инженер ОЭЖФ";
             for (int i = 0; i < 4; i++)
             {
-                range = WS.get_Range("B" + (from+i), "E" + (from+i));
+                range = WS.get_Range("A" + (startStroka + i), "E" + (startStroka + i));
                 //range.Merge(Type.Missing);
                 range.Font.Size = 10;
                 range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
@@ -2208,11 +2305,11 @@ namespace GKHNNC.Controllers
                 range.Merge();
                 range.RowHeight = 25;//высота строки
             }
+            WS.Cells[startStroka, 5].ColumnWidth = 18;
 
 
 
 
-         
 
             //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!222222222222222222222222222222222222222!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             //Делаем 2 лист
@@ -2220,35 +2317,36 @@ namespace GKHNNC.Controllers
             // ApExcel.Worksheets.Add();
             ApExcel.Worksheets.Add(Type.Missing);//Добавляем лист
             WS = WbExcel.Sheets[1];
-            WS.Name = "3. Работы по ДТР";
+            WS.Name = "2. Работы по ДТР";
 
             startStroka = 1;
-            WS.Cells[startStroka, 6] = " Утверждаю:";
-            range = WS.get_Range("F" + startStroka, "G" + startStroka);
+            WS.Cells[startStroka, 5] = " Утверждаю:";
+            range = WS.get_Range("E" + startStroka, "G" + startStroka);
             //  Opr.RangeMerge(ApExcel, range, true, true, 10, 15);
             range.Merge();
             range.Font.Size = 10;
             range.Borders.LineStyle = Excel.XlLineStyle.xlLineStyleNone;
             range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
             startStroka++;
-            WS.Cells[startStroka, 6] = "Директор ФГБУ 'Академия комфорта'";
-            range = WS.get_Range("F" + startStroka, "G" + startStroka);
+            WS.Cells[startStroka, 5] = "Директор ФГБУ 'Академия комфорта'";
+            range = WS.get_Range("E" + startStroka, "G" + startStroka);
+            //  Opr.RangeMerge(ApExcel, range, true, true, 13, 15);
+            range.Merge();
+            range.Font.Size = 10;
+            WS.Cells[startStroka, 5].ColumnWidth  = 34;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlLineStyleNone;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
+            startStroka++;
+            WS.Cells[startStroka, 5] = " ____________________В.В.Кисс";
+            range = WS.get_Range("E" + startStroka, "G" + startStroka);
             //  Opr.RangeMerge(ApExcel, range, true, true, 13, 15);
             range.Merge();
             range.Font.Size = 10;
             range.Borders.LineStyle = Excel.XlLineStyle.xlLineStyleNone;
             range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
             startStroka++;
-            WS.Cells[startStroka, 6] = " ____________________В.В.Кисс";
-            range = WS.get_Range("F" + startStroka, "G" + startStroka);
-            //  Opr.RangeMerge(ApExcel, range, true, true, 13, 15);
-            range.Merge();
-            range.Font.Size = 10;
-            range.Borders.LineStyle = Excel.XlLineStyle.xlLineStyleNone;
-            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
-            startStroka++;
-            WS.Cells[startStroka, 6] = " '___'________________" + (O.Date.Year) + "г.";
-            range = WS.get_Range("F" + startStroka, "G" + startStroka);
+            WS.Cells[startStroka, 5] = " '___'________________" + (O.Date.Year) + "г.";
+            range = WS.get_Range("E" + startStroka, "G" + startStroka);
             //  Opr.RangeMerge(ApExcel, range, true, true, 13, 15);
             range.Merge();
             range.Font.Size = 10;
@@ -2259,7 +2357,7 @@ namespace GKHNNC.Controllers
             // range = WS.get_Range("A" + 1, "H" + startStroka);
             // range.Borders.LineStyle = Excel.XlLineStyle.xlLineStyleNone;
 
-            WS.Cells[startStroka, 1] = "3. Работы по дополнительному текущему ремонту, определение их стоимости и размера платы за дополнительный текущий ремонт на " + (O.Date.Year + 1).ToString() + " год по адресу " + O.Adres.Ulica + " " + O.Adres.Dom;
+            WS.Cells[startStroka, 1] = "3. Работы по дополнительному текущему ремонту, определение их стоимости и размера платы за дополнительный текущий ремонт на " + O.Date.Year + "-" + (O.Date.Year + 1).ToString() + " год по адресу " + Adres;//O.Adres.Ulica + " " + O.Adres.Dom;
             range = WS.get_Range("A" + startStroka, "G" + startStroka);
             Opr.RangeMerge(ApExcel, range, true, true, 13, 50);
 
@@ -2282,13 +2380,13 @@ namespace GKHNNC.Controllers
             decimal ActivePloshad = db.Adres.Where(x => x.Id == O.AdresId).Select(x => x.ActivePloshad).First();
             decimal summa = 0;
 
-
-             var AOW = new List<ActiveOsmotrWork>();
+            DateTime DateStart = new DateTime(1, 1, 1);
+            var AOW = new List<ActiveOsmotrWork>();
              var Elements = new List<int>();
 
             try
             {
-                AOW = db.ActiveOsmotrWorks.Where(x => x.OsmotrId == O.Id && !x.Gotovo && x.OsmotrWork.OtchetId == 0).OrderBy(x => x.ElementId).Include(x => x.OsmotrWork).Include(x => x.OsmotrWork.Izmerenie).ToList();
+                AOW = db.ActiveOsmotrWorks.Where(x => x.OsmotrId == O.Id && !x.Gotovo && x.OsmotrWork.OtchetId == 0&&(x.DateZaplanirovana==DateStart||x.DateZaplanirovana==null)).OrderBy(x => x.ElementId).Include(x => x.OsmotrWork).Include(x => x.OsmotrWork.Izmerenie).ToList();
                 Elements = AOW.Select(x => x.ElementId).Distinct().ToList();
             }
             catch
@@ -2433,7 +2531,7 @@ namespace GKHNNC.Controllers
             Opr.RangeMerge(ApExcel, range, true, true, 11, 20);
 
             startStroka += 2;
-            WS.Cells[startStroka, 1] = "Заместитель директора по эксплуатации жилого фонда___________________________Т.П. Топчиева";
+            WS.Cells[startStroka, 1] = "Заместитель директора по эксплуатации жилищного фонда___________________________Т.П. Топчиева";
             range = WS.get_Range("A" + startStroka, "G" + startStroka);
             Opr.RangeMerge(ApExcel, range, true, false, 13, 20);
             range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
@@ -2456,9 +2554,114 @@ namespace GKHNNC.Controllers
             Opr.RangeMerge(ApExcel, range, true, false, 13, 20);
             range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
             range.Borders.LineStyle = Excel.XlLineStyle.xlLineStyleNone;
+            startStroka++;
+            WS.Cells[startStroka, 1] = "Начальник "+ eu   +"                      ___________________________" + G.DirectorIP;
+            range = WS.get_Range("A" + startStroka, "G" + startStroka);
+            Opr.RangeMerge(ApExcel, range, true, false, 13, 20);
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlLineStyleNone;
+
+            //Проверяем есть ли работы с назначеной датой, если да то выводим доп лист план работы иначе не выводим листа
+          
+            List<ActiveOsmotrWork> AOWD = new List<ActiveOsmotrWork>();
+            try
+            {
+                AOWD = db.ActiveOsmotrWorks.Include(x => x.OsmotrWork).Where(x => x.DateZaplanirovana > DateStart&&x.OsmotrId == O.Id).ToList();
+            }
+            catch
+            {
+
+            }
+            if (AOWD.Count == 0)
+            {
+                goto END;
+            }
+
+            //Добавляем лист планы работ
+            ApExcel.Worksheets.Add(Type.Missing);//Добавляем лист
+            WS = WbExcel.Sheets[1];
+            WS.Name = "3.План работ";
+
+            from = 1;
+            startStroka = 1;
+            WS.Cells[startStroka, 1] = "План";
+            range = WS.get_Range("A" + startStroka, "E" + startStroka);
+            range.Merge();
+            range.Font.Size = 12;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlLineStyleNone;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+
+            startStroka++;
+            WS.Cells[startStroka, 1] = "работ по устранению недостатков выявленных в результате весеннего осмотра от " + O.Date.ToString("dd.MM.yy");
+            range = WS.get_Range("A" + startStroka, "E" + startStroka);
+            range.Merge();
+            range.Merge(Type.Missing);
+            range.Font.Bold = true;
+            range.Font.Size = 8;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.RowHeight = 20;
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            startStroka++;
+            WS.Cells[startStroka, 1] = "по адресу " + Adres;
+            range = WS.get_Range("A" + startStroka, "E" + startStroka);
+            range.Merge();
+            range.Merge(Type.Missing);
+            range.Font.Bold = true;
+            range.Font.Size = 8;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.RowHeight = 20;
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            startStroka++;
+            WS.Cells[startStroka, 1] = "№";
+            WS.Cells[startStroka, 2] = "Наименование работы";
+            WS.Cells[startStroka, 3] = "Количество";
+            WS.Cells[startStroka, 4] = "Измерение";
+            WS.Cells[startStroka, 5] = "Срок";
+            range = WS.get_Range("A" + startStroka, "E" + startStroka);
+            range.Font.Size = 8;
+            range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            int z = 0;
+            foreach (var aowd  in AOWD)
+            {
+                z++;
+                startStroka++;
+                WS.Cells[startStroka, 1] = z;
+                WS.Cells[startStroka, 2] = aowd.OsmotrWork.Name;
+                WS.Cells[startStroka, 3] = aowd.Number;
+                WS.Cells[startStroka, 4] = aowd.OsmotrWork.Izmerenie.Name;
+                WS.Cells[startStroka, 5] = aowd.DateZaplanirovana.Value.ToString("dd.MM.yyyy");
+                range = WS.get_Range("A" + startStroka, "E" + startStroka);
+                range.ColumnWidth = 10;
+                range.Font.Size = 8;
+                range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+
+            }
+            startStroka++;
+            WS.Cells[startStroka, 1] = "_______________(" + G.DirectorIP + ")";// Начальник " + eu;
+            range = WS.get_Range("A" + startStroka, "E" + startStroka);
+            range.Font.Size = 8;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
+            range.Merge(Type.Missing);
+
+            range = WS.get_Range("B" + startStroka, "B" + startStroka);
+            range.ColumnWidth = 45;
 
 
 
+
+
+
+
+
+
+
+            END:
 
             // Сохранение файла Excel.
             try
@@ -2493,6 +2696,475 @@ namespace GKHNNC.Controllers
 
             CloseProcess();
         }
+
+        public static void GISGKHOtchet(List<MKDYearOtchet> OO, string path, string filename)
+        {
+            Excel.Application ApExcel = new Excel.Application();
+            Excel.Workbooks WB = null;
+            WB = ApExcel.Workbooks;
+            Excel.Workbook WbExcel = WB.Add(Missing.Value);
+            Excel.Worksheet WS = WbExcel.Sheets[1];
+            Excel.Range range;//рэндж
+            ApExcel.Visible = false;//невидимо
+            ApExcel.ScreenUpdating = false;//и не обновляемо
+            ApExcel.StandardFont = "TimesNewRoman";
+            WS.Name = "ФГБУ Академия комфорта";
+
+
+            int from = 1;
+
+            int StartStroka = 0;
+            int EndStroka = 0;
+            // string month = Opr.MonthToNorm(Opr.MonthOpred(O.Date.Month));
+            string year = DateTime.Now.AddYears(-1).Year.ToString();
+            int usluga = 1;
+            int start = 2;
+            int nachisleno = 3;
+            int oplacheno = 4;
+            int sobstvennie = 5;
+            int end = 6;
+
+
+
+         
+
+
+            from++;
+            WS.Cells[from, 1] = " Выполненные работы";
+            range = WS.get_Range("A" + from, "C" + from);
+            range.Merge(Type.Missing);
+            range.Font.Bold = true;
+            range.Font.Size = 18;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.RowHeight = 20;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            StartStroka = from;
+
+            from++;
+            WS.Cells[from, 1] = "АДРЕС";
+            WS.Cells[from, 2] = "НАЧИСЛЕНО ПО СОДЕРЖАНИЮ";
+            WS.Cells[from, 3] = "ВЫПОЛНЕННЫЕ РАБОТЫ ПО СОДЕРЖАНИЮ";
+            foreach (var O in OO)
+            {
+
+              
+
+                from++;
+                WS.Cells[from, 1] = O.Adres;
+                WS.Cells[from, 2] = O.ORCSoderganieCHANGE;
+                WS.Cells[from, 3] = O.Soderganie;
+
+            }
+            EndStroka = from;
+
+
+
+
+
+
+            //Рисуем границы
+            range = WS.get_Range("A" + StartStroka, "C" + EndStroka);
+            range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            // Сохранение файла Excel.
+            try
+            {
+                string fileName = path + filename + ".xlsx";
+                if (File.Exists(fileName)) { File.Delete(fileName); }
+
+                WbExcel.SaveCopyAs(fileName);//сохраняем в папку
+
+                fileName = path + filename + ".pdf";
+                if (File.Exists(fileName)) { File.Delete(fileName); }
+                WbExcel.ExportAsFixedFormat(Excel.XlFixedFormatType.xlTypePDF, fileName);
+                // WbExcel.SaveCopyAs(fileName);
+                //   WbExcel.SaveAs(fileName, Excel.XlFixedFormatType.xlTypePDF);
+
+
+
+            }
+            catch (Exception e)
+            {
+
+            }
+
+
+
+            //WbExcel.PrintOutEx(1, 1, 1, true, null, null, null, null, null);//печать сразу после сохранения
+            ApExcel.Visible = true;//невидимо
+            ApExcel.ScreenUpdating = true;//и не обновляемо
+                                          // Закрытие книги.
+            WbExcel.Close(false, "", Type.Missing);
+            // Закрытие приложения Excel.
+
+
+            ApExcel.Quit();
+            Marshal.FinalReleaseComObject(WS);
+            Marshal.FinalReleaseComObject(range);
+            Marshal.FinalReleaseComObject(WbExcel);
+            Marshal.FinalReleaseComObject(WB);
+
+
+
+            GC.Collect();
+            Marshal.FinalReleaseComObject(ApExcel);
+            GC.WaitForPendingFinalizers();
+            string f = path + filename + ".pdf";
+
+
+            CloseProcess();
+        }
+
+        public static void MKDOtchet(MKDYearOtchet O, string path, string filename, int Y = 0)
+        {
+            Excel.Application ApExcel = new Excel.Application();
+            Excel.Workbooks WB = null;
+            WB = ApExcel.Workbooks;
+            Excel.Workbook WbExcel = WB.Add(Missing.Value);
+            Excel.Worksheet WS = WbExcel.Sheets[1];
+            Excel.Range range;//рэндж
+            ApExcel.Visible = false;//невидимо
+            ApExcel.ScreenUpdating = false;//и не обновляемо
+            ApExcel.StandardFont = "TimesNewRoman";
+            WS.Name = "ФГБУ Академия комфорта";
+          
+
+            int from = 1;
+
+            int StartStroka = 0;
+            int EndStroka = 0;
+            // string month = Opr.MonthToNorm(Opr.MonthOpred(O.Date.Month));
+            string year = Y.ToString();//DateTime.Now.AddYears(-1).Year.ToString();
+            int usluga = 1;
+            int start = 2;
+            int nachisleno = 3;
+            int oplacheno = 4;
+            int sobstvennie = 5;
+            int end = 6;
+
+
+       
+            WS.Cells[from, 1] = " ФГБУ 'Академия комфорта'";
+            
+            range = WS.get_Range("A" + from, "F" + from);
+            range.Merge(Type.Missing);
+            range.Font.Bold = false;
+            range.Font.Size = 18;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.RowHeight = 20;//высота строки
+            range.ColumnWidth = 12;
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = " Отчет по выполненным работам за "+ year+" год";
+            range = WS.get_Range("A" + from, "F" + from);
+            range.Merge(Type.Missing);
+            range.Font.Bold = false;
+            range.Font.Size = 14;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.RowHeight = 20;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = " Адрес: " + O.Adres ;
+            range = WS.get_Range("A" + from, "F" + from);
+            range.Merge(Type.Missing);
+            range.Font.Bold = false;
+            range.Font.Size = 14;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.RowHeight = 40;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            StartStroka = from;
+            WS.Cells[from, 1] = " Движение денежных средств по многоквартирному дому ";
+            range = WS.get_Range("A" + from, "F" + from);
+            range.Merge(Type.Missing);
+            range.Font.Bold = false;
+            range.Font.Size = 12;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.RowHeight = 20;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+            range.Font.Bold = true;
+
+            from++;
+            WS.Cells[from, usluga] = "Услуга";
+            WS.Cells[from, start] = "Баланс на начало";
+            WS.Cells[from, nachisleno] = "Начислено";
+            WS.Cells[from, oplacheno] = "Оплачено";
+            WS.Cells[from, sobstvennie] = "Выполненные работы";
+            WS.Cells[from, end] = "Баланс на конец";
+            range = WS.get_Range("A" + from, "F" + from);
+           
+            range.Font.Bold = false;
+            range.Font.Size = 8;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.RowHeight = 20;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+
+            
+            from++;
+            int BigTableStart = from;
+            WS.Cells[from, usluga] = " Аренда ";
+            WS.Cells[from, start] = O.OstatkiArendaSTART;
+            WS.Cells[from, nachisleno] = O.OstatkiArendaNachisleno;
+            WS.Cells[from, oplacheno] = O.OstatkiArendaOplacheno;
+            WS.Cells[from, sobstvennie] = O.Arenda;// O.OstatkiArendaEND;
+
+            WS.Cells[from, end] = O.ArendaRaschet;
+
+            from++;
+            WS.Cells[from, usluga] = " Дополнительный текущий ремонт ";
+            WS.Cells[from, start] = O.OstatkiDopTekRemSTART;
+            WS.Cells[from, nachisleno] = O.ORCDopTekRemCHANGE;
+            WS.Cells[from, oplacheno] = O.ORCDopTekRemPAY;
+            WS.Cells[from, sobstvennie] = O.OstatkiDopTekRemEND;
+
+            WS.Cells[from, end] = O.DopTekRemRaschet;
+
+            from++;
+            WS.Cells[from, usluga] = " Непредвиденный/ Неотложный ремонт ";
+            WS.Cells[from, start] = O.OstatkiNepredRemSTART;
+            WS.Cells[from, nachisleno] = O.ORCNepredRemontCHANGE;
+            WS.Cells[from, oplacheno] = O.ORCNepredRemontPAY;
+            WS.Cells[from, sobstvennie] = O.OstatkiNepredRemEND;
+
+            WS.Cells[from, end] = O.NepredRaschet;
+
+            from++;
+            WS.Cells[from, usluga] = " Текущий ремонт (содержание)";
+            WS.Cells[from, start] = 0;
+            WS.Cells[from, nachisleno] = O.ORCTekRemCHANGE;
+            WS.Cells[from, oplacheno] = O.ORCTekRemPAY;
+            WS.Cells[from, sobstvennie] = O.OstatkiTekRemEND;
+
+            WS.Cells[from, end] = O.TekRemRaschet;
+
+            from++;
+            WS.Cells[from, usluga] = " ТЕКУЩИЙ РЕМОНТ (содержание)";
+            WS.Cells[from, start] = 0;
+            WS.Cells[from, nachisleno] = 0;
+            WS.Cells[from, oplacheno] = 0;
+            WS.Cells[from, sobstvennie] = O.TEKREM;
+
+            WS.Cells[from, end] = O.TekRemRaschet;
+
+            from++;
+            WS.Cells[from, usluga] = " Содержание";
+            WS.Cells[from, start] = O.OstatkiSoderganieSTART;
+            WS.Cells[from, nachisleno] = O.ORCSoderganieCHANGE;
+            WS.Cells[from, oplacheno] = O.ORCSoderganiePAY;
+            WS.Cells[from, sobstvennie] = O.Soderganie;
+
+            WS.Cells[from, end] = O.SoderganieRaschet;
+
+
+            //Уменьшаем шрифт в строках верхней таблицы
+            range = WS.get_Range("A" + BigTableStart, "F" + from);
+            range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.Font.Size = 8;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            //Делаем 1 строку шире
+            range = WS.get_Range("A" + BigTableStart, "A" + from);
+            range.ColumnWidth = 15;
+
+            from++;
+     
+
+            from++;
+            WS.Cells[from, 1] = " Выполненные работы";
+            range = WS.get_Range("A" + from, "F" + from);
+            range.Merge(Type.Missing);
+            range.Font.Bold = true;
+            range.Font.Size = 18;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.RowHeight = 20;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            foreach (var S in O.Stati)
+            {
+                decimal Summa = O.CompletedWorks.Where(x => x.WorkTip.Equals(S)).Sum(x => x.WorkSumma);
+                string Nazvanie = S;
+                if (S.Contains("Работы по текущему ремонту общего имущества"))
+                {
+                   Nazvanie = "Периодические работы согласно утверждённого тарифа";
+                }
+                if (S.Contains("Ремонтные работы за счет статьи Аренда"))
+                {
+                    Nazvanie = "Расходы по статье Аренда";
+                }
+                
+                from++;
+                WS.Cells[from, 1] = Nazvanie;
+                range = WS.get_Range("A" + from, "F" + from);
+                range.Merge(Type.Missing);
+                range.Font.Bold = true;
+                range.Font.Size = 10;
+                range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                range.RowHeight = 30;//высота строки
+                range.WrapText = true;
+                range.Font.Name = "TimesNewRoman";
+
+                from++;
+                WS.Cells[from, usluga] = "Наименование работы";
+                WS.Cells[from,oplacheno] = "Ед. изм. ";
+                WS.Cells[from, sobstvennie] = "Объём работ";
+                WS.Cells[from, end] = "Факт. затр.";
+
+           
+
+                foreach (var w in O.CompletedWorks
+.GroupBy(c => new
+{
+    c.WorkName,
+    c.WorkTip
+
+})
+.Select(cl => new MKDCompleteWork
+{
+    WorkName = cl.First().WorkName,
+    WorkSumma = cl.Sum(x => x.WorkSumma),
+    WorkTip = cl.First().WorkTip
+}).Where(x => x.WorkTip.Equals(S)&&x.WorkSumma!=0).ToList())
+                {
+                    from++;
+                    WS.Cells[from, usluga] = w.WorkName;
+                    WS.Cells[from, oplacheno] = "руб.";
+                    WS.Cells[from, sobstvennie] = w.WorkSumma;
+                    WS.Cells[from, end] = w.WorkSumma;
+
+                    //Объединяем ячейки чтоб название влазило
+                    range = WS.get_Range("A" + from, "C" + from);
+                    range.Merge(Type.Missing);
+                    range.Font.Bold = true;
+                    range.WrapText = true;
+                    range.Font.Size = 8;
+                    if (w.WorkName.Length > 40)
+                    {
+                        range.RowHeight = 20;//высота строки
+                    }
+                }
+
+             
+                from++;
+                WS.Cells[from, 1] = " Итог по разделу:" ;
+                range = WS.get_Range("A" + from, "E" + from);
+                range.Merge(Type.Missing);
+                range.Font.Bold = false;
+                range.Font.Size = 13;
+                
+                range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
+                range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                range.RowHeight = 15;//высота строки
+                range.WrapText = true;
+                range.Font.Name = "TimesNewRoman";
+
+                WS.Cells[from, end] = Summa;
+            }
+            EndStroka = from;
+
+
+
+            //Подписи
+            from++;
+            from++;
+            WS.Cells[from, usluga] = "Директор Кисс В.В.";
+            WS.Cells[from, 4] = "__________________";
+            from++;
+            from++;
+            WS.Cells[from, usluga] = "Заместитель директора по ЭЖФ Топчиева Т.П.";
+            WS.Cells[from, 4] = "__________________";
+            from++;
+            from++;
+            WS.Cells[from, usluga] = "Начальник ПЭО Зимина Е.Е.";
+            WS.Cells[from, 4] = "__________________";
+            from++;
+            WS.Cells[from, 4] = "подписано ЭЦП";
+            
+
+
+            //Рисуем границы
+            range = WS.get_Range("A" + StartStroka, "F" + EndStroka);
+            range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            // Сохранение файла Excel.
+            try
+            {
+                string fileName = path + filename + ".xlsx";
+                if (File.Exists(fileName)) { File.Delete(fileName); }
+            
+                WbExcel.SaveCopyAs(fileName);//сохраняем в папку
+
+                fileName = path + filename + ".pdf";
+                if (File.Exists(fileName)) { File.Delete(fileName); }
+                WbExcel.ExportAsFixedFormat(Excel.XlFixedFormatType.xlTypePDF, fileName);
+               // WbExcel.SaveCopyAs(fileName);
+             //   WbExcel.SaveAs(fileName, Excel.XlFixedFormatType.xlTypePDF);
+               
+               
+             
+            }
+            catch (Exception e)
+            {
+
+            }
+
+          
+
+            //WbExcel.PrintOutEx(1, 1, 1, true, null, null, null, null, null);//печать сразу после сохранения
+            ApExcel.Visible = true;//невидимо
+            ApExcel.ScreenUpdating = true;//и не обновляемо
+                                          // Закрытие книги.
+            WbExcel.Close(false, "", Type.Missing);
+            // Закрытие приложения Excel.
+
+
+            ApExcel.Quit();
+            Marshal.FinalReleaseComObject(WS);
+            Marshal.FinalReleaseComObject(range);
+            Marshal.FinalReleaseComObject(WbExcel);
+            Marshal.FinalReleaseComObject(WB);
+
+
+
+            GC.Collect();
+            Marshal.FinalReleaseComObject(ApExcel);
+            GC.WaitForPendingFinalizers();
+           string f = path + filename + ".pdf";
+            //  bool flag = SaveAsPdf(f);
+
+            //  ApExcel(Load)
+            //  WbExcel.SaveAs(f, Excel.XlFixedFormatType.xlTypePDF);
+           // Application excel = new Application();
+          //  Workbook wb = excel.Workbooks.Open(path);
+
+
+            CloseProcess();
+        }
+
+       
+
+
+
         public static string sostOpred (int i)
         {
             string sostoyanie = "";

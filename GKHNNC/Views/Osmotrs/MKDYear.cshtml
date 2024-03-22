@@ -1,0 +1,148 @@
+﻿@model IEnumerable<GKHNNC.Models.MKDCompleteWork>
+
+
+@{
+
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+<!DOCTYPE html>
+
+<html>
+
+<body>
+
+    <table id="T" class="table table-bordered table-striped">
+
+        <tr>
+
+            <th>
+                Наименование работ
+            </th>
+            <th>
+                Ед. Изм.
+            </th>
+            <th>
+                Объём работ
+            </th>
+            <th>
+                Фактич. затрат
+            </th>
+
+
+
+
+        </tr>
+        @{bool Y = false; string OldRes = ""; decimal Summ = 0;}
+        @foreach (var item in Model)
+        {
+            if (item.WorkTip.Contains("Работы по текущему ремонту общего имущества"))
+            {
+                item.WorkTip = "Периодические работы согласно утверждённого тарифа";
+            }
+            if (OldRes.Equals(item.WorkTip) == false)
+            {
+                if (Summ > 0)
+                {
+                    <tr>
+                        <td colspan="5" style="text-align:right">
+
+                            @OldRes итог по статье: @Summ
+
+                        </td>
+                    </tr>
+                    Summ = 0;
+                }
+                <tr>
+                    <td colspan="5">
+                        <center>
+                            <h4>
+                                @item.WorkTip
+                            </h4>
+                        </center>
+                    </td>
+                </tr>
+
+                OldRes = item.WorkTip;
+
+            }
+            Summ += item.WorkSumma;
+
+
+            <tr>
+
+                <th>
+                    @item.WorkName
+                </th>
+
+                <th>
+                    руб.
+                </th>
+                <th>
+                    @item.WorkCena
+                </th>
+                <th>
+                    @item.WorkSumma
+                </th>
+
+
+            </tr>
+
+        }
+
+    </table>
+    <p><a href="/Home/Index" class="btn btn-success btn-block"><< В главное меню </a> </p>
+   
+
+</body>
+
+</html>
+@Scripts.Render("~/scripts/jquery-3.4.1.js")
+@Scripts.Render("~/scripts/jquery-ui-1.12.1.js")
+@Scripts.Render("~/scripts/jquery.unobtrusive-ajax.js")
+@Scripts.Render("~/scripts/bootstrap.js")
+@Scripts.Render("~/scripts/bootstrap.bundle.js")
+@Scripts.Render("/scripts/ExportToExcel/excelexportjs.js")
+<link rel="stylesheet" href="~/Scripts/JqueryThemes/ui-lightness/jquery-ui.css" />
+<script>
+ $("#Search").autocomplete({
+        source: '@Url.Action("SearchAdres", "Houses")',
+        minLength: 1,
+        select: function (event, ui)
+        {
+
+        var _this = ui.item.label;
+        window.location.replace('/Houses/Index?Adres=' + _this);
+
+
+        },
+
+        open: function (event, ui) {
+        $(this).removeClass('ui-autocomplete-loading');
+
+        }
+    });
+
+    $('#Search').on('keypress', function () {
+        var that = this;
+
+        setTimeout(function () {
+            var res = /[^а-я,0-9,А-Я ]/g.exec(that.value);
+            console.log(res);
+            that.value = that.value.replace(res, '');
+        }, 0);
+    });
+</script>
+<script>
+    function NewOsmotr(id, date) {
+        alert(id + ';' + date);
+        var GO = confirm('Вы уверены, что хотите создать новый осмотр? ')
+        if (GO) {
+
+            /**/
+            window.location.replace('/Osmotrs/Create?id=' + id + '&date=' + date + '&NewOsmotr=true');
+            /**/
+
+        }
+    }
+</script>

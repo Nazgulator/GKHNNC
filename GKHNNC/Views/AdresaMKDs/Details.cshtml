@@ -1,0 +1,43 @@
+﻿@model GKHNNC.Models.AdresaMKDs
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>AdresaMKDs</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.ORC)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ORC)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ASU)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ASU)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FileName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FileName)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

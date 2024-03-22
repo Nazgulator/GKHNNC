@@ -14,7 +14,6 @@
 
     <p><a href="/Home/Index" class="btn btn-success btn-block"><< В главное меню </a> </p>
     <div class="alert-success">
-        <p>20.05 Исправлен глюк по добавлению необходимых работ</p>
         <p>Если созданный осмотр не отображается, нажмите кнопку "Сбросить" ниже. </p>
     </div>
     <div class="alert-danger">
@@ -50,34 +49,39 @@
     <button class="btn btn-block btn-success" onclick="location.href='@Url.Action("OtchetAll", "Houses")'"> Сформировать отчет по необходимым работам </button>
     @if (ViewBag.WorkPoisk == "")
     {
-        <table class="table table-bordered table-striped">
-            <tr><td colspan="5" style="text-align:center"> <h5>Введите интервал, работу и название улицы для поиска данных</h5></td></tr>
-            <tr>
-                <td colspan="2">
-                    <input id="fromD" type="date" class="form-control" value="@ViewBag.FromD" title="Дата начала интервала" />
-                </td>
-                <td colspan="2">
-                    <input id="toD" type="date" class="form-control" value="@ViewBag.ToD" title="Дата конца интервала" />
-                </td>
-                <td>
-                    <button class="btn btn-block btn-success" onclick="window.location.replace('/Houses/Index?obnovit=true')"> Сбросить </button>
-                </td>
-            </tr>
+    <table class="table table-bordered table-striped">
+        <tr><td colspan="7" style="text-align:center"> <h5>Введите интервал, работу и название улицы для поиска данных</h5></td></tr>
+         <tr hidden>
+                    <td colspan="2">
+                        <input id="fromD" type="date" class="form-control" value="@ViewBag.FromD" title="Дата начала интервала" hidden />
+                    </td>
+                    <td colspan="2">
+                        <input id="toD" type="date" class="form-control" value="@ViewBag.ToD" title="Дата конца интервала" hidden/>
+                    </td>
+                   
+                </tr>
+    
 
+         <tr>
+             <td colspan="4">
+                 <input id="Search" class="form-control" value="@ViewBag.Adres" placeholder="Начните вводить улицу для поиска" />
+             </td>
+             <td colspan="2">
+                 <input id="WorkPoisk" class="form-control" value="@ViewBag.WorkPoisk" placeholder="Часть наименования выполненной работы" hidden />
+             </td>
+             <td>
+                 <button class="btn btn-block btn-success" onclick="Sbros()"> Сбросить </button>
+             </td>
+             <td>
+         
+              
+          
 
-            <tr>
-                <td colspan="2">
-                    <input id="Search" class="form-control" value="@ViewBag.Adres" placeholder="Начните вводить улицу для поиска" />
-                </td>
-                <td colspan="2">
-                    <input id="WorkPoisk" class="form-control" value="@ViewBag.WorkPoisk" placeholder="Часть наименования выполненной работы" />
-                </td>
-                <td>
-                    <button class="btn btn-block btn-success" onclick="GoHome()"> Искать </button>
-                </td>
+             <button class="btn btn-block btn-success" onclick="GoHome()"> Искать </button>
+             </td>
 
-            </tr>
-        </table>
+         </tr>
+    </table>
         <table id="tableData" class="table table-bordered table-striped">
             <tr>
                 <th>
@@ -159,7 +163,7 @@
 
 
 
-                                        if (item.Osmotrs[j].Sostoyanie > 0)
+                                        if (item.Osmotrs[j].Sostoyanie > 0) //Если количество осмотров >0 и есть
                                         {
                                             string Opisanie = "Осмотр находится на заполнении в ЭУ";
                                             string sostoyanie = "btn btn-secondary";
@@ -176,7 +180,7 @@
                                         }
 
                                     }
-                                    if (item.Osmotrs.Where(x => x.Sostoyanie == 0).ToList().Count == 0)
+                                    if (item.Osmotrs.Where(x => x.Sostoyanie == 0).ToList().Count == 0) //Если количество осмотров = 0 горит кнопка Добавить осмотр
                                     {
                                         <button class="btn btn-success" onclick="NewOsmotr('@item.AdresId','@DateTime.Now')">Добавить осмотр</button>
                                     }
@@ -269,7 +273,13 @@
                                                             @w.Number
                                                         </td>
                                                         <td>
+                                                            @try
+                                                            {
                                                             @w.Izmerenie.Name
+                                                            }
+                                                            catch
+                                                            {
+                                                            }
                                                         </td>
                                                         <td>
                                                             @w.Cost руб.
@@ -287,7 +297,14 @@
                                                 {
                                                     <tr style="text-align:left">
                                                         <td>
+                                                            @try
+                                                            {
                                                             @w.OsmotrWork.Name
+                                                            }
+                                                            catch
+                                                            {
+
+                                                            }
                                                         </td>
                                                         <td>
                                                             @w.Number
@@ -426,8 +443,10 @@
                         }
                         if (osm.AOW != null)
                         {
-                            foreach (var w in osm.AOW.Where(x => x.Gotovo == true))
+                            foreach (var w in osm.AOW)
                             {
+                                if (w.Gotovo)
+                                {
                                 <tr style="text-align:left">
                                     <td>
                                         @w.OsmotrWork.Name
@@ -444,6 +463,7 @@
                                         @w.DateVipolneniya.ToString("dd.MM.yyyy")
                                     </td>
                                 </tr>
+                                }
                             }
                         }
 
@@ -578,6 +598,20 @@
 
 
         }
+
+        function Sbros()
+        {
+            var from = $('#fromD').val().split('-');
+
+            var f = from[0] + "/" + from[1] + "/" + from[2];
+
+            var to = $('#toD').val().split('-');
+            var t = to[0] + "/" + to[1] + "/" + to[2];
+
+            window.location.replace('/Houses/Index?fromD=' + f + '&toD=' + t + '&obnovit=true');
+           
+        }
+
 
     $('#Search').on('keypress', function () {
         var that = this;

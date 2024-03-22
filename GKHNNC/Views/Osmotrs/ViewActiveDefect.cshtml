@@ -46,6 +46,9 @@
         <th style="text-align:center">
             Стоимость
         </th>
+        <th style="text-align:center">
+            Дата
+        </th>
         <th style="text-align:center" colspan="2">
 
             Опции
@@ -54,28 +57,49 @@
 
     @for (int i = 0; i < Model.ActiveOsmotrWorks.Count; i++)
     {
-        <tr id="AO_@Model.ActiveOsmotrWorks[i].Id" >
-            <td style="text-align:center">
-                @Model.ActiveOsmotrWorks[i].OsmotrWork.Name
-            </td>
+    <tr id="AO_@Model.ActiveOsmotrWorks[i].Id">
+        <td style="text-align:center">
+            @Model.ActiveOsmotrWorks[i].OsmotrWork.Name
+        </td>
 
 
-            <td style="text-align:center" colspan="2">
-                @Model.ActiveOsmotrWorks[i].Number
-            </td>
-            <td style="text-align:center">
-                @Model.ActiveOsmotrWorks[i].OsmotrWork.Izmerenie.Name
-            </td>
-            <td style="text-align:center">
-                @Model.ActiveOsmotrWorks[i].TotalCost
-            </td>
-            <td style="text-align:center" colspan="2">
+        <td style="text-align:center" colspan="2">
+            @Model.ActiveOsmotrWorks[i].Number
+        </td>
+        <td style="text-align:center">
+            @Model.ActiveOsmotrWorks[i].OsmotrWork.Izmerenie.Name
+        </td>
+        <td style="text-align:center">
+            @Model.ActiveOsmotrWorks[i].TotalCost
+        </td>
+        <td style="text-align:center">
+           
 
-                <button type="button" id="RemoveWork" ADId="@Model.ActiveOsmotrWorks[i].Id" onclick="RemoveWork('@Model.ActiveOsmotrWorks[i].Id')" class="btn btn-outline-danger rem">Удалить работу</button>
-            </td>
-        </tr>
 
-    
+            @try
+            {
+                if (Model.ActiveOsmotrWorks[i].DateZaplanirovana > new DateTime(1, 1, 1))
+                {
+                @Model.ActiveOsmotrWorks[i].DateZaplanirovana.Value.ToString("dd.MM.yyyy")
+                }
+                else
+                {
+                 <p>Не запланирована</p>
+                }
+            }
+            catch
+            {
+                <p>Не запланирована</p>
+                    }
+        </td>
+        <td style="text-align:center" colspan="2">
+
+            <button type="button" id="RemoveWork" ADId="@Model.ActiveOsmotrWorks[i].Id" onclick="RemoveWork('@Model.ActiveOsmotrWorks[i].Id')" class="btn btn-outline-danger rem">Удалить работу</button>
+        </td>
+    </tr>
+
+
+
     }
 </table>
 @if (Model.Est == false)
@@ -477,6 +501,7 @@
                 <input onchange="RefreshTextDefect('@Model.ActiveDefects[i].Id',this.value)" value="@Model.ActiveDefects[i].Opisanie" class="form-control" style="width:230px" />
 
             </td>
+
             <td style="text-align:center">
                 <button type="button" id="RemoveDefect" ADId="@Model.ActiveDefects[i].Id" class="btn btn-outline-danger rem">Удалить дефект</button>
             </td>
@@ -504,7 +529,7 @@
 
                 </div>
                 <div class="modal-body">
-                    @{ string X = "OW" + Model.ElementId.ToString(); string Y = "N" + Model.ElementId.ToString(); string Z = "OSMOTR" + Model.ElementId.ToString(); }
+                    @{ string X = "OW" + Model.ElementId.ToString(); string Y = "N" + Model.ElementId.ToString(); string M = "M" + Model.ElementId.ToString(); string Z = "OSMOTR" + Model.ElementId.ToString(); }
 
                     <div class="col-6">
                         Осмотр#
@@ -524,6 +549,14 @@
                     </div>
                     <div class="col-6">
                         @Html.Editor(Y, new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+                    <div class="col-6">
+                        Плановая дата выполнения
+                    </div>
+                 <!--   @Html.DropDownList(M, new SelectList(ViewBag.Month), new { @class = "form-control" }) -->
+                    <div>
+                        <input type="date" id="@M" name="Date" style="border:3px solid #000000;font-size:20px;font-weight:bold" placeholder="Выберите дату" class="form-control" autocomplete="off"  />
+
                     </div>
 
 

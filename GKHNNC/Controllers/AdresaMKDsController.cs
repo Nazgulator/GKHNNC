@@ -11,107 +11,107 @@ using GKHNNC.Models;
 
 namespace GKHNNC.Controllers
 {
-    public class GEUsController : Controller
+    public class AdresaMKDsController : Controller
     {
         private WorkContext db = new WorkContext();
 
-        // GET: GEUs
+        // GET: AdresaMKDs
         public ActionResult Index()
         {
-            return View(db.GEUs.ToList());
+            return View(db.AdresMKDs.ToList());
         }
 
-        // GET: GEUs/Details/5
+        // GET: AdresaMKDs/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            GEU gEU = db.GEUs.Find(id);
-            if (gEU == null)
+            AdresaMKDs adresaMKDs = db.AdresMKDs.Find(id);
+            if (adresaMKDs == null)
             {
                 return HttpNotFound();
             }
-            return View(gEU);
+            return View(adresaMKDs);
         }
 
-        // GET: GEUs/Create
+        // GET: AdresaMKDs/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: GEUs/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: AdresaMKDs/Create
+        // Чтобы защититься от атак чрезмерной передачи данных, включите определенные свойства, для которых следует установить привязку. Дополнительные 
+        // сведения см. в статье https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Name,Director,DirectorIP,Doverennost,IngenerPTO,IngenerOEGF,EU,GEUN")] GEU gEU)
+        public ActionResult Create([Bind(Include = "Id,ORC,ASU,FileName")] AdresaMKDs adresaMKDs)
         {
             if (ModelState.IsValid)
             {
-                db.GEUs.Add(gEU);
+                db.AdresMKDs.Add(adresaMKDs);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(gEU);
+            return View(adresaMKDs);
         }
 
-        // GET: GEUs/Edit/5
+        // GET: AdresaMKDs/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            GEU gEU = db.GEUs.Find(id);
-            if (gEU == null)
+            AdresaMKDs adresaMKDs = db.AdresMKDs.Find(id);
+            if (adresaMKDs == null)
             {
                 return HttpNotFound();
             }
-            return View(gEU);
+            return View(adresaMKDs);
         }
 
-        // POST: GEUs/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: AdresaMKDs/Edit/5
+        // Чтобы защититься от атак чрезмерной передачи данных, включите определенные свойства, для которых следует установить привязку. Дополнительные 
+        // сведения см. в статье https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Name,Director,DirectorIP,Doverennost,IngenerPTO,IngenerOEGF,EU,GEUN")] GEU gEU)
+        public ActionResult Edit([Bind(Include = "Id,ORC,ASU,FileName")] AdresaMKDs adresaMKDs)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(gEU).State = EntityState.Modified;
+                db.Entry(adresaMKDs).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(gEU);
+            return View(adresaMKDs);
         }
 
-        // GET: GEUs/Delete/5
+        // GET: AdresaMKDs/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            GEU gEU = db.GEUs.Find(id);
-            if (gEU == null)
+            AdresaMKDs adresaMKDs = db.AdresMKDs.Find(id);
+            if (adresaMKDs == null)
             {
                 return HttpNotFound();
             }
-            return View(gEU);
+            return View(adresaMKDs);
         }
 
-        // POST: GEUs/Delete/5
+        // POST: AdresaMKDs/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            GEU gEU = db.GEUs.Find(id);
-            db.GEUs.Remove(gEU);
+            AdresaMKDs adresaMKDs = db.AdresMKDs.Find(id);
+            db.AdresMKDs.Remove(adresaMKDs);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

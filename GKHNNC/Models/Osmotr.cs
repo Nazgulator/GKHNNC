@@ -65,6 +65,9 @@ namespace GKHNNC.Models
         public int Sostoyanie { get; set; }
         [Display(Name = "Описание")]
         public string Opisanie { get; set; }
+
+        [Display(Name = "Выводы комиссии")]
+        public string Vivods { get; set; }
         [Display(Name = "Дата завершения")]
         public DateTime DateEnd { get; set; }
 

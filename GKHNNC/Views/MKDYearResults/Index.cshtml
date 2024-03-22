@@ -1,0 +1,230 @@
+﻿@model IEnumerable<GKHNNC.Models.MKDYearResult>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+
+
+<h2>Главная</h2>
+
+<p>
+    @Html.ActionLink("Создать", "Create", null, new { @class = "btn btn-success btn-block" })
+</p>
+<p>
+
+
+    <input class="btn btn-default" id="Adres" placeholder="Начните вводить адрес" value="@ViewBag.CurrentAdres"/>
+    <input class="btn btn-default" id="Dom" placeholder="Номер дома " value="@ViewBag.CurrentDom" />
+    <button class="btn btn-success" onclick="FindAdress()">Ok</button>
+    <button class="btn btn-danger" onclick="RemoveAll()">X</button>
+    @if (ViewBag.CurrentAdres!=null&&ViewBag.CurrentAdres != "")
+    {
+        <button class="btn btn-danger" onclick="RemoveAdres()"> Адрес @ViewBag.CurrentAdres</button>
+    }
+    @if (ViewBag.CurrentDom != null && ViewBag.CurrentDom != "")
+    {
+        <button class="btn btn-danger" onclick="RemoveDom()"> Дом @ViewBag.CurrentDom</button>
+    }
+    </p>
+<table id="PostT" class="table table-bordered table-striped">
+    <thead>
+        <tr >
+            <th  width="200px">
+                @Html.DisplayNameFor(model => model.AdresMKD)
+            </th>
+
+            <th  >
+                @Html.DisplayNameFor(model => model.PeriodYear)
+            </th>
+            <th  >
+                @Html.DisplayNameFor(model => model.Statya)
+            </th>
+            <th  >
+                @Html.DisplayNameFor(model => model.AdresId)
+            </th>
+            <th  >
+                Сальдо на начало
+            </th>
+            <th  >
+                Начислено
+            </th>
+            <th  >
+                Оплачено
+            </th>
+            <th >
+                Выполненные работы
+            </th>
+            <th >
+                Сальдо на конец
+            </th>
+
+            <th >
+                Опции
+
+            </th>
+        </tr>
+</thead>
+        @foreach (var item in Model)
+        {
+    <tr id="tr_@item.Id">
+        <td width="100px">
+            @Html.DisplayFor(modelItem => item.AdresMKD)
+        </td>
+
+        <td width="100px">
+            @Html.DisplayFor(modelItem => item.PeriodYear)
+        </td>
+        <td width="100px">
+            @Html.DisplayFor(modelItem => item.Statya)
+        </td>
+        <td width="100px">
+            @Html.DisplayFor(modelItem => item.AdresId)
+        </td>
+
+        <td width="100px">
+
+            <input class="btn btn-default" id="BallStart_@item.Id" value="@item.BallStart" style="width:200px"  />
+        </td>
+        <td width="100px">
+
+            <input class="btn btn-default" id="Nachisleno_@item.Id" value="@item.Nachisleno" style="width:200px" />
+        </td>
+        <td width="100px">
+
+            <input class="btn btn-default" id="Oplacheno_@item.Id" value="@item.Oplacheno" style="width:200px"/>
+        </td>
+
+        <td width="100px">
+            <input class="btn btn-default" id="Works_@item.Id" value="@item.CompleteWorks" style="width:200px"/>
+        </td>
+        <td width="100px">
+            <input class="btn btn-default" id="BallEnd_@item.Id" value="@item.BallEnd" style="width:200px"/>
+        </td>
+        <td width="100px">
+            <button class="btn btn-success" onclick="Save(@item.Id)">Сохранить</button>| @Html.ActionLink("Редактировать", "Edit", new { id = item.Id }) |
+            @Html.ActionLink("Удалить", "Delete", new { id = item.Id })
+        </td>
+    </tr>
+        }
+
+</table>
+<p><a href="/Home/Index" class="btn btn-success btn-block">В главное меню &raquo;</a> </p>
+
+
+<script>
+    function Save(Id) {
+        var Start = $("#BallStart_" + Id).val();
+        var End = $("#BallEnd_" + Id).val();
+        var Nach = $("#Nachisleno_" + Id).val();
+        var Opl = $("#Oplacheno_" + Id).val();
+        var Works = $("#Works_" + Id).val();
+
+        var url = "@Url.Action("SaveYearResults", "Osmotrs")?Id=" + Id + "&Start=" + Start + "&End=" + End + "&Nach=" + Nach + "&Opl=" + Opl + "&Works=" + Works;
+
+            $.post(url,
+                function (data)
+                {
+                    if (data = "Ok")
+                    {
+                        $("#tr_" + Id).addClass("table-success");
+                        $("#tr_" + Id).removeClass("table-danger");
+                    }
+                    else
+                    {
+                        $("#tr_" + Id).removeClass("table-success");
+                        $("#tr_" + Id).addClass("table-danger");
+                    }
+                   // alert('Фиксация результатов за ' + Y + ' год завершена!');
+                }
+        );
+
+
+        }
+</script>
+
+
+<script>
+    function FindAdress() {
+        var Adres = $("#Adres").val();
+        var Dom = $("#Dom").val();
+
+        var url = "@Url.Action("Index", "MKDYearResults")?Adres=" + Adres + "&Dom=" + Dom ;
+        window.location.replace(url);
+            
+
+
+        }
+</script>
+<script>
+    function RemoveAdres() {
+        var Adres = $("#Adres").val();
+
+
+        var url = "@Url.Action("RemoveAdresFromSession", "MKDYearResults")";
+        var url2 = "@Url.Action("Index", "MKDYearResults")?Adres="   ;
+            $.post(url,
+                function (data)
+                {
+                    window.location.replace(url2);
+                   // Adres.val(data);
+
+                }
+        );
+
+
+        }
+</script>
+
+<script>
+    function RemoveDom() {
+        var Dom = $("#Dom").val();
+
+
+        var url = "@Url.Action("RemoveDomFromSession", "MKDYearResults")";
+        var url2 = "@Url.Action("Index", "MKDYearResults")?Dom="   ;
+            $.post(url,
+                function (data)
+                {
+                    window.location.replace(url2);
+                   // Adres.val(data);
+
+                }
+        );
+
+
+        }
+</script>
+
+<script>
+    function RemoveAll() {
+        var Adres = $("#Adres").val();
+
+
+        var url = "@Url.Action("RemoveAdresFromSession", "MKDYearResults")";
+        var url2 = "@Url.Action("Index", "MKDYearResults")?Adres=" ;
+        var url3 = "@Url.Action("Index", "MKDYearResults")?Dom=" ;
+            $.post(url,
+                function (data)
+                {
+
+
+                }
+        );
+        
+            $.post(url,
+                function (data)
+                {
+                    window.location.replace(url3);
+  
+
+                }
+        );
+
+
+    }
+
+
+
+</script>

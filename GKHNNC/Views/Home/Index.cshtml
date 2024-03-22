@@ -35,10 +35,10 @@
 
 
 <Center>
-    <h1><b>ФГБУ "ЖКУ ННЦ"</b></h1>
+    <h1><b>ФГБУ "Академия комфорта"</b></h1>
 
     <p class="lead">
-        Федеральное государственное бюджетное учреждение <br /> «Жилищно коммунальное управление Новосибирского научного центра»
+        Федеральное государственное бюджетное учреждение <br /> "Академия комфорта"
     </p>
 
 
@@ -182,6 +182,11 @@
                 <p>
                     <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "CanCreateOsmotrs")'">
                         <i class="glyphicon glyphicon-map-marker"></i> Можно ли создавать осмотры &raquo;
+                    </button>
+                </p>
+                <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "PassportWorkTypes")'">
+                        <i class="glyphicon glyphicon-map-marker"></i> Справочник типов паспортов &raquo;
                     </button>
                 </p>
                 <p>
@@ -442,6 +447,10 @@
                     <div class="row">
                         <div class="col-md-12">
                             <p>
+                                <a href="/MKDYearResults/Index" class="btn btn-warning btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Корректировка годовых результатов &raquo;</a>
+                            </p>
+
+                            <p>
                                 <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Schetchiks")'">
                                     <i class="glyphicon glyphicon-hand-left"></i> Счетчики  &raquo;
                                 </button>
@@ -650,6 +659,17 @@
                 <p><a href="/Manage/RolesAndUsers" class="btn btn-success btn-lg" style="width:500Px"><i class="glyphicon glyphicon-user"></i> Пользователи &raquo;</a></p>
                 <p><a href="/AvtoScans/Index" class="btn btn-success btn-lg" style="width:500Px"><i class="glyphicon glyphicon-eye-open"></i> АвтоСкан &raquo;</a></p>
                 <p><a href="/Logs/Index" class="btn btn-success btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Логи &raquo;</a></p>
+                <p><a href="/Osmotrs/ObrabotatWord" class="btn btn-warning btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Обработать Word &raquo;</a></p>
+
+                <p><a href="/Osmotrs/MKDResult" class="btn btn-warning btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Загруженные работы из WORD &raquo;</a></p>
+                <p><a href="/Osmotrs/MKDYear" class="btn btn-warning btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Годовой отчет WORD &raquo;</a></p>
+                <p><a href="/AdresaMKDs/Index" class="btn btn-warning btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Таблица соответствия ОРС - АСУ &raquo;</a></p>
+                <p><a href="/Osmotrs/MKDYearOtchetSelect" class="btn btn-warning btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Итоговая годовая таблица &raquo;</a></p>
+                <p><a   onclick="Fix()" class="btn btn-warning btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Фиксируем годовые результаты &raquo;</a>
+                   <input class="btn btn-warning " id="Y" placeholder="Введите год" />
+    </p>
+               
+
             }
 
         }
@@ -742,49 +762,71 @@
 
 @section Scripts
 {
-@Scripts.Render("~/scripts/jquery-3.3.1.min.js")
-@Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
-@Scripts.Render("~/scripts/nprogress.min.js")
-@Scripts.Render("~/scripts/jquery.signalR-2.4.0.min.js")
-@Scripts.Render("~/signalr/hubs")
-<script>
-    $(function () {
-        var PB = $.connection.progressHub;
-        console.log("Loading...");
-        PB.client.sendMessage = function (message, count) {
-            // update progress
-            console.log(count);
-            UpdateProgress(message, count);
-            //alert(message);
-        };
-
-        $.connection.hub.start().done(function () {
-            console.log("Приконнектились");
-            // call the method CallLongOperation defined in the Hub
-            PB.server.getCountAndMessage();
-            //$("#progressBar").hide();
-          
+    @Scripts.Render("~/scripts/jquery-3.3.1.min.js")
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+    @Scripts.Render("~/scripts/nprogress.min.js")
+    @Scripts.Render("~/scripts/jquery.signalR-2.4.0.min.js")
+    @Scripts.Render("~/signalr/hubs")
 
 
-        });
 
+    <script>
+        function Fix() {
+            var Y = $("#Y").val();
+            alert('Начинаем фиксацию результатов за '+Y+' год');
 
-        // Update the progress bar
-        function UpdateProgress(message, count) {
-           // $("#progressBar").fadeIn("slow");
-            var result = $("#result");
-            if (count >= 100) { $("#X").click(); }
-            result.html(message);
+            var url = "@Url.Action("MKDFixResults", "Osmotrs")?Y=" + Y;
 
-            //$("#progressBar").data("progressbar").value(count);
+            $.post(url,
+                function (data)
+                {
+                    alert('Фиксация результатов за ' + Y + ' год завершена!');
+                }
+        );
 
-            $("#progressBar").attr("aria-valuenow", count);
-            $("#progressBar").width(count + '%');
-            $("#progressBar").text(count + '%');
-            $("#nadpis").text(message);
-            // $("#progressBar").css("width", count);
+         
         }
-    });
-</script>
+    </script>
+
+
+    <script>
+        $(function () {
+            var PB = $.connection.progressHub;
+            console.log("Loading...");
+            PB.client.sendMessage = function (message, count) {
+                // update progress
+                console.log(count);
+                UpdateProgress(message, count);
+                //alert(message);
+            };
+
+            $.connection.hub.start().done(function () {
+                console.log("Приконнектились");
+                // call the method CallLongOperation defined in the Hub
+                PB.server.getCountAndMessage();
+                //$("#progressBar").hide();
+
+
+
+            });
+
+
+            // Update the progress bar
+            function UpdateProgress(message, count) {
+                // $("#progressBar").fadeIn("slow");
+                var result = $("#result");
+                if (count >= 100) { $("#X").click(); }
+                result.html(message);
+
+                //$("#progressBar").data("progressbar").value(count);
+
+                $("#progressBar").attr("aria-valuenow", count);
+                $("#progressBar").width(count + '%');
+                $("#progressBar").text(count + '%');
+                $("#nadpis").text(message);
+                // $("#progressBar").css("width", count);
+            }
+        });
+    </script>
 
 }

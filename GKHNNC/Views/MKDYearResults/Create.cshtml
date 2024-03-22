@@ -1,0 +1,155 @@
+﻿@model GKHNNC.Models.MKDYearResult
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+<h2>Создать</h2>
+
+@using (Html.BeginForm()) 
+{
+    @Html.AntiForgeryToken()
+    
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+<div class="container">
+    <div class="form-horizontal">
+
+        <div class="row col-md-6 col-md-offset-3">
+            <div class="col-md-12">
+                @Html.LabelFor(model => model.AdresMKD, htmlAttributes: new { @class = "control-label" })
+
+            </div>
+            <div class="col-md-12">
+                @Html.EditorFor(model => model.AdresMKD, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.AdresMKD, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+        <div class="row col-md-6 col-md-offset-3">
+            <div class="col-md-12">
+                @Html.LabelFor(model => model.AdresFGBU, htmlAttributes: new { @class = "control-label" })
+
+            </div>
+            <div class="col-md-12">
+                @Html.EditorFor(model => model.AdresFGBU, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.AdresFGBU, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+        <div class="row col-md-6 col-md-offset-3">
+            <div class="col-md-12">
+                @Html.LabelFor(model => model.Statya, htmlAttributes: new { @class = "control-label" })
+
+            </div>
+            <div class="col-md-12">
+                @Html.EditorFor(model => model.Statya, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Statya, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+        <div class="row col-md-6 col-md-offset-3">
+            <div class="col-md-12">
+                @Html.LabelFor(model => model.AdresId, htmlAttributes: new { @class = "control-label" })
+
+            </div>
+            <div class="col-md-12">
+                @Html.EditorFor(model => model.AdresId, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.AdresId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+        <div class="row col-md-6 col-md-offset-3">
+            <div class="col-md-12">
+                @Html.LabelFor(model => model.PeriodYear, htmlAttributes: new { @class = "control-label" })
+
+            </div>
+            <div class="col-md-12">
+                @Html.EditorFor(model => model.PeriodYear, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.PeriodYear, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+        <div class="row col-md-6 col-md-offset-3">
+            <div class="col-md-12">
+                @Html.LabelFor(model => model.BallStart, htmlAttributes: new { @class = "control-label" })
+
+            </div>
+            <div class="col-md-12">
+                @Html.EditorFor(model => model.BallStart, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.BallStart, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+        <div class="row col-md-6 col-md-offset-3">
+            <div class="col-md-12">
+                @Html.LabelFor(model => model.Nachisleno, htmlAttributes: new { @class = "control-label" })
+
+            </div>
+            <div class="col-md-12">
+                @Html.EditorFor(model => model.Nachisleno, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Nachisleno, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+        <div class="row col-md-6 col-md-offset-3">
+            <div class="col-md-12">
+                @Html.LabelFor(model => model.Oplacheno, htmlAttributes: new { @class = "control-label" })
+
+            </div>
+            <div class="col-md-12">
+                @Html.EditorFor(model => model.Oplacheno, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Oplacheno, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+        <div class="row col-md-6 col-md-offset-3">
+            <div class="col-md-12">
+                @Html.LabelFor(model => model.CompletedWorks, htmlAttributes: new { @class = "control-label" })
+
+            </div>
+            <div class="col-md-12">
+                @Html.EditorFor(model => model.CompletedWorks, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.CompletedWorks, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="row col-md-6 col-md-offset-3">
+            <div class="col-md-12">
+                @Html.LabelFor(model => model.BallEnd, htmlAttributes: new { @class = "control-label" })
+
+            </div>
+            <div class="col-md-12">
+                @Html.EditorFor(model => model.BallEnd, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.BallEnd, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+        <div class="row col-md-12">
+            <p> </p>
+        </div>
+
+
+
+        <div class=" col-md-6  ">
+            @Html.ActionLink("Назад", "Index", null, new { @class = "btn btn-outline-success btn-block" })
+        </div>
+        <div class=" col-md-6  ">
+            <input type="submit" value="Готово" class="btn btn-success btn-block" />
+        </div>
+
+
+
+    </div>
+ </div>
+ }

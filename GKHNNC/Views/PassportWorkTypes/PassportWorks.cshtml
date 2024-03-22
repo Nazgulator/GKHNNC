@@ -1,0 +1,147 @@
+﻿@model IEnumerable<GKHNNC.Models.PassportWork>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+<Center>
+    <h3>
+        
+    </h3>
+</Center>
+<div class="container">
+    <div class="form-horizontal">
+        <div class="col-md-12">
+            <div  class="row">
+                <div class="col-md-12" style="background-color:#28a745">
+                    <table>
+                        <tr>
+                            <td>
+                                <h3 style="color:white"> Паспорта дома </h3>
+                            </td>
+                        </tr>
+
+                    </table>
+
+
+                </div>
+
+                <table id="PassportTable" class="table table-bordered table-striped">
+
+
+                    @foreach (var item in Model)
+                    {
+                        string Checked = "checked";
+                        string BTNCL = "success";
+                        string BTNT = "Посмотреть паспорт";
+
+                        if (!item.Est) { Checked = ""; BTNCL = "warning"; BTNT = "Загрузить паспорт"; }
+
+                        string Path = "";
+                        if (File.Exists(Server.MapPath("~/Files/Adres/" + item.AdresId + "/" + item.FilePath)) == false)
+                        { Path = "/Content/Images/NoDownload.png"; }
+                        else
+                        {
+
+                            Path = "/Files/Adres/" + item.AdresId + "/" + item.FilePath;
+                        }
+
+
+                        <tr style="background-color:lightgray">
+                            <th colspan="1" style="text-align:center">
+
+                                <h4> @item.PassportWorkType.Name</h4>
+                            </th>
+                            <td width="200px" style="background-color:lightgray">
+
+                                @if (!item.Est)
+                                {
+                                    <input type="file" onchange="PDFPassportWork(@item.Id,@item.AdresId)" id="PassW_@item.Id" class="form-control-file" />
+                                }
+                                else
+                                {
+                                    <a href="@Path" class="btn btn-@BTNCL" download>@BTNT</a>
+                                }
+
+                            </td>
+
+
+
+                            <td style="text-align:center" width="200px">
+
+                                <button style="margin:5px;text-align:center"  OnClick="DeletePassport(@item.Id,@item.AdresId)" class="btn btn-outline-danger go">
+                                    Удалить паспорт
+                                </button>
+                            </td>
+
+                        </tr>
+
+
+                    }
+
+                </table>
+                </DIV>
+            </div>
+        </div>
+    </div>
+
+
+        <script>
+    function DeletePassport(PassportWorkId, AdresId)
+        {
+             console.log("Нажата кнопка удалить паспорт!");
+
+
+        $.post('@Url.Action("DeletePassport", "PassportWorkTypes")', { PassportId: PassportWorkId},
+            function (data) {
+                  $('#Passport').load("@Url.Action("PassportWorks", "PassportWorkTypes")?AdresId="+AdresId );
+            });
+
+        }
+        </script>
+
+        <script>
+    function PDFPassportWork(PassportWorkId, AdresId)
+        {
+             console.log("Нажата кнопка загрузки ПДФ!");
+             console.log("Объект " + PassportWorkId);
+             var _this = $("#PassW_" + PassportWorkId);
+
+             var files = $(_this)[0].files;
+                console.log('Файлы.' + files);
+                if (files.length > 0) {
+                    if (window.FormData !== undefined) {
+                        var data = new FormData();
+
+                        for (var x = 0; x < files.length; x++) {
+                            data.append("file" + x, files[x]);
+                        }
+
+
+                        $.ajax({
+                            type: "POST",
+                            url: '@Url.Action("UploadPDF", "PassportWorkTypes")?WorkId='+PassportWorkId,
+                            contentType: false,
+                            processData: false,
+                            data: data,
+                            success: function (result) {
+                                $('.toast').toast('show');
+                                $('#Passport').load("@Url.Action("PassportWorks", "PassportWorkTypes")?AdresId="+AdresId );
+
+                            },
+                            error: function (xhr, status, p3) {
+
+                                alert(xhr.responseText);
+                            }
+                        });
+                    } else {
+                        alert("Браузер не поддерживает загрузку файлов HTML5!");
+                    }
+                }
+
+
+
+
+        }
+        </script>

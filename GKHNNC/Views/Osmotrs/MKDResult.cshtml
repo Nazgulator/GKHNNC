@@ -1,0 +1,155 @@
+﻿@model IEnumerable<GKHNNC.Models.MKDCompleteWork>
+
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Все выполненные работы по МКД</title>
+</head>
+<body>
+    <h2>Выполненные работы по МКД загруженые из WORD </h2>
+
+    <p><a href="/Home/Index" class="btn btn-success btn-block"><< В главное меню </a> </p>
+    <div class="alert-warning">
+        <p>Модуль работает в тестовом режиме! </p>
+    </div>
+    <table id="T" class="table table-bordered table-striped">
+        <tr>
+            <td colspan="3">
+                <input id="Search" class="form-control" placeholder="Начните вводить улицу для поиска" />
+            </td>
+            <td>
+                <button class="btn btn-block btn-success" onclick="window.location.replace('/Houses/Index')"> Все адреса </button>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                Дата (м.г)
+            </th>
+            <th>
+                Улица
+            </th>
+            <th>
+                Дом
+            </th>
+            <th>
+                Работа
+            </th>
+            <th>
+                Тип
+            </th>
+            <th>
+                Измерение
+            </th>
+            <th>
+               Цена на ед.
+            </th>
+            <th>
+               Сумма
+            </th>
+
+
+
+        </tr>
+        @{bool Y = false; }
+        @foreach (var item in Model)
+        {
+
+        <tr>
+            <th>
+                @item.WorkDate.ToString("MM.yy")
+            </th>
+            <th>
+               @item.AdresMKDID
+            </th>
+            <th>
+                @try
+                {
+                <p>
+                    @item.AdresMKD.ASU
+                </p>
+            
+                }
+                catch
+                {
+
+                }
+            </th>
+            <th>
+                @item.WorkName
+            </th>
+            <th>
+                @item.WorkTip
+            </th>
+            <th>
+                @item.WorkIzmerenie
+            </th>
+            <th>
+                @item.WorkCena
+            </th>
+            <th>
+                @item.WorkSumma
+            </th>
+
+        </tr>
+        }
+
+    </table>
+    <p><a href="/Home/Index" class="btn btn-success btn-block"><< В главное меню </a> </p>
+  
+   
+</body>
+
+</html>
+@Scripts.Render("~/scripts/jquery-3.4.1.js")
+@Scripts.Render("~/scripts/jquery-ui-1.12.1.js")
+@Scripts.Render("~/scripts/jquery.unobtrusive-ajax.js")
+@Scripts.Render("~/scripts/bootstrap.js")
+@Scripts.Render("~/scripts/bootstrap.bundle.js")
+@Scripts.Render("/scripts/ExportToExcel/excelexportjs.js")
+<link rel="stylesheet" href="~/Scripts/JqueryThemes/ui-lightness/jquery-ui.css" />
+<script>
+ $("#Search").autocomplete({
+        source: '@Url.Action("SearchAdres", "Houses")',
+        minLength: 1,
+        select: function (event, ui)
+        {
+
+        var _this = ui.item.label;
+        window.location.replace('/Houses/Index?Adres=' + _this);
+
+
+        },
+
+        open: function (event, ui) {
+        $(this).removeClass('ui-autocomplete-loading');
+
+        }
+    });
+
+    $('#Search').on('keypress', function () {
+        var that = this;
+
+        setTimeout(function () {
+            var res = /[^а-я,0-9,А-Я ]/g.exec(that.value);
+            console.log(res);
+            that.value = that.value.replace(res, '');
+        }, 0);
+    });
+</script>
+<script>
+    function NewOsmotr(id, date) {
+        alert(id + ';' + date);
+        var GO = confirm('Вы уверены, что хотите создать новый осмотр? ')
+        if (GO) {
+           
+            /**/
+            window.location.replace('/Osmotrs/Create?id='+id+'&date=' + date+'&NewOsmotr=true');
+    /**/
+
+}
+}
+</script>

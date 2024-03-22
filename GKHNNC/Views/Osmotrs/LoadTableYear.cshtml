@@ -1,0 +1,171 @@
+﻿@model GKHNNC.Models.MKDYearOtchet
+
+@{
+
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+<table class="table table-bordered table-stripped">
+    <tr>
+        <th>
+            Услуга
+        </th>
+        <th>
+            Баланс дома на начало периода
+        </th>
+        <th>
+            Начислено
+        </th>
+        <th>
+            Оплачено
+        </th>
+        <th>
+            Выполненные работы
+        </th>
+        <th>
+            Прочие средства
+        </th>
+        <th>
+            Баланс дома на конец периода
+        </th>
+    </tr>
+    <tr>
+        <td>
+            Аренда
+        </td>
+        <th title="Статья Аренда Данные Январь отчет Остатки" class="table-success">
+            @Model.OstatkiArendaSTART
+        </th>
+        <th title="Статья Начислено отчет Аренда" class="table-info">
+            @Model.OstatkiArendaNachisleno
+        </th>
+        <th title="Статья Оплачено отчет Аренда" class="table-info">
+            @Model.OstatkiArendaOplacheno
+        </th>
+        <th title="Статья Аренда Данные Остатки + Вознаграждение " class="table-success">
+            @Model.Arenda
+        </th>
+        <th>
+            0
+        </th>
+        <th title="Расчетное значение  @Model.OstatkiArendaSTART - @Model.OstatkiArendaEND + @Model.OstatkiArendaOplacheno" class="table-warning">
+            @Model.ArendaRaschet
+        </th>
+    </tr>
+    <tr>
+        <td>
+            Дополнительный текущий ремонт
+        </td>
+        <th title="Статья ДопТекРем Данные Январь отчет Остатки" class="table-success">
+            @Model.OstatkiDopTekRemSTART
+        </th>
+        <th title="Столбец CHARGE отчет ОРС" class="table-danger">
+            @Model.ORCDopTekRemCHANGE
+        </th>
+        <th title="Столбец PAY отчет ОРС" class="table-danger">
+            @Model.ORCDopTekRemPAY
+        </th>
+        <th title="Статья ДопТекРем Данные Расход отчет Остатки" class="table-success">
+            @Model.OstatkiDopTekRemEND
+        </th>
+        <th>
+            0
+        </th>
+        <th title="Расчетное значение  @Model.OstatkiDopTekRemSTART - @Model.OstatkiDopTekRemEND + @Model.ORCDopTekRemPAY" class="table-warning">
+            @Model.DopTekRemRaschet
+        </th>
+    </tr>
+
+    <tr>
+        <td>
+            Непредвиденный/Неотложный ремонт
+        </td>
+        <th title="Статья Непредвиденный ремонт Данные Январь отчет Остатки" class="table-success">
+            @Model.OstatkiNepredRemSTART
+        </th>
+        <th title="Столбец CHARGE отчет ОРС" class="table-danger">
+            @Model.ORCNepredRemontCHANGE
+        </th>
+        <th title="Столбец PAY отчет ОРС" class="table-danger">
+            @Model.ORCNepredRemontPAY
+        </th>
+        <th title="Статья ДопТекРем Данные Расход отчет Остатки" class="table-success">
+            @Model.OstatkiNepredRemEND
+        </th>
+        <th>
+            0
+        </th>
+        <th title="Расчетное значение  @Model.OstatkiNepredRemSTART - @Model.OstatkiNepredRemEND + @Model.ORCNepredRemontPAY" class="table-warning">
+            @Model.NepredRaschet
+        </th>
+    </tr>
+    <tr>
+        <td>
+            Текущий ремонт (содержание)
+        </td>
+        <th>
+            0
+        </th>
+        <th title="Столбец CHARGE отчет ОРС" class="table-danger">
+            @Model.ORCTekRemCHANGE
+        </th>
+        <th title="Столбец PAY отчет ОРС" class="table-danger">
+            @Model.ORCTekRemPAY
+        </th>
+        <th title="-" class="table-success">
+            0
+        </th>
+        <th>
+            0
+        </th>
+        <th title="Расчетное значение  0 - @Model.OstatkiTekRemEND + @Model.ORCTekRemPAY" class="table-warning">
+            @Model.TekRemRaschet
+        </th>
+    </tr>
+    <tr>
+        <td>
+            ТЕКУЩИЙ РЕМОНТ (содержание)
+        </td>
+        <th>
+            0
+        </th>
+        <th title="" class="table-danger">
+            0
+        </th>
+        <th title="" class="table-danger">
+            0
+        </th>
+        <th title="-" class="table-success">
+            @Model.TEKREM
+        </th>
+        <th>
+            0
+        </th>
+        <th title="Расчетное значение  0 - @Model.OstatkiTekRemEND + @Model.ORCTekRemPAY" class="table-warning">
+            @Model.TekRemRaschet
+        </th>
+    </tr>
+    <tr>
+        <td>
+            Содержание
+        </td>
+        <th title="Статья Непредвиденный ремонт Данные Январь отчет Остатки" class="table-success">
+            @Model.OstatkiSoderganieSTART
+        </th>
+        <th title="Столбец CHARGE отчет ОРС" class="table-danger">
+            @Model.ORCSoderganieCHANGE
+        </th>
+        <th title="Столбец PAY отчет ОРС" class="table-danger">
+            @Model.ORCSoderganiePAY
+        </th>
+        <th title="Статья Содержание и ремонт собственные средства Данные Word 3 исключения" class="table-info">
+            @Model.Soderganie
+        </th>
+        <th>
+            0
+        </th>
+        <th title="Расчетное значение  @Model.OstatkiSoderganieSTART - @Model.Soderganie + @Model.ORCSoderganiePAY" class="table-warning">
+            @Model.SoderganieRaschet
+        </th>
+    </tr>
+</table>

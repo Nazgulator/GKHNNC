@@ -1,0 +1,109 @@
+﻿@model GKHNNC.Models.MKDYearResult
+
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+<h2><Удалить></h2>
+
+<h3>Удаление элемента?</h3>
+<div>
+    <h4>MKDYearResult</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.AdresMKD)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AdresMKD)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AdresFGBU)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AdresFGBU)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Statya)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Statya)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AdresId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AdresId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PeriodYear)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PeriodYear)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.BallStart)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.BallStart)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Nachisleno)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Nachisleno)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Oplacheno)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Oplacheno)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.BallEnd)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.BallEnd)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+       
+           
+            
+       
+		<div class="row col-md-6 col-md-offset-3">
+            <div class=" form-group">
+                <div class=" col-md-6  ">
+                    @Html.ActionLink("Отмена", "Index", null, new { @class = "btn btn-success btn-block" })
+                </div>
+                <div class=" col-md-6  ">
+                    <input type="submit" value="Delete" class="btn btn-success" /> 
+                </div>
+
+            </div>
+        </div>
+
+    }
+</div>

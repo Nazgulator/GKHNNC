@@ -15,6 +15,10 @@ namespace GKHNNC.DAL
         //public DbSet<Student> Students { get; set; }
         // public DbSet<Enrollment> Enrollments { get; set; }
         // public DbSet<Course> Courses { get; set; }
+
+        
+
+        public DbSet<MKDYearResult> MKDYearResults { get; set; }
         public DbSet<ChatMessage> ChatMessages { get; set; }
         public DbSet<Ezdka> Ezdkas { get; set; }
         public DbSet<Zapravka> Zapravkas { get; set; }
@@ -168,7 +172,13 @@ namespace GKHNNC.DAL
 
         public System.Data.Entity.DbSet<GKHNNC.Models.MaterialStandart> MaterialStandasrts { get; set; }
         public System.Data.Entity.DbSet<GKHNNC.Models.MaterialToWorkStandart> MaterialToWorkStandarts { get; set; }
-
+        public System.Data.Entity.DbSet<GKHNNC.Models.MKDCompleteWork> MKDCompleteWork { get; set; }
+        public System.Data.Entity.DbSet<GKHNNC.Models.AdresaMKDs> AdresMKDs { get; set; }
+        public System.Data.Entity.DbSet<GKHNNC.Models.ORC> ORCs { get; set; }
+        public System.Data.Entity.DbSet<GKHNNC.Models.MKDOstatki> MKDOstatkis { get; set; }
+        public System.Data.Entity.DbSet<GKHNNC.Models.MKDArenda> MKDArendas { get; set; }
+        public System.Data.Entity.DbSet<GKHNNC.Models.PassportWorkType> PassportWorkType { get; set; }
+        public System.Data.Entity.DbSet<GKHNNC.Models.PassportWork> PassportWork { get; set; }
 
 
 

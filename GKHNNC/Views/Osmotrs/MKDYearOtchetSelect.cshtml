@@ -1,0 +1,141 @@
+﻿@model IEnumerable<GKHNNC.Models.MKDCompleteWork>
+
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Годовой отчет по МКД</title>
+</head>
+<body>
+    <h2>Выберите дом для отчета </h2>
+
+    <input placeholder="Начните вводить адрес" id="House" class="btn btn-default btn-block" />
+    <input placeholder="Введите год" class="btn btn-default btn-block" id="Y"/> 
+    <button onclick="Load()" class="btn btn-success btn-block">Ok</button>
+    <div id="SUDA">
+
+    </div>
+    <div id="STROKI">
+
+    </div>
+
+    <p><a href="/Home/Index" class="btn btn-success btn-block"><< В главное меню </a> </p>
+
+
+
+    <button class="btn btn-info btn-block" onclick="LoadFile()">Excel</button>
+    <button class="btn btn-warning btn-block" onclick="LoadAllFiles()">Все отчеты в Excel</button>
+    <button class="btn btn-success btn-block" onclick="LoadGISGKH()">Отчет для ГИСЖКХ в Excel</button>
+
+</body>
+
+</html>
+@Scripts.Render("~/scripts/jquery-3.4.1.js")
+@Scripts.Render("~/scripts/jquery-ui-1.12.1.js")
+@Scripts.Render("~/scripts/jquery.unobtrusive-ajax.js")
+@Scripts.Render("~/scripts/bootstrap.js")
+@Scripts.Render("~/scripts/bootstrap.bundle.js")
+@Scripts.Render("/scripts/ExportToExcel/excelexportjs.js")
+<link rel="stylesheet" href="~/Scripts/JqueryThemes/ui-lightness/jquery-ui.css" />
+
+
+<script>
+    function LoadFile() {
+        var H = $("#House").val().replace(/ /g, "");
+        var Y = $("#Y").val();
+        var URL = '/Osmotrs/MKDExportToExcel?Adres=' + H + "&Year=" + Y;
+        window.location.replace(URL);
+    }
+</script>
+
+<script>
+    function LoadAllFiles() {
+        var Y = $("#Y").val();
+        alert('Начинаем выгрузку всех отчетов')
+        var URL = '/Osmotrs/MKDMASSExportToExcel?Year='+Y;
+        window.location.replace(URL);
+    }
+</script>
+<script>
+    function LoadGISGKH() {
+        var Y = $("#Y").val();
+        alert('Начинаем выгрузку отчета для ГИСЖКХ')
+        var URL = '/Osmotrs/MKDExportGisOtchet?Year='+Y;
+        window.location.replace(URL);
+    }
+</script>
+<script>
+    function Load() {
+        var H = $("#House").val().replace(/ /g, "");
+        var Y = $("#Y").val();
+        var URL = '/Osmotrs/LoadTableYear?Adres=' + H+"&Y="+Y;
+        $('#SUDA').load(URL);
+
+        var URL = '/Osmotrs/MKDYear?Adres=' + H+"&Y="+Y;
+        $('#STROKI').load(URL);
+
+
+
+
+    }
+</script>
+<script>
+    $("#House").autocomplete({
+        source: '@Url.Action("FindHouses", "Osmotrs")',
+        minLength: 1,
+        select: function (event, ui)
+        {
+            var _this = ui.item.label;
+        },
+
+        open: function (event, ui) {
+        $(this).removeClass('ui-autocomplete-loading');
+
+        }
+    });
+</script>
+<script>
+    function SearchHouse() {
+        $("#House").autocomplete(
+                {
+                source: '@Url.Action("FindHouse", "Osmotrs")',
+                minLength: 0,
+                select: function (event, ui) {
+                   // $("#House").val(ui.item.label);
+                }
+            });
+
+
+            }
+
+</script>
+
+
+<script>
+ $("#Search").autocomplete({
+        source: '@Url.Action("SearchAdres", "Houses")',
+        minLength: 1,
+        select: function (event, ui)
+        {
+        var _this = ui.item.label;
+        window.location.replace('/Houses/Index?Adres=' + _this);
+        },
+
+        open: function (event, ui) {
+        $(this).removeClass('ui-autocomplete-loading');
+        }
+    });
+
+    $('#Search').on('keypress', function () {
+        var that = this;
+
+        setTimeout(function () {
+            var res = /[^а-я,0-9,А-Я ]/g.exec(that.value);
+            console.log(res);
+            that.value = that.value.replace(res, '');
+        }, 0);
+    });
+</script>
