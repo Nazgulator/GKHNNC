@@ -15,6 +15,12 @@ namespace GKHNNC.Models
         public decimal NepredRemont = 0;
         public decimal TEKREM = 0;
 
+        public decimal DopTekRemOld = 0;
+        public decimal ArendaOld = 0;
+        public decimal NeotlogniOld = 0;
+        public decimal TekRemOld = 0;
+        public decimal SoderganieOld = 0;
+
         public decimal ArendaVosnagragdenie = 0;
 
         public decimal OstatkiDopTekRemSTART = 0;

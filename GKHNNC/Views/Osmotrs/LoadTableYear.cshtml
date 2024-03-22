@@ -30,8 +30,8 @@
         <td>
             Аренда
         </td>
-        <th title="Статья Аренда Данные Январь отчет Остатки" class="table-success">
-            @Model.OstatkiArendaSTART
+        <th title="Статья Аренда Данные Январь отчет Остатки @Model.OstatkiArendaSTART + ФиксированныеРезультаты @Model.ArendaOld  " class="table-success">
+            @(Model.OstatkiArendaSTART+ Model.ArendaOld)
         </th>
         <th title="Статья Начислено отчет Аренда" class="table-info">
             @Model.OstatkiArendaNachisleno
@@ -42,16 +42,16 @@
         <th title="Статья Аренда Данные Остатки + Вознаграждение " class="table-success">
             @Model.Arenda
         </th>
-        <th title="Расчетное значение  @Model.OstatkiArendaSTART - @Model.OstatkiArendaEND + @Model.OstatkiArendaOplacheno -@Model.Arenda" class="table-warning">
-            @(Model.OstatkiArendaSTART - Model.OstatkiArendaEND + Model.OstatkiArendaOplacheno - Model.Arenda)
+        <th title="Расчетное значение  @Model.OstatkiArendaSTART + @Model.ArendaOld + @Model.OstatkiArendaOplacheno -@Model.Arenda" class="table-warning">
+            @(Model.OstatkiArendaSTART + Model.ArendaOld + Model.OstatkiArendaOplacheno - Model.Arenda)
         </th>
     </tr>
     <tr>
         <td>
             Дополнительный текущий ремонт
         </td>
-        <th title="Статья ДопТекРем Данные Январь отчет Остатки" class="table-success">
-            @Model.OstatkiDopTekRemSTART
+        <th title="Статья ДопТекРем Данные Январь отчет Остатки @Model.OstatkiDopTekRemSTART + ФиксированныеРезультаты @Model.DopTekRemOld" class="table-success">
+            @(Model.OstatkiDopTekRemSTART + Model.DopTekRemOld)
         </th>
         <th title="Столбец CHARGE отчет ОРС" class="table-danger">
             @Model.ORCDopTekRemCHANGE
@@ -62,8 +62,8 @@
         <th title="Статья ДопТекРем Данные Расход отчет Остатки" class="table-success">
             @Model.OstatkiDopTekRemEND
         </th>
-        <th title="Расчетное значение  @Model.OstatkiDopTekRemSTART - @Model.OstatkiDopTekRemEND + @Model.ORCDopTekRemPAY - @Model.DopTekRem" class="table-warning">
-            @(@Model.OstatkiDopTekRemSTART - Model.OstatkiDopTekRemEND + Model.ORCDopTekRemPAY - Model.DopTekRem)
+        <th title="Расчетное значение  @Model.OstatkiDopTekRemSTART + @Model.DopTekRemOld + @Model.ORCDopTekRemPAY - @Model.DopTekRem" class="table-warning">
+            @(@Model.OstatkiDopTekRemSTART + Model.DopTekRemOld + Model.ORCDopTekRemPAY - Model.DopTekRem)
         </th>
     </tr>
 
@@ -71,8 +71,8 @@
         <td>
             Непредвиденный/Неотложный ремонт
         </td>
-        <th title="Статья Непредвиденный ремонт Данные Январь отчет Остатки" class="table-success">
-            @Model.OstatkiNepredRemSTART
+        <th title="Статья Непредвиденный ремонт Данные Январь отчет Остатки @Model.OstatkiDopTekRemSTART + ФиксированныеРезультаты @Model.NeotlogniOld" class="table-success">
+            @(Model.OstatkiNepredRemSTART + Model.NeotlogniOld)
         </th>
         <th title="Столбец CHARGE отчет ОРС" class="table-danger">
             @Model.ORCNepredRemontCHANGE
@@ -83,16 +83,16 @@
         <th title="Статья ДопТекРем Данные Расход отчет Остатки" class="table-success">
             @Model.NepredRaschet
         </th>
-        <th title="Расчетное значение  @Model.OstatkiNepredRemSTART - @Model.OstatkiNepredRemEND + @Model.ORCNepredRemontPAY - @Model.NepredRemont" class="table-warning">
-            @(Model.OstatkiNepredRemSTART - Model.OstatkiNepredRemEND + @Model.ORCNepredRemontPAY - Model.NepredRemont)
+        <th title="Расчетное значение  @Model.OstatkiNepredRemSTART + @Model.NeotlogniOld + @Model.ORCNepredRemontPAY - @Model.NepredRemont" class="table-warning">
+            @(Model.OstatkiNepredRemSTART + Model.NeotlogniOld + @Model.ORCNepredRemontPAY - Model.NepredRemont)
         </th>
     </tr>
     <tr>
         <td>
             Текущий ремонт (содержание)
         </td>
-        <th>
-            @Model.OstatkiTekRemSTART
+        <th title="Статья ТЕКУЩИЙ РЕМОНТ Данные Январь отчет Остатки @Model.OstatkiDopTekRemSTART + ФиксированныеРезультаты @Model.TekRemOld" class="table-success">
+            @(Model.OstatkiTekRemSTART + Model.TekRemOld)
         </th>
         <th title="Столбец CHARGE отчет ОРС" class="table-danger">
             @Model.ORCTekRemCHANGE
@@ -103,16 +103,16 @@
         <th title="ТЕКРЕМ (Содержание) WORD" class="table-success">
             @Model.TEKREM
         </th>
-        <th title="Расчетное значение   @Model.OstatkiTekRemSTART - @Model.OstatkiTekRemEND + @Model.ORCTekRemPAY - @Model.TEKREM" class="table-warning">
-            @(Model.OstatkiTekRemSTART - Model.OstatkiTekRemEND + Model.ORCTekRemPAY - Model.TEKREM)
+        <th title="Расчетное значение   @Model.OstatkiTekRemSTART + @Model.TekRemOld + @Model.ORCTekRemPAY - @Model.TEKREM" class="table-warning">
+            @(Model.OstatkiTekRemSTART + Model.TekRemOld + Model.ORCTekRemPAY - Model.TEKREM)
         </th>
     </tr>
     <tr>
         <td>
             Содержание
         </td>
-        <th title="Статья Непредвиденный ремонт Данные Январь отчет Остатки" class="table-success">
-            @Model.OstatkiSoderganieSTART
+        <th title="Статья Содержание Данные Январь отчет Остатки @Model.OstatkiSoderganieSTART + ФиксированныеРезультаты @Model.SoderganieOld" class="table-success">
+            @(Model.OstatkiSoderganieSTART + Model.SoderganieOld)
         </th>
         <th title="Столбец CHARGE отчет ОРС" class="table-danger">
             @Model.ORCSoderganieCHANGE
@@ -123,8 +123,8 @@
         <th title="Статья Содержание и ремонт собственные средства Данные Word 3 исключения" class="table-info">
             @Model.Soderganie
         </th>
-        <th title="Расчетное значение  @Model.OstatkiSoderganieSTART - @Model.Soderganie + @Model.ORCSoderganiePAY" class="table-warning">
-            @Model.SoderganieRaschet
+        <th title="Расчетное значение  @Model.OstatkiSoderganieSTART + @Model.SoderganieOld - @Model.Soderganie + @Model.ORCSoderganiePAY" class="table-warning">
+            @(Model.OstatkiSoderganieSTART + Model.SoderganieOld - Model.Soderganie + Model.ORCSoderganiePAY )
         </th>
     </tr>
 </table>

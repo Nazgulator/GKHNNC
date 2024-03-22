@@ -1487,6 +1487,13 @@ WorkDate = cl.First().WorkDate
                 NeotlogniOld = ResultsOld.Where(x => x.Statya.Equals("Непредвиденный/Неотложный ремонт")).Sum(x => x.BallEnd);
                 TekRemOld = ResultsOld.Where(x => x.Statya.Equals("Текущий ремонт (содержание)")).Sum(x => x.BallEnd);
                 SoderganieOld = ResultsOld.Where(x => x.Statya.Equals("Содержание")).Sum(x => x.BallEnd);
+
+                O.DopTekRemOld = DopTekRemOld;
+                O.ArendaOld = ArendaOld;
+                O.NeotlogniOld = NeotlogniOld;
+                O.TekRemOld = TekRemOld;
+                O.SoderganieOld = SoderganieOld;
+
             } catch { }
 
             List<MKDArenda> Arenda = new List<MKDArenda>();
@@ -1530,19 +1537,19 @@ WorkDate = cl.First().WorkDate
             {
                 OstatkiAll = db.MKDOstatkis.Where(x => x.Adres.Equals(AdresMKD.ASU.Replace("д. ", ""))&&x.Year == Year).ToList();
 
-                O.OstatkiDopTekRemSTART = OstatkiAll.Where(x => x.Schet.Contains("Доп. тек")).Sum(x => x.OstatokJan) + DopTekRemOld;
+                O.OstatkiDopTekRemSTART = OstatkiAll.Where(x => x.Schet.Contains("Доп. тек")).Sum(x => x.OstatokJan);// + DopTekRemOld;
                 O.OstatkiDopTekRemEND = OstatkiAll.Where(x => x.Schet.Contains("Доп. тек")).Sum(x => x.Rashod);
 
-                O.OstatkiTekRemSTART = OstatkiAll.Where(x => x.Schet.Contains("Содержание")).Sum(x => x.OstatokJan) +TekRemOld;
+                O.OstatkiTekRemSTART = OstatkiAll.Where(x => x.Schet.Contains("Содержание")).Sum(x => x.OstatokJan);// +TekRemOld;
                 O.OstatkiTekRemEND = 0;//OstatkiAll.Where(x => x.Schet.Contains("Содержание")).Sum(x => x.Rashod);
 
-                O.OstatkiNepredRemSTART = OstatkiAll.Where(x => x.Schet.Contains("Непредвиденный")).Sum(x => x.OstatokJan)+ NeotlogniOld;
+                O.OstatkiNepredRemSTART = OstatkiAll.Where(x => x.Schet.Contains("Непредвиденный")).Sum(x => x.OstatokJan);// + NeotlogniOld;
                 O.OstatkiNepredRemEND = OstatkiAll.Where(x => x.Schet.Contains("Непредвиденный")).Sum(x => x.Rashod);
 
-                O.OstatkiSoderganieSTART = OstatkiAll.Where(x => x.Schet.Contains("Содержание")).Sum(x => x.OstatokJan)+SoderganieOld;
+                O.OstatkiSoderganieSTART = OstatkiAll.Where(x => x.Schet.Contains("Содержание")).Sum(x => x.OstatokJan);// +SoderganieOld;
                 O.OstatkiSoderganieEND = OstatkiAll.Where(x => x.Schet.Contains("Содержание")).Sum(x => x.Rashod);
 
-                O.OstatkiArendaSTART = OstatkiAll.Where(x => x.Schet.Contains("Аренда")).Sum(x => x.OstatokJan) +ArendaOld;
+                O.OstatkiArendaSTART = OstatkiAll.Where(x => x.Schet.Contains("Аренда")).Sum(x => x.OstatokJan);// +ArendaOld;
                 O.OstatkiArendaEND = OstatkiAll.Where(x => x.Schet.Contains("Аренда")).Sum(x => x.Rashod);
 
 
