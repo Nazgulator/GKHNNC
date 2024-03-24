@@ -40,7 +40,7 @@
             {
                 item.WorkTip = "Периодические работы согласно утверждённого тарифа";
             }
-            if (OldRes.Equals(item.WorkTip) == false)
+            if (OldRes.Equals(item.WorkTip) == false || item == Model.Last())
             {
                 if (Summ > 0)
                 {
@@ -53,6 +53,8 @@
                     </tr>
                     Summ = 0;
                 }
+                if (OldRes.Equals(item.WorkTip) == false)
+                {
                 <tr>
                     <td colspan="5">
                         <center>
@@ -62,6 +64,7 @@
                         </center>
                     </td>
                 </tr>
+                }
 
                 OldRes = item.WorkTip;
 

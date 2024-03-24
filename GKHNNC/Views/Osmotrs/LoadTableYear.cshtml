@@ -60,7 +60,7 @@
             @Model.ORCDopTekRemPAY
         </th>
         <th title="Статья ДопТекРем Данные Расход отчет Остатки" class="table-success">
-            @Model.OstatkiDopTekRemEND
+            @Model.DopTekRem
         </th>
         <th title="Расчетное значение  @Model.OstatkiDopTekRemSTART + @Model.DopTekRemOld + @Model.ORCDopTekRemPAY - @Model.DopTekRem" class="table-warning">
             @(@Model.OstatkiDopTekRemSTART + Model.DopTekRemOld + Model.ORCDopTekRemPAY - Model.DopTekRem)
@@ -80,8 +80,8 @@
         <th title="Столбец PAY отчет ОРС" class="table-danger">
             @Model.ORCNepredRemontPAY
         </th>
-        <th title="Статья ДопТекРем Данные Расход отчет Остатки" class="table-success">
-            @Model.NepredRaschet
+        <th title="Статья неотложный Данные Расход отчет Остатки" class="table-success">
+            @Model.NepredRemont
         </th>
         <th title="Расчетное значение  @Model.OstatkiNepredRemSTART + @Model.NeotlogniOld + @Model.ORCNepredRemontPAY - @Model.NepredRemont" class="table-warning">
             @(Model.OstatkiNepredRemSTART + Model.NeotlogniOld + @Model.ORCNepredRemontPAY - Model.NepredRemont)

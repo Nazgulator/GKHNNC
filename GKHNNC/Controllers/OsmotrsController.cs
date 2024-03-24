@@ -1374,7 +1374,7 @@ namespace GKHNNC.Controllers
                  AdresMKD = db.AdresMKDs.Where(x => x.ASU.Replace(" ", "").Equals(Adres)).First();//Ищем адрес по наименованию АСУ
                 if (AdresMKD.Id > 0)
                 {
-                    Result = db.MKDCompleteWork.Where(x=>x.AdresMKDID== AdresMKD.Id&& x.WorkDate.Year==Y).OrderBy(x=>x.WorkTip).ToList();
+                    Result = db.MKDCompleteWork.Where(x=>x.AdresMKDID== AdresMKD.Id&& x.WorkDate.Year==Y).Include(x=>x.WorkTip).OrderBy(x=>x.WorkTip).ToList();
                 }
                 else
                 {
@@ -1500,13 +1500,14 @@ WorkDate = cl.First().WorkDate
             //Суммируем данные по WORD
             try
             {
-                All = db.MKDCompleteWork.Where(x => x.AdresMKDID == AdresMKD.Id&&x.WorkSumma!=0&&x.WorkDate.Year==Year).ToList();
+                All = db.MKDCompleteWork.Where(x => x.AdresMKDID == AdresMKD.Id&&x.WorkSumma!=0&&x.WorkDate.Year==Year).Include(x => x.WorkTip).OrderBy(x=>x.WorkTip).ToList();
              
              //   O.KapRemont = All.Where(x => x.WorkTip.Contains("содержания несущих конструкций") || x.WorkTip.Contains("содержания оборудования и систем")).Sum(x => x.WorkSumma);
                 O.Soderganie = All.Where(x => x.WorkTip.Contains("ТЕКУЩИЙ РЕМОНТ") ==false && x.WorkTip.Contains("Непредвиденный/неотложный ремонт") == false && x.WorkTip.Contains("Ремонтные работы за счет статьи Аренда") == false && x.WorkTip.Contains("Дополнительный текущий ремонт") == false).Sum(x => x.WorkSumma);
                 O.DopTekRem = All.Where(x => x.WorkTip.Contains("Дополнительный текущий ремонт")).Sum(x => x.WorkSumma);
                 O.Arenda = All.Where(x => x.WorkTip.Contains("Аренда")).Sum(x => x.WorkSumma);
                 O.TEKREM = All.Where(x => x.WorkTip.Contains("ТЕКУЩИЙ РЕМОНТ")).Sum(x => x.WorkSumma);
+                O.NepredRemont = All.Where(x => x.WorkTip.Contains("Непредвиденный/неотложный ремонт")).Sum(x => x.WorkSumma);
             }
             catch
             {
