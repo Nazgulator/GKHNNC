@@ -2919,57 +2919,43 @@ namespace GKHNNC.Controllers
             from++;
             int BigTableStart = from;
             WS.Cells[from, usluga] = " Аренда ";
-            WS.Cells[from, start] = O.OstatkiArendaSTART;
+            WS.Cells[from, start] = O.OstatkiArendaSTART + O.ArendaOld;
             WS.Cells[from, nachisleno] = O.OstatkiArendaNachisleno;
             WS.Cells[from, oplacheno] = O.OstatkiArendaOplacheno;
             WS.Cells[from, sobstvennie] = O.Arenda;// O.OstatkiArendaEND;
-
-            WS.Cells[from, end] = O.ArendaRaschet;
+            WS.Cells[from, end] = O.OstatkiArendaSTART + O.ArendaOld + O.OstatkiArendaOplacheno - O.Arenda;
 
             from++;
             WS.Cells[from, usluga] = " Дополнительный текущий ремонт ";
-            WS.Cells[from, start] = O.OstatkiDopTekRemSTART;
+            WS.Cells[from, start] = O.OstatkiDopTekRemSTART + O.DopTekRemOld;
             WS.Cells[from, nachisleno] = O.ORCDopTekRemCHANGE;
             WS.Cells[from, oplacheno] = O.ORCDopTekRemPAY;
             WS.Cells[from, sobstvennie] = O.OstatkiDopTekRemEND;
-
-            WS.Cells[from, end] = O.DopTekRemRaschet;
+            WS.Cells[from, end] = O.OstatkiDopTekRemSTART + O.DopTekRemOld + O.ORCDopTekRemPAY - O.DopTekRem;
 
             from++;
             WS.Cells[from, usluga] = " Непредвиденный/ Неотложный ремонт ";
-            WS.Cells[from, start] = O.OstatkiNepredRemSTART;
+            WS.Cells[from, start] = O.OstatkiNepredRemSTART + O.NeotlogniOld;
             WS.Cells[from, nachisleno] = O.ORCNepredRemontCHANGE;
             WS.Cells[from, oplacheno] = O.ORCNepredRemontPAY;
             WS.Cells[from, sobstvennie] = O.OstatkiNepredRemEND;
-
-            WS.Cells[from, end] = O.NepredRaschet;
+            WS.Cells[from, end] = O.OstatkiNepredRemSTART + O.NeotlogniOld + O.ORCNepredRemontPAY - O.NepredRemont;
 
             from++;
             WS.Cells[from, usluga] = " Текущий ремонт (содержание)";
-            WS.Cells[from, start] = 0;
+            WS.Cells[from, start] = O.OstatkiTekRemSTART + O.TekRemOld;
             WS.Cells[from, nachisleno] = O.ORCTekRemCHANGE;
             WS.Cells[from, oplacheno] = O.ORCTekRemPAY;
             WS.Cells[from, sobstvennie] = O.OstatkiTekRemEND;
-
-            WS.Cells[from, end] = O.TekRemRaschet;
-
-            from++;
-            WS.Cells[from, usluga] = " ТЕКУЩИЙ РЕМОНТ (содержание)";
-            WS.Cells[from, start] = 0;
-            WS.Cells[from, nachisleno] = 0;
-            WS.Cells[from, oplacheno] = 0;
-            WS.Cells[from, sobstvennie] = O.TEKREM;
-
-            WS.Cells[from, end] = O.TekRemRaschet;
+            WS.Cells[from, end] = O.OstatkiTekRemSTART + O.TekRemOld + O.ORCTekRemPAY - O.TEKREM;
 
             from++;
             WS.Cells[from, usluga] = " Содержание";
-            WS.Cells[from, start] = O.OstatkiSoderganieSTART;
+            WS.Cells[from, start] = O.OstatkiSoderganieSTART + O.SoderganieOld;
             WS.Cells[from, nachisleno] = O.ORCSoderganieCHANGE;
             WS.Cells[from, oplacheno] = O.ORCSoderganiePAY;
             WS.Cells[from, sobstvennie] = O.Soderganie;
-
-            WS.Cells[from, end] = O.SoderganieRaschet;
+            WS.Cells[from, end] = O.OstatkiSoderganieSTART + O.SoderganieOld - O.Soderganie + O.ORCSoderganiePAY;
 
 
             //Уменьшаем шрифт в строках верхней таблицы
