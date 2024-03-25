@@ -1647,6 +1647,7 @@ WorkDate = cl.First().WorkDate
             try
             {
                 O.Stati.Remove("Дополнительные работы по содержанию общего имущества");
+                O.Stati.Remove("ТЕКУЩИЙ РЕМОНТ (содержание)");
             }
             catch
             {
