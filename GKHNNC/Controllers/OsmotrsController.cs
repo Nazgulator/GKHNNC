@@ -112,18 +112,44 @@ namespace GKHNNC.Controllers
             ExcelExportDomVipolnennieUslugi.MKDOtchet(O, path, fileName, Year);
 
             string EndPath = path + fileName + ".xlsx";
+            string PdfPath = path + fileName + ".pdf";
             // Путь к файлу
 
+           // ExceltoPdf(EndPath, PdfPath);
+
             // Тип файла - content-type
+            //  string file_type = "application/xlsx";
             string file_type = "application/xlsx";
             // Имя файла - необязательно
+            string returnFile = fileName + ".xlsx";
 
-            return File(EndPath, file_type, fileName+ ".xlsx");
+
+            return File(EndPath, file_type, returnFile);
 
         }
 
 
- 
+        public string ExceltoPdf(string excelLocation, string outputLocation)
+        {
+            try
+            {
+                Microsoft.Office.Interop.Excel.Application app = new Microsoft.Office.Interop.Excel.Application();
+                app.Visible = false;
+                Microsoft.Office.Interop.Excel.Workbook wkb = app.Workbooks.Open(excelLocation);
+                wkb.ExportAsFixedFormat(Microsoft.Office.Interop.Excel.XlFixedFormatType.xlTypePDF, outputLocation);
+
+                wkb.Close();
+                app.Quit();
+
+                return outputLocation;
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.StackTrace);
+                throw ex;
+            }
+        }
 
 
         public JsonResult MKDFixResults(int Y)
@@ -1602,6 +1628,15 @@ WorkDate = cl.First().WorkDate
             O.CompletedWorks = All.OrderBy(x => x.WorkTip).ToList();
             O.Stati = All.Select(x => x.WorkTip).Distinct().ToList();
 
+            List<string> Statis = new List<string>();
+            Statis.Add("Работы, необходимые для надлежащего содержания несущих конструкций и ненесущих конструкций многоквартирных домов");
+            Statis.Add("Работы, необходимые для надлежащего содержания оборудования и систем инженерно-технического обеспечения, входящих в состав общего имущества в многоквартирном доме");
+            Statis.Add("Работы и услуги по содержанию иного общего имущества в многоквартирном доме");
+            Statis.Add("Дополнительные работы и услуги:");
+            Statis.Add("Ремонтные работы за счет статьи Аренда");
+            Statis.Add("ТЕКУЩИЙ РЕМОНТ (содержание)");
+            Statis.AddRange(O.Stati);
+            O.Stati = Statis.Distinct().ToList();
             return O;
         }
   

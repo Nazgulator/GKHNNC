@@ -2986,9 +2986,11 @@ namespace GKHNNC.Controllers
             range.WrapText = true;
             range.Font.Name = "TimesNewRoman";
 
+     
+
             foreach (var S in O.Stati)
             {
-                decimal Summa = O.CompletedWorks.Where(x => x.WorkTip.Equals(S)).Sum(x => x.WorkSumma);
+                decimal Summa = O.CompletedWorks.Where(x => x.WorkTip.Contains(S)).Sum(x => x.WorkSumma);
                 string Nazvanie = S;
                 if (S.Contains("Работы по текущему ремонту общего имущества"))
                 {
@@ -3114,7 +3116,9 @@ namespace GKHNNC.Controllers
 
             }
 
-          
+
+
+
 
             //WbExcel.PrintOutEx(1, 1, 1, true, null, null, null, null, null);//печать сразу после сохранения
             ApExcel.Visible = true;//невидимо
