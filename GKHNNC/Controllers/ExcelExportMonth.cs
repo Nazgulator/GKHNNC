@@ -2930,7 +2930,7 @@ namespace GKHNNC.Controllers
             WS.Cells[from, start] = O.OstatkiDopTekRemSTART + O.DopTekRemOld;
             WS.Cells[from, nachisleno] = O.ORCDopTekRemCHANGE;
             WS.Cells[from, oplacheno] = O.ORCDopTekRemPAY;
-            WS.Cells[from, sobstvennie] = O.OstatkiDopTekRemEND;
+            WS.Cells[from, sobstvennie] = O.DopTekRem;
             WS.Cells[from, end] = O.OstatkiDopTekRemSTART + O.DopTekRemOld + O.ORCDopTekRemPAY - O.DopTekRem;
 
             from++;
@@ -2938,7 +2938,7 @@ namespace GKHNNC.Controllers
             WS.Cells[from, start] = O.OstatkiNepredRemSTART + O.NeotlogniOld;
             WS.Cells[from, nachisleno] = O.ORCNepredRemontCHANGE;
             WS.Cells[from, oplacheno] = O.ORCNepredRemontPAY;
-            WS.Cells[from, sobstvennie] = O.OstatkiNepredRemEND;
+            WS.Cells[from, sobstvennie] = O.NepredRemont;
             WS.Cells[from, end] = O.OstatkiNepredRemSTART + O.NeotlogniOld + O.ORCNepredRemontPAY - O.NepredRemont;
 
             from++;
@@ -2946,7 +2946,7 @@ namespace GKHNNC.Controllers
             WS.Cells[from, start] = O.OstatkiTekRemSTART + O.TekRemOld;
             WS.Cells[from, nachisleno] = O.ORCTekRemCHANGE;
             WS.Cells[from, oplacheno] = O.ORCTekRemPAY;
-            WS.Cells[from, sobstvennie] = O.OstatkiTekRemEND;
+            WS.Cells[from, sobstvennie] = O.TEKREM;
             WS.Cells[from, end] = O.OstatkiTekRemSTART + O.TekRemOld + O.ORCTekRemPAY - O.TEKREM;
 
             from++;
