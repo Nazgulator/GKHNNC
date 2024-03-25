@@ -112,7 +112,7 @@ namespace GKHNNC.Controllers
             ExcelExportDomVipolnennieUslugi.MKDOtchet(O, path, fileName, Year);
 
             string EndPath = path + fileName + ".xlsx";
-            string PdfPath = path + fileName + ".pdf";
+            //string PdfPath = path + fileName + ".pdf";
             // Путь к файлу
 
            // ExceltoPdf(EndPath, PdfPath);
@@ -178,17 +178,22 @@ namespace GKHNNC.Controllers
                 O.Add(Otch);
                 try
                 {
+            //@(Model.OstatkiArendaSTART + Model.ArendaOld)
+            //@Model.OstatkiArendaNachisleno      
+            //@Model.OstatkiArendaOplacheno
+            //@Model.Arenda
+            //@(Model.OstatkiArendaSTART + Model.ArendaOld + Model.OstatkiArendaOplacheno - Model.Arenda)
                     MKDYearResult YR = new MKDYearResult();
                     YR.AdresMKD = Otch.Adres;
                     YR.AdresFGBU = Otch.Adres;
                     YR.AdresId = Otch.AdresId;
                     YR.PeriodYear = Y;
                     YR.Statya = "Аренда";
-                    YR.BallStart = Otch.OstatkiArendaSTART;
-                    YR.BallEnd = Otch.ArendaRaschet; 
+                    YR.BallStart = Otch.OstatkiArendaSTART+ Otch.ArendaOld;
                     YR.Nachisleno = Otch.OstatkiArendaNachisleno;
                     YR.Oplacheno = Otch.OstatkiArendaOplacheno;
-                    YR.CompleteWorks = Otch.OstatkiArendaEND;
+                    YR.CompleteWorks = Otch.Arenda;
+                    YR.BallEnd = Otch.OstatkiArendaSTART +Otch.ArendaOld+ Otch.OstatkiArendaOplacheno - Otch.Arenda;
                     try
                     {
                         db.MKDYearResults.Add(YR);
@@ -205,11 +210,12 @@ namespace GKHNNC.Controllers
                     YR.AdresId = Otch.AdresId;
                     YR.PeriodYear = Y;
                     YR.Statya = "Дополнительный текущий ремонт";
-                    YR.BallStart = Otch.OstatkiDopTekRemSTART;
-                    YR.BallEnd = Otch.DopTekRemRaschet ;
+                    YR.BallStart = Otch.OstatkiDopTekRemSTART + Otch.ArendaOld;
                     YR.Nachisleno = Otch.ORCDopTekRemCHANGE;
                     YR.Oplacheno = Otch.ORCDopTekRemPAY;
-                    YR.CompleteWorks = Otch.OstatkiDopTekRemEND;
+                    YR.CompleteWorks = Otch.DopTekRem;
+                    YR.BallEnd = Otch.ORCDopTekRemSTART + Otch.DopTekRemOld + Otch.ORCDopTekRemPAY - Otch.DopTekRem;
+
                     try
                     {
                         db.MKDYearResults.Add(YR);
@@ -226,11 +232,11 @@ namespace GKHNNC.Controllers
                     YR.PeriodYear = Y;
                     YR.AdresId = Otch.AdresId;
                     YR.Statya = "Непредвиденный/Неотложный ремонт";
-                    YR.BallStart = Otch.OstatkiNepredRemSTART;
-                    YR.BallEnd = Otch.NepredRaschet;
+                    YR.BallStart = Otch.OstatkiNepredRemSTART +Otch.NeotlogniOld;
                     YR.Nachisleno = Otch.ORCNepredRemontCHANGE;
                     YR.Oplacheno = Otch.ORCNepredRemontPAY;
-                    YR.CompleteWorks = Otch.OstatkiNepredRemEND;
+                    YR.CompleteWorks = Otch.NepredRemont;
+                    YR.BallEnd = Otch.OstatkiNepredRemSTART + Otch.NeotlogniOld + Otch.ORCNepredRemontPAY - Otch.NepredRemont;
                     try
                     {
                         db.MKDYearResults.Add(YR);
@@ -247,11 +253,11 @@ namespace GKHNNC.Controllers
                     YR.PeriodYear = Y;
                     YR.AdresId = Otch.AdresId;
                     YR.Statya = "Текущий ремонт (содержание)";
-                    YR.BallStart = 0;
-                    YR.BallEnd = Otch.TekRemRaschet;  
+                    YR.BallStart = Otch.OstatkiTekRemSTART + Otch.TekRemOld;
                     YR.Nachisleno = Otch.ORCTekRemCHANGE;
                     YR.Oplacheno = Otch.ORCTekRemPAY;
-                    YR.CompleteWorks = Otch.OstatkiTekRemEND;
+                    YR.CompleteWorks = Otch.TEKREM;
+                    YR.BallEnd = Otch.OstatkiTekRemSTART + Otch.TekRemOld +Otch.ORCTekRemPAY - Otch.TEKREM;
                     try
                     {
                         db.MKDYearResults.Add(YR);
@@ -268,11 +274,11 @@ namespace GKHNNC.Controllers
                     YR.PeriodYear = Y;
                     YR.AdresId = Otch.AdresId;
                     YR.Statya = "Содержание";
-                    YR.BallStart = Otch.OstatkiSoderganieSTART;
-                    YR.BallEnd = Otch.SoderganieRaschet;
+                    YR.BallStart = Otch.OstatkiSoderganieSTART + Otch.SoderganieOld; 
                     YR.Nachisleno = Otch.ORCSoderganieCHANGE;
                     YR.Oplacheno = Otch.ORCSoderganiePAY;
-                    YR.CompleteWorks = Otch.Soderganie; 
+                    YR.CompleteWorks = Otch.Soderganie;
+                    YR.BallEnd =Otch.OstatkiSoderganieSTART + Otch.SoderganieOld + Otch.ORCSoderganiePAY - Otch.Soderganie;
                     try
                     {
                         db.MKDYearResults.Add(YR);
@@ -1530,8 +1536,8 @@ WorkDate = cl.First().WorkDate
 
                 //   O.KapRemont = All.Where(x => x.WorkTip.Contains("содержания несущих конструкций") || x.WorkTip.Contains("содержания оборудования и систем")).Sum(x => x.WorkSumma);
                 // O.Soderganie = All.Where(x => x.WorkTip.Contains("Работы и услуги по содержанию") ==false && x.WorkTip.Contains("Непредвиденный/неотложный ремонт") == false && x.WorkTip.Contains("Ремонтные работы за счет статьи Аренда") == false && x.WorkTip.Contains("Дополнительн") == false).Sum(x => x.WorkSumma);
-                
-                O.Soderganie = All.Where(x => x.WorkTip.Contains("Работы, необходимые для надлежащего содержания")|| x.WorkTip.Contains("Работы и услуги по содержанию") || x.WorkTip.Contains("Периодические работы согласно") || x.WorkTip.Contains("Работы и услуги по содержанию иного")||x.WorkTip.Contains("Работы по текущему ремонту общего имущества")||x.WorkTip.Contains("Дополнительные работы и услуги")||x.WorkTip.Contains("Дополнительные работы по содержанию")).Sum(x => x.WorkSumma);
+                var testwork = All.Where(x => x.WorkTip.Contains("Работы, необходимые для надлежащего содержания") || x.WorkTip.Contains("Работы и услуги по содержанию") || x.WorkTip.Contains("Периодические работы согласно") || x.WorkTip.Contains("Работы и услуги по содержанию иного") || x.WorkTip.Contains("Работы по текущему ремонту общего имущества") || x.WorkTip.Contains("Дополнительные работы и услуги") || x.WorkTip.Contains("Дополнительные работы по содержанию") || x.WorkTip.Contains("Дополнительные работы по содержанию общего имущества")).OrderBy(x=>x.WorkSumma).ToList();
+                O.Soderganie = All.Where(x => x.WorkTip.Contains("Работы, необходимые для надлежащего содержания")|| x.WorkTip.Contains("Работы и услуги по содержанию") || x.WorkTip.Contains("Периодические работы согласно") || x.WorkTip.Contains("Работы и услуги по содержанию иного")||x.WorkTip.Contains("Работы по текущему ремонту общего имущества")||x.WorkTip.Contains("Дополнительные работы и услуги")||x.WorkTip.Contains("Дополнительные работы по содержанию")||x.WorkTip.Contains("Дополнительные работы по содержанию общего имущества")).Sum(x => x.WorkSumma);
                 O.DopTekRem = All.Where(x => x.WorkTip.Contains("Дополнительный текущий ремонт")).Sum(x => x.WorkSumma);
                 O.Arenda = All.Where(x => x.WorkTip.Contains("Аренда")).Sum(x => x.WorkSumma);
                 O.TEKREM = All.Where(x => x.WorkTip.Contains("ТЕКУЩИЙ РЕМОНТ")).Sum(x => x.WorkSumma);
@@ -1634,9 +1640,18 @@ WorkDate = cl.First().WorkDate
             Statis.Add("Работы и услуги по содержанию иного общего имущества в многоквартирном доме");
             Statis.Add("Дополнительные работы и услуги:");
             Statis.Add("Ремонтные работы за счет статьи Аренда");
-            Statis.Add("ТЕКУЩИЙ РЕМОНТ (содержание)");
+            Statis.Add("ТЕКУЩИЙ РЕМОНТ");
+            Statis.Add("Дополнительные работы по содержанию");
             Statis.AddRange(O.Stati);
             O.Stati = Statis.Distinct().ToList();
+            try
+            {
+                O.Stati.Remove("Дополнительные работы по содержанию общего имущества");
+            }
+            catch
+            {
+
+            }
             return O;
         }
   
