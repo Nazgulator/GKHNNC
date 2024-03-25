@@ -1504,8 +1504,9 @@ WorkDate = cl.First().WorkDate
 
                 //   O.KapRemont = All.Where(x => x.WorkTip.Contains("содержания несущих конструкций") || x.WorkTip.Contains("содержания оборудования и систем")).Sum(x => x.WorkSumma);
                 // O.Soderganie = All.Where(x => x.WorkTip.Contains("Работы и услуги по содержанию") ==false && x.WorkTip.Contains("Непредвиденный/неотложный ремонт") == false && x.WorkTip.Contains("Ремонтные работы за счет статьи Аренда") == false && x.WorkTip.Contains("Дополнительн") == false).Sum(x => x.WorkSumma);
-                O.Soderganie = All.Where(x => x.WorkTip.Contains("Работы, необходимые для надлежащего содержания")|| x.WorkTip.Contains("Работы, необходимые для надлежащего содержания несущих конструкций")|| x.WorkTip.Contains("Периодические работы согласно") || x.WorkTip.Contains("Работы и услуги по содержанию иного")).Sum(x => x.WorkSumma);
-                O.DopTekRem = All.Where(x => x.WorkTip.Contains("Дополнительн")).Sum(x => x.WorkSumma);
+                
+                O.Soderganie = All.Where(x => x.WorkTip.Contains("Работы, необходимые для надлежащего содержания")|| x.WorkTip.Contains("Работы и услуги по содержанию") || x.WorkTip.Contains("Периодические работы согласно") || x.WorkTip.Contains("Работы и услуги по содержанию иного")||x.WorkTip.Contains("Работы по текущему ремонту общего имущества")||x.WorkTip.Contains("Дополнительные работы и услуги")||x.WorkTip.Contains("Дополнительные работы по содержанию")).Sum(x => x.WorkSumma);
+                O.DopTekRem = All.Where(x => x.WorkTip.Contains("Дополнительный текущий ремонт")).Sum(x => x.WorkSumma);
                 O.Arenda = All.Where(x => x.WorkTip.Contains("Аренда")).Sum(x => x.WorkSumma);
                 O.TEKREM = All.Where(x => x.WorkTip.Contains("ТЕКУЩИЙ РЕМОНТ")).Sum(x => x.WorkSumma);
                 O.NepredRemont = All.Where(x => x.WorkTip.Contains("Непредвиденный/неотложный ремонт")).Sum(x => x.WorkSumma);
