@@ -2988,27 +2988,27 @@ namespace GKHNNC.Controllers
 
      
 
-            foreach (var S in O.Stati)
+            foreach (var S in O.MKDStatys)
             {
-                decimal Summa = O.CompletedWorks.Where(x => x.WorkTip.Contains(S)).Sum(x => x.WorkSumma);
+                decimal Summa = O.CompletedWorks.Where(x => x.WorkTip.Equals(S.Name)).Sum(x => x.WorkSumma);
                 if (Summa==0)
                 {
                     continue;
                 }
-                string Nazvanie = S;
-                if (S.Contains("Работы по текущему ремонту общего имущества"))
-                {
-                   Nazvanie = "Периодические работы согласно утверждённого тарифа";
-                }
-                if (S.Contains("Ремонтные работы за счет статьи Аренда"))
-                {
-                    Nazvanie = "Расходы по статье Аренда";
-                }
+                string Nazvanie = S.MKDName;
+                //if (S.Contains("Работы по текущему ремонту общего имущества"))
+                //{
+                //   Nazvanie = "Периодические работы согласно утверждённого тарифа";
+                //}
+                //if (S.Contains("Ремонтные работы за счет статьи Аренда"))
+                //{
+                //    Nazvanie = "Расходы по статье Аренда";
+                //}
                  
-                if (S.Contains("ТЕКУЩИЙ РЕМОНТ"))
-                {
-                    Nazvanie = "ТЕКУЩИЙ РЕМОНТ(содержание)";
-                }
+                //if (S.Contains("ТЕКУЩИЙ РЕМОНТ"))
+                //{
+                //    Nazvanie = "ТЕКУЩИЙ РЕМОНТ(содержание)";
+                //}
                
 
 
@@ -3030,7 +3030,7 @@ namespace GKHNNC.Controllers
                 WS.Cells[from, sobstvennie] = "Объём работ";
                 WS.Cells[from, end] = "Факт. затр.";
 
-           
+
 
                 foreach (var w in O.CompletedWorks
 .GroupBy(c => new
@@ -3044,7 +3044,7 @@ namespace GKHNNC.Controllers
     WorkName = cl.First().WorkName,
     WorkSumma = cl.Sum(x => x.WorkSumma),
     WorkTip = cl.First().WorkTip
-}).Where(x => x.WorkTip.Contains(S)&&x.WorkSumma!=0).ToList())
+}).Where(x => x.WorkTip.Equals(S.Name) && x.WorkSumma != 0).ToList())
                 {
                     from++;
                     WS.Cells[from, usluga] = w.WorkName;

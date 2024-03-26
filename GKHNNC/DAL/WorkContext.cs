@@ -180,7 +180,7 @@ namespace GKHNNC.DAL
         public System.Data.Entity.DbSet<GKHNNC.Models.PassportWorkType> PassportWorkType { get; set; }
         public System.Data.Entity.DbSet<GKHNNC.Models.PassportWork> PassportWork { get; set; }
 
-
+        public System.Data.Entity.DbSet<GKHNNC.Models.MKDStatya> MKDStatyas { get; set; }
 
         //protected override void OnModelCreating(DbModelBuilder modelBuilder)
 

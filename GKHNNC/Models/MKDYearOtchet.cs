@@ -74,5 +74,6 @@ namespace GKHNNC.Models
 
         public List<MKDCompleteWork> CompletedWorks;
         public List<string> Stati;
+        public List<MKDStatya> MKDStatys;
     }
 }
