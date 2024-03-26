@@ -1641,6 +1641,7 @@ WorkDate = cl.First().WorkDate
             Statis.Add("Ремонтные работы за счет статьи Аренда");
             Statis.Add("ТЕКУЩИЙ РЕМОНТ");
             Statis.Add("Дополнительные работы по содержанию");
+            Statis.Add("Работы по текущему ремонту общего имущества");
             Statis.AddRange(O.Stati);
             O.Stati = Statis.Distinct().ToList();
             try
