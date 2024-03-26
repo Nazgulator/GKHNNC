@@ -159,7 +159,6 @@ namespace GKHNNC.Controllers
             {
                 //чистим прошлые записи
                 var Results = db.MKDYearResults.Where(x=>x.PeriodYear==Y).ToList();
-
                 db.MKDYearResults.RemoveRange(Results);
                 db.SaveChanges();
 
@@ -210,7 +209,7 @@ namespace GKHNNC.Controllers
                     YR.AdresId = Otch.AdresId;
                     YR.PeriodYear = Y;
                     YR.Statya = "Дополнительный текущий ремонт";
-                    YR.BallStart = Otch.OstatkiDopTekRemSTART + Otch.ArendaOld;
+                    YR.BallStart = Otch.OstatkiDopTekRemSTART + Otch.DopTekRemOld;
                     YR.Nachisleno = Otch.ORCDopTekRemCHANGE;
                     YR.Oplacheno = Otch.ORCDopTekRemPAY;
                     YR.CompleteWorks = Otch.DopTekRem;

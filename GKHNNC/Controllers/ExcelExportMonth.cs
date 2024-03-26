@@ -3004,7 +3004,14 @@ namespace GKHNNC.Controllers
                 {
                     Nazvanie = "Расходы по статье Аренда";
                 }
-                
+                 
+                if (S.Contains("ТЕКУЩИЙ РЕМОНТ"))
+                {
+                    Nazvanie = "ТЕКУЩИЙ РЕМОНТ(содержание)";
+                }
+               
+
+
                 from++;
                 WS.Cells[from, 1] = Nazvanie;
                 range = WS.get_Range("A" + from, "F" + from);
