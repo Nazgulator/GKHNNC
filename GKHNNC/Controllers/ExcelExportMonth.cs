@@ -2699,122 +2699,127 @@ namespace GKHNNC.Controllers
 
         public static void GISGKHOtchet(List<MKDYearOtchet> OO, string path, string filename)
         {
-            Excel.Application ApExcel = new Excel.Application();
-            Excel.Workbooks WB = null;
-            WB = ApExcel.Workbooks;
-            Excel.Workbook WbExcel = WB.Add(Missing.Value);
-            Excel.Worksheet WS = WbExcel.Sheets[1];
-            Excel.Range range;//рэндж
-            ApExcel.Visible = false;//невидимо
-            ApExcel.ScreenUpdating = false;//и не обновляемо
-            ApExcel.StandardFont = "TimesNewRoman";
-            WS.Name = "ФГБУ Академия комфорта";
+           
+                Excel.Application ApExcel = new Excel.Application();
+                Excel.Workbooks WB = null;
+                WB = ApExcel.Workbooks;
+                Excel.Workbook WbExcel = WB.Add(Missing.Value);
+                Excel.Worksheet WS = WbExcel.Sheets[1];
+                Excel.Range range;//рэндж
+                ApExcel.Visible = false;//невидимо
+                ApExcel.ScreenUpdating = false;//и не обновляемо
+                ApExcel.StandardFont = "TimesNewRoman";
+                WS.Name = "ФГБУ Академия комфорта";
 
 
-            int from = 1;
+                int from = 1;
 
-            int StartStroka = 0;
-            int EndStroka = 0;
-            // string month = Opr.MonthToNorm(Opr.MonthOpred(O.Date.Month));
-            string year = DateTime.Now.AddYears(-1).Year.ToString();
-            int usluga = 1;
-            int start = 2;
-            int nachisleno = 3;
-            int oplacheno = 4;
-            int sobstvennie = 5;
-            int end = 6;
-
-
-
-         
+                int StartStroka = 0;
+                int EndStroka = 0;
+                // string month = Opr.MonthToNorm(Opr.MonthOpred(O.Date.Month));
+                string year = DateTime.Now.AddYears(-1).Year.ToString();
+                int usluga = 1;
+                int start = 2;
+                int nachisleno = 3;
+                int oplacheno = 4;
+                int sobstvennie = 5;
+                int end = 6;
 
 
-            from++;
-            WS.Cells[from, 1] = " Выполненные работы";
-            range = WS.get_Range("A" + from, "C" + from);
-            range.Merge(Type.Missing);
-            range.Font.Bold = true;
-            range.Font.Size = 18;
-            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
-            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
-            range.RowHeight = 20;//высота строки
-            range.WrapText = true;
-            range.Font.Name = "TimesNewRoman";
 
-            StartStroka = from;
 
-            from++;
-            WS.Cells[from, 1] = "АДРЕС";
-            WS.Cells[from, 2] = "НАЧИСЛЕНО ПО СОДЕРЖАНИЮ";
-            WS.Cells[from, 3] = "ВЫПОЛНЕННЫЕ РАБОТЫ ПО СОДЕРЖАНИЮ";
-            foreach (var O in OO)
-            {
 
-              
 
                 from++;
-                WS.Cells[from, 1] = O.Adres;
-                WS.Cells[from, 2] = O.ORCSoderganieCHANGE;
-                WS.Cells[from, 3] = O.Soderganie;
+                WS.Cells[from, 1] = " Выполненные работы";
+                range = WS.get_Range("A" + from, "C" + from);
+                range.Merge(Type.Missing);
+                range.Font.Bold = true;
+                range.Font.Size = 18;
+                range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                range.RowHeight = 20;//высота строки
+                range.WrapText = true;
+                range.Font.Name = "TimesNewRoman";
 
-            }
-            EndStroka = from;
+                StartStroka = from;
 
-
-
-
-
-
-            //Рисуем границы
-            range = WS.get_Range("A" + StartStroka, "C" + EndStroka);
-            range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
-            // Сохранение файла Excel.
-            try
-            {
-                string fileName = path + filename + ".xlsx";
-                if (File.Exists(fileName)) { File.Delete(fileName); }
-
-                WbExcel.SaveCopyAs(fileName);//сохраняем в папку
-
-                fileName = path + filename + ".pdf";
-                if (File.Exists(fileName)) { File.Delete(fileName); }
-                WbExcel.ExportAsFixedFormat(Excel.XlFixedFormatType.xlTypePDF, fileName);
-                // WbExcel.SaveCopyAs(fileName);
-                //   WbExcel.SaveAs(fileName, Excel.XlFixedFormatType.xlTypePDF);
+                from++;
+                WS.Cells[from, 1] = "АДРЕС";
+                WS.Cells[from, 2] = "НАЧИСЛЕНО ПО СОДЕРЖАНИЮ";
+                WS.Cells[from, 3] = "ВЫПОЛНЕННЫЕ РАБОТЫ ПО СОДЕРЖАНИЮ";
+                foreach (var O in OO)
+                {
 
 
 
-            }
-            catch (Exception e)
-            {
+                    from++;
+                    try
+                    {
+                        WS.Cells[from, 1] = O.Adres;
+                        WS.Cells[from, 2] = O.ORCSoderganieCHANGE;
+                        WS.Cells[from, 3] = O.Soderganie;
+                    }
+                    catch
+                    {
 
-            }
+                    }
 
-
-
-            //WbExcel.PrintOutEx(1, 1, 1, true, null, null, null, null, null);//печать сразу после сохранения
-            ApExcel.Visible = true;//невидимо
-            ApExcel.ScreenUpdating = true;//и не обновляемо
-                                          // Закрытие книги.
-            WbExcel.Close(false, "", Type.Missing);
-            // Закрытие приложения Excel.
-
-
-            ApExcel.Quit();
-            Marshal.FinalReleaseComObject(WS);
-            Marshal.FinalReleaseComObject(range);
-            Marshal.FinalReleaseComObject(WbExcel);
-            Marshal.FinalReleaseComObject(WB);
+                }
+                EndStroka = from;
 
 
+                //Рисуем границы
+                range = WS.get_Range("A" + StartStroka, "C" + EndStroka);
+                range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+                // Сохранение файла Excel.
+                try
+                {
+                    string fileName = path + filename + ".xlsx";
+                    if (File.Exists(fileName)) { File.Delete(fileName); }
 
-            GC.Collect();
-            Marshal.FinalReleaseComObject(ApExcel);
-            GC.WaitForPendingFinalizers();
-            string f = path + filename + ".pdf";
+                    WbExcel.SaveCopyAs(fileName);//сохраняем в папку
+
+                    fileName = path + filename + ".pdf";
+                    if (File.Exists(fileName)) { File.Delete(fileName); }
+                    WbExcel.ExportAsFixedFormat(Excel.XlFixedFormatType.xlTypePDF, fileName);
+                    // WbExcel.SaveCopyAs(fileName);
+                    //   WbExcel.SaveAs(fileName, Excel.XlFixedFormatType.xlTypePDF);
 
 
-            CloseProcess();
+
+                }
+                catch (Exception e)
+                {
+
+                }
+
+
+
+                //WbExcel.PrintOutEx(1, 1, 1, true, null, null, null, null, null);//печать сразу после сохранения
+                ApExcel.Visible = true;//невидимо
+                ApExcel.ScreenUpdating = true;//и не обновляемо
+                                              // Закрытие книги.
+                WbExcel.Close(false, "", Type.Missing);
+                // Закрытие приложения Excel.
+
+
+                ApExcel.Quit();
+                Marshal.FinalReleaseComObject(WS);
+                Marshal.FinalReleaseComObject(range);
+                Marshal.FinalReleaseComObject(WbExcel);
+                Marshal.FinalReleaseComObject(WB);
+
+
+
+                GC.Collect();
+                Marshal.FinalReleaseComObject(ApExcel);
+                GC.WaitForPendingFinalizers();
+                string f = path + filename + ".pdf";
+
+
+                CloseProcess();
+      
         }
 
         public static void MKDOtchet(MKDYearOtchet O, string path, string filename, int Y = 0)

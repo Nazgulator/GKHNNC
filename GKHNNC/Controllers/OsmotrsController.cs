@@ -1841,7 +1841,7 @@ WorkDate = cl.First().WorkDate
                                           textBuilder.RemoveAt(0);
                                           textBuilder.RemoveAt(0);
 
-                                        if (textBuilder.Count > 50)
+                                        if (textBuilder.Count > 38)
 
                                         {
                                             Nestandart = true;
