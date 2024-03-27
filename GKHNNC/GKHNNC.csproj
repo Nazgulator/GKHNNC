@@ -357,6 +357,7 @@
       <DependentUpon>WorkCenterContext.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\MKDStatya.cs" />
     <Compile Include="Models\WordComplete.cs" />
     <Compile Include="Models\MKDYearResult.cs" />
     <Compile Include="Models\PassportWork.cs" />
