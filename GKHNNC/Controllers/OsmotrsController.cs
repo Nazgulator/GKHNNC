@@ -1718,6 +1718,7 @@ WorkDate = cl.First().WorkDate
             int AdresMKDId = 0;
             string[] fileEntries = Directory.GetFiles(Server.MapPath("~/Files/MKD/"));
             List<MKDCompleteWork> Result = new List<MKDCompleteWork>();
+            List<string> Stati = db.MKDStatyas.Select(x => x.Name).ToList();
             List<string> Errors = new List<string>();
             foreach (string f in fileEntries)
             {
@@ -1882,10 +1883,11 @@ WorkDate = cl.First().WorkDate
                                                     continue;
                                                 }
 
+                                                
 
                                                 if (textBuilder[i].Contains("Работы, необходимые для надлежащего")|| textBuilder[i].Contains("Работы и услуги по содержанию") 
                                                     ||textBuilder[i].Contains("ТЕКУЩИЙ РЕМОНТ (содержание)") ||textBuilder[i].Contains("Ремонтные работы за счет статьи") 
-                                                    || textBuilder[i].Contains("Работы по текущему ремонту общего имущества"))
+                                                    || textBuilder[i].Contains("Работы по текущему ремонту общего имущества") || textBuilder[i].Contains("Дополнительные работы по содержанию")||Stati.Contains(textBuilder[i]))
                                                 {
                                                     WordComplete WT = new WordComplete();
                                                     WT.WorkType = textBuilder[i].Replace(", в т.ч.:", "");
