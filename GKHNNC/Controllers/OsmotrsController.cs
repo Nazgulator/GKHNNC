@@ -1838,9 +1838,12 @@ WorkDate = cl.First().WorkDate
                                     bool Nestandart = false;
                                     if (textBuilder.Count > 2)
                                     {
-                                        tip = textBuilder[0].Replace(", в т.ч.:","");
-                                          textBuilder.RemoveAt(0);
-                                          textBuilder.RemoveAt(0);
+                                        if (textBuilder.Count < 38)
+                                        {
+                                            tip = textBuilder[0].Replace(", в т.ч.:", "");
+                                            textBuilder.RemoveAt(0);
+                                            textBuilder.RemoveAt(0);
+                                        }
 
                                         if (textBuilder.Count > 38)
 
@@ -1854,6 +1857,7 @@ WorkDate = cl.First().WorkDate
   
                                             //bool udalit = false;
                                             bool DobavitNext = true;
+                                            bool NachatoDobavlenie = false;
                                             
                                             for (int i=0;i < textBuilder.Count; i++)
                                             {
@@ -1880,6 +1884,7 @@ WorkDate = cl.First().WorkDate
                                                 {
                                                    // textBuilder.Remove(textBuilder[i]);
                                                     Dobavit = false;
+                                                    
                                                     continue;
                                                 }
 
@@ -1891,17 +1896,17 @@ WorkDate = cl.First().WorkDate
                                                 {
                                                     WordComplete WT = new WordComplete();
                                                     WT.WorkType = textBuilder[i].Replace(", в т.ч.:", "");
-                                                   
                                                     WorkTypes.Add(WT);
                                                  
                                                     //  textBuilder.Remove(textBuilder[i]);
                                                     //   textBuilder.Remove(textBuilder[i]);
                                                     Dobavit = false;
                                                     DobavitNext = false;
+                                                    NachatoDobavlenie = true;
                                                     continue;
                                                 }
 
-                                                if (Dobavit)
+                                                if (Dobavit&&NachatoDobavlenie)
                                                 {
                                                     WorkTypes.Last().AllWorks.Add(textBuilder[i]);
                                                     NewTextBuilder.Add(textBuilder[i]);
