@@ -200,6 +200,20 @@ try
 try
                 {
                     Osmotrs = db.Osmotrs.Include(x => x.Adres).Include(x => x.ORW).Include(x => x.AOW).ToList();
+                    var AllOsmotrWorks = db.OsmotrWorks.ToList();
+                    var AllIzmerenies = db.Izmerenies.ToList();
+                    foreach (var o in  Osmotrs) 
+                    { 
+                    foreach (var a in o.AOW)
+                        {
+                            a.OsmotrWork = AllOsmotrWorks.Where(x=>x.Id == a.OsmotrWorkId).First();
+                        }
+                    foreach (var w in o.ORW)
+                        {
+                            w.Izmerenie = AllIzmerenies.Where(x => x.Id == w.IzmerenieId).First();
+                        }
+                    }
+
                     Session["Osmotrs"] = Osmotrs;
                 }
                 catch (Exception e)

@@ -41,6 +41,7 @@ namespace GKHNNC.Controllers
         public ActionResult Create()
         {
             ViewBag.ElementTypeId = new SelectList(db.DOMParts, "Id", "Name");
+            ViewBag.MaxId = db.Elements.Select(x=>x.ElementId).Max();
             return View();
         }
 
@@ -55,11 +56,57 @@ namespace GKHNNC.Controllers
             {
                 db.Elements.Add(element);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+              
             }
 
             ViewBag.ElementTypeId = new SelectList(db.DOMParts, "Id", "Name", element.ElementTypeId);
-            return View(element);
+
+            try
+            {
+                DateTime dateTime = DateTime.Now;
+               List<Osmotr> Osmotrs = db.Osmotrs.Where(x => x.Date.Year == dateTime.Year).ToList();
+                if (element.Id > 0)
+                {
+                    foreach (var O in Osmotrs)
+                    {
+                        ActiveElement AE = new ActiveElement();
+                        AE.Sostoyanie = 3;
+                        AE.Date = dateTime;
+                        AE.DateIzmeneniya = dateTime;
+                        AE.ElementId = element.Id;
+                        AE.Est = true;
+                        AE.IsOld1 = false;
+                        AE.IsOld2 = false;
+                        AE.AdresId = O.AdresId.Value;
+                        AE.Photo1 = null;
+                        AE.Photo2 = null;
+                        AE.IzmerenieId = 3;
+                        AE.Izmerenie2Id = 1;
+                        AE.Kolichestvo = 0;
+                        AE.Kolichestvo2 = 0;
+                        AE.MaterialId = 1;
+                        AE.OsmotrId = O.Id;
+                        try
+                        {
+                            db.ActiveElements.Add(AE);
+                            db.SaveChanges();
+                        }
+                        catch (Exception ex) 
+                        {
+
+                        }
+
+                    }
+                }
+
+            }
+            catch
+            {
+
+            }
+
+            return RedirectToAction("Index");
+
         }
 
         // GET: Elements/Edit/5

@@ -2690,11 +2690,11 @@ WorkDate = cl.First().WorkDate
                     //для загруженных и новых
                     try
                     {
-                        Defect D = new Defect();
-                        D.ElementId = 0;
-                        D.Def = "Отсутствует";
+                        //Defect D = new Defect();
+                        //D.ElementId = 0;
+                        //D.Def = "Отсутствует";
                         AE.Defects = new List<Defect>();
-                        AE.Defects.Add(D);
+                       // AE.Defects.Add(D);
                         AE.Defects.AddRange(db.Defects.Where(x => x.ElementId == ElementId).ToList());
                         
                     }
@@ -3916,10 +3916,10 @@ WorkDate = cl.First().WorkDate
                                 NewO = new Osmotr();
                                 NewO.AdresId = id;
                                 NewO.Adres = db.Adres.Where(x => x.Id == id).First();
-                                NewO.Date = date;
-                                NewO.DateEnd = date;
-                                NewO.DateOEGF = date;
-                                NewO.DatePTO = date;
+                                NewO.Date = D;
+                                NewO.DateEnd = D;
+                                NewO.DateOEGF = D;
+                                NewO.DatePTO = D;
                                 NewO.Opisanie = "Первый осмотр";
                                
                                 db.Osmotrs.Add(NewO);
