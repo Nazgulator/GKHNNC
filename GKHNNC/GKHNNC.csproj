@@ -2081,6 +2081,9 @@
     <Content Include="Views\MKDYearResults\Details.cshtml" />
     <Content Include="Views\MKDYearResults\Edit.cshtml" />
     <Content Include="Views\MKDYearResults\Index.cshtml" />
+    <Content Include="Views\Elements\DomParts.cshtml" />
+    <Content Include="Views\Elements\EditPart.cshtml" />
+    <Content Include="Views\Elements\CreatePart.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

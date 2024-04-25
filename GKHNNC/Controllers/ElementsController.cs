@@ -37,12 +37,73 @@ namespace GKHNNC.Controllers
             return View(element);
         }
 
+        public ActionResult DomParts()
+        {
+            return View(db.DOMParts.ToList());
+        }
+
         // GET: Elements/Create
         public ActionResult Create()
         {
             ViewBag.ElementTypeId = new SelectList(db.DOMParts, "Id", "Name");
             ViewBag.MaxId = db.Elements.Select(x=>x.ElementId).Max();
             return View();
+        }
+
+        // GET: Elements/Create
+        public ActionResult CreatePart()
+        {
+            return View();
+        }
+
+        // POST: Elements/Create
+        // Чтобы защититься от атак чрезмерной передачи данных, включите определенные свойства, для которых следует установить привязку. Дополнительные 
+        // сведения см. в статье https://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CreatePart([Bind(Include = "Id,Name")] DOMPart element)
+        {
+            if (ModelState.IsValid)
+            {
+                db.DOMParts.Add(element);
+                db.SaveChanges();
+
+            }
+
+            return RedirectToAction("DomParts");
+
+        }
+
+        // GET: Elements/Edit/5
+        public ActionResult EditPart(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            DOMPart element = db.DOMParts.Find(id);
+            if (element == null)
+            {
+                return HttpNotFound();
+            }
+       
+            return View(element);
+        }
+
+        // POST: Elements/Edit/5
+        // Чтобы защититься от атак чрезмерной передачи данных, включите определенные свойства, для которых следует установить привязку. Дополнительные 
+        // сведения см. в статье https://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditPart([Bind(Include = "Id,Name")] DOMPart element)
+        {
+            if (ModelState.IsValid)
+            {
+                db.Entry(element).State = EntityState.Modified;
+                db.SaveChanges();
+                return RedirectToAction("DomParts");
+            }
+            return View(element);
         }
 
         // POST: Elements/Create

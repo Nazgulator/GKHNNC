@@ -99,6 +99,7 @@ namespace GKHNNC.Controllers
                 adres.EUId = db.GEUs.Where(x => x.Name.Equals(adres.GEU)).Select(x => x.EU).First();
                     adres.MKD = false;
                 adres.TypeId = 1;
+                adres.MKD = true;
                 db.Adres.Add(adres);
                 db.SaveChanges();
                 return RedirectToAction("Index");
