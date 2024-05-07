@@ -2084,6 +2084,7 @@
     <Content Include="Views\Elements\DomParts.cshtml" />
     <Content Include="Views\Elements\EditPart.cshtml" />
     <Content Include="Views\Elements\CreatePart.cshtml" />
+    <Content Include="Views\Manage\AddPassword.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -9,6 +9,7 @@ using Microsoft.Owin.Security;
 using GKHNNC.Models;
 using GKHNNC.DAL;
 using System.Collections.Generic;
+using DocumentFormat.OpenXml.Office2010.Excel;
 
 namespace GKHNNC.Controllers
 {
@@ -346,6 +347,34 @@ namespace GKHNNC.Controllers
             }
             AddErrors(result);
             return View(model);
+        }
+
+
+        //
+        // GET: /Manage/SetPassword
+        public ActionResult AddPassword(string id)
+        {
+            ViewBag.UserId = id;
+            return View();
+        }
+
+        //
+        // POST: /Manage/SetPassword
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> AddPassword(string UserId, string NewPassword)
+        {
+            var result2 = await UserManager.RemovePasswordAsync(UserId.ToString());
+            var result = await UserManager.AddPasswordAsync(UserId.ToString(), NewPassword);
+                if (result.Succeeded)
+                {
+                return View(new { Message = ManageMessageId.SetPasswordSuccess });
+            }
+                AddErrors(result);
+
+            ViewBag.UserId = UserId;
+            // Это сообщение означает наличие ошибки; повторное отображение формы
+            return View();
         }
 
         //

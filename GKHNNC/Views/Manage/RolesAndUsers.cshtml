@@ -33,9 +33,13 @@
             </td>
 
             <td>
+                @if (User.IsInRole("Администратор"))
+                {
+                @Html.ActionLink("Сменить пароль", "AddPassword", new { id = item.Id })
+                }
                 @if (ViewBag.Roles[i] == "Пользователь")
                 {
-                    @Html.ActionLink("Назначить администратором", "ToAdmin", new { id = item.Id , roll = ViewBag.Roles[i] })
+                    @Html.ActionLink("Назначить администратором", "ToAdmin", new { id = item.Id, roll = ViewBag.Roles[i] })
                 }
                 else
                 {
