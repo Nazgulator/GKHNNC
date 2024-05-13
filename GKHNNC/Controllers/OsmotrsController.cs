@@ -2714,7 +2714,7 @@ WorkDate = cl.First().WorkDate
                     List<ActiveOsmotrWork> AOW = new List<ActiveOsmotrWork>();
                     try
                     {
-                        AOW = db.ActiveOsmotrWorks.Where(x => x.ElementId == ElementId && x.OsmotrId == OsmotrId).Include(x=>x.OsmotrWork).Include(x=>x.OsmotrWork.Izmerenie).ToList();
+                        AOW = db.ActiveOsmotrWorks.Where(x =>   x.OsmotrId == OsmotrId).Include(x=>x.OsmotrWork).Where(x=>x.OsmotrWork.DOMPartId == DOMPartId).Include(x=>x.OsmotrWork.Izmerenie).ToList();
                         AE.ActiveOsmotrWorks = AOW;
                     }
                     catch

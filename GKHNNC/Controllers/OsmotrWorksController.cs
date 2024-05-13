@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using DocumentFormat.OpenXml.Office2010.Excel;
 using GKHNNC.DAL;
 using GKHNNC.Models;
 
@@ -80,6 +81,8 @@ namespace GKHNNC.Controllers
             }
             ViewBag.DOMPartId = new SelectList(db.DOMParts, "Id", "Name", osmotrWork.DOMPartId);
             ViewBag.IzmerenieId = new SelectList(db.Izmerenies, "Id", "Name", osmotrWork.IzmerenieId);
+
+
             return View(osmotrWork);
         }
 
@@ -94,8 +97,18 @@ namespace GKHNNC.Controllers
             {
                 db.Entry(osmotrWork).State = EntityState.Modified;
                 db.SaveChanges();
+
+
+                //List<ActiveOsmotrWork> AOW = db.ActiveOsmotrWorks.Where(x => x.OsmotrWorkId == osmotrWork.Id&&x.ElementId == osmotrWork.).ToList();
+                //foreach (var aow in AOW)
+                //{
+                //    aow.ElementId = osmotrWork.;
+                //    db.Entry(aow).State = EntityState.Modified;
+                //    db.SaveChanges();
+                //}
                 return RedirectToAction("Index");
             }
+
             ViewBag.DOMPartId = new SelectList(db.DOMParts, "Id", "Name", osmotrWork.DOMPartId);
             ViewBag.IzmerenieId = new SelectList(db.Izmerenies, "Id", "Name", osmotrWork.IzmerenieId);
             return View(osmotrWork);
