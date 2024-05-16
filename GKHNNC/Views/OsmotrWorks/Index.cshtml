@@ -12,6 +12,9 @@
 
 </p>
 <p>
+    <button class="btn btn-info btn-block" onclick="Export()"> ExportToExcel </button>
+</p>
+<p>
 
     <button class="btn btn-block btn-warning" onclick="Refresh()">Обновить стоимость всех работ в текущем году</button>
 </p>
@@ -39,31 +42,43 @@
 
     @foreach (var item in Model)
     {
-      
+        string cl = "";
+        if (item.Archive )
+        {
+            cl = "table-warning";
+        }
 
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.DOMPart.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Izmerenie.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Cost)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.OtchetId)
-        </td>
-        <td>
-            <button class="btn btn-success" onclick="ShowZam(@item.Id)">Заменить</button>
-            <button class="btn btn-success" onclick="Colvo(@item.Id)">Количество</button>
-            @Html.ActionLink("Редактировать", "Edit", new { id = item.Id }, new { @class = "btn btn-success " })
-            @Html.ActionLink("Удалить", "Delete", new { id = item.Id }, new { @class = "btn btn-secondary " })
-        </td>
-    </tr>
+        <tr class="@cl">
+            <td>
+                @Html.DisplayFor(modelItem => item.DOMPart.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Izmerenie.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Cost)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OtchetId)
+            </td>
+            <td>
+                @if (item.Archive)
+                {
+                    <button id="@item.Id" class="btn btn-info" onclick="Actual(@item.Id)">Сделать актуальной</button>
+                }
+                else
+                {
+                    <button id="@item.Id" class="btn btn-warning" onclick="Archive(@item.Id)">Архивировать</button>
+                }
+                <button class="btn btn-success" onclick="ShowZam(@item.Id)">Заменить</button>
+                <button class="btn btn-success" onclick="Colvo(@item.Id)">Количество</button>
+                @Html.ActionLink("Редактировать", "Edit", new { id = item.Id }, new { @class = "btn btn-success " })
+                @Html.ActionLink("Удалить", "Delete", new { id = item.Id }, new { @class = "btn btn-secondary " })
+            </td>
+        </tr>
     }
 
 </table>
@@ -113,6 +128,7 @@
     @Scripts.Render("~/scripts/validate.js")
     @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
     @Scripts.Render("~/scripts/jquery.unobtrusive.min.js")
+    @Scripts.Render("/scripts/ExportToExcel/excelexportjs.js")
     <script>
     function Refresh()
     {
@@ -140,6 +156,35 @@
 
         });
         }
+    </script>
+    <script>
+     function Actual(id)
+     {
+         $.post('@Url.Action("Actual", "OsmotrWorks")', { id:id}, function (data) {
+         if (data != '') {
+             $('#' + id).text('Актуальна!').removeClass("btn-info").addClass("btn-warning");
+         }
+         else {
+             alert('Ошибка!');
+         }
+
+     });
+     }
+    </script>
+    <script>
+    function Archive(id)
+    {
+        $.post('@Url.Action("Archive", "OsmotrWorks")', { id:id}, function (data) {
+        if (data != '') {
+            $('#' + id).text('Помещена в архив!').removeClass("btn-warning").addClass("btn-info");
+        }
+        else {
+            alert('Ошибка!');
+        }
+
+        });
+
+    }
     </script>
     <script>
         function ShowZam(id) {
@@ -188,5 +233,26 @@
                         });
         }
 
+    </script>
+    <script>
+        function Export() {
+            var images = $("img");
+            for (var i = 0; i < images.length; i++) {
+                var Alt = images[i].getAttribute("alt");
+                images[i].replaceWith(Alt);
+
+            };
+
+            var inputs = $("input");
+            for (var i = 0; i < inputs.length; i++) {
+                var Inp = inputs[i].value;
+                inputs[i].replaceWith(Inp);
+            }
+            $("#T").excelexportjs({
+                containerid: "T",
+                datatype: 'table'
+            });
+
+        };
     </script>
 }

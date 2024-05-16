@@ -2728,7 +2728,7 @@ WorkDate = cl.First().WorkDate
                         if (DOMPartId != 0)
                         {
 
-                            OW = db.OsmotrWorks.Where(x => x.DOMPartId == DOMPartId).ToList();
+                            OW = db.OsmotrWorks.Where(x => x.DOMPartId == DOMPartId&&!x.Archive).ToList();
                             SelectList SL = new SelectList(OW, "Id", "Name");
                             AE.OsmotrWorks = SL;
                            addwork = true;

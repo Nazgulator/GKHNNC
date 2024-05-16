@@ -52,15 +52,35 @@ namespace GKHNNC.Controllers
         // Чтобы защититься от атак чрезмерной передачи данных, включите определенные свойства, для которых следует установить привязку. Дополнительные 
         // сведения см. в статье https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        public JsonResult Actual(int Id)
+        {
+           var w = db.OsmotrWorks.Where(x => x.Id == Id).First();
+            w.Archive = false;
+            db.Entry(w).State = EntityState.Modified;
+            db.SaveChanges();
+            return Json("Ok");
+        }
+
+        [HttpPost]
+        public JsonResult Archive(int Id)
+        {
+            var w = db.OsmotrWorks.Where(x => x.Id == Id).First();
+            w.Archive = true;
+            db.Entry(w).State = EntityState.Modified;
+            db.SaveChanges();
+            return Json("Ok");
+        }
+
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,Name,IzmerenieId,Cost,DOMPartId,OtchetId")] OsmotrWork osmotrWork)
         {
-          //  if (ModelState.IsValid)
-         //   {
-                db.OsmotrWorks.Add(osmotrWork);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-          //  }
+            //  if (ModelState.IsValid)
+            //   {
+            db.OsmotrWorks.Add(osmotrWork);
+            db.SaveChanges();
+            return RedirectToAction("Index");
+            //  }
 
             ViewBag.DOMPartId = new SelectList(db.DOMParts, "Id", "Name", osmotrWork.DOMPartId);
             ViewBag.IzmerenieId = new SelectList(db.Izmerenies, "Id", "Name", osmotrWork.IzmerenieId);

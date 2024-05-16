@@ -24,6 +24,8 @@ namespace GKHNNC.Models
         public int DOMPartId { get; set; }
         [Display(Name = "Отчет ИД")]
         public int OtchetId { get; set; }
+        [Display(Name = "Архивная?")]
+        public bool Archive { get; set; }
 
 
         // public virtual ICollection<Sopostavlenie> Sopostavlenies { get; set; }

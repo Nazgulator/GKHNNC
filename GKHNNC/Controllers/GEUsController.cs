@@ -21,6 +21,12 @@ namespace GKHNNC.Controllers
             return View(db.GEUs.ToList());
         }
 
+        // GET: GEUs
+        public ActionResult PrintConstantIndex()
+        {
+            return View(db.PrintConstants.ToList());
+        }
+
         // GET: GEUs/Details/5
         public ActionResult Details(int? id)
         {
@@ -78,8 +84,7 @@ namespace GKHNNC.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Name,Director,DirectorIP,Doverennost,IngenerPTO,IngenerOEGF,EU,GEUN")] GEU gEU)
+        public ActionResult Edit([Bind(Include = "Id,Name,Director,DirectorIP,Doverennost,IngenerPTO,IngenerOEGF,EU,GEUN,DirectorDolgnost,IngenerPTODolgnost,IngenerOEGFDolgnost")] GEU gEU)
         {
             if (ModelState.IsValid)
             {
@@ -88,6 +93,36 @@ namespace GKHNNC.Controllers
                 return RedirectToAction("Index");
             }
             return View(gEU);
+        }
+
+        // GET: GEUs/PCEdit/5
+        public ActionResult PCEdit(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            PrintConstant pc = db.PrintConstants.Find(id);
+            if (pc == null)
+            {
+                return HttpNotFound();
+            }
+            return View(pc);
+        }
+
+        // POST: GEUs/PCEdit/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        public ActionResult PCEdit([Bind(Include = "Id,Name,NameRP,Dolgnost")] PrintConstant printConstant)
+        {
+            if (ModelState.IsValid)
+            {
+                db.Entry(printConstant).State = EntityState.Modified;
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(printConstant);
         }
 
         // GET: GEUs/Delete/5

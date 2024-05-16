@@ -5,6 +5,9 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+@Html.Action("PrintConstantIndex", "GEUs")
+
+
 <h2>ЖЭУ</h2>
 
 <p>
@@ -16,13 +19,22 @@
             @Html.DisplayNameFor(model => model.Name)
         </th>
         <th>
+            @Html.DisplayNameFor(model => model.DirectorDolgnost)
+        </th>
+        <th>
             @Html.DisplayNameFor(model => model.Director)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Doverennost)
         </th>
         <th>
+            @Html.DisplayNameFor(model => model.IngenerPTODolgnost)
+        </th>
+        <th>
             @Html.DisplayNameFor(model => model.IngenerPTO)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IngenerOEGFDolgnost)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.IngenerOEGF)
@@ -36,35 +48,45 @@
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Director)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Doverennost)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.IngenerPTO)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.IngenerOEGF)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.EU)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.GEUN)
-        </td>
-        <td>
-            @Html.ActionLink("Редактировать", "Edit", new { id = item.Id }) |
-            @Html.ActionLink("Удалить", "Delete", new { id = item.Id })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <th>
+                @Html.DisplayFor(modelItem => item.DirectorDolgnost)
+            </th>
+            <td>
+                @Html.DisplayFor(modelItem => item.Director)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Doverennost)
+            </td>
+            <th>
+                @Html.DisplayFor(modelItem => item.IngenerPTODolgnost)
+            </th>
+            <td>
+                @Html.DisplayFor(modelItem => item.IngenerPTO)
+            </td>
+            <th>
+                @Html.DisplayFor(modelItem => item.IngenerOEGFDolgnost)
+            </th>
+            <td>
+                @Html.DisplayFor(modelItem => item.IngenerOEGF)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EU)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GEUN)
+            </td>
+            <td>
+                @Html.ActionLink("Редактировать", "Edit", new { id = item.Id }) |
+                @Html.ActionLink("Удалить", "Delete", new { id = item.Id })
+            </td>
+        </tr>
+    }
 
 </table>
 <p>

@@ -26,6 +26,12 @@ namespace GKHNNC.Models
         public int EU { get; set; }
         [Display(Name = "Номер ЖЭУ")]
         public int GEUN { get; set; }
+        [Display(Name = "Должность начальника ЖЭУ")]
+        public string DirectorDolgnost { get; set; }
+        [Display(Name = "Должность инженера ПТО")]
+        public string IngenerPTODolgnost { get; set; }
+        [Display(Name = "Должность инженера ОЭЖФ")]
+        public string IngenerOEGFDolgnost { get; set; }
 
     }
 }

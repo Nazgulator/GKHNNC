@@ -357,6 +357,7 @@
       <DependentUpon>WorkCenterContext.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\PrintConstant.cs" />
     <Compile Include="Models\MKDStatya.cs" />
     <Compile Include="Models\WordComplete.cs" />
     <Compile Include="Models\MKDYearResult.cs" />
@@ -2085,6 +2086,8 @@
     <Content Include="Views\Elements\EditPart.cshtml" />
     <Content Include="Views\Elements\CreatePart.cshtml" />
     <Content Include="Views\Manage\AddPassword.cshtml" />
+    <Content Include="Views\GEUs\PrintConstantIndex.cshtml" />
+    <Content Include="Views\GEUs\PCEdit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -23,7 +23,13 @@
             @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
 
         </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.DirectorDolgnost, htmlAttributes: new { @class = "control-label ", @style = "width:365Px" })
 
+            @Html.EditorFor(model => model.DirectorDolgnost, new { htmlAttributes = new { @class = "form-control", @style = "width:365Px" } })
+            @Html.ValidationMessageFor(model => model.DirectorDolgnost, "", new { @class = "text-danger" })
+
+        </div>
         <div class="form-group">
             @Html.LabelFor(model => model.Director, htmlAttributes: new { @class = "control-label ", @style = "width:365Px" })
 
@@ -31,6 +37,8 @@
             @Html.ValidationMessageFor(model => model.Director, "", new { @class = "text-danger" })
 
         </div>
+
+
         <div class="form-group">
             @Html.LabelFor(model => model.DirectorIP, htmlAttributes: new { @class = "control-label ", @style = "width:365Px" })
 
@@ -47,10 +55,23 @@
 
         </div>
         <div class="form-group">
+            @Html.LabelFor(model => model.IngenerPTODolgnost, htmlAttributes: new { @class = "control-label ", @style = "width:365Px" })
+
+            @Html.EditorFor(model => model.IngenerPTODolgnost, new { htmlAttributes = new { @class = "form-control", @style = "width:365Px" } })
+            @Html.ValidationMessageFor(model => model.IngenerPTODolgnost, "", new { @class = "text-danger" })
+
+        </div>
+        <div class="form-group">
             @Html.LabelFor(model => model.IngenerPTO, htmlAttributes: new { @class = "control-label ", @style = "width:365Px" })
 
             @Html.EditorFor(model => model.IngenerPTO, new { htmlAttributes = new { @class = "form-control", @style = "width:365Px" } })
             @Html.ValidationMessageFor(model => model.IngenerPTO, "", new { @class = "text-danger" })
+
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.IngenerOEGFDolgnost, htmlAttributes: new { @class = "control-label ", @style = "width:365Px" })
+            @Html.EditorFor(model => model.IngenerOEGFDolgnost, new { htmlAttributes = new { @class = "form-control", @style = "width:365Px" } })
+            @Html.ValidationMessageFor(model => model.IngenerOEGFDolgnost, "", new { @class = "text-danger" })
 
         </div>
         <div class="form-group">

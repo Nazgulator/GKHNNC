@@ -2192,6 +2192,10 @@ namespace GKHNNC.Controllers
             {
 
             }
+            PrintConstant Dir =  db.PrintConstants.Where(x => x.Dolgnost.Equals("Директор")).First();
+            PrintConstant MainEngineer = db.PrintConstants.Where(x => x.Dolgnost.Equals("Главный инженер")).First();
+            PrintConstant ZamOEGF = db.PrintConstants.Where(x => x.Dolgnost.Equals("Заместитель директора по эксплуатации")).First();
+
 
             startStroka++;
             startStroka++;
@@ -2413,14 +2417,14 @@ namespace GKHNNC.Controllers
 
 
 
-            for (int i = 0; i < Elements.Count; i++)
+            for (int i = 0; i < DP.Count; i++)//Elements.Count();
             {
                 startStroka++;
 
 
-                List<ActiveOsmotrWork> AOW2 = AOW.Where(x => x.ElementId == Elements[i]).ToList();
-                int idd = AOW2[0].OsmotrWork.DOMPartId;
-                string DomPart = db.DOMParts.Where(x => x.Id == idd).Select(x => x.Name).First();
+                List<ActiveOsmotrWork> AOW2 = AOW.Where(x => x.OsmotrWork.DOMPartId == i).ToList();//.Where(x => x.ElementId == Elements[i]
+                                                                                                   // int idd = AOW2[0].OsmotrWork.DOMPartId;
+                string DomPart = DP[i].Name;// db.DOMParts.Where(x => x.Id == idd).Select(x => x.Name).First();
                 WS.Cells[startStroka, 1] = DomPart;
                 range = WS.get_Range("A" + startStroka, "G" + startStroka);
                 //range.Merge();
@@ -2511,6 +2515,9 @@ namespace GKHNNC.Controllers
             //   WS.Cells[startStroka, 6] = Math.Round(summa / 10, 2);
             string IngOEGF = "";
             string IngPTO = "";
+            string DolgnostPTO = "";
+            string DolgnostOEGF = "";
+            string DolgnostDirektor = "";
             try
             {
                 IngOEGF = G.IngenerOEGF;
@@ -2520,6 +2527,9 @@ namespace GKHNNC.Controllers
 
             }
             try { IngPTO = G.IngenerPTO; } catch { }
+            DolgnostPTO = G.IngenerPTODolgnost;
+            DolgnostOEGF = G.IngenerOEGFDolgnost;
+            DolgnostDirektor = G.DirectorDolgnost;
             WS.Cells[startStroka, 6] = Math.Round((summa / 12) / ActivePloshad, 2);
             range = WS.get_Range("A" + startStroka, "G" + startStroka);
             range.Font.Bold = true;
@@ -2531,31 +2541,31 @@ namespace GKHNNC.Controllers
             Opr.RangeMerge(ApExcel, range, true, true, 11, 20);
 
             startStroka += 2;
-            WS.Cells[startStroka, 1] = "Заместитель директора по эксплуатации жилищного фонда___________________________Т.П. Топчиева";
+            WS.Cells[startStroka, 1] = ZamOEGF.Dolgnost+"                             ___________________________"+ZamOEGF.Name;
             range = WS.get_Range("A" + startStroka, "G" + startStroka);
             Opr.RangeMerge(ApExcel, range, true, false, 13, 20);
             range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
             range.Borders.LineStyle = Excel.XlLineStyle.xlLineStyleNone;
             startStroka++;
-            WS.Cells[startStroka, 1] = "Начальник ОЭЖФ                                    ___________________________С.Ю. Конкина";
+            WS.Cells[startStroka, 1] = MainEngineer.Dolgnost+"                                    ___________________________"+MainEngineer.Name;
             range = WS.get_Range("A" + startStroka, "G" + startStroka);
             Opr.RangeMerge(ApExcel, range, true, false, 13, 20);
             range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
             range.Borders.LineStyle = Excel.XlLineStyle.xlLineStyleNone;
             startStroka++;
-            WS.Cells[startStroka, 1] = "Ведущий инженер ОЭЖФ                              ___________________________" + IngOEGF;
+            WS.Cells[startStroka, 1] = DolgnostOEGF+"                              ___________________________" + IngOEGF;
             range = WS.get_Range("A" + startStroka, "G" + startStroka);
             Opr.RangeMerge(ApExcel, range, true, false, 13, 20);
             range.Borders.LineStyle = Excel.XlLineStyle.xlLineStyleNone;
             range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
             startStroka++;
-            WS.Cells[startStroka, 1] = "Инженер ПТО                                       ___________________________" + IngPTO;
+            WS.Cells[startStroka, 1] = DolgnostPTO+ "                                      ___________________________" + IngPTO;
             range = WS.get_Range("A" + startStroka, "G" + startStroka);
             Opr.RangeMerge(ApExcel, range, true, false, 13, 20);
             range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
             range.Borders.LineStyle = Excel.XlLineStyle.xlLineStyleNone;
             startStroka++;
-            WS.Cells[startStroka, 1] = "Начальник "+ eu   +"                      ___________________________" + G.DirectorIP;
+            WS.Cells[startStroka, 1] = DolgnostDirektor + eu   +"                      ___________________________" + G.DirectorIP;
             range = WS.get_Range("A" + startStroka, "G" + startStroka);
             Opr.RangeMerge(ApExcel, range, true, false, 13, 20);
             range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
