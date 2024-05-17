@@ -9,14 +9,17 @@
 
 <table class="table">
     <tr>
+        <td>
+           Поле для поиска
+        </td>
         <th>
-            @Html.DisplayNameFor(model => model.Name)
+            ФИО
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.NameRP)
+            ФИО Родительный падеж
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Dolgnost)
+           Должность
         </th>
         <th></th>
     </tr>
@@ -24,16 +27,19 @@
 @foreach (var item in Model) {
     <tr>
         <td>
+            @Html.DisplayFor(modelItem => item.Poisk)
+        </td>
+        <td>
             @Html.DisplayFor(modelItem => item.Name)
         </td>
         <th>
             @Html.DisplayFor(modelItem => item.NameRP)
         </th>
         <td>
-            @Html.DisplayFor(modelItem => item.Dolgnost)
+            <input readonly value="@item.Dolgnost" class="btn btn-default" />
         </td>
         <td>
-            @Html.ActionLink("Редактировать", "PCEdit", new { id = item.Id }) 
+            @Html.ActionLink("Редактировать", "PCEdit", new { id = item.Id })
         </td>
     </tr>
 }

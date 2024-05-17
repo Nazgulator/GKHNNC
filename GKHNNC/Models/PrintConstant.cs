@@ -10,6 +10,7 @@ namespace GKHNNC.Models
         public string Name { get; set; }
         public string NameRP { get; set; }
         public string Dolgnost { get; set; }
+        public string Poisk { get; set; }
 
     }
 }
