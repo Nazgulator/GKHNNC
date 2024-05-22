@@ -1993,7 +1993,7 @@ namespace GKHNNC.Controllers
 
            
             from++;
-            WS.Cells[from, 2] = "Акт весеннего осмотра №" + O.Id+" от "+O.Date.ToString("dd.MM.yy");
+            WS.Cells[from, 2] = "Акт весеннего осмотра №" + O.Id+" от "+"15.05."+(O.Date.Year);//ToString("dd.MM.yy")
             range = WS.get_Range("A" + from, "E" + from);
             range.Merge(Type.Missing);
             range.Font.Bold = true;
@@ -2223,9 +2223,10 @@ namespace GKHNNC.Controllers
             range.WrapText = true;
             WS.Cells[startStroka, 1] = O.Vivods;
             range.RowHeight = 1;
+            // range.EntireRow.AutoFit();
             try
             {
-                range.RowHeight =(Math.Truncate(Convert.ToDecimal(O.Vivods.Length) / 60) + 1) * 15+1;
+                range.RowHeight = (Math.Truncate(Convert.ToDecimal(O.Vivods.Length) / 60) + 1) * 18 + 1;
             }
             catch
             {
@@ -2297,7 +2298,7 @@ namespace GKHNNC.Controllers
             range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
             range.RowHeight = 25;//высота строки
             startStroka++;
-            WS.Cells[startStroka, 5] = "1._______________("+G.DirectorIP+")"+Dir.Dolgnost + eu;
+            WS.Cells[startStroka, 5] = "1._______________("+G.DirectorIP+")"+Dir.Dolgnost;//+ eu
             WS.Cells[startStroka+1, 5] = "2._______________(___________) Представитель УО";
             WS.Cells[startStroka+2, 5] = "3._______________(___________) Председатель Совета МКД";
             WS.Cells[startStroka+3, 5] = "4._______________("+G.IngenerOEGF+") " + G.IngenerOEGFDolgnost;
@@ -2421,11 +2422,15 @@ namespace GKHNNC.Controllers
 
             for (int i = 0; i < DP.Count; i++)//Elements.Count();
             {
-                startStroka++;
-
-
                 List<ActiveOsmotrWork> AOW2 = AOW.Where(x => x.OsmotrWork.DOMPartId == i).ToList();//.Where(x => x.ElementId == Elements[i]
-                                                                                                   // int idd = AOW2[0].OsmotrWork.DOMPartId;
+                if (AOW2.Count == 0)
+                {
+                    continue;
+                }
+                    startStroka++;
+
+
+              // int idd = AOW2[0].OsmotrWork.DOMPartId;
                 string DomPart = DP[i].Name;// db.DOMParts.Where(x => x.Id == idd).Select(x => x.Name).First();
                 WS.Cells[startStroka, 1] = DomPart;
                 range = WS.get_Range("A" + startStroka, "G" + startStroka);
@@ -2655,7 +2660,7 @@ namespace GKHNNC.Controllers
 
             }
             startStroka++;
-            WS.Cells[startStroka, 1] = "_______________(" + G.DirectorIP + ")";// Начальник " + eu;
+            WS.Cells[startStroka, 1] = "_______________(" + G.DirectorDolgnost + " " + G.DirectorIP + ")";// Начальник " + eu;
             range = WS.get_Range("A" + startStroka, "E" + startStroka);
             range.Font.Size = 8;
             range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
