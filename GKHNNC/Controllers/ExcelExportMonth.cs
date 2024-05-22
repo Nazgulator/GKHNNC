@@ -2423,7 +2423,7 @@ namespace GKHNNC.Controllers
             for (int i = 0; i < DP.Count; i++)//Elements.Count();
             {
                 List<ActiveOsmotrWork> AOW2 = AOW.Where(x => x.OsmotrWork.DOMPartId == i).ToList();//.Where(x => x.ElementId == Elements[i]
-                if (AOW2.Count == 0)
+                if (AOW2.Count == 0&& ORK.Where(x => x.DOMPartId == DP[i].Id).Count() == 0)
                 {
                     continue;
                 }
@@ -2469,50 +2469,89 @@ namespace GKHNNC.Controllers
                     summa += TC;
                 }
 
-            }
-            startStroka++;
-            WS.Cells[startStroka, 1] = "";
-            range = WS.get_Range("A" + startStroka, "G" + startStroka);
-            //range.Merge();
-            Opr.RangeMerge(ApExcel, range, true, true, 13, 20);
-            //заполняем дополнительные работы
-            for (int i = 0; i < ORK.Count; i++)
-            {
-                if (ORK[i].Kommisia < 0)
+                foreach (var ork in ORK.Where(x=>x.DOMPartId == DP[i].Id).ToList())
                 {
-                    int stavka = 10;
-                    if (ORK[i].Cost >= 50000)
+                    if (ork.Kommisia < 0)
                     {
-                        stavka = 5;
+                        int stavka = 10;
+                        if (ork.Cost >= 50000)
+                        {
+                            stavka = 5;
+                        }
+                        if (ork.Cost >= 100000)
+                        {
+                            stavka = 3;
+                        }
+                        ork.Kommisia = stavka;
                     }
-                    if (ORK[i].Cost >= 100000)
+                    decimal FinKom = 1 + Convert.ToDecimal(ork.Kommisia) * 0.01m;//преобразуем коммисию из процентов в коэффициент 1.05 
+                    startStroka++;
+                    counter++;
+                    decimal TC = Math.Round(ork.Cost * FinKom, 2);
+                    WS.Cells[startStroka, 1] = counter;
+                    WS.Cells[startStroka, 2] = ork.Name;
+                    if (ork.Name.Length > 44)
                     {
-                        stavka = 3;
+                        range = WS.get_Range("A" + startStroka, "G" + startStroka);
+                        range.RowHeight = 29;//высота строки
+                        range.WrapText = true;
+
                     }
-                    ORK[i].Kommisia = stavka;
-                }
-                decimal FinKom = 1 + Convert.ToDecimal(ORK[i].Kommisia) * 0.01m;//преобразуем коммисию из процентов в коэффициент 1.05 
-                startStroka++;
-                counter++;
-                decimal TC = Math.Round(ORK[i].Cost * FinKom, 2);
-                WS.Cells[startStroka, 1] = counter;
-                WS.Cells[startStroka, 2] = ORK[i].Name;
-                if (ORK[i].Name.Length > 44)
-                {
-                    range = WS.get_Range("A" + startStroka, "G" + startStroka);
-                    range.RowHeight = 29;//высота строки
-                    range.WrapText = true;
+                    WS.Cells[startStroka, 3] = ork.Izmerenie.Name;
+                    WS.Cells[startStroka, 4] = ork.Number;
+                    WS.Cells[startStroka, 5] = TC;
+                    //  WS.Cells[startStroka, 6] = Math.Round(ORK[i].Cost / 10, 2);
+                    WS.Cells[startStroka, 6] = Math.Round(((TC) / 12) / ActivePloshad, 2);
+
+                    summa += TC;
 
                 }
-                WS.Cells[startStroka, 3] = ORK[i].Izmerenie.Name;
-                WS.Cells[startStroka, 4] = ORK[i].Number;
-                WS.Cells[startStroka, 5] = TC;
-                //  WS.Cells[startStroka, 6] = Math.Round(ORK[i].Cost / 10, 2);
-                WS.Cells[startStroka, 6] = Math.Round(((TC) / 12) / ActivePloshad, 2);
+
+
+            }
+            //startStroka++;
+            //WS.Cells[startStroka, 1] = "";
+            //range = WS.get_Range("A" + startStroka, "G" + startStroka);
+            ////range.Merge();
+            //Opr.RangeMerge(ApExcel, range, true, true, 13, 20);
+            ////заполняем дополнительные работы
+            //for (int i = 0; i < ORK.Count; i++)
+            //{
+            //    if (ORK[i].Kommisia < 0)
+            //    {
+            //        int stavka = 10;
+            //        if (ORK[i].Cost >= 50000)
+            //        {
+            //            stavka = 5;
+            //        }
+            //        if (ORK[i].Cost >= 100000)
+            //        {
+            //            stavka = 3;
+            //        }
+            //        ORK[i].Kommisia = stavka;
+            //    }
+            //    decimal FinKom = 1 + Convert.ToDecimal(ORK[i].Kommisia) * 0.01m;//преобразуем коммисию из процентов в коэффициент 1.05 
+            //    startStroka++;
+            //    counter++;
+            //    decimal TC = Math.Round(ORK[i].Cost * FinKom, 2);
+            //    WS.Cells[startStroka, 1] = counter;
+            //    WS.Cells[startStroka, 2] = ORK[i].Name;
+            //    if (ORK[i].Name.Length > 44)
+            //    {
+            //        range = WS.get_Range("A" + startStroka, "G" + startStroka);
+            //        range.RowHeight = 29;//высота строки
+            //        range.WrapText = true;
+
+            //    }
+            //    WS.Cells[startStroka, 3] = ORK[i].Izmerenie.Name;
+            //    WS.Cells[startStroka, 4] = ORK[i].Number;
+            //    WS.Cells[startStroka, 5] = TC;
+            //    //  WS.Cells[startStroka, 6] = Math.Round(ORK[i].Cost / 10, 2);
+            //    WS.Cells[startStroka, 6] = Math.Round(((TC) / 12) / ActivePloshad, 2);
                
-                summa += TC;
+            //    summa += TC;
 
-            }
+            //}
             startStroka++;
 
             WS.Cells[startStroka, 2] = "Итого";
@@ -2572,7 +2611,7 @@ namespace GKHNNC.Controllers
             range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
             range.Borders.LineStyle = Excel.XlLineStyle.xlLineStyleNone;
             startStroka++;
-            WS.Cells[startStroka, 1] = DolgnostDirektor +" "+ eu   +"                      ______________________" + G.DirectorIP;
+            WS.Cells[startStroka, 1] = DolgnostDirektor +"                      ______________________" + G.DirectorIP;
             range = WS.get_Range("A" + startStroka, "G" + startStroka);
             Opr.RangeMerge(ApExcel, range, true, false, 13, 20);
             range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
