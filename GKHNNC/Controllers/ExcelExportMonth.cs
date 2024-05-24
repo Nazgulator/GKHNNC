@@ -14,6 +14,7 @@ using System.IO;
 using System.Drawing;
 using System.Diagnostics;
 using System.Web.UI;
+using DocumentFormat.OpenXml.Spreadsheet;
 
 
 
@@ -2393,7 +2394,7 @@ namespace GKHNNC.Controllers
 
             try
             {
-                AOW = db.ActiveOsmotrWorks.Where(x => x.OsmotrId == O.Id && !x.Gotovo && x.OsmotrWork.OtchetId == 0&&(x.DateZaplanirovana==DateStart||x.DateZaplanirovana==null)).OrderBy(x => x.ElementId).Include(x => x.OsmotrWork).Include(x => x.OsmotrWork.Izmerenie).ToList();
+                AOW = db.ActiveOsmotrWorks.Where(x => x.OsmotrId == O.Id && !x.Gotovo && x.OsmotrWork.OtchetId == 0&&(x.DateZaplanirovana==DateStart||x.DateZaplanirovana==null)).OrderBy(x => x.OsmotrWork.DOMPartId).Include(x => x.OsmotrWork).Include(x => x.OsmotrWork.Izmerenie).ToList();//.Include(x=>x.OsmotrWork.DOMPart)
                 Elements = AOW.Select(x => x.ElementId).Distinct().ToList();
             }
             catch
@@ -2422,7 +2423,7 @@ namespace GKHNNC.Controllers
 
             for (int i = 0; i < DP.Count; i++)//Elements.Count();
             {
-                List<ActiveOsmotrWork> AOW2 = AOW.Where(x => x.OsmotrWork.DOMPartId == i).ToList();//.Where(x => x.ElementId == Elements[i]
+                List<ActiveOsmotrWork> AOW2 = AOW.Where(x => x.OsmotrWork.DOMPartId == DP[i].Id).ToList();//.Where(x => x.ElementId == Elements[i]
                 if (AOW2.Count == 0&& ORK.Where(x => x.DOMPartId == DP[i].Id).Count() == 0)
                 {
                     continue;
@@ -2451,7 +2452,7 @@ namespace GKHNNC.Controllers
                     counter++;
                     startStroka++;
                     WS.Cells[startStroka, 1] = counter;
-                    WS.Cells[startStroka, 2] = A.OsmotrWork.Name;
+                    WS.Cells[startStroka, 2] = A.OsmotrWork.Name;//+ "("+A.OsmotrWork.DOMPart.Name+")";
                     if (A.OsmotrWork.Name.Length > 44)
                     {
                         range = WS.get_Range("A" + startStroka, "G" + startStroka);
