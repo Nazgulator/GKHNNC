@@ -2299,7 +2299,7 @@ namespace GKHNNC.Controllers
             range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
             range.RowHeight = 25;//высота строки
             startStroka++;
-            WS.Cells[startStroka, 5] = "1._______________("+G.DirectorIP+")"+Dir.Dolgnost;//+ eu
+            WS.Cells[startStroka, 5] = "1._______________("+G.DirectorIP+")"+G.DirectorDolgnost;//+ eu
             WS.Cells[startStroka+1, 5] = "2._______________(___________) Представитель УО";
             WS.Cells[startStroka+2, 5] = "3._______________(___________) Председатель Совета МКД";
             WS.Cells[startStroka+3, 5] = "4._______________("+G.IngenerOEGF+") " + G.IngenerOEGFDolgnost;
