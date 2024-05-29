@@ -2806,6 +2806,7 @@ WorkDate = cl.First().WorkDate
                     a.TotalCost = a.OsmotrWork.Cost * a.Number;
                     db.Entry(a).State = EntityState.Modified;
                     db.SaveChanges();
+                    count++;
                 }
 
                 //foreach (ActiveOsmotrWork A in AOW)
