@@ -2791,26 +2791,42 @@ WorkDate = cl.First().WorkDate
             foreach (Osmotr os in O)
             {
                 List<ActiveOsmotrWork> AOW = new List<ActiveOsmotrWork>();
-                AOW = db.ActiveOsmotrWorks.Where(x => x.OsmotrId == os.Id).ToList();
-                foreach (ActiveOsmotrWork A in AOW)
+               
+                try
                 {
-                    OsmotrWork OW = new OsmotrWork();
-                    try
-                    {
-                        OW = db.OsmotrWorks.Where(x => x.Id == A.OsmotrWorkId).First();
-                        decimal c = A.TotalCost;
-
-                        A.TotalCost = OW.Cost * A.Number;
-                        if (c != A.TotalCost)
-                        { 
-                        db.Entry(A).State = EntityState.Modified;
-                        db.SaveChanges();
-                        count++;
-                        };
-
-                    }
-                    catch { }
+                    AOW = db.ActiveOsmotrWorks.Where(x => x.OsmotrId == os.Id).Include(x => x.OsmotrWork).Where(x => (x.OsmotrWork.Cost * x.Number) != x.TotalCost).ToList();
                 }
+                catch
+                {
+
+                }
+
+                foreach (var a in AOW)
+                {
+                    a.TotalCost = a.OsmotrWork.Cost * a.Number;
+                    db.Entry(a).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+
+                //foreach (ActiveOsmotrWork A in AOW)
+                //{
+                //    OsmotrWork OW = new OsmotrWork();
+                //    try
+                //    {
+                //        OW = db.OsmotrWorks.Where(x => x.Id == A.OsmotrWorkId).First();
+                //        decimal c = A.TotalCost;
+
+                //        A.TotalCost = OW.Cost * A.Number;
+                //        if (c != A.TotalCost)
+                //        { 
+                //        db.Entry(A).State = EntityState.Modified;
+                //        db.SaveChanges();
+                //        count++;
+                //        };
+
+                //    }
+                //    catch { }
+                //}
             }
 
 
