@@ -114,7 +114,7 @@ namespace GKHNNC.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        public ActionResult PCEdit([Bind(Include = "Id,Name,NameRP,Dolgnost")] PrintConstant printConstant)
+        public ActionResult PCEdit([Bind(Include = "Id,Name,NameRP,Dolgnost,Poisk")] PrintConstant printConstant)
         {
             if (ModelState.IsValid)
             {

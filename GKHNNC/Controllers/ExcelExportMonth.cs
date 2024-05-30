@@ -2198,6 +2198,8 @@ namespace GKHNNC.Controllers
             PrintConstant Dir =  db.PrintConstants.Where(x => x.Poisk.Equals("Директор")).First();
             PrintConstant MainEngineer = db.PrintConstants.Where(x => x.Poisk.Equals("Главный инженер")).First();
             PrintConstant ZamOEGF = db.PrintConstants.Where(x => x.Poisk.Equals("Заместитель директора ОЭЖФ")).First();
+            PrintConstant PredstavitelUO = db.PrintConstants.Where(x => x.Poisk.Equals("ПредставительУО")).First();
+            PrintConstant Predsedatel = db.PrintConstants.Where(x => x.Poisk.Equals("Председатель")).First();
 
 
             startStroka++;
@@ -2205,7 +2207,7 @@ namespace GKHNNC.Controllers
             WS.Cells[startStroka, 1] = "В ходе осмотра выявлено:";
             range = WS.Cells[startStroka, periodichnost];
             range.ColumnWidth = 20;
-           
+
             range.Font.Bold = true;
             range.Font.Size = 8;
             range.RowHeight = 15;//высота строки
@@ -2214,7 +2216,7 @@ namespace GKHNNC.Controllers
 
             startStroka++;
             range = WS.get_Range("A" + (startStroka), "E" + (startStroka));
-          //  range.ColumnWidth = 13;
+            //  range.ColumnWidth = 13;
             WS.Cells[startStroka, 1] = "Выводы комиссии:";
             range.Merge();
 
@@ -2300,8 +2302,8 @@ namespace GKHNNC.Controllers
             range.RowHeight = 25;//высота строки
             startStroka++;
             WS.Cells[startStroka, 5] = "1._______________("+G.DirectorIP+")"+G.DirectorDolgnost;//+ eu
-            WS.Cells[startStroka+1, 5] = "2._______________(___________) Представитель УО";
-            WS.Cells[startStroka+2, 5] = "3._______________(___________) Председатель Совета МКД";
+            WS.Cells[startStroka+1, 5] = "2._______________(___________) "+PredstavitelUO.Dolgnost;
+            WS.Cells[startStroka+2, 5] = "3._______________(___________) "+Predsedatel.Dolgnost;
             WS.Cells[startStroka+3, 5] = "4._______________("+G.IngenerOEGF+") " + G.IngenerOEGFDolgnost;
             for (int i = 0; i < 4; i++)
             {
@@ -2623,7 +2625,7 @@ namespace GKHNNC.Controllers
             List<ActiveOsmotrWork> AOWD = new List<ActiveOsmotrWork>();
             try
             {
-                AOWD = db.ActiveOsmotrWorks.Include(x => x.OsmotrWork).Where(x => x.DateZaplanirovana > DateStart&&x.OsmotrId == O.Id).ToList();
+                AOWD = db.ActiveOsmotrWorks.Include(x => x.OsmotrWork).Include(x=>x.OsmotrWork.Izmerenie).Where(x => x.DateZaplanirovana > DateStart&&x.OsmotrId == O.Id).ToList();
             }
             catch
             {
