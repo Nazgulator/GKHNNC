@@ -2302,9 +2302,9 @@ namespace GKHNNC.Controllers
             range.RowHeight = 25;//высота строки
             startStroka++;
             WS.Cells[startStroka, 5] = "1._______________("+G.DirectorIP+")"+G.DirectorDolgnost;//+ eu
-            WS.Cells[startStroka+1, 5] = "2._______________(___________) "+PredstavitelUO.Dolgnost;
-            WS.Cells[startStroka+2, 5] = "3._______________(___________) "+Predsedatel.Dolgnost;
-            WS.Cells[startStroka+3, 5] = "4._______________("+G.IngenerOEGF+") " + G.IngenerOEGFDolgnost;
+          //  WS.Cells[startStroka+1, 5] = "2._______________(___________) "+PredstavitelUO.Dolgnost;
+            WS.Cells[startStroka+2, 5] = "2._______________(___________) "+Predsedatel.Dolgnost;
+            WS.Cells[startStroka+3, 5] = "3._______________("+G.IngenerOEGF+") " + G.IngenerOEGFDolgnost;
             for (int i = 0; i < 4; i++)
             {
                 range = WS.get_Range("A" + (startStroka + i), "E" + (startStroka + i));
