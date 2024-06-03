@@ -1898,6 +1898,12 @@ namespace GKHNNC.Controllers
                 return;
             }
 
+            PrintConstant Dir = db.PrintConstants.Where(x => x.Poisk.Equals("Директор")).First();
+            PrintConstant MainEngineer = db.PrintConstants.Where(x => x.Poisk.Equals("Главный инженер")).First();
+            PrintConstant ZamOEGF = db.PrintConstants.Where(x => x.Poisk.Equals("Заместитель директора ОЭЖФ")).First();
+            PrintConstant PredstavitelUO = db.PrintConstants.Where(x => x.Poisk.Equals("ПредставительУО")).First();
+            PrintConstant Predsedatel = db.PrintConstants.Where(x => x.Poisk.Equals("Председатель")).First();
+
 
             Excel.Application ApExcel = new Excel.Application();
             Excel.Workbooks WB = null;
@@ -1947,7 +1953,7 @@ namespace GKHNNC.Controllers
             range.Font.Name = "TimesNewRoman";
 
             from++;
-            WS.Cells[from, 3] = " Заместитель директора по эксплуатации ЖФ _______________(Топчиева Т.П.)";
+            WS.Cells[from, 3] = ZamOEGF.Dolgnost +"  _______________("+ZamOEGF.Name+")";
             range = WS.get_Range("C" + from, "E" + from);
             range.Merge(Type.Missing);
             range.Font.Bold = false;
@@ -1958,7 +1964,7 @@ namespace GKHNNC.Controllers
             range.WrapText = true;
             range.Font.Name = "TimesNewRoman";
 
-            WS.Cells[from, 1] = " Главный инженер  __________(Шпедт О.А.)";
+            WS.Cells[from, 1] = MainEngineer.Dolgnost +"  __________("+MainEngineer.Name+")";
             range = WS.get_Range("A" + from, "B" + from);
             range.Merge(Type.Missing);
             range.Font.Bold = false;
@@ -2195,12 +2201,7 @@ namespace GKHNNC.Controllers
             }
 
 
-            PrintConstant Dir =  db.PrintConstants.Where(x => x.Poisk.Equals("Директор")).First();
-            PrintConstant MainEngineer = db.PrintConstants.Where(x => x.Poisk.Equals("Главный инженер")).First();
-            PrintConstant ZamOEGF = db.PrintConstants.Where(x => x.Poisk.Equals("Заместитель директора ОЭЖФ")).First();
-            PrintConstant PredstavitelUO = db.PrintConstants.Where(x => x.Poisk.Equals("ПредставительУО")).First();
-            PrintConstant Predsedatel = db.PrintConstants.Where(x => x.Poisk.Equals("Председатель")).First();
-
+         
 
             startStroka++;
             startStroka++;
@@ -2338,7 +2339,7 @@ namespace GKHNNC.Controllers
             range.Borders.LineStyle = Excel.XlLineStyle.xlLineStyleNone;
             range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
             startStroka++;
-            WS.Cells[startStroka, 5] = "Директор ФГБУ 'Академия комфорта'";
+            WS.Cells[startStroka, 5] = Dir.Dolgnost;
             range = WS.get_Range("E" + startStroka, "G" + startStroka);
             //  Opr.RangeMerge(ApExcel, range, true, true, 13, 15);
             range.Merge();
@@ -2347,7 +2348,7 @@ namespace GKHNNC.Controllers
             range.Borders.LineStyle = Excel.XlLineStyle.xlLineStyleNone;
             range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
             startStroka++;
-            WS.Cells[startStroka, 5] = " ____________________В.В.Кисс";
+            WS.Cells[startStroka, 5] = " ____________________"+Dir.Name;
             range = WS.get_Range("E" + startStroka, "G" + startStroka);
             //  Opr.RangeMerge(ApExcel, range, true, true, 13, 15);
             range.Merge();
