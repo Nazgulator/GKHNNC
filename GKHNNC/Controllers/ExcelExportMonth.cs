@@ -2380,7 +2380,7 @@ namespace GKHNNC.Controllers
             WS.Cells[startStroka, 2] = "Виды работ"; WS.Cells[startStroka, 2].ColumnWidth = 50;
             WS.Cells[startStroka, 3] = "Ед. изм."; WS.Cells[startStroka, 3].ColumnWidth = 6.25;
             WS.Cells[startStroka, 4] = "Объёмы работ"; WS.Cells[startStroka, 3].ColumnWidth = 8.5;
-            WS.Cells[startStroka, 5] = "Стоимость работ, включая организационно-контрольные работы УК, руб."; WS.Cells[startStroka, 5].ColumnWidth = 22.5;
+            WS.Cells[startStroka, 5] = "Стоимость работ, включая организационно-контрольные работы УО, руб."; WS.Cells[startStroka, 5].ColumnWidth = 22.5;
             //   WS.Cells[startStroka, 6] = "Вознаграждение УК за выполнение работ по доп. текущему ремонту"; WS.Cells[startStroka, 6].ColumnWidth = 32;
             WS.Cells[startStroka, 6] = "Стоимость работ на кв.м  в месяц, руб."; WS.Cells[startStroka, 6].ColumnWidth = 15;
             WS.Cells[startStroka, 7] = "Срок выполнения ***"; WS.Cells[startStroka, 7].ColumnWidth = 12;
