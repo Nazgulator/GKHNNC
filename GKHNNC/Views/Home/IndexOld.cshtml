@@ -1,0 +1,869 @@
+﻿@using Microsoft.AspNet.Identity
+
+
+<!-- Modal -->
+<div class="modal fade" id="Download" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+
+
+
+
+                <h4>Загрузка данных, пожалуйста подождите...</h4>
+                <button id="X" type="button" class="close hide" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="progress">
+
+                    <div id="progressBar" class="progress-bar progress-bar-striped bg-success progress-bar-animated" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                    <center>
+                        <label id="nadpis">Загрузка данных...</label>
+                    </center>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+<Center>
+    <h1><b>ФГБУ "Академия комфорта"</b></h1>
+
+    <p class="lead">
+        Федеральное государственное бюджетное учреждение <br /> "Академия комфорта"
+    </p>
+
+
+    @if (Request.IsAuthenticated)
+    {
+        if (((User.IsInRole("Пользователь") || User.IsInRole("Администратор"))) && User.Identity.Name.Contains("Полигон") == false)
+        {
+
+            <div class="alert-success">
+                <p>07.02.2022 Добавлены приборы учета ЭЭ, Отопление, ГВС, ХВС.</p>
+            </div>
+
+            if (User.Identity.Name.Contains("ПТО") || User.Identity.Name.Contains("ОЭЖФ") || User.IsInRole("Администратор"))
+            {
+                if (ViewBag.Events != null)
+                {
+
+                    <table class="table-block" style="width:100%">
+                        @for (int i = 0; i < ViewBag.Events.Count; i++)
+                        {
+                            <tr class=" @ViewBag.Events[i].Class " style="text-align:center">
+                                <td> @ViewBag.Events[i].Date.ToString("HH:mm")  </td>
+                                <td> @ViewBag.Events[i].Text </td>
+                            </tr>
+                        }
+                    </table>
+
+
+                }
+
+            }
+
+            if (User.Identity.Name.Contains("УАТ") == false && User.Identity.Name.Contains("УЭВ") == false && User.Identity.Name.Contains("Асанова") == false)
+            {
+                <div class="media col-md-4 col-md-offset-4">
+                    <div class="media-left">
+                        <img src="~/Ico/icons8-каска-50.png" class="media-object" style="width:50px">
+                    </div>
+                    <div class="media-body">
+                        <h3 class="media-heading">Основные</h3>
+                        <p>Выполненные работы и акты</p>
+                    </div>
+                </div>
+                <p>
+                    <button type="button" class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("IndexMain", "CompleteWorks")'">
+                        <span class="glyphicon glyphicon-ok"></span> Выполненные работы &raquo;
+                    </button>
+                    <span class="glyphicon glyphicon-search"></span>
+                </p>
+                <p>
+                    <button type="button" class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "EventLogs")'">
+                        <span class="glyphicon glyphicon-ok"></span> Оповещения &raquo;
+                    </button>
+                    <span class="glyphicon glyphicon-search"></span>
+                </p>
+                <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("SozdanieAktov", "CompleteWorks")'">
+                        <span class="glyphicon glyphicon-list-alt"></span> Формирование актов &raquo;
+                    </button>
+                </p>
+                <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='http://10.0.1.73/workplan'">
+                        <span class="glyphicon glyphicon-list-alt"></span> Работы ППР &raquo;
+                    </button>
+                </p>
+
+                if (User.IsInRole("Администратор") || User.Identity.Name.Contains("ОЭЖФ") || User.Identity.Name.Contains("Эксплуатация") || User.Identity.Name.Contains("СГЭ"))
+                {
+                    <p>
+                        <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("OsmotrsProverka1", "Houses")'">
+                            <i class="glyphicon glyphicon-map-marker"></i> Проверить осмотры (ОЭЖФ) &raquo;
+                        </button>
+                    </p>
+
+                    <p>
+                        <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Schetchiks")'">
+                            <i class="glyphicon glyphicon-hand-left"></i> Счетчики  &raquo;
+                        </button>
+                    </p>
+                }
+                if (User.IsInRole("Администратор") || User.Identity.Name.Contains("ПТО") && !User.Identity.Name.Contains("ОЭЖФ"))
+                {
+                    <p>
+                        <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("OsmotrsProverka2", "Houses")'">
+                            <i class="glyphicon glyphicon-map-marker"></i> Проверить осмотры (ПТО) &raquo;
+                        </button>
+                    </p>
+                    <p>
+                        <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "OsmotrWorks")'">
+                            <i class="glyphicon glyphicon-star"></i> Непредвиденный ремонт работы &raquo;
+                        </button>
+                    </p>
+                    <p>
+                        <button class="btn btn-secondary btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "OsmotrRecommendWorks")'">
+                            <i class="glyphicon glyphicon-star"></i> Рекомендованные ПТО работы &raquo;
+                        </button>
+                    </p>
+                    <p>
+                        <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("PlanoviStatiView", "Osmotrs")'">
+                            <i class="glyphicon glyphicon-star"></i> Рапределение работ по статьям &raquo;
+                        </button>
+                    </p>
+
+                }
+                if (User.IsInRole("Администратор") || User.Identity.Name.Contains("Голосований"))
+                {
+                    <p>
+                        <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("OsmotrsProverka3", "Houses")'">
+                            <i class="glyphicon glyphicon-map-marker"></i> Осмотры на голосовании &raquo;
+                        </button>
+                    </p>
+
+                }
+                if (!User.Identity.Name.Contains("Голосований"))
+                {
+                    <p>
+                        <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Houses")'">
+                            <i class="glyphicon glyphicon-map-marker"></i> Тех. паспорт домов и осмотры &raquo;
+                        </button>
+                    </p>
+                    <p>
+                        <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("OsmotrsTech", "Osmotrs")'">
+                            <i class="glyphicon glyphicon-map-marker"></i> Технические осмотры  &raquo;
+                        </button>
+                    </p>
+                }
+
+            }
+
+            if (User.IsInRole("Администратор"))
+            {
+                <div class="media col-md-4 col-md-offset-4">
+                    <div class="media-left">
+                        <img src="~/Ico/icons8-шестерни-50.png" class="media-object" style="width:50px">
+                    </div>
+                    <div class="media-body">
+                        <h3 class="media-heading">Администрирование</h3>
+                        <p>Дома и осмотры</p>
+                    </div>
+                </div>
+                <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "CanCreateOsmotrs")'">
+                        <i class="glyphicon glyphicon-map-marker"></i> Можно ли создавать осмотры &raquo;
+                    </button>
+                </p>
+                <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "PassportWorkTypes")'">
+                        <i class="glyphicon glyphicon-map-marker"></i> Справочник типов паспортов &raquo;
+                    </button>
+                </p>
+                <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" onclick="location.href='@Url.Action("DomParts", "Elements")'">
+                        <i class="glyphicon glyphicon-inbox"></i> Справочник частей дома (Разделы в осмотрах) &raquo;
+                    </button>
+                </p>
+                <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Elements")'">
+                        <i class="glyphicon glyphicon-map-marker"></i> Справочник элементов дома (Строки в разделах) &raquo;
+                    </button>
+                </p>
+
+
+
+            }
+
+            if (User.IsInRole("Администратор") || User.Identity.Name.Contains("ИнженерОЭЖФ") || User.Identity.Name.Contains("Эксплуатация"))
+            {
+                <div class="media col-md-4 col-md-offset-4">
+                    <div class="media-left">
+                        <img src="~/Ico/icons8-шестерни-50.png" class="media-object" style="width:50px">
+                    </div>
+                    <div class="media-body">
+                        <h3 class="media-heading">Технические хар-ки</h3>
+                        <p>Технический паспорт дома и план</p>
+                    </div>
+                </div>
+                <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "CanCreateOsmotrs")'">
+                        <i class="glyphicon glyphicon-map-marker"></i> Можно ли создавать осмотры &raquo;
+                    </button>
+                </p>
+                <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "PassportWorkTypes")'">
+                        <i class="glyphicon glyphicon-map-marker"></i> Справочник типов паспортов &raquo;
+                    </button>
+                </p>
+                <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "WorkSoderganies")'">
+                        <i class="glyphicon glyphicon-map-marker"></i> Справочник работ по содержанию &raquo;
+                    </button>
+                </p>
+                <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Tips")'">
+                        <i class="glyphicon glyphicon-map-marker"></i> Справочник типов работ &raquo;
+                    </button>
+                </p>
+
+                <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "ConstructiveTypes")'">
+                        <i class="glyphicon glyphicon-map-marker"></i> Справочник типов конструктивных элементов  &raquo;
+                    </button>
+                </p>
+                <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Elements")'">
+                        <i class="glyphicon glyphicon-map-marker"></i> Справочник элементов дома &raquo;
+                    </button>
+                </p>
+                <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "TypeElements")'">
+                        <i class="glyphicon glyphicon-map-marker"></i> Типы конструктивных элементов на домах  &raquo;
+                    </button>
+                </p>
+                <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("OsmotrsTech", "Osmotrs")'">
+                        <i class="glyphicon glyphicon-map-marker"></i> Технические осмотры  &raquo;
+                    </button>
+                </p>
+                <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "ActiveWorkSoderganies")'">
+                        <i class="glyphicon glyphicon-map-marker"></i> Активные работы по содержанию &raquo;
+                    </button>
+                </p>
+
+
+
+                <div class="media col-md-4 col-md-offset-4">
+                    <div class="media-left">
+                        <img src="~/Ico/icons8-руководство-50.png" class="media-object" style="width:50px">
+                    </div>
+                    <div class="media-body">
+                        <h3 class="media-heading">Жилищный стандарт</h3>
+                        <p>Интеграция с ПО Жилищный стандарт</p>
+                    </div>
+                </div>
+                <p>
+                    <button type="button" class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "WorkStandarts")'">
+                        <span></span> Работы Стандарт (план) &raquo;
+                    </button>
+                    <span></span>
+                </p>
+                <p>
+                    <button type="button" class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "MaterialStandarts")'">
+                        <span class="glyphicon glyphicon-ok"></span> Материалы Стандарт (план) &raquo;
+                    </button>
+                    <span class="glyphicon glyphicon-search"></span>
+                </p>
+                <p>
+                    <button type="button" class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "MaterialToWorkStandarts")'">
+                        <span class="glyphicon glyphicon-ok"></span> Привязка материалов к работам (план) &raquo;
+                    </button>
+                    <span class="glyphicon glyphicon-search"></span>
+                </p>
+
+
+                <div class="media col-md-4 col-md-offset-4">
+                    <div class="media-left">
+                        <img src="~/Ico/icons8-производство-50.png" class="media-object" style="width:50px">
+                    </div>
+                    <div class="media-body">
+                        <h3 class="media-heading">Адреса и виды работ</h3>
+                        <p>Добавление новых адресов и видов работ</p>
+                    </div>
+                </div>
+
+                <div class="table">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <p>
+                                <button class="btn btn-success btn-lg" style="width:500Px" onclick="location.href='@Url.Action("Index", "Works")'">
+                                    <i class="glyphicon glyphicon-wrench"></i> Виды работ &raquo;
+                                </button>
+                            </p>
+                            <p>
+                                <button class="btn btn-success btn-lg" style="width:500Px" onclick="location.href='@Url.Action("Index", "Adres")'">
+                                    <i class="glyphicon glyphicon-home"></i> Адреса &raquo;
+                                </button>
+                            </p>
+                            <p>
+                                <button class="btn btn-success btn-lg" style="width:500Px" onclick="location.href='@Url.Action("Index", "AdresTypes")'">
+                                    <i class="glyphicon glyphicon-home"></i> Типы домов &raquo;
+                                </button>
+                            </p>
+                            <p>
+                                <button class="btn btn-success btn-lg" style="width:500Px" onclick="location.href='@Url.Action("Index", "AllStreets")'">
+                                    <i class="glyphicon glyphicon-road"></i> Улицы &raquo;
+                                </button>
+                            </p>
+
+                            <p>
+                                <button class="btn btn-success btn-lg" style="width:500Px" onclick="location.href='@Url.Action("TechPasport", "Home")'">
+                                    <i class="glyphicon glyphicon-inbox"></i> Справочники частей дома &raquo;
+                                </button>
+                            </p>
+                            <p>
+                                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Osmotrs")'">
+                                    <i class="glyphicon glyphicon-star"></i> Осмотры &raquo;
+                                </button>
+                            </p>
+                            <p>
+                                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "ActiveElements")'">
+                                    <i class="glyphicon glyphicon-star"></i> Активные элементы &raquo;
+                                </button>
+                            </p>
+                            <p>
+                                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "ActiveDefects")'">
+                                    <i class="glyphicon glyphicon-star"></i> Активные дефекты &raquo;
+                                </button>
+                            </p>
+                            <p>
+                                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("DefectEdit", "Defect")'">
+                                    <i class="glyphicon glyphicon-star"></i> Редактор дефектов &raquo;
+                                </button>
+                            </p>
+                            <p>
+                                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Materials")'">
+                                    <i class="glyphicon glyphicon-tint"></i> Редактор материалов &raquo;
+                                </button>
+                            </p>
+                            <p>
+                                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("MaterialEdit", "Osmotrs")'">
+                                    <i class="glyphicon glyphicon-map-marker"></i> Объединение материалов &raquo;
+                                </button>
+                            </p>
+
+                            <p>
+                                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Houses")'">
+                                    <i class="glyphicon glyphicon-map-marker"></i> Тех. паспорт домов и осмотры &raquo;
+                                </button>
+                            </p>
+                            <p>
+                                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "OsmotrWorks")'">
+                                    <i class="glyphicon glyphicon-star"></i> Работы с ценами для осмотров &raquo;
+                                </button>
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+
+            }
+
+            if (User.IsInRole("Администратор") || User.Identity.Name.Contains("УЭВ"))
+            {
+                <div class="media col-md-4 col-md-offset-4">
+                    <div class="media-left">
+                        <img src="~/Ico/icons8-бумага-50.png" class="media-object" style="width:50px">
+                    </div>
+                    <div class="media-body">
+                        <h3 class="media-heading">Отчеты</h3>
+                        <p>Отчеты по домам и услугам</p>
+                    </div>
+                </div>
+
+                <div class="table">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <p>
+                                <button class="btn btn-success btn-lg" style="width:500Px" onclick="location.href='@Url.Action("OtchetAllSpec", "Houses")'">
+                                    <i class="glyphicon glyphicon-home"></i> Отчет двери, лавки, почтовые ящики за год &raquo;
+                                </button>
+                            </p>
+
+                            <p>
+                                <button class="btn btn-success btn-lg" style="width:500Px" onclick="location.href='@Url.Action("OtchetAll", "Houses")'">
+                                    <i class="glyphicon glyphicon-lock"></i> Отчет по необходимым работам на домах &raquo;
+                                </button>
+                            </p>
+
+
+                        </div>
+                    </div>
+
+                </div>
+            }
+
+            if (User.IsInRole("Администратор") || User.Identity.Name.Contains("УЭВ"))
+            {
+
+
+
+                <div class="media col-md-4 col-md-offset-4">
+                    <div class="media-left">
+                        <img src="~/Ico/icons8-solidworks-flow-simulation-50.png" class="media-object" style="width:50px">
+                    </div>
+                    <div class="media-body">
+                        <h3 class="media-heading">Программа VODA</h3>
+                        <p>Web версия программы.</p>
+                    </div>
+                </div>
+
+                <div class="table">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <p>
+                                <button class="btn btn-success btn-lg" style="width:500Px" onclick="location.href='@Url.Action("Index", "Adres")'">
+                                    <i class="glyphicon glyphicon-home"></i> Адреса &raquo;
+                                </button>
+                            </p>
+
+                            <p>
+                                <button class="btn btn-success btn-lg" style="width:500Px" onclick="location.href='@Url.Action("Index", "Arendators")'">
+                                    <i class="glyphicon glyphicon-lock"></i> Арендаторы &raquo;
+                                </button>
+                            </p>
+                            <p>
+                                <button class="btn btn-success btn-lg" style="width:500Px" onclick="location.href='@Url.Action("Index", "TableServices")'">
+                                    <i class="glyphicon glyphicon-th-large"></i> Таблица сервисов &raquo;
+                                </button>
+                            </p>
+                            <p>
+                                <button class="btn btn-success btn-lg" style="width:500Px" onclick="location.href='@Url.Action("VODAMain", "Home")'">
+                                    <i class="glyphicon glyphicon-list-alt"></i> Программа "VODA" &raquo;
+                                </button>
+                            </p>
+                            <p>
+                                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Upload", "Defect")'">
+                                    <i class="glyphicon glyphicon-warning-sign"></i> Дефектные файлы &raquo;
+                                </button>
+                            </p>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            }
+
+
+            if (User.Identity.Name.Contains("Экономист") || User.IsInRole("Администратор"))
+            {
+
+                <div class="media col-md-4 col-md-offset-4">
+                    <div class="media-left">
+                        <img src="~/Ico/icons8-лицензия-50.png" class="media-object" style="width:50px">
+                    </div>
+                    <div class="media-body">
+                        <h3 class="media-heading">Услуги</h3>
+                        <p>Загрузка выполненных услуг</p>
+                    </div>
+                </div>
+                <div class="table">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <p>
+                                <a href="/MKDYearResults/Index" class="btn btn-warning btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Корректировка годовых результатов &raquo;</a>
+                            </p>
+
+                            <p>
+                                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Schetchiks")'">
+                                    <i class="glyphicon glyphicon-hand-left"></i> Счетчики  &raquo;
+                                </button>
+                            </p>
+                            <p>
+                                <button class="btn btn-success btn-lg" style="width:500Px" onclick="location.href='@Url.Action("Index", "GEUs")'">
+                                    <i class="glyphicon glyphicon-briefcase"></i> ЖЭУ &raquo;
+                                </button>
+                            </p>
+                            <p>
+                                <button class="btn btn-success btn-lg" style="width:500Px" onclick="location.href='@Url.Action("Index", "Uslugas")'">
+                                    <i class="glyphicon glyphicon-star-empty"></i> Услуги &raquo;
+                                </button>
+                            </p>
+                            <p>
+                                <button class="btn btn-success btn-lg" style="width:500Px" onclick="location.href='@Url.Action("Index", "Periodichnosts")'">
+                                    <i class="glyphicon glyphicon-repeat"></i> Периодичность &raquo;
+                                </button>
+                            </p>
+                            <p>
+                                <button class="btn btn-success btn-lg" style="width:500Px" onclick="location.href='@Url.Action("IndexPoDomam", "VipolnennieUslugis")'">
+                                    <i class="glyphicon glyphicon-ok-sign"></i> Выполненные услуги по домам &raquo;
+                                </button>
+                            </p>
+
+                            <p>
+                                <button class="btn btn-success btn-lg" style="width:500Px" onclick="location.href='@Url.Action("Load", "Home")'">
+                                    <i class="glyphicon glyphicon-open"></i> Загрузка таблиц для актов &raquo;
+                                </button>
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            }
+            if (User.Identity.Name.Contains("Teplotehnik") || User.Identity.Name.Contains("BuhKv") || User.Identity.Name.Contains("Voda"))
+            {
+                <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" onclick="location.href='@Url.Action("Index", "Houses")'">
+                        <i class="glyphicon glyphicon-map-marker"></i> Детализация по домам &raquo;
+                    </button>
+                </p>
+                <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" onclick="location.href='@Url.Action("VODAMain", "Home")'">
+                        <i class="glyphicon glyphicon-list-alt"></i> Расчет отопления и горячей воды  &raquo;
+                    </button>
+                </p>
+
+            }
+            if (User.Identity.Name.Contains("BuhKv"))
+            {
+                <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" onclick="location.href='@Url.Action("Index", "Arendators")'">
+                        <i class="glyphicon glyphicon-lock"></i> Арендаторы &raquo;
+                    </button>
+                </p>
+
+            }
+
+            if (User.Identity.Name.Contains("Асанова") || User.Identity.Name.Contains("БухгалтерПоТопливу") || User.IsInRole("Администратор"))
+            {
+                <div class="media col-md-4 col-md-offset-4">
+                    <div class="media-left">
+                        <img src="~/Ico/icons8-погрузчик-50.png" class="media-object" style="width:50px">
+                    </div>
+                    <div class="media-body">
+                        <h3 class="media-heading">Транспортный цех</h3>
+                        <p>Автомобили, ездки, отчёты</p>
+                    </div>
+                </div>
+
+                <p>
+
+                    <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "TypeAvtos")'">
+                        <i class="glyphicon glyphicon-road"></i>  Типы автомобилей &raquo;
+
+                    </button>
+                </p>
+
+                <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "MarkaAvtomobils")'">
+                        <i class="glyphicon glyphicon-screenshot"></i> Марки автомобилей &raquo;
+                    </button>
+                </p>
+                <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Avtomobils")'">
+                        <i class="glyphicon glyphicon-dashboard"></i> Список автомобилей &raquo;
+                    </button>
+                </p>
+
+                <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Ezdkas")'">
+                        <i class="glyphicon glyphicon-transfer"></i> Ездки &raquo;
+                    </button>
+                </p>
+
+                <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("SverkaAvtoscan", "Ezdkas")'">
+                        <i class="glyphicon glyphicon-alert"></i> Сверка автоскан &raquo;
+                    </button>
+                </p>
+
+
+
+
+            }
+            if (User.Identity.Name.Contains("БухгалтерПоТопливу") || User.Identity.Name.Equals("Экономист") || User.IsInRole("Администратор") || User.Identity.Name.Contains("НачальникУАТ"))
+            {
+                <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "TypeAvtos")'">
+                        <i class="glyphicon glyphicon-road"></i>  Типы автомобилей &raquo;
+                    </button>
+                </p>
+
+                <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "MarkaAvtomobils")'">
+                        <i class="glyphicon glyphicon-screenshot"></i> Марки автомобилей &raquo;
+                    </button>
+                </p>
+                <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Avtomobils")'">
+                        <i class="glyphicon glyphicon-dashboard"></i> Список автомобилей &raquo;
+                    </button>
+                </p>
+                <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Voditels")'">
+                        <i class="glyphicon glyphicon-user"></i> Список водителей &raquo;
+                    </button>
+                </p>
+                <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Mechanics")'">
+                        <i class="glyphicon glyphicon-user"></i> Список механиков &raquo;
+                    </button>
+                </p>
+                <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Zakazchiks")'">
+                        <i class="glyphicon glyphicon-hand-left"></i>  Список Заказчиков &raquo;
+                    </button>
+                </p>
+                <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Old", "ASControls")'">
+                        <i class="glyphicon glyphicon-random"></i> Выезды в предыдущие дни &raquo;
+                    </button>
+                </p>
+                <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "ASControls")'">
+                        <i class="glyphicon glyphicon-scale"></i> Управление выездами &raquo;
+                    </button>
+                </p>
+                <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Upload", "Musors")'">
+                        <i class="glyphicon glyphicon-trash"></i>  Отчет по мусору &raquo;
+                    </button>
+                </p>
+
+                <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "MusorPloshadkas")'">
+                        <i class="glyphicon glyphicon-trash"></i>  Мусорные площадки &raquo;
+                    </button>
+                </p>
+                <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Import", "MusorPloshadkas")'">
+                        <i class="glyphicon glyphicon-trash"></i>  Импорт мусорных площадок &raquo;
+                    </button>
+                </p>
+                <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("AvtoWarnings", "ASControls")'">
+                        <i class="glyphicon glyphicon-warning-sign"></i> Автомобили с проблемами связи &raquo;
+                    </button>
+                </p>
+            }
+            if (User.Identity.Name.Contains("ДиспетчерУАТ") || User.Identity.Name.Contains("КонтрольУАТ"))
+            {
+
+                <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "ASControls")'">
+                        <i class="glyphicon glyphicon-expand"></i> Управление выездами &raquo;
+                    </button>
+                </p>
+            }
+            if (User.Identity.Name.Contains("МеханикУАТ"))
+            {
+                <p>
+                    <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Mechanic", "ASControls")'">
+                        <i class="glyphicon glyphicon-wrench"></i> Закрытие выездов &raquo;
+                    </button>
+                </p>
+            }
+
+
+            if (User.IsInRole("Администратор"))
+
+            {
+                <div class="media col-md-4 col-md-offset-4">
+                    <div class="media-left">
+                        <img src="~/Ico/icons8-документы-50.png" class="media-object" style="width:50px">
+                    </div>
+                    <div class="media-body">
+                        <h3 class="media-heading">Администрирование</h3>
+                        <p>Логи, отчеты, программы</p>
+                    </div>
+                </div>
+                <p><a href="/Manage/RolesAndUsers" class="btn btn-success btn-lg" style="width:500Px"><i class="glyphicon glyphicon-user"></i> Пользователи &raquo;</a></p>
+                <p><a href="/AvtoScans/Index" class="btn btn-success btn-lg" style="width:500Px"><i class="glyphicon glyphicon-eye-open"></i> АвтоСкан &raquo;</a></p>
+                <p><a href="/Logs/Index" class="btn btn-success btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Логи &raquo;</a></p>
+                <p><a href="/Osmotrs/ObrabotatWord" class="btn btn-warning btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Обработать Word &raquo;</a></p>
+
+                <p><a href="/Osmotrs/MKDResult" class="btn btn-warning btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Загруженные работы из WORD &raquo;</a></p>
+                <p><a href="/Osmotrs/MKDYear" class="btn btn-warning btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Годовой отчет WORD &raquo;</a></p>
+                <p><a href="/AdresaMKDs/Index" class="btn btn-warning btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Таблица соответствия ОРС - АСУ &raquo;</a></p>
+                <p><a href="/Osmotrs/MKDYearOtchetSelect" class="btn btn-warning btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Итоговая годовая таблица &raquo;</a></p>
+                <p>
+                    <a onclick="Fix()" class="btn btn-warning btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Фиксируем годовые результаты &raquo;</a>
+                    <input class="btn btn-warning " id="Y" placeholder="Введите год" />
+                </p>
+
+
+            }
+
+        }
+
+        if (User.Identity.Name.Contains("Логист") || User.IsInRole("Администратор") || User.Identity.Name.Contains("Асанова"))
+        {
+            <div class="media col-md-4 col-md-offset-4">
+                <div class="media-left">
+                    <img src="~/Ico/icons8-материнская-плата-50.png" class="media-object" style="width:50px">
+                </div>
+                <div class="media-body">
+                    <h3 class="media-heading">Маршруты и мусор</h3>
+                    <p>Маршруты, отчеты, площадки, выезды</p>
+                </div>
+            </div>
+
+            <p>
+                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "ASControls")'">
+                    <i class="glyphicon glyphicon-expand"></i> Управление выездами &raquo;
+                </button>
+            </p>
+            <p>
+                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Voditels")'">
+                    <i class="glyphicon glyphicon-user"></i> Список водителей &raquo;
+                </button>
+            </p>
+            <p>
+                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "MusorPloshadkas")'">
+                    <i class="glyphicon glyphicon-trash"></i>  Мусорные площадки &raquo;
+                </button>
+            </p>
+            <p>
+                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Import", "MusorPloshadkas")'">
+                    <i class="glyphicon glyphicon-trash"></i>  Импорт мусорных площадок &raquo;
+                </button>
+            </p>
+            <p>
+                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("MarshrutsBaseIndex", "MusorPloshadkas")'">
+                    <i class="glyphicon glyphicon-trash"></i> Базовые и активные маршруты  &raquo;
+                </button>
+            </p>
+            <p>
+                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Marshruts")'">
+                    <i class="glyphicon glyphicon-trash"></i> Маршруты  &raquo;
+                </button>
+            </p>
+            <p>
+                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("IndexMain", "Ezdkas")'">
+                    <i class="glyphicon glyphicon-duplicate"></i> Отчёты по ездкам &raquo;
+                </button>
+            </p>
+        }
+
+        if (User.Identity.Name.Contains("Полигон") || User.IsInRole("Администратор") || User.Identity.Name.Contains("Логист") || User.Identity.Name.Contains("Асанова") || User.Identity.Name.Contains("УАТ"))
+        {
+            <p>
+                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Poligons")'">
+                    <i class="glyphicon glyphicon-trash"></i>  Полигон &raquo;
+                </button>
+            </p>
+            <p>
+                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "KontrAgents")'">
+                    <i class="glyphicon glyphicon-trash"></i>  Контрагенты &raquo;
+                </button>
+            </p>
+            <p>
+                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "MarkaAvtomobils")'">
+                    <i class="glyphicon glyphicon-screenshot"></i> Марки автомобилей &raquo;
+                </button>
+            </p>
+            <p>
+                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Avtomobils")'">
+                    <i class="glyphicon glyphicon-dashboard"></i> Список автомобилей &raquo;
+                </button>
+            </p>
+        }
+
+
+        <p><a href="http://gkhnsc.ru/" class="btn btn-success btn-lg" style="width:500Px"><i class="glyphicon glyphicon-new-window"></i>Web сайт &raquo;</a></p>
+
+    }
+    else
+    {
+        <h4 style="color:forestgreen;"><b>Вы не авторизованы на сайте. Пожалуйста: </b></h4>
+        <p><a href="/Account/Login" class="btn btn-success btn-lg" style="width:500Px">Войдите в программу &raquo;</a></p>
+    }
+
+</Center>
+
+
+@section Scripts
+{
+    @Scripts.Render("~/scripts/jquery-3.3.1.min.js")
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+    @Scripts.Render("~/scripts/nprogress.min.js")
+    @Scripts.Render("~/scripts/jquery.signalR-2.4.0.min.js")
+    @Scripts.Render("~/signalr/hubs")
+
+
+
+    <script>
+        function Fix() {
+            var Y = $("#Y").val();
+            alert('Начинаем фиксацию результатов за '+Y+' год');
+
+            var url = "@Url.Action("MKDFixResults", "Osmotrs")?Y=" + Y;
+
+            $.post(url,
+                function (data)
+                {
+                    alert('Фиксация результатов за ' + Y + ' год завершена!');
+                }
+        );
+
+         
+        }
+    </script>
+
+
+    <script>
+        $(function () {
+            var PB = $.connection.progressHub;
+            console.log("Loading...");
+            PB.client.sendMessage = function (message, count) {
+                // update progress
+                console.log(count);
+                UpdateProgress(message, count);
+                //alert(message);
+            };
+
+            $.connection.hub.start().done(function () {
+                console.log("Приконнектились");
+                // call the method CallLongOperation defined in the Hub
+                PB.server.getCountAndMessage();
+                //$("#progressBar").hide();
+
+
+
+            });
+
+
+            // Update the progress bar
+            function UpdateProgress(message, count) {
+                // $("#progressBar").fadeIn("slow");
+                var result = $("#result");
+                if (count >= 100) { $("#X").click(); }
+                result.html(message);
+
+                //$("#progressBar").data("progressbar").value(count);
+
+                $("#progressBar").attr("aria-valuenow", count);
+                $("#progressBar").width(count + '%');
+                $("#progressBar").text(count + '%');
+                $("#nadpis").text(message);
+                // $("#progressBar").css("width", count);
+            }
+        });
+    </script>
+
+}

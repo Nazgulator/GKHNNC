@@ -44,34 +44,72 @@
 
     @if (Request.IsAuthenticated)
     {
+
+        <div class="media col-md-4 col-md-offset-4">
+            <div class="media-left">
+                <img src="~/Ico/icons8-каска-50.png" class="media-object" style="width:50px">
+            </div>
+            <div class="media-body">
+                <h3 class="media-heading">Осмотры</h3>
+                <p>Состояния осмотров</p>
+            </div>
+        </div>
         <p>
-            <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Osmotrs", "Home")'">
-                <i class="glyphicon glyphicon-star"></i> Осенне - Весенние осмотры &raquo;
+            <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Osmotrs")'">
+                <i class="glyphicon glyphicon-star"></i> Статусы осмотров &raquo;
             </button>
         </p>
         <p>
-            <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Otchetnost", "Home")'">
-                <i class="glyphicon glyphicon-star"></i> Формирование годовой отчетности &raquo;
+            <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("OsmotrsProverka1", "Houses")'">
+                <i class="glyphicon glyphicon-map-marker"></i> Проверить осмотры (ОЭЖФ) &raquo;
             </button>
         </p>
-        if (Request.IsAuthenticated && User.IsInRole("Администратор"))
-        {
-            <p>
-                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Administrator", "Home")'">
-                    <i class="glyphicon glyphicon-star"></i> Администрирование &raquo;
-                </button>
-            </p>
-        }
+        <p>
+            <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("OsmotrsProverka2", "Houses")'">
+                <i class="glyphicon glyphicon-map-marker"></i> Проверить осмотры (ПТО) &raquo;
+            </button>
+        </p>
+        <p>
+            <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("OsmotrsProverka3", "Houses")'">
+                <i class="glyphicon glyphicon-map-marker"></i> Осмотры на голосовании &raquo;
+            </button>
+        </p>
+        <p>
+            <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Houses")'">
+                <i class="glyphicon glyphicon-map-marker"></i> Тех. паспорт домов и осмотры &raquo;
+            </button>
+        </p>
+        <p>
+            <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("OsmotrsTech", "Osmotrs")'">
+                <i class="glyphicon glyphicon-map-marker"></i> Технические осмотры  &raquo;
+            </button>
+        </p>
 
-            <p><a href="http://gkhnsc.ru/" class="btn btn-success btn-lg" style="width:500Px"><i class="glyphicon glyphicon-new-window"></i>Web сайт &raquo;</a></p>
-        }
-        else
-        {
-            <h4 style="color:forestgreen;"><b>Вы не авторизованы на сайте. Пожалуйста: </b></h4>
-            <p><a href="/Account/Login" class="btn btn-success btn-lg" style="width:500Px">Войдите в программу &raquo;</a></p>
-        }
 
-    </Center>
+
+        <div class="media col-md-4 col-md-offset-4">
+            <div class="media-left">
+                <img src="~/Ico/icons8-каска-50.png" class="media-object" style="width:50px">
+            </div>
+            <div class="media-body">
+                <h3 class="media-heading">Счетчики</h3>
+                <p>Различные приборы и счетчики</p>
+            </div>
+        </div>
+
+        <p>
+            <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "Schetchiks")'">
+                <i class="glyphicon glyphicon-hand-left"></i> Счетчики  &raquo;
+            </button>
+        </p>
+    }
+    else
+    {
+        <h4 style="color:forestgreen;"><b>Вы не авторизованы на сайте. Пожалуйста: </b></h4>
+        <p><a href="/Account/Login" class="btn btn-success btn-lg" style="width:500Px">Войдите в программу &raquo;</a></p>
+    }
+
+</Center>
 
 
 @section Scripts
@@ -98,7 +136,7 @@
                 }
         );
 
-         
+
         }
     </script>
 

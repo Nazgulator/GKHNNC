@@ -2088,6 +2088,12 @@
     <Content Include="Views\Manage\AddPassword.cshtml" />
     <Content Include="Views\GEUs\PrintConstantIndex.cshtml" />
     <Content Include="Views\GEUs\PCEdit.cshtml" />
+    <Content Include="Views\Home\Administrator.cshtml" />
+    <Content Include="Views\Home\Spravochniki.cshtml" />
+    <Content Include="Views\Home\Otchetnost.cshtml" />
+    <Content Include="Views\Home\Osmotrs.cshtml" />
+    <Content Include="Views\Home\Arhiv.cshtml" />
+    <Content Include="Views\Home\IndexOld.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

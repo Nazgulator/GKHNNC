@@ -42,36 +42,67 @@
     </p>
 
 
-    @if (Request.IsAuthenticated)
+    @if (Request.IsAuthenticated && User.IsInRole("Администратор"))
     {
-        <p>
-            <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Osmotrs", "Home")'">
-                <i class="glyphicon glyphicon-star"></i> Осенне - Весенние осмотры &raquo;
-            </button>
-        </p>
-        <p>
-            <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Otchetnost", "Home")'">
-                <i class="glyphicon glyphicon-star"></i> Формирование годовой отчетности &raquo;
-            </button>
-        </p>
-        if (Request.IsAuthenticated && User.IsInRole("Администратор"))
-        {
-            <p>
-                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Administrator", "Home")'">
-                    <i class="glyphicon glyphicon-star"></i> Администрирование &raquo;
-                </button>
-            </p>
-        }
+        <div class="table">
+            <div class="row">
+                <div class="col-md-12">
+                    <p>
+                        <a href="/MKDYearResults/Index" class="btn btn-warning btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Корректировка годовых результатов &raquo;</a>
+                    </p>
 
-            <p><a href="http://gkhnsc.ru/" class="btn btn-success btn-lg" style="width:500Px"><i class="glyphicon glyphicon-new-window"></i>Web сайт &raquo;</a></p>
-        }
-        else
-        {
-            <h4 style="color:forestgreen;"><b>Вы не авторизованы на сайте. Пожалуйста: </b></h4>
-            <p><a href="/Account/Login" class="btn btn-success btn-lg" style="width:500Px">Войдите в программу &raquo;</a></p>
-        }
+                </div>
 
-    </Center>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <p><a href="/Osmotrs/ObrabotatWord" class="btn btn-warning btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Обработать Word &raquo;</a></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <p><a href="/Osmotrs/MKDResult" class="btn btn-warning btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Загруженные работы из WORD &raquo;</a></p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <p><a href="/Osmotrs/MKDYear" class="btn btn-warning btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Годовой отчет WORD &raquo;</a></p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <p><a href="/AdresaMKDs/Index" class="btn btn-warning btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Таблица соответствия ОРС - АСУ &raquo;</a></p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <p><a href="/Osmotrs/MKDYearOtchetSelect" class="btn btn-warning btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Итоговая годовая таблица &raquo;</a></p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <p>
+                    <a onclick="Fix()" class="btn btn-warning btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Фиксируем годовые результаты &raquo;</a>
+                    <input class="btn btn-warning " id="Y" placeholder="Введите год" />
+                </p>
+            </div>
+        </div>
+
+           }
+    else
+    {
+        <h4 style="color:forestgreen;"><b>Вы не авторизованы на сайте. Пожалуйста: </b></h4>
+        <p><a href="/Account/Login" class="btn btn-success btn-lg" style="width:500Px">Войдите в программу &raquo;</a></p>
+    }
+
+</Center>
 
 
 @section Scripts
@@ -98,7 +129,7 @@
                 }
         );
 
-         
+
         }
     </script>
 

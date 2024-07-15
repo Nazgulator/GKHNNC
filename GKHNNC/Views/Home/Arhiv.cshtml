@@ -44,34 +44,30 @@
 
     @if (Request.IsAuthenticated)
     {
+
+        <div class="media col-md-4 col-md-offset-4">
+            <div class="media-left">
+                <img src="~/Ico/icons8-каска-50.png" class="media-object" style="width:50px">
+            </div>
+            <div class="media-body">
+                <h3 class="media-heading">Архив</h3>
+                <p>Архив старых разделов</p>
+            </div>
+        </div>
+
         <p>
-            <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Osmotrs", "Home")'">
-                <i class="glyphicon glyphicon-star"></i> Осенне - Весенние осмотры &raquo;
+            <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("SozdanieAktov", "CompleteWorks")'">
+                <span class="glyphicon glyphicon-list-alt"></span> Формирование актов &raquo;
             </button>
         </p>
-        <p>
-            <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Otchetnost", "Home")'">
-                <i class="glyphicon glyphicon-star"></i> Формирование годовой отчетности &raquo;
-            </button>
-        </p>
-        if (Request.IsAuthenticated && User.IsInRole("Администратор"))
-        {
-            <p>
-                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Administrator", "Home")'">
-                    <i class="glyphicon glyphicon-star"></i> Администрирование &raquo;
-                </button>
-            </p>
-        }
+    }
+    else
+    {
+        <h4 style="color:forestgreen;"><b>Вы не авторизованы на сайте. Пожалуйста: </b></h4>
+        <p><a href="/Account/Login" class="btn btn-success btn-lg" style="width:500Px">Войдите в программу &raquo;</a></p>
+    }
 
-            <p><a href="http://gkhnsc.ru/" class="btn btn-success btn-lg" style="width:500Px"><i class="glyphicon glyphicon-new-window"></i>Web сайт &raquo;</a></p>
-        }
-        else
-        {
-            <h4 style="color:forestgreen;"><b>Вы не авторизованы на сайте. Пожалуйста: </b></h4>
-            <p><a href="/Account/Login" class="btn btn-success btn-lg" style="width:500Px">Войдите в программу &raquo;</a></p>
-        }
-
-    </Center>
+</Center>
 
 
 @section Scripts

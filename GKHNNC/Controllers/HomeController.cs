@@ -64,6 +64,86 @@ namespace GKHNNC.Controllers
             ViewBag.Events = Events;
             return View();
         }
+
+        public ActionResult Osmotrs()
+        {
+            List<EventLog> Events = new List<EventLog>();
+            try
+            {
+                Events = db.EventLogs.OrderByDescending(x => x.Date).Take(5).ToList();
+
+            }
+            catch
+            {
+
+            }
+            ViewBag.Events = Events;
+            return View();
+        }
+
+        public ActionResult Otchetnost()
+        {
+            List<EventLog> Events = new List<EventLog>();
+            try
+            {
+                Events = db.EventLogs.OrderByDescending(x => x.Date).Take(5).ToList();
+
+            }
+            catch
+            {
+
+            }
+            ViewBag.Events = Events;
+            return View();
+        }
+
+        public ActionResult Spravochniki()
+        {
+            List<EventLog> Events = new List<EventLog>();
+            try
+            {
+                Events = db.EventLogs.OrderByDescending(x => x.Date).Take(5).ToList();
+
+            }
+            catch
+            {
+
+            }
+            ViewBag.Events = Events;
+            return View();
+        }
+
+        public ActionResult Arhiv()
+        {
+            List<EventLog> Events = new List<EventLog>();
+            try
+            {
+                Events = db.EventLogs.OrderByDescending(x => x.Date).Take(5).ToList();
+
+            }
+            catch
+            {
+
+            }
+            ViewBag.Events = Events;
+            return View();
+        }
+
+        public ActionResult Administrator()
+        {
+            List<EventLog> Events = new List<EventLog>();
+            try
+            {
+                Events = db.EventLogs.OrderByDescending(x => x.Date).Take(5).ToList();
+
+            }
+            catch
+            {
+
+            }
+            ViewBag.Events = Events;
+            return View();
+        }
         /*
         public ActionResult ProverkaVodaMonth(int Month)
         {

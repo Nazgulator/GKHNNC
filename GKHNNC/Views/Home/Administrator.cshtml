@@ -42,36 +42,72 @@
     </p>
 
 
-    @if (Request.IsAuthenticated)
+    @if (Request.IsAuthenticated && User.IsInRole("Администратор"))
     {
+
+        <div class="alert-success">
+            <p>15.07.2024 реструктуризация главного меню</p>
+        </div>
+        if (ViewBag.Events != null)
+        {
+
+            <table class="table-block" style="width:100%">
+                @for (int i = 0; i < ViewBag.Events.Count; i++)
+                {
+                    <tr class=" @ViewBag.Events[i].Class " style="text-align:center">
+                        <td> @ViewBag.Events[i].Date.ToString("HH:mm")  </td>
+                        <td> @ViewBag.Events[i].Text </td>
+                    </tr>
+                }
+            </table>
+
+
+        }
+
+
+
+
+        <div class="media col-md-4 col-md-offset-4">
+            <div class="media-left">
+                <img src="~/Ico/icons8-настройки-3-50.png" class="media-object" style="width:50px">
+            </div>
+            <div class="media-body">
+                <h3 class="media-heading">Основные</h3>
+                <p>Администрирование</p>
+            </div>
+        </div>
+
         <p>
-            <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Osmotrs", "Home")'">
-                <i class="glyphicon glyphicon-star"></i> Осенне - Весенние осмотры &raquo;
+            <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Spravochniki", "Home")'">
+                <i class="glyphicon glyphicon-star"></i> Справочники &raquo;
             </button>
         </p>
         <p>
-            <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Otchetnost", "Home")'">
-                <i class="glyphicon glyphicon-star"></i> Формирование годовой отчетности &raquo;
+            <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Arhiv", "Home")'">
+                <i class="glyphicon glyphicon-star"></i> Архив &raquo;
             </button>
         </p>
-        if (Request.IsAuthenticated && User.IsInRole("Администратор"))
-        {
-            <p>
-                <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Administrator", "Home")'">
-                    <i class="glyphicon glyphicon-star"></i> Администрирование &raquo;
-                </button>
-            </p>
-        }
+        <p>
+            <button type="button" class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "EventLogs")'">
+                <span class="glyphicon glyphicon-ok"></span> Оповещения &raquo;
+            </button>
+            <span class="glyphicon glyphicon-search"></span>
+        </p>
+        <p>
+            <button class="btn btn-success btn-lg" style="width:500Px" data-toggle="modal" data-target="#Download" onclick="location.href='@Url.Action("Index", "CanCreateOsmotrs")'">
+                <i class="glyphicon glyphicon-map-marker"></i> Можно ли создавать осмотры &raquo;
+            </button>
+        </p>
+        <p><a href="/Manage/RolesAndUsers" class="btn btn-success btn-lg" style="width:500Px"><i class="glyphicon glyphicon-user"></i> Пользователи &raquo;</a></p>
 
-            <p><a href="http://gkhnsc.ru/" class="btn btn-success btn-lg" style="width:500Px"><i class="glyphicon glyphicon-new-window"></i>Web сайт &raquo;</a></p>
-        }
-        else
-        {
-            <h4 style="color:forestgreen;"><b>Вы не авторизованы на сайте. Пожалуйста: </b></h4>
-            <p><a href="/Account/Login" class="btn btn-success btn-lg" style="width:500Px">Войдите в программу &raquo;</a></p>
-        }
+    }
+    else
+    {
+        <h4 style="color:forestgreen;"><b>Вы не авторизованы на сайте. Пожалуйста: </b></h4>
+        <p><a href="/Account/Login" class="btn btn-success btn-lg" style="width:500Px">Войдите в программу &raquo;</a></p>
+    }
 
-    </Center>
+</Center>
 
 
 @section Scripts
