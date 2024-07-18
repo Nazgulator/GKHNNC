@@ -14,6 +14,7 @@ using DocumentFormat.OpenXml.Wordprocessing;
 using GKHNNC.DAL;
 using GKHNNC.Models;
 using ImageResizer;
+using Opredelenie;
 
 namespace GKHNNC.Controllers
 {
@@ -27,6 +28,74 @@ namespace GKHNNC.Controllers
             var osmotrs = db.Osmotrs.Where(x=>x.Sostoyanie==0).Include(o => o.Adres);
    
             return View(osmotrs.ToList());
+        }
+
+        public ActionResult TechnicalOsmotrs(string Adres = "")
+        {
+            List<House> H = new List<House>();
+            List<House> Y = new List<House>();
+            List<Adres> houses = new List<Adres>();
+            List<EventLog> Events = new List<EventLog>();
+            List<Osmotr> Osmotrs = new List<Osmotr>();
+            List<OsmotrWork> PoiskWorks = new List<OsmotrWork>();
+            try
+            {
+                Events = db.EventLogs.OrderByDescending(x => x.Date).Take(5).ToList();
+
+            }
+            catch
+            {
+
+            }
+            ViewBag.Events = Events;
+            DateTime Date = Opr.MonthMinus(1, DateTime.Now);//берем прошлый месяц
+            DateTime FromDate = DateTime.Now.AddYears(-2);
+            DateTime ToDate = DateTime.Now;
+      
+            ViewBag.Adres = Adres;
+            houses = GetAdresa();
+            if (Adres.Equals("") == false)
+            {
+                houses = houses.Where(x => x.Adress.Contains(Adres)).ToList();
+            }
+            else
+            {
+                if (User.Identity.Name.Contains("ЖЭУ"))
+                {
+
+                    string GEU = "ЖЭУ-" + User.Identity.Name.Remove(0, User.Identity.Name.Length - 1);
+
+                    try
+                    {
+                        int EuId = db.GEUs.Where(x => x.Name.Equals(GEU)).Select(x => x.EU).First();
+                        houses = houses.Where(x => x.GEU != null).Where(x => x.EUId == EuId && x.MKD && x.TypeId == 1).ToList();
+                    }
+                    catch
+                    {
+                        houses = houses.Where(x => x.GEU != null).Where(x => x.EUId.Equals(GEU) && x.MKD && x.TypeId == 1).ToList();
+                    }
+
+                }
+                else
+                {
+                    // houses = db.Adres.ToList();
+
+
+                }
+            }
+
+            List<string> Primechanie = new List<string>();
+            // List<Arendator> Arendators = db.Arendators.Where(c => c.Date.Year == Date.Year && c.Date.Month == Date.Month).ToList();//Берем всех арендаторов за текущий месяц
+            //List<UEV> Uevs = db.UEVs.Where(c => c.Date.Year == Date.Year && c.Date.Month == Date.Month).ToList();
+            //List<OPU> Opus = db.OPUs.Where(c => c.Date.Year == Date.Year && c.Date.Month == Date.Month).ToList();
+            int progress = 0;
+            double pro100 = 0;
+            int procount = 0;
+            pro100 = houses.Count;
+
+            ViewBag.FromD = FromDate.ToString("yyyy-MM-dd");
+            ViewBag.ToD = ToDate.ToString("yyyy-MM-dd");
+            return View(houses);
         }
 
         public JsonResult MKDMASSExportToExcel(int Y = 0)
@@ -3422,6 +3491,36 @@ WorkDate = cl.First().WorkDate
 
             }
             return Json("");
+        }
+
+        public ActionResult OsmotrsTechByAdresId(int Id)
+        {
+            DateTime D = DateTime.Now;
+            Osmotr O = db.Osmotrs.Where(x => x.AdresId == Id).Include(x => x.Adres).OrderByDescending(x=>x.Date).First();
+            try
+            {
+                O.DOMParts = db.DOMParts.OrderBy(x => x.Id).ToList();
+                O.Elements = db.ActiveElements.Where(x => x.OsmotrId == O.Id).Include(x => x.Element).Include(x => x.Izmerenie).Include(x => x.Izmerenie2).Include(x => x.Material).OrderBy(x => x.Element.ElementTypeId).ThenBy(x => x.Element.Name).ToList();
+                O.TE = db.TechElements.Where(x => x.AdresId == Id).Include(x => x.Izmerenie).ToList();
+                O.TypeE = db.TypeElements.Where(x => x.AdresId == Id).Include(x => x.ConstructiveType).Include(x => x.DOMPart).Include(x => x.Material).ToList();
+                O.Materials = db.Materials.ToList();
+            }
+            catch (Exception e)
+            {
+
+            }
+            if (O.TypeE != null)
+            {
+                foreach (TypeElement t in O.TypeE)
+                {
+                    t.CT = new SelectList(db.ConstructiveTypes.Where(x => x.DOMPartId == t.DOMPartId).ToList(), "Id", "Name");
+                }
+            }
+            ViewBag.ConstructiveTypes = new SelectList(db.ConstructiveTypes, "Id", "Name");
+            ViewBag.DOMParts = new SelectList(db.DOMParts, "Id", "Name");
+            ViewBag.Materials = new SelectList(db.Materials, "Id", "Name");
+            ViewBag.Error = "";
+            return View(O);
         }
 
         public ActionResult OsmotrsTechById(int Id)
