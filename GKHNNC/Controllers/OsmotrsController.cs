@@ -32,6 +32,8 @@ namespace GKHNNC.Controllers
 
         public ActionResult TechnicalOsmotrs(string Adres = "")
         {
+
+            ViewBag.Adresa = db.Adres.Select(x => new { text = x.Id, value = x.Adress }).ToList();
             List<House> H = new List<House>();
             List<House> Y = new List<House>();
             List<Adres> houses = new List<Adres>();
@@ -3493,8 +3495,60 @@ WorkDate = cl.First().WorkDate
             return Json("");
         }
 
+        public JsonResult CopyTech(int id, int fromid)
+        {
+            var tech =  db.TechElements.Where(x => x.AdresId == id).ToList();
+            var newtech = db.TechElements.Where(x => x.AdresId == fromid).ToList();
+            //db.TechElements.RemoveRange(tech);
+            //db.SaveChanges();
+
+            if (newtech.Count > 0 && tech.Count>0)
+            {
+                foreach (var el in tech)
+                {
+                   var nt = newtech.Where(x => x.Name == el.Name).First();
+                    el.Val = nt.Val;
+                    el.IzmerenieId = nt.IzmerenieId;
+                    db.Entry(el).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+                return Json("Все скопировано!");
+            }
+
+            return Json("Ошибка копирования. Количество элементов не сходится.");
+        }
+
+        public JsonResult CreateTech(int id)
+        {
+            var tech = db.TechElements.Where(x => x.AdresId == 14).ToList();
+            var oldtech = db.TechElements.Where(x => x.AdresId == id).ToList();
+            //db.TechElements.RemoveRange(tech);
+            //db.SaveChanges();
+            if (oldtech.Count!=tech.Count)
+            {
+                foreach (var el in tech)
+                {
+                    TechElement te = new TechElement();
+                    te.Val = 0;
+                    te.IzmerenieId = el.IzmerenieId;
+                    te.AdresId = id;
+                    te.Name = el.Name;
+                    te.UserName = "Создан по кнопке";
+                    te.Date = DateTime.Now;
+
+                    db.TechElements.Add(te);
+                    db.SaveChanges();
+                }
+                return Json("Технические элементы созданы!");
+            }
+
+            return Json("Технические элементы уже присутствуют. Их нужно заполнить а не создаваать.");
+        }
+
         public ActionResult OsmotrsTechByAdresId(int Id)
         {
+            ViewBag.AdresId = Id;
+            ViewBag.Adresa = db.Adres.Select(x => new { text = x.Id, value = x.Adress }).ToList();
             DateTime D = DateTime.Now;
             Osmotr O = db.Osmotrs.Where(x => x.AdresId == Id).Include(x => x.Adres).OrderByDescending(x=>x.Date).First();
             try

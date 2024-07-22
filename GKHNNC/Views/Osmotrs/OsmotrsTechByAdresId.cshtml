@@ -48,8 +48,9 @@
             <a href="#@i" style="color:white;font-size:20px">@Model.DOMParts[i].Name |</a>
         }
         @Html.ActionLink("Сохранить отчет в Excel |", "ExportToExcel", "Osmotrs", null, new { @style = "color:white;font-size:20px" })
-        @Html.ActionLink("Назад", "Index", "Houses", null, new { @style = "color:white;font-size:20px" })
+        @Html.ActionLink("Назад", "TechnicalOsmotrs", "Osmotrs", null, new { @style = "color:white;font-size:20px" })
     </div>
+
     <div class="fixed-bottom">
         <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="3000">
             <div class="toast-header">
@@ -61,6 +62,12 @@
 
         </div>
     </div>
+    <div>
+        Скопировать данные
+        @Html.DropDownList("copyfrom", new SelectList(ViewBag.Adresa, "text", "value"))
+        <button class="btn btn-success btn-block" onclick="CopyTech(@Model.Id)"> Копировать </button>
+    </div>
+    
     <br />
     <h2>Технические характеристики дома по адресу #@Model.Adres.Adress</h2>
     <div class="col-md-12" style="background-color:#28a745">
@@ -1148,6 +1155,19 @@
 
 
                         });
+
+        }
+    </script>
+
+    <script>
+        function CopyTech(id)
+        {
+            fromid = $("#copyfrom").val();
+            $.post('@Url.Action("CopyTech", "Osmotrs")', { id: id, fromid: fromid },
+                function (data) {
+                    alert(data);
+                    location.reload();
+                });
 
         }
     </script>

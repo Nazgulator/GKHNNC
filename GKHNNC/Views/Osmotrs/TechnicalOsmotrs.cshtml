@@ -15,52 +15,55 @@
 
     <table class="table table-bordered table-striped">
         <tr><td colspan="7" style="text-align:center"> <h5>Введите интервал, работу и название улицы для поиска данных</h5></td></tr>
-       
-             <td colspan="4">
-                 <input id="Search" class="form-control" value="@ViewBag.Adres" placeholder="Начните вводить улицу для поиска" />
-             </td>
-             <td>
-                 <button class="btn btn-block btn-success" onclick="Sbros()"> Сбросить </button>
-             </td>
-             <td>
-                 <button class="btn btn-block btn-success" onclick="GoHome()"> Искать </button>
-             </td>
+        <tr>
+            <td colspan="4">
+                <input id="Search" class="form-control" value="@ViewBag.Adres" placeholder="Начните вводить улицу для поиска" />
+            </td>
 
-         </tr>
+        </tr>
     </table>
-        <table id="tableData" class="table table-bordered table-striped">
+    <table id="tableData" class="table table-bordered table-striped">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Adress)
+            </th>
+
+            <th>
+                Технический паспорт дома
+            </th>
+        </tr>
+        @{bool Y = false; }
+        @foreach (var item in Model)
+        {
+
             <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Adress)
-                </th>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Adress)
+                </td>
 
-                <th>
-                    Технический паспорт дома
-                </th>
+
+                <td>
+                    @Html.ActionLink("Технический паспорт", "OsmotrsTechByAdresId", "Osmotrs", new { Id = item.Id }, new { @type = "button", @class = "btn btn-success" })
+                </td>
+                <td>
+                    <button class="btn btn-success btn-block" onclick="CreateTech(@item.Id)"> Создать элементы </button>
+                </td>
+                <td>
+
+
+                    @Html.DropDownList("copyfrom", new SelectList(ViewBag.Adresa, "text", "value"))
+                    <button class="btn btn-success btn-block" onclick="CopyTech(@item.Id)"> Копировать </button>
+
+                </td>
             </tr>
-            @{bool Y = false; }
-            @foreach (var item in Model)
-            {
+        }
 
-                        <tr >
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Adress)
-                            </td>
+    </table>
 
 
-                            <td>
-                                    @Html.ActionLink("Технический паспорт", "OsmotrsTechByAdresId", "Osmotrs", new { Id = item.Id }, new { @type = "button", @class = "btn btn-success" })
-                            </td>
-                        </tr>
-            }
 
-        </table>
-
-      
-   
     <br />
-    <p><button class="btn btn-block btn-success" onclick="Export()"> Экспорт в Эксель </button></p>
-    <p><a href="/Home/Index" class="btn btn-success btn-block"><< В главное меню </a> </p>
+    <p><a href="/Home/Osmotrs" class="btn btn-success btn-block"><< В осмотры </a> </p>
     <!-- Modal -->
     <div class="modal fade" id="Download" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl" role="document">
@@ -207,5 +210,31 @@
 
             window.location.replace('/Houses/Index?Adres=' + _this + '&fromD=' + f + '&toD=' + t + '&WorkPoisk=' + WP);
         };
+    </script>
+
+    <script>
+     function CreateTech(id)
+     {
+         fromid = $("#copyfrom").val();
+         $.post('@Url.Action("CreateTech", "Osmotrs")', { id: id },
+             function (data) {
+                 console.log(data);
+                 location.reload();
+             });
+
+     }
+    </script>
+
+    <script>
+        function CopyTech(id)
+        {
+            fromid = $("#copyfrom").val();
+            $.post('@Url.Action("CopyTech", "Osmotrs")', { id: id, fromid: fromid },
+                function (data) {
+                    alert(data);
+                    location.reload();
+                });
+
+        }
     </script>
 }
