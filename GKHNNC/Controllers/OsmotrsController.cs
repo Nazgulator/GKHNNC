@@ -100,6 +100,15 @@ namespace GKHNNC.Controllers
             return View(houses);
         }
 
+
+        public ActionResult PasportsOtoplenie(string Adres = "")
+        {
+
+           List<Adres> Adresa = db.Adres.Where(x=>x.Adress.Contains(Adres)).ToList(); //.Select(x => new { text = x.Id, value = x.Adress })
+
+            return View(Adresa);
+        }
+
         public JsonResult MKDMASSExportToExcel(int Y = 0)
         {
             List<string> S = db.AdresMKDs.Select(x => x.ASU).ToList();
@@ -152,6 +161,45 @@ namespace GKHNNC.Controllers
             // Имя файла - необязательно
 
             return File(EndPath, file_type, fileName + ".xlsx");
+
+        }
+
+        public FileResult PassportOtoplenieExport(int AdresId)
+        {
+            var Elements = db.TechElements.Where(x => x.AdresId == AdresId).ToList();
+            var Adres = db.Adres.Where(x=>x.Id == AdresId).FirstOrDefault();
+
+            DateTime Date = DateTime.Now;
+
+            if (Directory.Exists(Server.MapPath("~/Files")) == false)
+            {
+                Directory.CreateDirectory(Server.MapPath("~/Files"));
+            }
+            if (Directory.Exists(Server.MapPath("~/Files/MKD" + Date.Year)) == false)
+            {
+                Directory.CreateDirectory(Server.MapPath("~/Files/MKD" + Date.Year));
+            }
+            // получаем имя файла
+            string fileName = "Паспорт_готовности_дома_в_зимний_период_для_работы_" + Date.Year;
+            var path = Server.MapPath("~/Files/MKD" + Date.Year + "/");
+
+            //экспорт в эксель акта осмотра отправляем все активные элементы и сам осмотр
+            ExcelExportDomVipolnennieUslugi.SformirovatPasportTeplo(Adres, Elements, path, fileName);
+
+            string EndPath = path + fileName + ".xlsx";
+            // Путь к файлу
+
+            // Тип файла - content-type
+            string file_type = "application/xlsx";
+            // Имя файла - необязательно
+
+            //Read the File as Byte Array.
+            byte[] bytes = System.IO.File.ReadAllBytes(EndPath);
+
+            //Convert File to Base64 string and send to Client.
+            string base64 = Convert.ToBase64String(bytes, 0, bytes.Length);
+
+            return File(EndPath, file_type, fileName + ".xlsx");//EndPath, file_type, fileName + ".xlsx");
 
         }
 

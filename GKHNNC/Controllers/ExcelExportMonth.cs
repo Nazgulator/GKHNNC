@@ -3258,6 +3258,1382 @@ namespace GKHNNC.Controllers
             return sostoyanie;
         }
 
+        public static void SformirovatPasportTeplo( Adres Adres, List<TechElement> TechElements, string Path, string Filename)
+        {
+
+
+            Excel.Application ApExcel = new Excel.Application();
+            Excel.Workbooks WB = null;
+            WB = ApExcel.Workbooks;
+            Excel.Workbook WbExcel = WB.Add(Missing.Value);
+            Excel.Worksheet WS = WbExcel.Sheets[1];
+            Excel.Range range;//рэндж
+            ApExcel.Visible = false;//невидимо
+            ApExcel.ScreenUpdating = false;//и не обновляемо
+            ApExcel.StandardFont = "TimesNewRoman";
+
+            int from = 1;
+
+            int year = DateTime.Now.Year;
+            int periodichnost = 2;
+            int izmerenie = 3;
+            int stoimost = 4;
+            int cena = 5;
+            int naimenovanie = 1;
+
+
+            WS.Cells[from, 1] = "ПАСПОРТ";
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Merge(Type.Missing);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.RowHeight = 15;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "Готовности объекта жилищно-коммунального назначения\r\n\r\nк работе в зимних условиях";
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Merge(Type.Missing);
+            range.Font.Bold = false;
+            range.Font.Size = 13;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.RowHeight = 50;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            range.Columns.ColumnWidth = 15;
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Columns.ColumnWidth = 45;
+
+            from++;
+            WS.Cells[from, 1] = "город Новосибирск";
+
+            WS.Cells[from, 1].Font.Bold = true;
+            WS.Cells[from, 1].Font.Size = 10;
+            WS.Cells[from, 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            WS.Cells[from, 1].VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            WS.Cells[from, 1].RowHeight = 20;
+            WS.Cells[from, 1].WrapText = true;
+            WS.Cells[from, 1].Font.Name = "TimesNewRoman";
+
+            WS.Cells[from, 5] = "район Советский";
+
+            WS.Cells[from, 5].Font.Bold = true;
+            WS.Cells[from, 5].Font.Size = 10;
+            WS.Cells[from, 5].HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
+            WS.Cells[from, 5].VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            WS.Cells[from, 5].RowHeight = 15;
+            WS.Cells[from, 5].WrapText = true;
+            WS.Cells[from, 5].Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "адрес " + Adres.Adress;
+
+            WS.Cells[from, 1].Font.Bold = true;
+            WS.Cells[from, 1].Font.Size = 10;
+            WS.Cells[from, 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            WS.Cells[from, 1].VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            WS.Cells[from, 1].RowHeight = 15;
+            WS.Cells[from, 1].WrapText = true;
+            WS.Cells[from, 1].Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "принадлежность объекта" + "ФГБУ 'Академия комфорта'";
+
+            WS.Cells[from, 1].Font.Bold = true;
+            WS.Cells[from, 1].Font.Size = 10;
+            WS.Cells[from, 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            WS.Cells[from, 1].VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            WS.Cells[from, 1].RowHeight = 15;
+            WS.Cells[from, 1].WrapText = true;
+            WS.Cells[from, 1].Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 5] = "15.08."+year;
+
+            WS.Cells[from, 5].Font.Bold = true;
+            WS.Cells[from, 5].Font.Size = 10;
+            WS.Cells[from, 5].HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            WS.Cells[from, 5].VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            WS.Cells[from, 5].RowHeight = 15;
+            WS.Cells[from, 5].WrapText = true;
+            WS.Cells[from, 5].Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "I. ОБЩИЕ СВЕДЕНИЯ";
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Merge(Type.Missing);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.RowHeight = 25;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "1. Назначение объекта - Жилое";
+
+            WS.Cells[from, 1].Font.Bold = false;
+            WS.Cells[from, 1].Font.Size = 10;
+            WS.Cells[from, 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            WS.Cells[from, 1].VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            WS.Cells[from, 1].RowHeight = 15;//высота строки
+            WS.Cells[from, 1].WrapText = true;
+            WS.Cells[from, 1].Font.Name = "TimesNewRoman";
+
+            var GodPostroiki = TechElements.Where(x => x.Name.Equals("Год постройки")).First(); 
+            from++;
+            WS.Cells[from, 1] = "2. Год постройки "+ GodPostroiki.Val;
+
+            WS.Cells[from, 1].Font.Bold = false;
+            WS.Cells[from, 1].Font.Size = 10;
+            WS.Cells[from, 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            WS.Cells[from, 1].VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            WS.Cells[from, 1].RowHeight = 15;//высота строки
+            WS.Cells[from, 1].WrapText = true;
+            WS.Cells[from, 1].Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "3. Характеристики объекта:";
+
+            WS.Cells[from, 1].Font.Bold = false;
+            WS.Cells[from, 1].Font.Size = 10;
+            WS.Cells[from, 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            WS.Cells[from, 1].VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            WS.Cells[from, 1].RowHeight = 15;//высота строки
+            WS.Cells[from, 1].WrapText = true;
+            WS.Cells[from, 1].Font.Name = "TimesNewRoman";
+
+
+            var Iznos = TechElements.Where(x=>x.Name.Equals("Износ")).First();
+            var Etagnost = TechElements.Where(x=>x.Name.Equals("Этажей")).First();
+            var Podiezdov = TechElements.Where(x => x.Name.Equals("Подъездов")).First();
+            var Obshaya = TechElements.Where(x => x.Name.Equals("Общая площадь дома")).First();
+            var Gilaya = TechElements.Where(x => x.Name.Equals("Жилая площадь")).First();
+            var Negilaya = TechElements.Where(x => x.Name.Equals("Нежилая площадь квартир")).First();
+            var Podval = TechElements.Where(x => x.Name.Equals("Площадь подвала")).First();
+            var Cokol = TechElements.Where(x => x.Name.Equals("Площадь подвала")).First();
+            var Kvartir = TechElements.Where(x => x.Name.Equals("Количество квартир")).First();
+
+            from++;
+            WS.Cells[from, 1] = "Износ в % - " + Iznos.Val + " Этажность - "+Etagnost.Val + "Подъездов - "+ Podiezdov.Val;
+
+            WS.Cells[from, 1].Font.Bold = false;
+            WS.Cells[from, 1].Font.Size = 10;
+            WS.Cells[from, 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            WS.Cells[from, 1].VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            WS.Cells[from, 1].RowHeight = 15;//высота строки
+            WS.Cells[from, 1].WrapText = true;
+            WS.Cells[from, 1].Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "Общая площадь объекта - " + Obshaya.Val + " м2, в.т.ч. ";
+
+            WS.Cells[from, 1].Font.Bold = false;
+            WS.Cells[from, 1].Font.Size = 10;
+            WS.Cells[from, 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            WS.Cells[from, 1].VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            WS.Cells[from, 1].RowHeight = 15;//высота строки
+            WS.Cells[from, 1].WrapText = true;
+            WS.Cells[from, 1].Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "Жилая - " + Gilaya.Val + " м2";
+
+            WS.Cells[from, 1].Font.Bold = false;
+            WS.Cells[from, 1].Font.Size = 10;
+            WS.Cells[from, 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            WS.Cells[from, 1].VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            WS.Cells[from, 1].RowHeight = 15;//высота строки
+            WS.Cells[from, 1].WrapText = true;
+            WS.Cells[from, 1].Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "Не жилая - " + Negilaya.Val + " м2";
+
+            WS.Cells[from, 1].Font.Bold = false;
+            WS.Cells[from, 1].Font.Size = 10;
+            WS.Cells[from, 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            WS.Cells[from, 1].VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            WS.Cells[from, 1].RowHeight = 15;//высота строки
+            WS.Cells[from, 1].WrapText = true;
+            WS.Cells[from, 1].Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "Площадь подвала - " + Podval.Val + " м2";
+
+            WS.Cells[from, 1].Font.Bold = false;
+            WS.Cells[from, 1].Font.Size = 10;
+            WS.Cells[from, 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            WS.Cells[from, 1].VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            WS.Cells[from, 1].RowHeight = 15;//высота строки
+            WS.Cells[from, 1].WrapText = true;
+            WS.Cells[from, 1].Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "Площадь цокольного этажа - " + Cokol.Val + " м2";
+
+            WS.Cells[from, 1].Font.Bold = false;
+            WS.Cells[from, 1].Font.Size = 10;
+            WS.Cells[from, 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            WS.Cells[from, 1].VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            WS.Cells[from, 1].RowHeight = 15;//высота строки
+            WS.Cells[from, 1].WrapText = true;
+            WS.Cells[from, 1].Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "Количество квартир - " + Kvartir.Val + " м2";
+
+            WS.Cells[from, 1].Font.Bold = false;
+            WS.Cells[from, 1].Font.Size = 10;
+            WS.Cells[from, 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            WS.Cells[from, 1].VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            WS.Cells[from, 1].RowHeight = 15;//высота строки
+            WS.Cells[from, 1].WrapText = true;
+            WS.Cells[from, 1].Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "4. Характеристика инженерного оборудования - Централизованное";
+
+            WS.Cells[from, 1].Font.Bold = false;
+            WS.Cells[from, 1].Font.Size = 10;
+            WS.Cells[from, 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            WS.Cells[from, 1].VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            WS.Cells[from, 1].RowHeight = 15;//высота строки
+            WS.Cells[from, 1].WrapText = true;
+            WS.Cells[from, 1].Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "5. Источники:";
+
+            WS.Cells[from, 1].Font.Bold = false;
+            WS.Cells[from, 1].Font.Size = 10;
+            WS.Cells[from, 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            WS.Cells[from, 1].VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            WS.Cells[from, 1].RowHeight = 15;//высота строки
+            WS.Cells[from, 1].WrapText = true;
+            WS.Cells[from, 1].Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "теплоснабжения ТС-1 / ТС-2";
+
+            WS.Cells[from, 1].Font.Bold = false;
+            WS.Cells[from, 1].Font.Size = 10;
+            WS.Cells[from, 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            WS.Cells[from, 1].VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            WS.Cells[from, 1].RowHeight = 15;//высота строки
+            WS.Cells[from, 1].WrapText = true;
+            WS.Cells[from, 1].Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "газоснабжения -";
+
+            WS.Cells[from, 1].Font.Bold = false;
+            WS.Cells[from, 1].Font.Size = 10;
+            WS.Cells[from, 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            WS.Cells[from, 1].VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            WS.Cells[from, 1].RowHeight = 15;//высота строки
+            WS.Cells[from, 1].WrapText = true;
+            WS.Cells[from, 1].Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "твердого и жидкого топлива -";
+
+            WS.Cells[from, 1].Font.Bold = false;
+            WS.Cells[from, 1].Font.Size = 10;
+            WS.Cells[from, 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            WS.Cells[from, 1].VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            WS.Cells[from, 1].RowHeight = 15;//высота строки
+            WS.Cells[from, 1].WrapText = true;
+            WS.Cells[from, 1].Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "энергоснабжения - Трансформаторная подстанция";
+
+            WS.Cells[from, 1].Font.Bold = false;
+            WS.Cells[from, 1].Font.Size = 10;
+            WS.Cells[from, 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            WS.Cells[from, 1].VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            WS.Cells[from, 1].RowHeight = 15;//высота строки
+            WS.Cells[from, 1].WrapText = true;
+            WS.Cells[from, 1].Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "Системы АПЗ и дымоудаления -";
+
+            WS.Cells[from, 1].Font.Bold = false;
+            WS.Cells[from, 1].Font.Size = 10;
+            WS.Cells[from, 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            WS.Cells[from, 1].VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            WS.Cells[from, 1].RowHeight = 15;//высота строки
+            WS.Cells[from, 1].WrapText = true;
+            WS.Cells[from, 1].Font.Name = "TimesNewRoman";
+
+            int lastyear = year - 1;
+
+            from++;
+            WS.Cells[from, 1] = "II. РЕЗУЛЬТАТЫ ЭКСПЛУАТАЦИИ ОБЪЕКТА В ЗИМНИХ\r\n\r\nУСЛОВИЯХ ПРОШЕДШЕГО "+lastyear+"-"+year+" гг.";
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Merge(Type.Missing);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.RowHeight = 25;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "№ п/п";
+            WS.Cells[from, 2] = "Основные виды неисправностей (аварий) конструктивных элементов и инженерного оборудования";
+            WS.Cells[from, 3] = "Дата";
+            WS.Cells[from, 4] = "Причина возникновения неисправностей (аварий)";
+            WS.Cells[from, 5] = "Отметка о выполненных работах по ликвидации неисправностей (аварий) в текущем "+year+" г.";
+
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 40;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "-";
+            WS.Cells[from, 2] = "-";
+            WS.Cells[from, 3] = "-";
+            WS.Cells[from, 4] = "-";
+            WS.Cells[from, 5] = "-";
+
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 10;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            int nextyear = year + 1;
+
+            from++;
+            WS.Cells[from, 1] = "III. ОБЪЕМЫ ВЫПОЛНЕННЫХ РАБОТ ПО ПОДГОТОВКЕ\r\n\r\nОБЪЕКТА К ЭКСПЛУАТАЦИИ В ЗИМНИХ УСЛОВИЯХ " + year + "-" + nextyear + " гг.";
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Merge(Type.Missing);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.RowHeight = 25;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "№ п/п";
+            WS.Cells[from, 2] = "Виды выполненных работ по конструкциям здания и технологическому и инженерному оборудованию";
+            WS.Cells[from, 3] = "Единицы измерения";
+            WS.Cells[from, 4] = "Всего по плану подготовки к зиме";
+            WS.Cells[from, 5] = "Выполнено при подготовке к зиме";
+
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 30;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "1";
+            WS.Cells[from, 2] = "2";
+            WS.Cells[from, 3] = "3";
+            WS.Cells[from, 4] = "4";
+            WS.Cells[from, 5] = "5";
+
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 10;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "1";
+            WS.Cells[from, 2] = "Объём работ";
+            WS.Cells[from, 3] = "-";
+            WS.Cells[from, 4] = "-";
+            WS.Cells[from, 5] = "-";
+
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft; ;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 10;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "2";
+            WS.Cells[from, 2] = "Ремонт кровли";
+            WS.Cells[from, 3] = "кв.м.";
+            WS.Cells[from, 4] = "0";
+            WS.Cells[from, 5] = "0";
+
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft; ;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 10;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "3";
+            WS.Cells[from, 2] = "Ремонт чердачных помещений, в том числе:";
+            WS.Cells[from, 3] = "шт.";
+            WS.Cells[from, 4] = "0";
+            WS.Cells[from, 5] = "0";
+
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 10;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "";
+            WS.Cells[from, 2] = "- утепление (засыпка) чердачного перекрытия";
+            WS.Cells[from, 3] = "шт.";
+            WS.Cells[from, 4] = "0";
+            WS.Cells[from, 5] = "0";
+
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 10;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "";
+            WS.Cells[from, 2] = "- изоляция трубопроводов, вентиляционных коробов и камер, расширительных баков";
+            WS.Cells[from, 3] = "шт.";
+            WS.Cells[from, 4] = "0";
+            WS.Cells[from, 5] = "0";
+
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 10;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "4";
+            WS.Cells[from, 2] = "Ремонт фасадов, в том числе:";
+            WS.Cells[from, 3] = "кв.м.";
+            WS.Cells[from, 4] = "0";
+            WS.Cells[from, 5] = "0";
+
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 10;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "";
+            WS.Cells[from, 2] = "- ремонт и покраска";
+            WS.Cells[from, 3] = "кв.м.";
+            WS.Cells[from, 4] = "0";
+            WS.Cells[from, 5] = "0";
+
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 10;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "";
+            WS.Cells[from, 2] = "- герметизация швов";
+            WS.Cells[from, 3] = "кв.м.";
+            WS.Cells[from, 4] = "0";
+            WS.Cells[from, 5] = "0";
+
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 10;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "";
+            WS.Cells[from, 2] = "- ремонт водосточных труб";
+            WS.Cells[from, 3] = "кв.м.";
+            WS.Cells[from, 4] = "0";
+            WS.Cells[from, 5] = "0";
+
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 10;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "";
+            WS.Cells[from, 2] = "- утепление оконных проемов";
+            WS.Cells[from, 3] = "кв.м.";
+            WS.Cells[from, 4] = "0";
+            WS.Cells[from, 5] = "0";
+
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 10;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "";
+            WS.Cells[from, 2] = "- утепление дверных проемов";
+            WS.Cells[from, 3] = "кв.м.";
+            WS.Cells[from, 4] = "0";
+            WS.Cells[from, 5] = "0";
+
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 10;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "5";
+            WS.Cells[from, 2] = "Ремонт подвальных помещений, в том числе:";
+            WS.Cells[from, 3] = "п.м.";
+            WS.Cells[from, 4] = "0";
+            WS.Cells[from, 5] = "0";
+
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 10;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "";
+            WS.Cells[from, 2] = "- изоляция трубопроводов";
+            WS.Cells[from, 3] = "п.м.";
+            WS.Cells[from, 4] = "0";
+            WS.Cells[from, 5] = "0";
+
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 10;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "";
+            WS.Cells[from, 2] = "- ремонт дренажных и водоотводящих устройств";
+            WS.Cells[from, 3] = "п.м.";
+            WS.Cells[from, 4] = "0";
+            WS.Cells[from, 5] = "0";
+
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 10;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "6";
+            WS.Cells[from, 2] = "Ремонт покрытий дворовых территорий, в том числе:";
+            WS.Cells[from, 3] = "кв.м.";
+            WS.Cells[from, 4] = "0";
+            WS.Cells[from, 5] = "0";
+
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 10;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "";
+            WS.Cells[from, 2] = "- отмосток";
+            WS.Cells[from, 3] = "кв.м.";
+            WS.Cells[from, 4] = "0";
+            WS.Cells[from, 5] = "0";
+
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 10;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "";
+            WS.Cells[from, 2] = "- приямков";
+            WS.Cells[from, 3] = "кв.м.";
+            WS.Cells[from, 4] = "0";
+            WS.Cells[from, 5] = "0";
+
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 10;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "7";
+            WS.Cells[from, 2] = "Ремонт инженерного оборудования, в том числе:";
+            WS.Cells[from, 3] = "";
+            WS.Cells[from, 4] = "0";
+            WS.Cells[from, 5] = "0";
+
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 10;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "";
+            WS.Cells[from, 2] = "1.Центрального отопления:";
+            WS.Cells[from, 3] = "";
+            WS.Cells[from, 4] = "0";
+            WS.Cells[from, 5] = "0";
+
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 10;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "";
+            WS.Cells[from, 2] = "- радиаторов";
+            WS.Cells[from, 3] = "шт.";
+            WS.Cells[from, 4] = "0";
+            WS.Cells[from, 5] = "0";
+
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 10;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "";
+            WS.Cells[from, 2] = "- трубопроводов";
+            WS.Cells[from, 3] = "п.м.";
+            WS.Cells[from, 4] = "0";
+            WS.Cells[from, 5] = "0";
+
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 10;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "";
+            WS.Cells[from, 2] = "- запорной арматуры";
+            WS.Cells[from, 3] = "шт.";
+            WS.Cells[from, 4] = "0";
+            WS.Cells[from, 5] = "0";
+
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 10;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "";
+            WS.Cells[from, 2] = "- промывка и опрессовка";
+            WS.Cells[from, 3] = "мкд";
+            WS.Cells[from, 4] = "0";
+            WS.Cells[from, 5] = "0";
+
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 10;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "";
+            WS.Cells[from, 2] = "2.Горячего водоснабжения:";
+            WS.Cells[from, 3] = "";
+            WS.Cells[from, 4] = "0";
+            WS.Cells[from, 5] = "0";
+
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 10;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "";
+            WS.Cells[from, 2] = "- трубопроводов";
+            WS.Cells[from, 3] = "п.м.";
+            WS.Cells[from, 4] = "0";
+            WS.Cells[from, 5] = "0";
+
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 10;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "";
+            WS.Cells[from, 2] = "- запорной арматуры";
+            WS.Cells[from, 3] = "шт.";
+            WS.Cells[from, 4] = "0";
+            WS.Cells[from, 5] = "0";
+
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 10;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "";
+            WS.Cells[from, 2] = "4.Водопровода:";
+            WS.Cells[from, 3] = "";
+            WS.Cells[from, 4] = "0";
+            WS.Cells[from, 5] = "0";
+
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 10;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "";
+            WS.Cells[from, 2] = "- ремонт и замена арматуры";
+            WS.Cells[from, 3] = "шт.";
+            WS.Cells[from, 4] = "0";
+            WS.Cells[from, 5] = "0";
+
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 10;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "";
+            WS.Cells[from, 2] = "- ремонт и изоляция труб";
+            WS.Cells[from, 3] = "п.м.";
+            WS.Cells[from, 4] = "0";
+            WS.Cells[from, 5] = "0";
+
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 10;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "";
+            WS.Cells[from, 2] = "5.Канализации:";
+            WS.Cells[from, 3] = "";
+            WS.Cells[from, 4] = "0";
+            WS.Cells[from, 5] = "0";
+
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 10;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "";
+            WS.Cells[from, 2] = "- ремонт трубопроводов";
+            WS.Cells[from, 3] = "п.м.";
+            WS.Cells[from, 4] = "0";
+            WS.Cells[from, 5] = "0";
+
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 10;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "";
+            WS.Cells[from, 2] = "6.Электрооборудования:";
+            WS.Cells[from, 3] = "";
+            WS.Cells[from, 4] = "0";
+            WS.Cells[from, 5] = "0";
+
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 10;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "";
+            WS.Cells[from, 2] = "- электропроводки";
+            WS.Cells[from, 3] = "п.м.";
+            WS.Cells[from, 4] = "0";
+            WS.Cells[from, 5] = "0";
+
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 10;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "";
+            WS.Cells[from, 2] = "- вводных устройств";
+            WS.Cells[from, 3] = "мкд";
+            WS.Cells[from, 4] = "0";
+            WS.Cells[from, 5] = "0";
+
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 10;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "";
+            WS.Cells[from, 2] = "- электрощитовых";
+            WS.Cells[from, 3] = "шт.";
+            WS.Cells[from, 4] = "0";
+            WS.Cells[from, 5] = "0";
+
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 10;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "";
+            WS.Cells[from, 2] = "- электродвигателей";
+            WS.Cells[from, 3] = "шт.";
+            WS.Cells[from, 4] = "0";
+            WS.Cells[from, 5] = "0";
+
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.RowHeight = 10;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "Инструментом и инвентарем для зимней уборки территорий обеспечен.";
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Merge(Type.Missing);
+            WS.Cells[from, 1].Font.Bold = false;
+            WS.Cells[from, 1].Font.Size = 10;
+            WS.Cells[from, 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            WS.Cells[from, 1].VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            WS.Cells[from, 1].RowHeight = 15;//высота строки
+            WS.Cells[from, 1].WrapText = true;
+            WS.Cells[from, 1].Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "IV. РЕЗУЛЬТАТЫ ПРОВЕРКИ ГОТОВНОСТИ К ЗИМЕ " + year + "-" + nextyear + " гг.";
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Merge(Type.Missing);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.RowHeight = 25;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "Комиссия в составе: ";
+
+            WS.Cells[from, 1].Font.Bold = false;
+            WS.Cells[from, 1].Font.Size = 10;
+            WS.Cells[from, 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            WS.Cells[from, 1].VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            WS.Cells[from, 1].RowHeight = 15;//высота строки
+            WS.Cells[from, 1].WrapText = true;
+            WS.Cells[from, 1].Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "Председателя " + "Главный инженер ФГБУ «Академия комфорта» Шпедт О.А.";
+
+            WS.Cells[from, 1].Font.Bold = false;
+            WS.Cells[from, 1].Font.Size = 10;
+            WS.Cells[from, 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            WS.Cells[from, 1].VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            WS.Cells[from, 1].RowHeight = 25;//высота строки
+            WS.Cells[from, 1].WrapText = true;
+            WS.Cells[from, 1].Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "Члены комиссии:";
+
+            WS.Cells[from, 1].Font.Bold = false;
+            WS.Cells[from, 1].Font.Size = 10;
+            WS.Cells[from, 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            WS.Cells[from, 1].VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            WS.Cells[from, 1].RowHeight = 15;//высота строки
+            WS.Cells[from, 1].WrapText = true;
+            WS.Cells[from, 1].Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "Собственники жилых помещений кв.:";
+
+            WS.Cells[from, 1].Font.Bold = false;
+            WS.Cells[from, 1].Font.Size = 10;
+            WS.Cells[from, 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            WS.Cells[from, 1].VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            WS.Cells[from, 1].RowHeight = 15;//высота строки
+            WS.Cells[from, 1].WrapText = true;
+            WS.Cells[from, 1].Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "1.";
+
+            WS.Cells[from, 1].Font.Bold = false;
+            WS.Cells[from, 1].Font.Size = 10;
+            WS.Cells[from, 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            WS.Cells[from, 1].VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            WS.Cells[from, 1].RowHeight = 15;//высота строки
+            WS.Cells[from, 1].WrapText = true;
+            WS.Cells[from, 1].Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "2.";
+
+            WS.Cells[from, 1].Font.Bold = false;
+            WS.Cells[from, 1].Font.Size = 10;
+            WS.Cells[from, 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            WS.Cells[from, 1].VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            WS.Cells[from, 1].RowHeight = 15;//высота строки
+            WS.Cells[from, 1].WrapText = true;
+            WS.Cells[from, 1].Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "3.";
+
+            WS.Cells[from, 1].Font.Bold = false;
+            WS.Cells[from, 1].Font.Size = 10;
+            WS.Cells[from, 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            WS.Cells[from, 1].VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            WS.Cells[from, 1].RowHeight = 15;//высота строки
+            WS.Cells[from, 1].WrapText = true;
+            WS.Cells[from, 1].Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "4.";
+
+            WS.Cells[from, 1].Font.Bold = false;
+            WS.Cells[from, 1].Font.Size = 10;
+            WS.Cells[from, 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            WS.Cells[from, 1].VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            WS.Cells[from, 1].RowHeight = 15;//высота строки
+            WS.Cells[from, 1].WrapText = true;
+            WS.Cells[from, 1].Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "Представителя специализированных организаций:";
+
+            WS.Cells[from, 1].Font.Bold = false;
+            WS.Cells[from, 1].Font.Size = 10;
+            WS.Cells[from, 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            WS.Cells[from, 1].VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            WS.Cells[from, 1].RowHeight = 15;//высота строки
+            WS.Cells[from, 1].WrapText = true;
+            WS.Cells[from, 1].Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "1.";
+
+            WS.Cells[from, 1].Font.Bold = false;
+            WS.Cells[from, 1].Font.Size = 10;
+            WS.Cells[from, 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            WS.Cells[from, 1].VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            WS.Cells[from, 1].RowHeight = 15;//высота строки
+            WS.Cells[from, 1].WrapText = true;
+            WS.Cells[from, 1].Font.Name = "TimesNewRoman";
+
+            from++;
+            from++;
+            WS.Cells[from, 1] = "1. Работы по профилактике и ремонту внутри дворовых систем выполнены согласно плану.";
+            WS.Cells[from, 1].Font.Bold = false;
+            WS.Cells[from, 1].Font.Size = 10;
+            WS.Cells[from, 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            WS.Cells[from, 1].VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            WS.Cells[from, 1].RowHeight = 15;//высота строки
+            WS.Cells[from, 1].WrapText = true;
+            WS.Cells[from, 1].Font.Name = "TimesNewRoman";
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Merge(Type.Missing);
+
+            from++;
+            WS.Cells[from, 1] = "2. Количество отопительных приборов и поверхности нагрева соответствуют проекту.";
+
+            WS.Cells[from, 1].Font.Bold = false;
+            WS.Cells[from, 1].Font.Size = 10;
+            WS.Cells[from, 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            WS.Cells[from, 1].VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            WS.Cells[from, 1].RowHeight = 15;//высота строки
+            WS.Cells[from, 1].WrapText = true;
+            WS.Cells[from, 1].Font.Name = "TimesNewRoman";
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Merge(Type.Missing);
+
+            from++;
+            WS.Cells[from, 1] = "3. Состояние утепления отапливаемых помещений (чердаки, лестничные клетки, подвалы), внутренней разводки – удовлетворительные.";
+
+            WS.Cells[from, 1].Font.Bold = false;
+            WS.Cells[from, 1].Font.Size = 10;
+            WS.Cells[from, 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            WS.Cells[from, 1].VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            WS.Cells[from, 1].RowHeight = 15;//высота строки
+            WS.Cells[from, 1].WrapText = true;
+            WS.Cells[from, 1].Font.Name = "TimesNewRoman";
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Merge(Type.Missing);
+
+            from++;
+            WS.Cells[from, 1] = "3. Состояние утепления отапливаемых помещений (чердаки, лестничные клетки, подвалы), внутренней разводки – удовлетворительные.";
+
+            WS.Cells[from, 1].Font.Bold = false;
+            WS.Cells[from, 1].Font.Size = 10;
+            WS.Cells[from, 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            WS.Cells[from, 1].VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            WS.Cells[from, 1].RowHeight = 15;//высота строки
+            WS.Cells[from, 1].WrapText = true;
+            WS.Cells[from, 1].Font.Name = "TimesNewRoman";
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Merge(Type.Missing);
+
+            from++;
+            from++;
+
+            WS.Cells[from, 1] = "Вывод:_________________Объект к эксплуатации готов__________________";
+            range = WS.get_Range("A" + from, "E" + from);
+            range.Merge(Type.Missing);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.RowHeight = 65;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "Председатель комиссии: _________________________";
+            range = WS.get_Range("A" + from, "B" + from);
+            range.Merge(Type.Missing);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.RowHeight = 15;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            WS.Cells[from, 4] = "Шпедт О.А.";
+            range = WS.get_Range("D" + from, "E" + from);
+            range.Merge(Type.Missing);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.RowHeight = 15;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+
+            from++;
+            WS.Cells[from, 1] = "Члены комиссии: _________________________";
+            range = WS.get_Range("A" + from, "B" + from);
+            range.Merge(Type.Missing);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.RowHeight = 15;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            WS.Cells[from, 4] = "_______________";
+            range = WS.get_Range("D" + from, "E" + from);
+            range.Merge(Type.Missing);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.RowHeight = 15;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "_________________________";
+            range = WS.get_Range("A" + from, "B" + from);
+            range.Merge(Type.Missing);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.RowHeight = 15;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            WS.Cells[from, 4] = "_______________";
+            range = WS.get_Range("D" + from, "E" + from);
+            range.Merge(Type.Missing);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.RowHeight = 15;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = "_________________________";
+            range = WS.get_Range("A" + from, "B" + from);
+            range.Merge(Type.Missing);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.RowHeight = 15;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            WS.Cells[from, 4] = "_______________";
+            range = WS.get_Range("D" + from, "E" + from);
+            range.Merge(Type.Missing);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.RowHeight = 15;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            from++;
+            WS.Cells[from, 1] = " _________________________";
+            range = WS.get_Range("A" + from, "B" + from);
+            range.Merge(Type.Missing);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.RowHeight = 15;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+            WS.Cells[from, 4] = "_______________";
+            range = WS.get_Range("D" + from, "E" + from);
+            range.Merge(Type.Missing);
+            range.Font.Bold = false;
+            range.Font.Size = 10;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
+            range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.RowHeight = 15;//высота строки
+            range.WrapText = true;
+            range.Font.Name = "TimesNewRoman";
+
+        
+
+
+            // Сохранение файла Excel.
+            try
+            {
+                if (File.Exists(Path)) { File.Delete(Path); }
+                WbExcel.SaveCopyAs(Path + Filename + ".xlsx");//сохраняем в папку
+            }
+            catch (Exception e)
+            {
+
+            }
+            //WbExcel.PrintOutEx(1, 1, 1, true, null, null, null, null, null);//печать сразу после сохранения
+            ApExcel.Visible = false;//невидимо
+            ApExcel.ScreenUpdating = false;//и не обновляемо
+                                           // Закрытие книги.
+            WbExcel.Close(false, "", Type.Missing);
+            // Закрытие приложения Excel.
+
+
+            ApExcel.Quit();
+            Marshal.FinalReleaseComObject(WS);
+            Marshal.FinalReleaseComObject(range);
+            Marshal.FinalReleaseComObject(WbExcel);
+            Marshal.FinalReleaseComObject(WB);
+
+            GC.Collect();
+            Marshal.FinalReleaseComObject(ApExcel);
+            GC.WaitForPendingFinalizers();
+
+            CloseProcess();
+        }
+
+
         public static void SFORMIROVATAKT(List<CompleteWork> CompleteWorks, List<VipolnennieUslugi> VipolnennieUslugi, string Month, string GEU, string Year, string Ulica,string Dom, string Nachalnik, string Prikaz, string patch, string Summa, string EU, bool GG = true)
         {
 

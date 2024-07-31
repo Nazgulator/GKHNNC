@@ -2096,6 +2096,7 @@
     <Content Include="Views\Home\IndexOld.cshtml" />
     <Content Include="Views\Osmotrs\TechnicalOsmotrs.cshtml" />
     <Content Include="Views\Osmotrs\OsmotrsTechByAdresId.cshtml" />
+    <Content Include="Views\Osmotrs\PasportsOtoplenie.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
