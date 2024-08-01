@@ -100,13 +100,13 @@ namespace GKHNNC.Controllers
             return View(houses);
         }
 
-
+        [HttpGet]
         public ActionResult PasportsOtoplenie(string Adres = "")
         {
 
            List<Adres> Adresa = db.Adres.Where(x=>x.Adress.Contains(Adres)).ToList(); //.Select(x => new { text = x.Id, value = x.Adress })
 
-            return View(Adresa);
+           return View(Adresa);
         }
 
         public JsonResult MKDMASSExportToExcel(int Y = 0)
