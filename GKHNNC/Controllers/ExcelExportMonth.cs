@@ -3508,7 +3508,7 @@ namespace GKHNNC.Controllers
 
             var GodPostroiki = TechElements.Where(x => x.Name.Equals("Год постройки")).First(); 
             from++;
-            WS.Cells[from, 2] = "2. Год постройки "+ GodPostroiki.Val;
+            WS.Cells[from, 2] = "2. Год постройки "+ Math.Round(GodPostroiki.Val,0);
 
             WS.Cells[from, 2].Font.Bold = false;
             WS.Cells[from, 2].Font.Size = 10;
@@ -3545,7 +3545,7 @@ namespace GKHNNC.Controllers
             var Kvartir = TechElements.Where(x => x.Name.Equals("Количество квартир")).First();
 
             from++;
-            WS.Cells[from, 2] = "Износ в % - " + Iznos.Val + " Этажность - "+Etagnost.Val + "Подъездов - "+ Podiezdov.Val;
+            WS.Cells[from, 2] = "Износ в % - " + Math.Round(Iznos.Val, 0) + " Этажность - " + Math.Round(Etagnost.Val, 0) + "Подъездов - "+ Math.Round(Podiezdov.Val, 0);
 
             WS.Cells[from, 2].Font.Bold = false;
             WS.Cells[from, 2].Font.Size = 10;
@@ -3623,7 +3623,7 @@ namespace GKHNNC.Controllers
             range.Merge(Type.Missing);
 
             from++;
-            WS.Cells[from, 2] = "Количество квартир - " + Kvartir.Val + " м2";
+            WS.Cells[from, 2] = "Количество квартир - " + Kvartir.Val + " шт";
 
             WS.Cells[from, 2].Font.Bold = false;
             WS.Cells[from, 2].Font.Size = 10;
