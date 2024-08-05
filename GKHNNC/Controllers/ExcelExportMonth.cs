@@ -3353,7 +3353,7 @@ namespace GKHNNC.Controllers
             range.Merge(Type.Missing);
 
             from++;
-            WS.Cells[from, 2] = "Акт проверки готовности к отопительному периоду от хх.хх.ххх №Х";
+            WS.Cells[from, 2] = "Акт проверки готовности к отопительному периоду от            №        ";
 
             WS.Cells[from, 2].Font.Bold = true;
             WS.Cells[from, 2].Font.Size = 10;
@@ -3503,6 +3503,8 @@ namespace GKHNNC.Controllers
             WS.Cells[from, 2].RowHeight = 15;//высота строки
             WS.Cells[from, 2].WrapText = true;
             WS.Cells[from, 2].Font.Name = "TimesNewRoman";
+            range = WS.get_Range("B" + from, "C" + from);
+            range.Merge(Type.Missing);
 
             var GodPostroiki = TechElements.Where(x => x.Name.Equals("Год постройки")).First(); 
             from++;
@@ -3515,6 +3517,8 @@ namespace GKHNNC.Controllers
             WS.Cells[from, 2].RowHeight = 15;//высота строки
             WS.Cells[from, 2].WrapText = true;
             WS.Cells[from, 2].Font.Name = "TimesNewRoman";
+            range = WS.get_Range("B" + from, "C" + from);
+            range.Merge(Type.Missing);
 
             from++;
             WS.Cells[from, 2] = "3. Характеристики объекта:";
@@ -3526,6 +3530,8 @@ namespace GKHNNC.Controllers
             WS.Cells[from, 2].RowHeight = 15;//высота строки
             WS.Cells[from, 2].WrapText = true;
             WS.Cells[from, 2].Font.Name = "TimesNewRoman";
+            range = WS.get_Range("B" + from, "C" + from);
+            range.Merge(Type.Missing);
 
 
             var Iznos = TechElements.Where(x=>x.Name.Equals("Износ")).First();
@@ -3548,6 +3554,8 @@ namespace GKHNNC.Controllers
             WS.Cells[from, 2].RowHeight = 15;//высота строки
             WS.Cells[from, 2].WrapText = true;
             WS.Cells[from, 2].Font.Name = "TimesNewRoman";
+            range = WS.get_Range("B" + from, "C" + from);
+            range.Merge(Type.Missing);
 
             from++;
             WS.Cells[from, 2] = "Общая площадь объекта - " + Obshaya.Val + " м2, в.т.ч. ";
@@ -3559,6 +3567,8 @@ namespace GKHNNC.Controllers
             WS.Cells[from, 2].RowHeight = 15;//высота строки
             WS.Cells[from, 2].WrapText = true;
             WS.Cells[from, 2].Font.Name = "TimesNewRoman";
+            range = WS.get_Range("B" + from, "C" + from);
+            range.Merge(Type.Missing);
 
             from++;
             WS.Cells[from, 2] = "Жилая - " + Gilaya.Val + " м2";
@@ -3570,6 +3580,8 @@ namespace GKHNNC.Controllers
             WS.Cells[from, 2].RowHeight = 15;//высота строки
             WS.Cells[from, 2].WrapText = true;
             WS.Cells[from, 2].Font.Name = "TimesNewRoman";
+            range = WS.get_Range("B" + from, "C" + from);
+            range.Merge(Type.Missing);
 
             from++;
             WS.Cells[from, 2] = "Не жилая - " + Negilaya.Val + " м2";
@@ -3581,6 +3593,8 @@ namespace GKHNNC.Controllers
             WS.Cells[from, 2].RowHeight = 15;//высота строки
             WS.Cells[from, 2].WrapText = true;
             WS.Cells[from, 2].Font.Name = "TimesNewRoman";
+            range = WS.get_Range("B" + from, "C" + from);
+            range.Merge(Type.Missing);
 
             from++;
             WS.Cells[from, 2] = "Площадь подвала - " + Podval.Val + " м2";
@@ -3592,6 +3606,8 @@ namespace GKHNNC.Controllers
             WS.Cells[from, 2].RowHeight = 15;//высота строки
             WS.Cells[from, 2].WrapText = true;
             WS.Cells[from, 2].Font.Name = "TimesNewRoman";
+            range = WS.get_Range("B" + from, "C" + from);
+            range.Merge(Type.Missing);
 
             from++;
             WS.Cells[from, 2] = "Площадь цокольного этажа - " + Cokol.Val + " м2";
@@ -3603,6 +3619,8 @@ namespace GKHNNC.Controllers
             WS.Cells[from, 2].RowHeight = 15;//высота строки
             WS.Cells[from, 2].WrapText = true;
             WS.Cells[from, 2].Font.Name = "TimesNewRoman";
+            range = WS.get_Range("B" + from, "C" + from);
+            range.Merge(Type.Missing);
 
             from++;
             WS.Cells[from, 2] = "Количество квартир - " + Kvartir.Val + " м2";
@@ -3614,6 +3632,8 @@ namespace GKHNNC.Controllers
             WS.Cells[from, 2].RowHeight = 15;//высота строки
             WS.Cells[from, 2].WrapText = true;
             WS.Cells[from, 2].Font.Name = "TimesNewRoman";
+            range = WS.get_Range("B" + from, "C" + from);
+            range.Merge(Type.Missing);
 
             from++;
             WS.Cells[from, 2] = "4. Характеристика инженерного оборудования - Централизованное";
@@ -3625,6 +3645,8 @@ namespace GKHNNC.Controllers
             WS.Cells[from, 2].RowHeight = 15;//высота строки
             WS.Cells[from, 2].WrapText = true;
             WS.Cells[from, 2].Font.Name = "TimesNewRoman";
+            range = WS.get_Range("B" + from, "C" + from);
+            range.Merge(Type.Missing);
 
             from++;
             WS.Cells[from, 2] = "5. Источники:";
@@ -3636,6 +3658,8 @@ namespace GKHNNC.Controllers
             WS.Cells[from, 2].RowHeight = 15;//высота строки
             WS.Cells[from, 2].WrapText = true;
             WS.Cells[from, 2].Font.Name = "TimesNewRoman";
+            range = WS.get_Range("B" + from, "C" + from);
+            range.Merge(Type.Missing);
 
             from++;
             WS.Cells[from, 2] = "теплоснабжения ТС-1 / ТС-2";
@@ -3647,6 +3671,8 @@ namespace GKHNNC.Controllers
             WS.Cells[from, 2].RowHeight = 15;//высота строки
             WS.Cells[from, 2].WrapText = true;
             WS.Cells[from, 2].Font.Name = "TimesNewRoman";
+            range = WS.get_Range("B" + from, "C" + from);
+            range.Merge(Type.Missing);
 
             from++;
             WS.Cells[from, 2] = "газоснабжения -";
@@ -3658,6 +3684,8 @@ namespace GKHNNC.Controllers
             WS.Cells[from, 2].RowHeight = 15;//высота строки
             WS.Cells[from, 2].WrapText = true;
             WS.Cells[from, 2].Font.Name = "TimesNewRoman";
+            range = WS.get_Range("B" + from, "C" + from);
+            range.Merge(Type.Missing);
 
             from++;
             WS.Cells[from, 2] = "твердого и жидкого топлива -";
@@ -3669,6 +3697,8 @@ namespace GKHNNC.Controllers
             WS.Cells[from, 2].RowHeight = 15;//высота строки
             WS.Cells[from, 2].WrapText = true;
             WS.Cells[from, 2].Font.Name = "TimesNewRoman";
+            range = WS.get_Range("B" + from, "C" + from);
+            range.Merge(Type.Missing);
 
             from++;
             WS.Cells[from, 2] = "энергоснабжения - Трансформаторная подстанция";
@@ -3680,6 +3710,8 @@ namespace GKHNNC.Controllers
             WS.Cells[from, 2].RowHeight = 15;//высота строки
             WS.Cells[from, 2].WrapText = true;
             WS.Cells[from, 2].Font.Name = "TimesNewRoman";
+            range = WS.get_Range("B" + from, "C" + from);
+            range.Merge(Type.Missing);
 
             from++;
             WS.Cells[from, 2] = "Системы АПЗ и дымоудаления -";
@@ -3691,6 +3723,8 @@ namespace GKHNNC.Controllers
             WS.Cells[from, 2].RowHeight = 15;//высота строки
             WS.Cells[from, 2].WrapText = true;
             WS.Cells[from, 2].Font.Name = "TimesNewRoman";
+            range = WS.get_Range("B" + from, "C" + from);
+            range.Merge(Type.Missing);
 
             int lastyear = year - 1;
 
@@ -3719,7 +3753,7 @@ namespace GKHNNC.Controllers
             range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
             range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
             range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
-            range.RowHeight = 40;//высота строки
+            range.RowHeight = 120;//высота строки
             range.WrapText = true;
             range.Font.Name = "TimesNewRoman";
 
@@ -3729,6 +3763,8 @@ namespace GKHNNC.Controllers
             WS.Cells[from, 3] = "-";
             WS.Cells[from, 4] = "-";
             WS.Cells[from, 5] = "-";
+
+            from++;
 
             range = WS.get_Range("A" + from, "E" + from);
             range.Font.Bold = false;
@@ -3765,7 +3801,7 @@ namespace GKHNNC.Controllers
             range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
             range.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
             range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
-            range.RowHeight = 40;//высота строки
+            range.RowHeight = 50;//высота строки
             range.WrapText = true;
             range.Font.Name = "TimesNewRoman";
 
@@ -4434,7 +4470,7 @@ namespace GKHNNC.Controllers
             WS.Cells[from, 2].Font.Name = "TimesNewRoman";
 
             from++;
-            WS.Cells[from, 2] = "Председателя " + "Главный инженер ФГБУ «Академия комфорта» Шпедт О.А.";
+            WS.Cells[from, 2] = "Председателя " + "И.О. директора Шпедт О.А.";
 
             WS.Cells[from, 2].Font.Bold = false;
             WS.Cells[from, 2].Font.Size = 10;
