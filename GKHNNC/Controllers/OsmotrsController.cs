@@ -181,6 +181,7 @@ namespace GKHNNC.Controllers
             }
             // получаем имя файла
             string fileName = "Паспорт_готовности_дома_в_зимний_период_для_работы_" + Date.Year+ " "+ Adres.Adress.Replace("/","к").Replace("\\","к");
+            
             var path = Server.MapPath("~/Files/MKD" + Date.Year + "/");
 
             //экспорт в эксель акта осмотра отправляем все активные элементы и сам осмотр
