@@ -15,11 +15,12 @@
 <p>
 
 
-    <input class="btn btn-default" id="Adres" placeholder="Начните вводить адрес" value="@ViewBag.CurrentAdres"/>
+    <input class="btn btn-default" id="Adres" placeholder="Начните вводить адрес" value="@ViewBag.CurrentAdres" />
     <input class="btn btn-default" id="Dom" placeholder="Номер дома " value="@ViewBag.CurrentDom" />
+    <input class="btn btn-default" id="Year" placeholder="Год " value="@ViewBag.CurrentYear" />
     <button class="btn btn-success" onclick="FindAdress()">Ok</button>
     <button class="btn btn-danger" onclick="RemoveAll()">X</button>
-    @if (ViewBag.CurrentAdres!=null&&ViewBag.CurrentAdres != "")
+    @if (ViewBag.CurrentAdres != null && ViewBag.CurrentAdres != "")
     {
         <button class="btn btn-danger" onclick="RemoveAdres()"> Адрес @ViewBag.CurrentAdres</button>
     }
@@ -27,14 +28,17 @@
     {
         <button class="btn btn-danger" onclick="RemoveDom()"> Дом @ViewBag.CurrentDom</button>
     }
-    </p>
+    @if (ViewBag.CurrentYear != null && ViewBag.CurrentYear != "")
+    {
+        <button class="btn btn-danger" onclick="RemoveYear()"> Год @ViewBag.CurrentYear</button>
+    }
+</p>
 <table id="PostT" class="table table-bordered table-striped">
     <thead>
         <tr >
             <th  width="200px">
                 @Html.DisplayNameFor(model => model.AdresMKD)
             </th>
-
             <th  >
                 @Html.DisplayNameFor(model => model.PeriodYear)
             </th>
@@ -59,10 +63,8 @@
             <th >
                 Сальдо на конец
             </th>
-
             <th >
                 Опции
-
             </th>
         </tr>
 </thead>
@@ -149,8 +151,9 @@
     function FindAdress() {
         var Adres = $("#Adres").val();
         var Dom = $("#Dom").val();
+        var Year = $("#Year").val();
 
-        var url = "@Url.Action("Index", "MKDYearResults")?Adres=" + Adres + "&Dom=" + Dom ;
+        var url = "@Url.Action("Index", "MKDYearResults")?Adres=" + Adres + "&Dom=" + Dom + "&Year=" + Year ;
         window.location.replace(url);
             
 
@@ -160,20 +163,28 @@
 <script>
     function RemoveAdres() {
         var Adres = $("#Adres").val();
-
-
         var url = "@Url.Action("RemoveAdresFromSession", "MKDYearResults")";
         var url2 = "@Url.Action("Index", "MKDYearResults")?Adres="   ;
             $.post(url,
                 function (data)
                 {
                     window.location.replace(url2);
-                   // Adres.val(data);
-
                 }
         );
+        }
+</script>
 
-
+<script>
+    function RemoveYear() {
+        var Year = $("#Year").val();
+        var url = "@Url.Action("RemoveYearFromSession", "MKDYearResults")";
+        var url2 = "@Url.Action("Index", "MKDYearResults")?Year="   ;
+            $.post(url,
+                function (data)
+                {
+                    window.location.replace(url2);
+                }
+        );
         }
 </script>
 

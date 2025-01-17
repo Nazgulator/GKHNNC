@@ -7,15 +7,17 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>Результат загрузки данных из WORD</title>
+    <title>Результат загрузки данных из EXCEL</title>
 </head>
 <body>
-    <h2>Выполненные работы по МКД загруженые из WORD </h2>
+    <h2>Выполненные работы по МКД загруженые из EXCEL </h2>
     <h3>Работ загружено @ViewBag.Dobavleno</h3>
     <h3>Работ очищено @ViewBag.Udaleno</h3>
     <h3>Папка для загрузки C:\inetpub\wwwroot\Files\MKD</h3>
     <p><a href="/Home/Index" class="btn btn-success btn-block"><< В главное меню </a> </p>
-
+    <div class="alert-warning">
+        <p>Модуль работает в тестовом режиме! </p>
+    </div>
     <table class="table table-bordered">
         @foreach (string E in ViewBag.Errors)
         {

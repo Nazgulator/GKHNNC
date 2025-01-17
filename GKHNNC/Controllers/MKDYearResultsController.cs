@@ -36,27 +36,37 @@ namespace GKHNNC.Controllers
             return Json(Dom);
         }
 
+        public JsonResult YearToSession(string Year = "")
+        {
+            if (Year != null && Year.Equals("") == false)
+            {
+
+                Session["CurrentYear"] = Year;
+            }
+            return Json(Year);
+        }
+
         public JsonResult RemoveAdresFromSession()
         {
-           
-
-                Session["CurrentAdres"] = "";
-           
+            Session["CurrentAdres"] = "";
             return Json("Ok");
         }
 
 
         public JsonResult RemoveDomFromSession()
         {
-
-
             Session["CurrentDom"] = "";
+            return Json("Ok");
+        }
 
+        public JsonResult RemoveYearFromSession()
+        {
+            Session["CurrentYear"] = "";
             return Json("Ok");
         }
 
         // GET: MKDYearResults
-        public ActionResult Index(string Adres ="", string Dom="")
+        public ActionResult Index(string Adres ="", string Dom="", string Year = "")
         {
             List<MKDYearResult> Res = new List<MKDYearResult>();
             if (Adres == null || Adres.Equals("")==true)
@@ -77,6 +87,15 @@ namespace GKHNNC.Controllers
                 DomToSession(Dom);
             }
 
+            if (Year == null || Year.Equals("") == true)
+            {
+                Year = (string)Session["CurrentYear"];
+            }
+            else
+            {
+                YearToSession(Year);
+            }
+
 
             if ( Adres!=null &&Adres.Equals("") == false)
             {
@@ -94,7 +113,21 @@ namespace GKHNNC.Controllers
             {
                 try
                 {
-                    Res = Res.Where(x => x.AdresMKD.Contains(Dom)).ToList();
+                    Res = Res.Where(x => x.AdresMKD.Contains(" "+ Dom)).ToList();
+                }
+                catch
+                {
+
+                }
+            }
+
+            if (Year != null && Year.Equals("") == false)
+            {
+                
+                try
+                {
+                    int Y = Convert.ToInt16(Year);
+                    Res = Res.Where(x => x.PeriodYear == Y).ToList();
                 }
                 catch
                 {
@@ -104,6 +137,7 @@ namespace GKHNNC.Controllers
 
             ViewBag.CurrentAdres = Adres;
             ViewBag.CurrentDom = Dom;
+            ViewBag.CurrentYear = Year;
 
             return View(Res);
         }

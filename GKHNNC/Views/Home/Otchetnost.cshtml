@@ -44,23 +44,29 @@
 
     @if (Request.IsAuthenticated && User.IsInRole("Администратор"))
     {
-        <div class="table">
-            <div class="row">
-                <div class="col-md-12">
-                    <p>
-                        <a href="/MKDYearResults/Index" class="btn btn-warning btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Корректировка годовых результатов &raquo;</a>
-                    </p>
-
-                </div>
+    <div class="table">
+        <div class="row">
+            <div class="col-md-12">
+                <p>
+                    <a href="/MKDYearResults/Index" class="btn btn-warning btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Корректировка годовых результатов &raquo;</a>
+                </p>
 
             </div>
 
-            <div class="row">
-                <div class="col-md-12">
-                    <p><a href="/Osmotrs/ObrabotatWord" class="btn btn-warning btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Обработать Word &raquo;</a></p>
-                </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <p><a href="/Osmotrs/ObrabotatWord" class="btn btn-warning btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Обработать Word &raquo;</a></p>
             </div>
         </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <p><a href="/Osmotrs/ObrabotatExcel" class="btn btn-warning btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Обработать Excel &raquo;</a></p>
+            </div>
+        </div>
+    </div>
 
         <div class="row">
             <div class="col-md-12">
