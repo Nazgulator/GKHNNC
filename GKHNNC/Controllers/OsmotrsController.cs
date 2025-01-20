@@ -1826,8 +1826,205 @@ WorkDate = cl.First().WorkDate
             ViewBag.MCW = MCW;
             return View();
         }
-    
-   
+
+
+        public ActionResult ObrabotatExcel()
+        {
+            string errors = "";
+            string StreetsFalse = "";
+            int Dobavleno = 0;
+            int Udaleno = 0;
+            int AdresMKDId = 0;
+            string[] fileEntries = Directory.GetFiles(Server.MapPath("~/Files/MKD/"));
+            List<MKDCompleteWork> Result = new List<MKDCompleteWork>();
+            List<string> Stati = db.MKDStatyas.Select(x => x.Name).ToList();
+            List<string> Errors = new List<string>();
+            foreach (string f in fileEntries)
+            {
+                try
+                { 
+                    string FileName = System.IO.Path.GetFileName(f);
+                    if (FileName.Contains(".csv")==false)
+                    {
+                        continue;
+                    }
+                    string File = System.IO.Path.GetFileName(f).Replace(".csv", "");//.Replace("лит_","").Replace("ул_", "").Replace("ул","");
+                    DateTime D = new DateTime();
+
+                    int Month = 1;
+                    int Year = DateTime.Now.AddYears(-2).Year;
+                    int MaxYear = DateTime.Now.Year;
+                    bool Naideno = false;
+                    for (int Y = Year; Y <= MaxYear; Y++)
+                    {
+                        for (int M = 1; M <= 12; M++)
+                        {
+                            DateTime DD = new DateTime(Y, M, 1);
+                            string Date = "_" + DD.ToString("MM") + "_" + DD.ToString("yyyy");
+                            if (File.IndexOf(Date) > 0)
+                            {
+                                //Нашли дату в файле
+                                D = new DateTime(Y, M, 1);
+                                string Adres = File.Remove(File.IndexOf(Date));
+                                try
+                                {
+                                    AdresMKDId = db.AdresMKDs.Where(x => x.FileName.Equals(Adres)).First().Id;
+                                    Naideno = true;
+                                    break;
+
+                                }
+                                catch (Exception e)
+                                {
+
+                                }
+
+                            }
+                        }
+                    }
+                    if (!Naideno)
+                    {
+                        Errors.Add("Не найдено соответствие файлу " + File + " сопоставьте его имя в таблице соответствия");
+                        continue;
+                    }
+
+                    //   string[] S = File.Split('_');
+                    //   string TYPE = "";
+                    //   if (S.Length>5)
+                    //   {
+                    //       TYPE = S[0].ToUpper();
+                    //   }
+                    //   string STREET = S[1].ToUpper();
+                    //   string DOM = S[2].ToUpper();
+                    //  D = new DateTime(Convert.ToInt16(S[4]), Convert.ToInt16(S[3]), 1);
+                    List<MKDCompleteWork> MCW = new List<MKDCompleteWork>();
+                    try
+                    {
+                        MCW = db.MKDCompleteWork.Where(x => x.AdresMKDID == AdresMKDId && x.WorkDate == D).ToList();
+                    }
+                    catch
+                    {
+
+                    }
+                    if (MCW.Count > 0)
+                    {
+                        foreach (var m in MCW)
+                        {
+                            db.Entry(m).State = EntityState.Deleted;
+                            Udaleno++;
+                        }
+                        try
+                        {
+                            db.SaveChanges();
+
+                        }
+                        catch
+                        {
+
+                        }
+                    }
+                    ViewBag.Udaleno = Udaleno;
+
+                    bool NaidenaTablica = false;
+                    MCW = new List<MKDCompleteWork>();
+
+
+                    string[] read;
+                    char[] seperators = { ';' };
+
+                    StreamReader sr = new StreamReader(f, Encoding.GetEncoding("Windows-1251"));
+
+                    string data = sr.ReadLine();// sr.ReadLine().Replace("и?","й");
+                    List<string> textBuilder = new List<string>();
+                    List<WordComplete> WorkTypes = new List<WordComplete>();
+                    bool Dobavit = false;
+                    bool DobavitNext = false;
+                    bool NachatoDobavlenie = false;
+                    bool AddWork = false;
+                    List<string> NewTextBuilder = new List<string>();
+                    WordComplete WT = new WordComplete();
+
+                    while ((data = sr.ReadLine()) != null)
+                    {
+                        if (data!=null)
+                        {
+                            data = data.Replace("и?", "й");
+                        }
+
+                        read = data.Split(seperators, StringSplitOptions.RemoveEmptyEntries); //StringSplitOptions.RemoveEmptyEntries
+
+                        //Создаем заголовок
+                        if (read.Count() == 2)
+                        {
+                            string tip = read[0].Replace(", в т.ч.:", "");
+                            WT = new WordComplete();
+                            WT.WorkType = tip;
+                            WorkTypes.Add(WT);
+
+                        }
+                        else
+                        {
+
+                            //float longitude = float.Parse(read[1].Replace(",", "."));
+                            //float latitude = 0;
+
+                            //latitude = float.Parse(read[2].Replace(",", "."));
+                            //AddWork = false;
+
+                            WT.AllWorks.Add(data);
+
+                        }
+                    }
+
+                    foreach (var wt in WorkTypes)
+                    {
+                        foreach (var w in wt.AllWorks)
+                        {
+
+                            try
+                            {
+                                var work = w.Split(seperators);
+                                string Izmerenie = work[2];
+                                decimal CenaZaEdinicu = Convert.ToDecimal(work[3].Replace(" ", "").Replace(",", ".").Replace(" ", ""));
+                                decimal Summa = Convert.ToDecimal(work[4].Replace(" ", "").Replace(",", ".").Replace(" ", ""));
+
+                                MKDCompleteWork MKD = new MKDCompleteWork();
+                                MKD.WorkDate = D;
+                                MKD.AdresMKDID = AdresMKDId;
+
+                                MKD.WorkCena = CenaZaEdinicu;
+                                MKD.WorkIzmerenie = Izmerenie;
+                                MKD.WorkName = work[0].Remove(0, 3);
+                                MKD.WorkSumma = Summa;
+                                MKD.WorkTip = wt.WorkType;
+                                db.MKDCompleteWork.Add(MKD);
+                                db.SaveChanges();
+                                Result.Add(MKD);
+                                NaidenaTablica = true;
+                            }
+                            catch
+                            {
+
+                            }
+                        }
+                    }
+
+
+                    if (!NaidenaTablica)
+                    {
+                        Errors.Add("Не найдена таблица в файле " + File + " видимо он корректировался вручную?");
+                    }
+                }
+                catch (Exception exx)
+                {
+
+                }
+            }
+            ViewBag.Dobavleno = Result.Count;
+            ViewBag.Errors = Errors;
+            return View(Result);
+
+        }
+
 
         public ActionResult ObrabotatWord()
         {
