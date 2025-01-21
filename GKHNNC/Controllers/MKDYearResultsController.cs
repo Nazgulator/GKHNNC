@@ -113,7 +113,7 @@ namespace GKHNNC.Controllers
             {
                 try
                 {
-                    Res = Res.Where(x => x.AdresMKD.Contains(" "+ Dom)).ToList();
+                    Res = Res.Where(x => x.AdresMKD.EndsWith(" "+ Dom)).ToList();
                 }
                 catch
                 {
