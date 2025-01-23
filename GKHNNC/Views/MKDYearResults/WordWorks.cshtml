@@ -1,0 +1,236 @@
+﻿@model IEnumerable<GKHNNC.Models.MKDCompleteWork>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+
+
+<h2>Главная</h2>
+
+<p>
+
+    <input class="btn btn-default" id="Adres" placeholder="Начните вводить адрес" value="@ViewBag.CurrentAdres" />
+    <input class="btn btn-default" id="Dom" placeholder="Номер дома " value="@ViewBag.CurrentDom" />
+    <input class="btn btn-default" id="Year" placeholder="Год " value="@ViewBag.CurrentYear" />
+    <button class="btn btn-success" onclick="FindAdress()">Ok</button>
+    <button class="btn btn-danger" onclick="RemoveAll()">X</button>
+    @if (ViewBag.CurrentAdres != null && ViewBag.CurrentAdres != "")
+    {
+        <button class="btn btn-danger" onclick="RemoveAdres()"> Адрес @ViewBag.CurrentAdres</button>
+    }
+    @if (ViewBag.CurrentDom != null && ViewBag.CurrentDom != "")
+    {
+        <button class="btn btn-danger" onclick="RemoveDom()"> Дом @ViewBag.CurrentDom</button>
+    }
+    @if (ViewBag.CurrentYear != null && ViewBag.CurrentYear != "")
+    {
+        <button class="btn btn-danger" onclick="RemoveYear()"> Год @ViewBag.CurrentYear</button>
+    }
+    </p>
+<table id="PostT" class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>
+                Дата (м.г)
+            </th>
+            <th>
+                ID
+            </th>
+            <th>
+                Адрес
+            </th>
+            <th>
+                Работа
+            </th>
+            <th>
+                Тип
+            </th>
+            <th>
+                Измерение
+            </th>
+            <th>
+                Цена на ед.
+            </th>
+            <th>
+                Сумма
+            </th>
+        </tr>
+    </thead>
+    @{bool Y = false; decimal Summ = 0; }
+    @foreach (var item in Model)
+    {
+        <tr>
+            <th>
+                @item.WorkDate.ToString("MM.yy")
+            </th>
+            <th>
+                @item.AdresMKDID
+            </th>
+            <th>
+                @try
+                {
+                    <p>
+                        @item.AdresMKD.ASU
+                    </p>
+
+                }
+                catch
+                {
+
+                }
+            </th>
+            <th>
+                @item.WorkName
+            </th>
+            <th>
+                @item.WorkTip
+            </th>
+            <th>
+                @item.WorkIzmerenie
+            </th>
+            <th>
+                @item.WorkCena
+            </th>
+            <th>
+                @item.WorkSumma
+            </th>
+
+        </tr>
+        { Summ += item.WorkSumma; }
+    }
+
+    <tr>
+        <th>
+        
+        </th>
+        <th>
+            
+        </th>
+        <th>
+            Итого за период
+        </th>
+        <th>
+
+        </th>
+        <th>
+            
+        </th>
+        <th>
+            
+        </th>
+        <th>
+            
+        </th>
+        <th>
+            @Summ
+        </th>
+
+    </tr>
+
+</table>
+    <p><a href="/Home/Index" class="btn btn-success btn-block">В главное меню &raquo;</a> </p>
+
+
+    <script>
+    function FindAdress() {
+        var Adres = $("#Adres").val();
+        var Dom = $("#Dom").val();
+        var Year = $("#Year").val();
+
+        var url = "@Url.Action("WordWorks", "MKDYearResults")?Adres=" + Adres + "&Dom=" + Dom + "&Year=" + Year ;
+        window.location.replace(url);
+
+
+
+        }
+    </script>
+    <script>
+    function RemoveAdres() {
+        var Adres = $("#Adres").val();
+        var url = "@Url.Action("RemoveAdresFromSession", "MKDYearResults")";
+        var url2 = "@Url.Action("WordWorks", "MKDYearResults")?Adres="   ;
+            $.post(url,
+                function (data)
+                {
+                    window.location.replace(url2);
+                }
+        );
+        }
+    </script>
+
+    <script>
+    function RemoveYear() {
+        var Year = $("#Year").val();
+        var url = "@Url.Action("RemoveYearFromSession", "MKDYearResults")";
+        var url2 = "@Url.Action("WordWorks", "MKDYearResults")?Year="   ;
+            $.post(url,
+                function (data)
+                {
+                    window.location.replace(url2);
+                }
+        );
+        }
+    </script>
+
+    <script>
+    function RemoveDom() {
+        var Dom = $("#Dom").val();
+
+
+        var url = "@Url.Action("RemoveDomFromSession", "MKDYearResults")";
+        var url2 = "@Url.Action("WordWorks", "MKDYearResults")?Dom="   ;
+            $.post(url,
+                function (data)
+                {
+                    window.location.replace(url2);
+                   // Adres.val(data);
+
+                }
+        );
+
+
+        }
+    </script>
+
+    <script>
+    function RemoveAll() {
+        var Adres = $("#Adres").val();
+
+
+        var url = "@Url.Action("RemoveAdresFromSession", "MKDYearResults")";
+        var url2 = "@Url.Action("WordWorks", "MKDYearResults")?Adres=" ;
+        var url3 = "@Url.Action("WordWorks", "MKDYearResults")?Dom=";
+        var url4 = "@Url.Action("WordWorks", "MKDYearResults")?Year=" ;
+            $.post(url,
+                function (data)
+                {
+
+
+                }
+        );
+
+            $.post(url,
+                function (data)
+                {
+                    window.location.replace(url3);
+
+
+                }
+        );
+
+        $.post(url,
+            function (data) {
+                window.location.replace(url4);
+
+
+            }
+        );
+
+
+    }
+
+
+
+    </script>

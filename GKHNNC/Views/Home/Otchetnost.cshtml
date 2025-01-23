@@ -45,61 +45,47 @@
     @if (Request.IsAuthenticated && User.IsInRole("Администратор"))
     {
     <div class="table">
-        <div class="row">
-            <div class="col-md-12">
-                <p>
-                    <a href="/MKDYearResults/Index" class="btn btn-warning btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Корректировка годовых результатов &raquo;</a>
-                </p>
 
-            </div>
-
-        </div>
 
         <div class="row">
             <div class="col-md-12">
-                <p><a href="/Osmotrs/ObrabotatWord" class="btn btn-warning btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Обработать Word &raquo;</a></p>
+                <p><a href="/MKDYearResults/OstatkiPoNakopitelnymSchetam" class="btn btn-success btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Остатки по накопительным счетам &raquo;</a></p>
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-12">
-                <p><a href="/Osmotrs/ObrabotatExcel" class="btn btn-warning btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Обработать CSV &raquo;</a></p>
-            </div>
-        </div>
-    </div>
-
-        <div class="row">
-            <div class="col-md-12">
-                <p><a href="/Osmotrs/MKDResult" class="btn btn-warning btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Загруженные работы из WORD &raquo;</a></p>
+                <p><a href="/MKDYearResults/ObrabotkaAktov" class="btn btn-success btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Обработка всех актов 761 из АСУ ЖС &raquo;</a></p>
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-12">
-                <p><a href="/Osmotrs/MKDYear" class="btn btn-warning btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Годовой отчет WORD &raquo;</a></p>
+                <p><a href="/MKDYearResults/WordWorks" class="btn btn-success btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Выполненные работы &raquo;</a></p>
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-12">
-                <p><a href="/AdresaMKDs/Index" class="btn btn-warning btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Таблица соответствия ОРС - АСУ &raquo;</a></p>
+                <p><a href="/Osmotrs/MKDResult" class="btn btn-success btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Загруженные работы из WORD (Удалить) &raquo;</a></p>
+            </div>
+        </div>
+
+
+
+        <div class="row">
+            <div class="col-md-12">
+                <p><a href="/AdresaMKDs/Index" class="btn btn-success btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Справочник МКД &raquo;</a></p>
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-12">
-                <p><a href="/Osmotrs/MKDYearOtchetSelect" class="btn btn-warning btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Итоговая годовая таблица &raquo;</a></p>
+                <p><a href="/Osmotrs/MKDYearOtchetSelect" class="btn btn-success btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Формирование годовых отчетов по МКД &raquo;</a></p>
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-md-12">
-                <p>
-                    <a onclick="Fix()" class="btn btn-warning btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Фиксируем годовые результаты &raquo;</a>
-                    <input class="btn btn-warning " id="Y" placeholder="Введите год" />
-                </p>
-            </div>
-        </div>
+    </div> 
 
            }
     else

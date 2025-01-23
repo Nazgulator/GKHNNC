@@ -65,6 +65,138 @@ namespace GKHNNC.Controllers
             return Json("Ok");
         }
 
+        public ActionResult OstatkiPoNakopitelnymSchetam()
+        {
+            return View();
+        }
+
+        public ActionResult PerenosOstatkovPoNakopitelnymSchetam()
+        {
+            return View();
+        }
+
+        public ActionResult ObrabotkaAktov()
+        {
+            return View();
+        }
+
+        public ActionResult WordWorks(string Adres = "", string Dom = "", string Year = "")
+        {
+            List<MKDCompleteWork> Result = new List<MKDCompleteWork>();
+            //try
+            //{
+            //    Result = db.MKDCompleteWork.ToList();
+            //}
+            //catch
+            //{
+
+            //}
+
+            if (Adres == null || Adres.Equals("") == true)
+            {
+                Adres = (string)Session["CurrentAdres"];
+            }
+            else
+            {
+                AdresToSession(Adres);
+            }
+
+            if (Dom == null || Dom.Equals("") == true)
+            {
+                Dom = (string)Session["CurrentDom"];
+            }
+            else
+            {
+                DomToSession(Dom);
+            }
+
+            if (Year == null || Year.Equals("") == true)
+            {
+                Year = (string)Session["CurrentYear"];
+            }
+            else
+            {
+                YearToSession(Year);
+            }
+
+
+            List<int> Adresa = new List<int>();
+            List<int> Doma = new List<int>();
+            if (Dom != null && Dom.Equals("") == false)
+            {
+                try
+                {
+                    Doma.AddRange(db.AdresMKDs.Where(x => x.ASU.EndsWith(" " + Dom)).Select(x => x.Id).ToList());
+                }
+                catch
+                {
+
+                }
+            }
+
+
+            if (Adres != null && Adres.Equals("") == false)
+            {
+                Adresa.AddRange(db.AdresMKDs.Where(x => x.ASU.Contains(Adres)).Select(x=>x.Id).ToList());
+
+            }
+            else
+            {
+                //if (Year != null && Year.Equals("") == true)
+                //{
+                //    //int Y = DateTime.Now.Year;
+                //   // Result = db.MKDCompleteWork.Where(x => x.WorkDate.Year == Y).Take(100).ToList();
+                //}
+
+            }
+
+            if (Adresa.Count>0 && Doma.Count>0)
+            {
+                Adresa = Adresa.Where(x => Doma.Contains(x)).ToList();
+            }
+
+            if (Adresa.Count == 0 && Doma.Count > 0)
+            {
+                Adresa = Doma;
+            }
+
+            if (Adresa.Count()>0)
+            {
+                Adresa = Adresa.Distinct().ToList();
+                List<AdresaMKDs> AdresAll = db.AdresMKDs.Where(x => Adresa.Contains(x.Id)).ToList(); 
+                Result = db.MKDCompleteWork.Where(x => Adresa.Contains(x.AdresMKDID)).OrderBy(x=>x.AdresMKDID).ThenBy(x=>x.WorkTip).ThenBy(x=>x.WorkDate).ToList();
+                foreach ( var r in Result)
+                {
+                    r.AdresMKD = AdresAll.Where(x => x.Id == r.AdresMKDID).First();
+                }
+
+
+            }
+
+            
+
+            if (Year != null && Year.Equals("") == false)
+            {
+
+                try
+                {
+                    int Y = Convert.ToInt16(Year);
+                    Result = Result.Where(x => x.WorkDate.Year == Y).ToList();
+                }
+                catch
+                {
+
+                }
+            }
+
+            ViewBag.CurrentAdres = Adres;
+            ViewBag.CurrentDom = Dom;
+            ViewBag.CurrentYear = Year;
+
+            return View(Result);
+
+        }
+
         // GET: MKDYearResults
         public ActionResult Index(string Adres ="", string Dom="", string Year = "")
         {
