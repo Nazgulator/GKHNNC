@@ -13,9 +13,72 @@
             <div class="col-md-12">
                 <p>
                     <input class="btn btn-warning " id="Y" placeholder="Введите год" />
-                    <a onclick="Fix()" class="btn btn-success btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Фиксируем годовые результаты &raquo;</a>
+                    <a onclick="PerenosOstatkov()" class="btn btn-success btn-lg" style="width:500Px" title="Стирает данные за выбранный год!!! затем переносит остатки на конец предыдущего года в начало выбранного. Ничего не расчитывает!"><i class="glyphicon glyphicon-align-right"></i> Перенос остатков на начало выбранного года&raquo;</a>
+                </p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <p>
+                    <a onclick="Fix()" class="btn btn-success btn-lg" style="width:500Px"  title="Берет список строк за выбранный год со статьями, формирует отчет и записывает результаты пересохраняя строки. Новых строк не создает."><i class="glyphicon glyphicon-align-right"></i>Перерасчет остатков по накопитекльным счетам по всем МКД за выбранный период &raquo;</a>
                 </p>
             </div>
         </div>
     </div>
 </Center>
+
+@section Scripts
+{
+    @Scripts.Render("~/scripts/jquery-3.3.1.min.js")
+    @Scripts.Render("~/scripts/jquery-ui-1.12.1.min.js")
+    @Scripts.Render("~/scripts/nprogress.min.js")
+    @Scripts.Render("~/scripts/jquery.signalR-2.4.0.min.js")
+    @Scripts.Render("~/signalr/hubs")
+
+    <script>
+        function Fix()
+        {
+            var Y = $("#Y").val();
+
+            if (Y > 2022)
+            {
+                var url = "@Url.Action("MKDFixResultsNew", "Osmotrs")?Y=" + Y;
+
+                if (confirm('Начинаем перерасчет остатков по накопитекльным счетам по всем МКД за ' + Y + ' год?')) {
+                    $.post(url,
+                        function (data) {
+                            alert('Перерасчет остатков по накопитекльным счетам по всем МКД за ' + Y + ' год завершен!');
+                        }
+                    );
+                }
+                else {
+                    alert("Перерасчет отменен!");
+                }
+            }
+           
+        }
+    </script>
+
+    <script>
+        function PerenosOstatkov()
+        {
+            var Y = $("#Y").val();
+            if (Y > 2022)
+            {
+                var url = "@Url.Action("MKDPerenosOstatkov", "Osmotrs")?Y=" + Y;
+
+                if (confirm('Начинаем перенос остатков за ' + Y + ' год?')) {
+                    $.post(url,
+                        function (data) {
+                            alert('Перенос остатков за ' + Y + ' год завершен!');
+                        }
+                    );
+                }
+                else {
+                    alert("Отменен перенос остатков");
+                }
+            }
+        }
+    </script>
+
+}

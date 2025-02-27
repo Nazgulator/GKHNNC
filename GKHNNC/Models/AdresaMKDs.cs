@@ -18,6 +18,8 @@ namespace GKHNNC.Models
         public string ASU { get; set; }
         [Display(Name = "ИмяФайла")]
         public string FileName { get; set; }
+        [Display(Name = "Идентификатор AdresId")]
+        public int AdresId { get; set; }
 
 
 

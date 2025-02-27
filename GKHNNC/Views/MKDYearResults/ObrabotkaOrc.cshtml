@@ -1,0 +1,25 @@
+﻿
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+
+
+<h2>Обработка документа ОСВ по домам (ОРС)</h2>
+
+<h3>Файл должен содержать следующие поля:</h3>
+<h3>|Район|Филиал|Адрес|Услуга|Поставщик|Начислено|Оплачено|</h3>
+<h3>Файл должен называться ORC_2024.csv где 2024 - год. И лежать в папке Files\ORC:</h3>
+
+<Center>
+    <div class="table">
+        <div class="row">
+            <div class="col-md-12">
+                <p><a href="/Osmotrs/ObrabotatORC" class="btn btn-warning btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Обработать CSV &raquo;</a></p>
+            </div>
+        </div>
+
+    </div>
+</Center>

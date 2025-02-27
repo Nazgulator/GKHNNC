@@ -1,0 +1,33 @@
+﻿@model List<string>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout0.cshtml";
+}
+
+
+
+<h2>Обработка документа Аренда</h2>
+
+<h3>Файл должен содержать следующие поля:</h3>
+<h4>|Адрес|Номер|Начислено|Оплачено|Вознаграждение|</h4>
+<h4>Файл должен называться Arenda_2024.csv где 2024 - год. И лежать в папке \Files\Arenda</h4>
+
+<h4>В папке найдены следующие файлы:</h4>
+@foreach (string file in Model)
+{
+
+    <div class="btn btn-warning">@file</div>
+
+}
+
+<Center>
+    <div class="table">
+        <div class="row">
+            <div class="col-md-12">
+                <p><a href="/Osmotrs/ObrabotatArenda" class="btn btn-warning btn-lg" style="width:500Px"><i class="glyphicon glyphicon-align-right"></i> Обработать все файлы CSV &raquo;</a></p>
+            </div>
+        </div>
+
+    </div>
+</Center>

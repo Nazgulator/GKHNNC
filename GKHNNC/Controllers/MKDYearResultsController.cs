@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -78,6 +79,31 @@ namespace GKHNNC.Controllers
         public ActionResult ObrabotkaAktov()
         {
             return View();
+        }
+
+        public ActionResult ObrabotkaORC()
+        {
+            return View();
+        }
+
+        public ActionResult ObrabotkaArenda()
+        {
+            string[] fileEntries = Directory.GetFiles(Server.MapPath("~/Files/Arenda/"));
+            List<string> Result = new List<string>();
+
+            foreach (string f in fileEntries)
+            {
+                string FileName = System.IO.Path.GetFileName(f);
+                if (FileName.Contains(".csv") == false)
+                {
+                    
+                    continue;
+                }
+                Result.Add(FileName);
+
+                
+            }
+            return View(Result);
         }
 
         public ActionResult WordWorks(string Adres = "", string Dom = "", string Year = "")

@@ -272,6 +272,207 @@ namespace GKHNNC.Controllers
         }
 
 
+        public JsonResult MKDPerenosOstatkov(int Y)
+        {
+
+            try
+            {
+                //чистим прошлые записи
+                var Results = db.MKDYearResults.Where(x => x.PeriodYear == Y).ToList();
+                db.MKDYearResults.RemoveRange(Results);
+                db.SaveChanges();
+
+            }
+            catch
+            {
+
+            }
+
+            int LastYear = Y - 1;
+            List<MKDYearResult> LastResult = db.MKDYearResults.Where(x=>x.PeriodYear == LastYear).ToList();
+            foreach (var res in LastResult)
+            {
+                MKDYearResult YR = new MKDYearResult();
+                YR.PeriodYear = Y;
+                YR.BallStart = res.BallEnd;
+                YR.AdresMKD = res.AdresMKD;
+                YR.AdresFGBU = res.AdresFGBU;
+                YR.AdresId = res.AdresId;
+                YR.Statya = res.Statya;
+                YR.BallEnd = 0;
+                YR.CompleteWorks = 0;
+                YR.Nachisleno = 0;
+                YR.Oplacheno = 0;
+
+                try
+                {
+                    db.MKDYearResults.Add(YR);
+                    db.SaveChanges();
+                }
+                catch (Exception e)
+                {
+
+                }
+            }
+
+            return Json("Ok");
+
+        }
+
+        public JsonResult MKDFixResultsNew(int Y)
+        {
+
+            List<MKDYearOtchet> O = new List<MKDYearOtchet>();
+            List<AdresaMKDs> AdresMKD = db.AdresMKDs.ToList();
+            foreach (var mkd in AdresMKD)
+            {
+                List<MKDYearResult> Results = db.MKDYearResults.Where(x => x.PeriodYear == Y && x.AdresId == mkd.Id).ToList();
+                MKDYearOtchet Otch = SformirovatMKDOtchet(mkd.ASU, Y);
+                O.Add(Otch);
+                try
+                {
+                    //@(Model.OstatkiArendaSTART + Model.ArendaOld)
+                    //@Model.OstatkiArendaNachisleno      
+                    //@Model.OstatkiArendaOplacheno
+                    //@Model.Arenda
+                    //@(Model.OstatkiArendaSTART + Model.ArendaOld + Model.OstatkiArendaOplacheno - Model.Arenda)
+
+                    //YR.AdresMKD = Otch.Adres;
+                    //YR.AdresFGBU = Otch.Adres;
+                    //YR.AdresId = Otch.AdresId;
+                    //YR.PeriodYear = Y;
+                    //YR.Statya = "Аренда";
+                    //YR.BallStart = Otch.OstatkiArendaSTART + Otch.ArendaOld;
+                    
+                    try
+                    {
+                        MKDYearResult YR = Results.Where(x => x.Statya.Equals("Аренда")).First();
+                        YR.Nachisleno = Otch.OstatkiArendaNachisleno;
+                        YR.Oplacheno = Otch.OstatkiArendaOplacheno;
+                        YR.CompleteWorks = Otch.Arenda;
+                        YR.BallEnd = YR.BallStart + YR.Nachisleno + YR.Oplacheno - YR.CompleteWorks; //+ Otch.ArendaOld + Otch.OstatkiArendaOplacheno - Otch.Arenda; //Otch.OstatkiArendaSTART
+
+                        // db.MKDYearResults.Add(YR);
+                        db.Entry(YR).State = EntityState.Modified;
+                        db.SaveChanges();
+                    }
+                    catch (Exception e)
+                    {
+
+                    }
+
+
+                    //YR.AdresMKD = Otch.Adres;
+                    //YR.AdresFGBU = Otch.Adres;
+                    //YR.AdresId = Otch.AdresId;
+                    //YR.PeriodYear = Y;
+                    //YR.Statya = "Дополнительный текущий ремонт";
+                    //YR.BallStart = Otch.OstatkiDopTekRemSTART + Otch.DopTekRemOld;
+                   
+
+                    try
+                    {
+                        MKDYearResult YR = Results.Where(x => x.Statya.Equals("Дополнительный текущий ремонт")).First();
+                        YR.Nachisleno = Otch.ORCDopTekRemCHANGE;
+                        YR.Oplacheno = Otch.ORCDopTekRemPAY;
+                        YR.CompleteWorks = Otch.DopTekRem;
+                        YR.BallEnd = YR.BallStart + YR.Nachisleno + YR.Oplacheno - YR.CompleteWorks;//+ Otch.DopTekRemOld + Otch.ORCDopTekRemPAY - Otch.DopTekRem;//Otch.ORCDopTekRemSTART
+
+                        //db.MKDYearResults.Add(YR);
+                        db.Entry(YR).State = EntityState.Modified;
+                        db.SaveChanges();
+                    }
+                    catch
+                    {
+
+                    }
+
+                    //YR = new MKDYearResult();
+                    //YR.AdresMKD = Otch.Adres;
+                    //YR.AdresFGBU = Otch.Adres;
+                    //YR.PeriodYear = Y;
+                    //YR.AdresId = Otch.AdresId;
+                    //YR.Statya = "Непредвиденный/Неотложный ремонт";
+                    //YR.BallStart = Otch.OstatkiNepredRemSTART + Otch.NeotlogniOld;
+                   
+                    try
+                    {
+                        MKDYearResult YR = Results.Where(x => x.Statya.Equals("Непредвиденный/Неотложный ремонт")).First();
+                        YR.Nachisleno = Otch.ORCNepredRemontCHANGE;
+                        YR.Oplacheno = Otch.ORCNepredRemontPAY;
+                        YR.CompleteWorks = Otch.NepredRemont;
+                        YR.BallEnd = YR.BallStart + YR.Nachisleno + YR.Oplacheno - YR.CompleteWorks;//+ Otch.NeotlogniOld + Otch.ORCNepredRemontPAY - Otch.NepredRemont; //Otch.OstatkiNepredRemSTART
+
+                        //db.MKDYearResults.Add(YR);
+                        db.Entry(YR).State = EntityState.Modified;
+                        db.SaveChanges();
+                    }
+                    catch
+                    {
+
+                    }
+
+                    //YR = new MKDYearResult();
+                    //YR.AdresMKD = Otch.Adres;
+                    //YR.AdresFGBU = Otch.Adres;
+                    //YR.PeriodYear = Y;
+                    //YR.AdresId = Otch.AdresId;
+                    //YR.Statya = "Текущий ремонт (содержание)";
+                    //YR.BallStart = Otch.OstatkiTekRemSTART + Otch.TekRemOld;
+                    
+                    try
+                    {
+                        MKDYearResult YR = Results.Where(x => x.Statya.Equals("Текущий ремонт (содержание)")).First();
+                        YR.Nachisleno = Otch.ORCTekRemCHANGE;
+                        YR.Oplacheno = Otch.ORCTekRemPAY;
+                        YR.CompleteWorks = Otch.TEKREM;
+                        YR.BallEnd = YR.BallStart + YR.Nachisleno + YR.Oplacheno - YR.CompleteWorks;//+ Otch.TekRemOld + Otch.ORCTekRemPAY - Otch.TEKREM; //Otch.OstatkiTekRemSTART
+
+                        //db.MKDYearResults.Add(YR);
+                        db.Entry(YR).State = EntityState.Modified;
+                        db.SaveChanges();
+                    }
+                    catch
+                    {
+
+                    }
+
+                    //YR = new MKDYearResult();
+                    //YR.AdresMKD = Otch.Adres;
+                    //YR.AdresFGBU = Otch.Adres;
+                    //YR.PeriodYear = Y;
+                    //YR.AdresId = Otch.AdresId;
+                    //YR.Statya = "Содержание";
+                    //YR.BallStart = Otch.OstatkiSoderganieSTART + Otch.SoderganieOld;
+                    
+                    try
+                    {
+                        MKDYearResult YR = Results.Where(x => x.Statya.Equals("Содержание")).First();
+                        YR.Nachisleno = Otch.ORCSoderganieCHANGE;
+                        YR.Oplacheno = Otch.ORCSoderganiePAY;
+                        YR.CompleteWorks = Otch.Soderganie;
+                        YR.BallEnd = YR.BallStart + YR.Nachisleno + YR.Oplacheno - YR.CompleteWorks; //+ Otch.SoderganieOld + Otch.ORCSoderganiePAY - Otch.Soderganie; //Otch.OstatkiSoderganieSTART
+
+                        //db.MKDYearResults.Add(YR);
+                        db.Entry(YR).State = EntityState.Modified;
+                        db.SaveChanges();
+                    }
+                    catch
+                    {
+
+                    }
+
+
+                }
+                catch
+                {
+
+                }
+            }
+            return Json("Ok");
+
+        }
+
         public JsonResult MKDFixResults(int Y)
         {
             
@@ -1827,6 +2028,321 @@ WorkDate = cl.First().WorkDate
             return View();
         }
 
+
+        public ActionResult ObrabotatORC()
+        {
+            //Район;Филиал;Адрес МКД;Услуга;Поставщик;Начислено;Оплачено
+
+            string errors = "";
+            string StreetsFalse = "";
+            int Dobavleno = 0;
+            int Udaleno = 0;
+            int AdresMKDId = 0;
+            string[] fileEntries = Directory.GetFiles(Server.MapPath("~/Files/ORC/"));
+            List<string> Result = new List<string>();
+            List<string> Errors = new List<string>();
+
+            foreach (string f in fileEntries)
+            {
+                try
+                {
+                    string FileName = System.IO.Path.GetFileName(f);
+                    if (FileName.Contains(".csv") == false)
+                    {
+                        Errors.Add("Файл содержит не верное расширение " + FileName + " нужно сохранить как csv Разделители - запятые (по факту ;)");
+                        continue;
+                    }
+                    string File = System.IO.Path.GetFileName(f).Replace(".csv", "").Replace("ORC_", "");//.Replace("лит_","").Replace("ул_", "").Replace("ул","");
+                    DateTime D = new DateTime();
+                    int Year = 0;
+                    try
+                    {
+                        Year = Convert.ToInt16(File);
+                    }
+                    catch
+                    {
+                        Errors.Add("Файл не содержит год в наименовании " + File + " вот что осталось после зачистки имени.");
+                        continue;
+                    }
+
+                    List<ORC> OldOrc = db.ORCs.Where(x => x.Year == Year).ToList();
+
+                    try
+                    {
+                        if (OldOrc.Count > 0)
+                        {
+                            db.ORCs.RemoveRange(OldOrc);
+                            db.SaveChanges();
+                        }
+
+                    }
+                    catch
+                    {
+                        Errors.Add("Не смогли очистить старые данные за " + Year);
+                        continue;
+                    }
+
+                    string[] read;
+                    char[] seperators = { ';' };
+
+                    StreamReader sr = new StreamReader(f, Encoding.GetEncoding("Windows-1251"));
+
+                    string data = sr.ReadLine();// sr.ReadLine().Replace("и?","й");
+                    List<string> textBuilder = new List<string>();
+                    List<WordComplete> WorkTypes = new List<WordComplete>();
+                    bool Dobavit = false;
+                    bool DobavitNext = false;
+                    bool NachatoDobavlenie = false;
+                    bool AddWork = false;
+                    List<string> NewTextBuilder = new List<string>();
+                    List<ORC> ORC = new List<ORC>();
+
+
+
+                    try
+                    {
+                        sr.ReadLine();//Читаем первую строку
+                    }
+                    catch
+                    {
+                        Errors.Add("Файл не содержит строк " + File + " ошибка считывания 1 строки!");
+                        continue;
+                    }
+
+                    List<ORC> newORC = new List<ORC>();
+
+                    while ((data = sr.ReadLine()) != null)
+                    {
+                        read = data.Split(seperators, StringSplitOptions.RemoveEmptyEntries); //StringSplitOptions.RemoveEmptyEntries
+                        //Район;Филиал;Адрес;Услуга;Поставщик;Начислено;Оплачено
+                        string DISTRICT = read[0];
+                        string DEPARTMENT = read[1];
+                        string ADDRESS = read[2];
+                        string SERVICE = read[3];
+                        string PROVIDER = read[4];
+                        decimal CHARGE = 0;
+                        decimal PAYS = 0;
+                        try
+                        {
+                            CHARGE = Convert.ToDecimal(read[5]);
+                            PAYS = Convert.ToDecimal(read[6]);
+                        }
+                        catch
+                        {
+                            Errors.Add(" Не смогли преобразовать в цифру значение полей CHARGE =" + read[5] + " PAYS = " + read[6] + " в файле " + FileName);
+                            continue;
+                        }
+
+                        ORC orc = new ORC();
+                        orc.DISTRICT = DISTRICT;
+                        orc.DEPARTMENT = DEPARTMENT;
+                        orc.ADDRESS = ADDRESS;
+                        orc.SERVICE = SERVICE;
+                        orc.PROVIDER = PROVIDER;
+                        orc.CHARGE = CHARGE;
+                        orc.PAYS = PAYS;
+                        orc.Year = Year;
+                        newORC.Add(orc);
+
+
+                    }
+
+                    try
+                    {
+                        db.ORCs.AddRange(newORC);
+                        db.SaveChanges();
+                        Result.Add("Успешно обработано  " + newORC.Count() + " из файла " + FileName);
+                    }
+                    catch
+                    {
+
+                    }
+
+                }
+                catch (Exception exx)
+                {
+
+                }
+            }
+
+            ViewBag.Dobavleno = Result.Count;
+            ViewBag.Errors = Errors;
+
+            return View(Result);
+
+        }
+
+        public ActionResult ObrabotatArenda()
+        {
+            //Район;Филиал;Адрес МКД;Услуга;Поставщик;Начислено;Оплачено
+
+            string errors = "";
+            string StreetsFalse = "";
+            int Dobavleno = 0;
+            int Udaleno = 0;
+            int AdresMKDId = 0;
+            string[] fileEntries = Directory.GetFiles(Server.MapPath("~/Files/Arenda/"));
+            List<string> Result = new List<string>();
+            List<string> Errors = new List<string>();
+
+            foreach (string f in fileEntries)
+            {
+                try
+                {
+                    string FileName = System.IO.Path.GetFileName(f);
+                    if (FileName.Contains(".csv") == false)
+                    {
+                        Errors.Add("Файл содержит не верное расширение " + FileName + " нужно сохранить как csv Разделители - запятые (по факту ;)");
+                        continue;
+                    }
+                    string File = System.IO.Path.GetFileName(f).Replace(".csv", "").Replace("Arenda_", "");//.Replace("лит_","").Replace("ул_", "").Replace("ул","");
+                    DateTime D = new DateTime();
+                    int Year = 0;
+                    try
+                    {
+                        Year = Convert.ToInt16(File);
+                    }
+                    catch
+                    {
+                        Errors.Add("Файл не содержит год в наименовании " + File + " вот что осталось после зачистки имени.");
+                        continue;
+                    }
+
+                    List<MKDArenda> OldArenda = db.MKDArendas.Where(x => x.Year == Year).ToList();
+
+                    try
+                    {
+                        if (OldArenda.Count > 0)
+                        {
+                            db.MKDArendas.RemoveRange(OldArenda);
+                            db.SaveChanges();
+                        }
+
+                    }
+                    catch
+                    {
+                        Errors.Add("Не смогли очистить старые данные за " + Year);
+                        continue;
+                    }
+
+                    string[] read;
+                    char[] seperators = { ';' };
+
+                    StreamReader sr = new StreamReader(f, Encoding.GetEncoding("Windows-1251"));
+
+                    string data = sr.ReadLine();// sr.ReadLine().Replace("и?","й");
+                    List<string> textBuilder = new List<string>();
+                    List<WordComplete> WorkTypes = new List<WordComplete>();
+                    List<string> NewTextBuilder = new List<string>();
+                    List<ORC> ORC = new List<ORC>();
+
+                    try
+                    {
+                        sr.ReadLine();//Читаем первую строку
+                    }
+                    catch
+                    {
+                        Errors.Add("Файл не содержит строк " + File + " ошибка считывания 1 строки!");
+                        continue;
+                    }
+
+                    List<MKDArenda> newArenda = new List<MKDArenda>();
+
+                    List<Adres> Adresa = db.Adres.ToList();
+                    List<AdresaMKDs> VseMKD = db.AdresMKDs.ToList();
+
+                    while ((data = sr.ReadLine()) != null)
+                    {
+                        read = data.Split(seperators, StringSplitOptions.RemoveEmptyEntries); //StringSplitOptions.RemoveEmptyEntries
+                        //|Адрес|Номер|Начислено|Оплачено|Вознаграждение|
+                        string ADDRESS = read[0];
+                        string NUMBER = read[1];
+                        ADDRESS = ADDRESS + NUMBER;
+                        ADDRESS = ADDRESS.Replace(",", "");
+                        ADDRESS = ADDRESS.Replace("ПРОСПЕКТ","");
+                        ADDRESS = ADDRESS.Replace("ПРОЕЗД", "");
+                        ADDRESS = ADDRESS.Replace(".", "");
+                        ADDRESS = ADDRESS.Replace("БУЛЬВ", "");
+                        decimal NACHISLENO = 0;
+                        decimal OPLACHENO = 0;
+                        decimal VOSNAGRAGDENIE = 0;
+                        try
+                        {
+                            NACHISLENO = Convert.ToDecimal(read[2]);
+                            OPLACHENO = Convert.ToDecimal(read[3]);
+                            VOSNAGRAGDENIE = Convert.ToDecimal(read[4]);
+                        }
+                        catch
+                        {
+                            Errors.Add(" Не смогли преобразовать в цифру значение полей NACHISLENO =" + read[2] + " OPLACHENO = " + read[3] + " в файле " + FileName);
+                            continue;
+                        }
+
+
+                        int AdresId = 0;
+                        int MKDId = 0;
+                        try
+                        {
+                            
+                            AdresId = Adresa.Where(x => x.Adress.Equals(ADDRESS)).Select(x=>x.Id).First();
+                          
+                        }
+                        catch
+                        {
+                            Errors.Add(" Не смогли найти адрес =" + ADDRESS);
+                            continue;
+                        }
+
+                        try
+                        {
+                             MKDId = VseMKD.Where(x => x.AdresId == AdresId).Select(x => x.Id).First();
+                        }
+                        catch
+                        {
+                            Errors.Add(" Не смогли найти адрес МКД =" + ADDRESS);
+                            continue;
+                        }
+
+                        if(MKDId==0)
+                        {
+                            continue;
+                        }
+
+                        MKDArenda Arenda = new MKDArenda();
+                        Arenda.ASUId = MKDId;
+                        Arenda.Nachisleno = NACHISLENO;
+                        Arenda.Oplacheno = OPLACHENO;
+                        Arenda.Vosnagragdenie = VOSNAGRAGDENIE;
+                        Arenda.Year = Year;
+
+                        newArenda.Add(Arenda);
+
+                    }
+
+                    try
+                    {
+                        db.MKDArendas.AddRange(newArenda);
+                        db.SaveChanges();
+                        Result.Add("Успешно обработано  " + newArenda.Count + " из файла " + FileName);
+                    }
+                    catch
+                    {
+
+                    }
+
+                }
+                catch (Exception exx)
+                {
+
+                }
+            }
+
+            ViewBag.Dobavleno = Result.Count;
+            ViewBag.Errors = Errors;
+
+            return View(Result);
+
+        }
 
         public ActionResult ObrabotatExcel()
         {
