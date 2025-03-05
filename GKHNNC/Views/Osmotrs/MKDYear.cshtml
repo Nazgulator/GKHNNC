@@ -40,7 +40,7 @@
             {
                 item.WorkTip = "Периодические работы согласно утверждённого тарифа";
             }
-            if (OldRes.Equals(item.WorkTip) == false || item == Model.Last())
+            if (OldRes.Equals(item.WorkTip) == false)
             {
                 if (Summ > 0)
                 {
@@ -55,15 +55,15 @@
                 }
                 if (OldRes.Equals(item.WorkTip) == false)
                 {
-                <tr>
-                    <td colspan="5">
-                        <center>
-                            <h4>
-                                @item.WorkTip
-                            </h4>
-                        </center>
-                    </td>
-                </tr>
+                    <tr>
+                        <td colspan="5">
+                            <center>
+                                <h4>
+                                    @item.WorkTip
+                                </h4>
+                            </center>
+                        </td>
+                    </tr>
                 }
 
                 OldRes = item.WorkTip;
@@ -90,6 +90,33 @@
 
 
             </tr>
+
+            if (item == Model.Last())
+            {
+                if (Summ > 0)
+                {
+                    <tr>
+                        <td colspan="5" style="text-align:right">
+
+                            @OldRes итог по статье: @Summ
+
+                        </td>
+                    </tr>
+                    Summ = 0;
+                }
+                if (OldRes.Equals(item.WorkTip) == false)
+                {
+                    <tr>
+                        <td colspan="5">
+                            <center>
+                                <h4>
+                                    @item.WorkTip
+                                </h4>
+                            </center>
+                        </td>
+                    </tr>
+                }
+            }
 
         }
 

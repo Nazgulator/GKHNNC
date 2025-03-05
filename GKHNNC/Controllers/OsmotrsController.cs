@@ -1738,6 +1738,31 @@ namespace GKHNNC.Controllers
             {
 
             }
+
+            decimal ArendaMKD = 0;
+            //Ищем аренду 
+            try
+            {
+                MKDArenda Arenda = db.MKDArendas.Where(x => x.ASUId == AdresMKD.Id&&x.Year == Y).First();
+                ArendaMKD = Arenda.Vosnagragdenie;
+
+                MKDCompleteWork Arr = new MKDCompleteWork();
+                Arr.WorkDate = new DateTime(Arenda.Year, 1, 1);
+                Arr.WorkName = "Вознаграждение управляющей организации";
+                Arr.WorkTip = "Расходы за счет статьи Аренда";
+                Arr.WorkSumma = Arenda.Vosnagragdenie;
+                Arr.WorkIzmerenie = "руб.";
+                Arr.WorkCena = Arenda.Vosnagragdenie;
+                Arr.AdresMKDID = AdresMKD.Id;
+                Result.Add(Arr);
+
+            }
+            catch
+            {
+
+            }
+
+
             List<MKDCompleteWork> result = Result
 .GroupBy(c => new
 {
@@ -1758,26 +1783,18 @@ namespace GKHNNC.Controllers
 WorkDate = cl.First().WorkDate
 }).ToList();
 
+
             List<AdresaMKDs> AM = db.AdresMKDs.ToList();
             foreach (MKDCompleteWork r in result)
             {
                 r.AdresMKD = AM.Where(x => x.Id == r.AdresMKDID).First();
             }
 
-            decimal ArendaMKD = 0;
-            //Ищем аренду 
-            try
-            {
-              MKDArenda  Arenda = db.MKDArendas.Where(x => x.ASUId == AdresMKD.Id).First();
-                ArendaMKD = Arenda.Vosnagragdenie;
-            
-            }
-            catch
-            {
-
-            }
+     
 
             ViewBag.Vosnagragdenie = ArendaMKD;
+
+
 
             return View(result);
 
@@ -1870,7 +1887,7 @@ WorkDate = cl.First().WorkDate
             //Суммируем данные по ОРC
             try
             {
-                ORCs = db.ORCs.Where(x => x.ADDRESS.Equals(AdresMKD.ORC) && x.PROVIDER.Contains("ФГБУ АКАД-Я КОМФ")&&x.Year==Year).ToList();//Выбираем всех ОРКов
+                ORCs = db.ORCs.Where(x => x.ADDRESS.Equals(AdresMKD.ORC) && (x.PROVIDER.Equals("ФГБУ АКАД-Я КОМФ")|| x.PROVIDER.Equals("АКАДЕМИЯ КОМФОРТА")) && x.Year==Year).ToList();//Выбираем всех ОРКов
                                                                                                                               // O.ORCKapRemontCHANGE = ORCs.Where(x => x.SERVICE.Contains("КАП.РЕМОНТ") ).Sum(x => x.CHARGE);
                 O.ORCSoderganieCHANGE = ORCs.Where(x => x.SERVICE.Contains("СОДЕРЖАНИЕ ЖИЛЬЯ")).Sum(x => x.CHARGE);
                 O.ORCDopTekRemCHANGE = ORCs.Where(x => x.SERVICE.Contains("ДОП.ТЕК")).Sum(x => x.CHARGE);
@@ -1945,9 +1962,10 @@ WorkDate = cl.First().WorkDate
             }
            //Добавляем статью Вознаграждение УО
             MKDCompleteWork CW = new MKDCompleteWork();
-            CW.WorkTip = "Ремонтные работы за счет статьи Аренда";
+            CW.WorkTip = "Расходы за счет статьи Аренда";
             CW.WorkName = "Вознаграждение управляющей организации 10%";
             CW.WorkSumma = O.ArendaVosnagragdenie;
+            CW.WorkIzmerenie = "руб.";
             All.Add(CW);
 
             //Сохраняем в отчет
