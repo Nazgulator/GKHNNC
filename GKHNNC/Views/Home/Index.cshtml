@@ -54,6 +54,8 @@
                 <i class="glyphicon glyphicon-star"></i> Формирование годовой отчетности &raquo;
             </button>
         </p>
+
+
         if (Request.IsAuthenticated && User.IsInRole("Администратор"))
         {
             <p>
@@ -63,15 +65,15 @@
             </p>
         }
 
-            <p><a href="http://gkhnsc.ru/" class="btn btn-success btn-lg" style="width:500Px"><i class="glyphicon glyphicon-new-window"></i>Web сайт &raquo;</a></p>
-        }
-        else
-        {
-            <h4 style="color:forestgreen;"><b>Вы не авторизованы на сайте. Пожалуйста: </b></h4>
-            <p><a href="/Account/Login" class="btn btn-success btn-lg" style="width:500Px">Войдите в программу &raquo;</a></p>
-        }
+        <p><a href="http://gkhnsc.ru/" class="btn btn-success btn-lg" style="width:500Px"><i class="glyphicon glyphicon-new-window"></i>Web сайт &raquo;</a></p>
+    }
+    else
+    {
+        <h4 style="color:forestgreen;"><b>Вы не авторизованы на сайте. Пожалуйста: </b></h4>
+        <p><a href="/Account/Login" class="btn btn-success btn-lg" style="width:500Px">Войдите в программу &raquo;</a></p>
+    }
 
-    </Center>
+</Center>
 
 
 @section Scripts

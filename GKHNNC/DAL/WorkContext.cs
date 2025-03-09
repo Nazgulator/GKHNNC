@@ -183,6 +183,7 @@ namespace GKHNNC.DAL
         public System.Data.Entity.DbSet<GKHNNC.Models.MKDStatya> MKDStatyas { get; set; }
 
         public System.Data.Entity.DbSet<GKHNNC.Models.PrintConstant> PrintConstants { get; set; }
+        public System.Data.Entity.DbSet<GKHNNC.Models.Podpisant> Podpisnts { get; set; }
 
         //protected override void OnModelCreating(DbModelBuilder modelBuilder)
 

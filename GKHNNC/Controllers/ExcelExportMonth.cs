@@ -3147,20 +3147,41 @@ namespace GKHNNC.Controllers
             }
             EndStroka = from;
 
+            var Podpisants = db.Podpisnts.ToList();
+            string DirName = "";
+            string ZamDirName = "";
+            string PEOName = "";
 
+            string DirDolgnost = "КОД Директор отсутствует. Заполните поле КОД";
+            string ZamDolgnost = "КОД ЗаместительДиректора отсутствует. Заполните поле КОД";
+            string PEODolgnost = "КОД НачальникПЭО отсутствует. Заполните поле КОД";
 
-            //Подписи
+            try
+            {
+                DirName = Podpisants.Where(x => x.StringId.Equals("Директор")).Select(x => x.Name).First();
+                ZamDirName = Podpisants.Where(x => x.StringId.Equals("ЗаместительДиректора")).Select(x => x.Name).First();
+                PEOName = Podpisants.Where(x => x.StringId.Equals("НачальникПЭО")).Select(x => x.Name).First();
+
+                DirDolgnost = Podpisants.Where(x => x.StringId.Equals("Директор")).Select(x => x.Dolgnost).First();
+                ZamDolgnost = Podpisants.Where(x => x.StringId.Equals("ЗаместительДиректора")).Select(x => x.Dolgnost).First();
+                PEODolgnost = Podpisants.Where(x => x.StringId.Equals("НачальникПЭО")).Select(x => x.Dolgnost).First();
+            }
+            catch
+            {
+
+            }
+                //Подписи
             from++;
             from++;
-            WS.Cells[from, usluga] = "Директор Кисс В.В.";
+            WS.Cells[from, usluga] = DirDolgnost + " "+ DirName; //"Директор Кисс В.В.";
             WS.Cells[from, 4] = "__________________";
             from++;
             from++;
-            WS.Cells[from, usluga] = "Заместитель директора по ЭЖФ Топчиева Т.П.";
+            WS.Cells[from, usluga] = ZamDolgnost + " " + ZamDirName;//"Заместитель директора по ЭЖФ Топчиева Т.П.";
             WS.Cells[from, 4] = "__________________";
             from++;
             from++;
-            WS.Cells[from, usluga] = "Начальник ПЭО Зимина Е.Е.";
+            WS.Cells[from, usluga] = PEODolgnost + " " + PEOName;//"Начальник ПЭО Зимина Е.Е.";
             WS.Cells[from, 4] = "__________________";
             from++;
             WS.Cells[from, 4] = "подписано ЭЦП";
